@@ -295,6 +295,16 @@ notes:
 
 Sommerer & Mignonneau here worked with A-Life pioneer Thomas Ray, author of the Tierra computational ecosystem.
 
+---vimeo:93056665
+
+[Andy Lomas](https://andylomas.com/) - Morphogenetic Creations.
+
+Exhibited at the Ars Electronica Festival and the Bridges 2014 conference of maths and art.
+
+[The procedure is fully detailed in his paper "Cellular Forms: an Artistic Exploration of Morphogenesis".](https://andylomas.com/extra/andylomas_paper_cellular_forms_aisb50.pdf) It's worth reading this paper and considering the similarities and differences with the flocking algorithm, for example.
+
+The animations use digital simulation of a simplified biological model of morphogenesis, with three-dimensional structures generated out of interconnected particles to represent cells. Each form starts with a initial spherical cluster of cells which is incrementally developed over time by adding iterative layers of complexity to the structure. The aim is to create forms emergently: exploring generic similarities between many different shapes in nature rather than emulating any particular organism, revealing universal archetypal forms that can come from growth-like processes rather than top-down externally engineered design. Cell division is controlled by accumulated nutrient levels. When the level in a cell exceeds a given threshold the cell divides, and various parameters control how both the parent and daughter cells re-connect to their immediate neighbours. New nutrient can be created by photons in cells hit by incident light rays. Nutrient can also be allowed to flow to adjacent cells. The simulation process is repeated over thousands of iterations and millions of particles, with each of the final structures comprising over fifty million cells.
+
 ---vimeo:120987833
 
 Humans have always looked to nature for inspiration. As artists, we have done so in creating a family of ["Artificial Natures”](https://artificialnature.net/): interactive art installations surrounding humans with biologically-inspired complex systems experienced in immersive mixed reality. The invitation is to become part of an alien ecosystem rich in networks of complex feedback, but not as its central subject. Although artificial natures are computational, we draw our inspiration from the sense of open-ended continuation and the aesthetic integration of playful wonder with the tension of the unfamiliar recalled from childhood explorations in nature. By giving life to mixed reality we’re anticipating futures inevitably saturated in interconnected computational media. However we believe computation is not intrinsically utilitarian, nor in opposition to nature; we see it instead as a material means to plunge even more deeply into what nature is, and find our place within it. Artificial Nature springs from an inherent curiosity and aesthetic survival instinct to narrate alternate worlds in superposition to us, as a reminder that although the imaginable is greater than the known, the real is greater and weirder still.
