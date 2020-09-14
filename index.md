@@ -34,22 +34,25 @@ The course has a strongly practical emphasis, exploring frameworks through appli
      - Practice your [Javascript](https://github.com/worldmaking/worldmaking.github.io/wiki/JS-notes) and get to know the features of our [lab kit](labs.html)
      - Modify the [Game of Life](https://codepen.io/grrrwaaa/pen/MWyGZpd?editors=0010) to produce an interesting variant
 2. [**Cellular Automata II**](ca.html)
+   - Sharing CA variants
+   <!--- [Randomized gallery of assignments from past classes](https://artificialnature.net/courses/datt4950/gallery/index.html) -->
    - Action items:
 3. [**Cellular Automata III**](ca.html)
    - Action items:
+     - **Due Oct 1: [Assignment 1](assignments.html) (CA)**
 4. **Special Topic** *Oct 5* 
    - Action items:
 5. **Reading Week**
    - Action items:
-6. [**Agents I**](agents.html)
+6. [**Agents I**](agent.html)
    - Action items:
-7. [**Agents II**](agents.html)
+7. [**Agents II**](agent.html)
    - Action items:
-8. [**Evolution I**](agents.html) *Nov 2* 
+8. [**Evolution I**](agent.html) *Nov 2* 
    - Action items:
-9. [**Evolution II**](agents.html)
+9.  [**Evolution II**](agent.html)
    - Action items:
-10. [**Neural Networks I**](nn.html)
+11. [**Neural Networks I**](nn.html)
    - Action items:
 11. [**Neural Networks II**](nn.html)
    - Game of Life

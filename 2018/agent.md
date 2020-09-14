@@ -599,4 +599,8 @@ Energy dynamics should help keep a population size in reasonable ranges, however
 [Example](http://codepen.io/grrrwaaa/pen/PZxrbo?editors=0010)
 
 [And here's that example combined with the chemotaxis model](http://codepen.io/grrrwaaa/pen/QKXaGb?editors=0010)
+
+
+TODO: inter-agent behaviours, flocking, stigmergy, etc. 
+
 -->

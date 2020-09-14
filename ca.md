@@ -62,7 +62,7 @@ The essential components that define a cellular system are:
 - **Boundary conditions:** What happens to cells at the edges of the space. A periodic boundary 'wraps around' to the opposite edge; a static boundary always has the same state, a reflective boundary mirrors the neighbor state.
 
 
-[The wikibooks on CA](http://www.interciencia.es/PDF/WikipediaBooks/CellAutomata.pdf).
+[The wikibooks on CA](https://en.wikibooks.org/wiki/Cellular_Automata).
 
 ---
 
