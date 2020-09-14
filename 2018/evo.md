@@ -1,8 +1,3 @@
-title: Evolutionary Systems
-importance: 5
-
----
-
 # Evolutionary Systems
 
 There have been more than four decades of computational systems inspired by natural evolution. It has become a major field of machine learning and optimization. Beyond AI, it has been used in hardware and circuit design, robotics, and more recently in industrial design and architecture. It has of course also been deeply explored in art and music.
@@ -85,6 +80,8 @@ The main systematic differences between this an natural evolution are that the u
 [A fantastic list of practical applications of genetic algorithm & evolutionary programming](http://www.talkorigins.org/faqs/genalg/genalg.html#examples) 
 
 ### Some inspiration
+
+We encountered the use of artificial evolution by Karl Sims in our [introductory slides](../intro.html)
 
 [Karl Sims' Genetic Images](http://www.karlsims.com/genetic-images.html) -- and the [1991 Siggraph Paper](http://www.karlsims.com/papers/siggraph91.html)
 

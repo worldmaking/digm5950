@@ -48,9 +48,9 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Action items:
 7. [**Agents II**](agent.html)
    - Action items:
-8. [**Evolution I**](agent.html) *Nov 2* 
+8. [**Evolution I**](evo.html) *Nov 2* 
    - Action items:
-9.  [**Evolution II**](agent.html)
+9.  [**Evolution II**](evo.html)
    - Action items:
 11. [**Neural Networks I**](nn.html)
    - Action items:
