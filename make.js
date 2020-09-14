@@ -3,14 +3,24 @@ const fs = require("fs"),
 
 const JSON5 = require("json5")
 const marked = require("marked")
+const hljs   = require('highlight.js')
 const template = require('es6-dynamic-template')
 
+marked.setOptions({
+	highlight: function(code, lang) {
+	  return hljs.highlight(lang, code).value;
+	}
+});
+
+// add some library words to the highlighter:
+hljs.getLanguage("javascript").keywords.built_in += " now dt random wrap shuffle write draw2D field2D vec2 hashspace2D mouse key update draw reset "
 
 const meta_default = {
 	author: "Graham Wakefield",
 	template: "template.html",
 	title: "",
 	description: "",
+	cover_image: "img/collaborative_coding.jpg"
 }
 
 
@@ -25,7 +35,6 @@ function generate(file) {
 	if (match) {
 		try {
 			let header = JSON5.parse(match[1])
-			console.log(match)
 			Object.assign(meta, header);
 			src = src.replace(/<!--\s*(\{[\S\s]+?\})\s*-->/gm, "")
 		} catch (e) {
@@ -39,13 +48,17 @@ function generate(file) {
 		//console.warn("unable to find/parse title")
 	}
 
+	// TODO create TOC
+
+	// https://vimeo.zendesk.com/hc/en-us/articles/360001494447-Using-Player-Parameters
 	meta.src = src
 		// auto slide break at heading 1 titles:
 		.replace(/\n(#\s[^\n]+)/g, "\n---\n\n$1")
 		// replace @image:path as background contain 
 		.replace(/\n---image:([^\s]+)/g, `\n---\n<!-- .slide: data-background-image="$1" data-background-size="contain" -->`)
 		// // replace @youtube:ID as background video
-		.replace(/\n---youtube:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://youtube.com/embed/$1?rel=0&autoplay=1&start=0" -->`)
+		.replace(/\n---youtube:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://youtube.com/embed/$1?rel=0&autoplay=1&start=0" -->\n\nnotes:\n`)
+		.replace(/\n---vimeo:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://player.vimeo.com/video/$1?rel=0&autoplay=1&start=0&muted=0" -->\n\nnotes:\n`)
 
 	meta.body = marked(meta.src);
 

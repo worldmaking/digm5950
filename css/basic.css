@@ -59,6 +59,10 @@ hr {
 	margin-bottom: 2em;
 }
 
+img {
+	max-width: 100%;
+}
+
 ol {
     list-style-type: decimal; }
   
@@ -71,6 +75,17 @@ ul ul {
 ul ul ul {
 	list-style-type: square; }
 
+pre {
+	display: block;
+	font-family: Monaco, Consolas, "Andale Mono", "DejaVu Sans Mono", monospace;
+	word-wrap: break-word;
+	padding: 8px;	
+	
+	border: solid 1px #ccc;
+	border-radius: 3px;
+	background: #f6f6f6;	
+	color: #333;
+}
 
 a {
 	color: #e31837;

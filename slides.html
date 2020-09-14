@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>${title}</title>
+<meta name="description" content="${description}">
+<meta name="author" content="${author}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/theme.css" id="theme">
+<link rel="stylesheet" href="css/github.css" id="highlight-theme">
+<style>
+
+body {
+	display: flex;
+	flex-flow: column;
+	height: 100vh;
+	font-family: 'Roboto', Helvetica, Arial, sans-serif;
+}
+
+header {
+	background-color:#f5f5f5;
+	font-size: 75%;
+	padding: 0.5em;
+}
+
+footer {
+	background-color:#f5f5f5;
+	font-size: 75%;
+	padding: 0.5em;
+}
+
+.container {
+	/* let content fill all available area, and disable scroll */
+	flex: 1;
+	overflow: hidden;
+}
+
+/* wrap a youtube etc. iframe in this div */
+.iframe-wrap {
+	position:relative;
+	padding-bottom:56.25%;
+	padding-top:0px;
+	margin: 0px;
+	height:0;
+	overflow:hidden;
+}
+/* and add the correct aspect ratio class */
+.res-4by3{ padding-bottom: 75%; }
+.res-16by9{ padding-bottom: 56.25%; }
+
+.iframe-wrap iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.reveal .slides > section {
+    text-align: left;
+}
+
+
+.mediaelement {
+	display: inline-flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	height: 50vh;
+	justify-content: center;
+}
+
+.mediaelement > img {
+	padding: 1em;
+}
+  
+</style>
+</head>
+<body>
+<header><a href="index.html">Home</a></header>
+<article class="container"><div class="reveal"><div class="slides"><section data-markdown data-separator="---+" data-separator-vertical="\n\|\|\|+\n" data-separator-notes="\nnotes?:"><script type="text/markdown">
+
+<section data-background-image="${cover_image}" />
+
+${src}
+</script></section></div></div></article>
+<!--<footer>Graham Wakefield 2020</footer>-->
+<script src="js/modernizr-3.11.2.min.js"></script>
+<script src="js/reveal.js"></script>
+<script src="js/plugin/zoom/zoom.js"></script>
+<script src="js/plugin/notes/notes.js"></script>
+<script src="js/plugin/markdown/markdown.js"></script>
+<script src="js/plugin/highlight/highlight.js"></script>
+<script>
+
+// pre-process markdown:
+let sources = document.querySelectorAll('[type="text/markdown"]');
+for (let e of sources) {
+
+	e.innerHTML = e.innerHTML
+	console.log(e.innerHTML)
+};
+
+// see https://revealjs.com/config/
+Reveal.initialize({
+	// show slide arrow controls:
+	controls: true,
+	// show progress bar at bottom:
+	progress: true,
+	// show slide numbers?
+	//slideNumber: "speaker",
+	// show notes along with slides:
+	showNotes: true,
+	// don't print separate pages for each animated fragment:
+	pdfSeparateFragments: false,
+	// add current slide to url
+	// so e.g. page refresh stays on the right slide
+	hash: true,
+	// Flags if the presentation is running in an embedded mode,
+	// i.e. contained within a limited portion of the screen
+	embedded: false,
+	// automatically start/stop media files on slides
+	autoPlayMedia: true,
+	// default transition style
+	transition: "fade",
+	transitionSpeed: "fast",
+	// Learn about plugins: https://revealjs.com/plugins/
+	plugins: [ RevealZoom, RevealNotes, RevealMarkdown, RevealHighlight ],
+
+	// options for markdown parsing
+	// see https://marked.js.org/#/USING_ADVANCED.md#options
+	marked: {
+
+	},
+
+});
+</script>
+<script src="https://player.vimeo.com/api/player.js"></script>
+</body></html>
