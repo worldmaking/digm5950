@@ -35,8 +35,9 @@ The course has a strongly practical emphasis, exploring frameworks through appli
      - Modify the [Game of Life](https://codepen.io/grrrwaaa/pen/MWyGZpd?editors=0010) to produce an interesting variant
 2. [**Cellular Automata II**](ca.html)
    - Sharing CA variants
-   <!--- [Randomized gallery of assignments from past classes](https://artificialnature.net/courses/datt4950/gallery/index.html) -->
+   - [Randomized gallery of assignments from past classes](https://artificialnature.net/courses/datt4950/gallery/index.html)
    - Action items:
+     - Continue developing your CA for [Assignment 1](assignments.html)
 3. [**Cellular Automata III**](ca.html)
    - Action items:
      - **Due Oct 1: [Assignment 1](assignments.html) (CA)**
