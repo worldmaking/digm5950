@@ -8,12 +8,6 @@ const marked = require("marked")
 const hljs   = require('highlight.js')
 const template = require('es6-dynamic-template')
 
-marked.setOptions({
-	highlight: function(code, lang) {
-	  return hljs.highlight(lang, code).value;
-	}
-});
-
 // add some library words to the highlighter:
 hljs.getLanguage("javascript").keywords.built_in += " now dt random wrap shuffle write draw2D field2D vec2 hashspace2D mouse key update draw reset "
 
@@ -32,6 +26,7 @@ function generate(file) {
 	console.log("parsing", file.name)
 	// lazy deep copy of meta defaults:
 	let meta = JSON.parse(JSON.stringify(meta_default)) 
+	
 	// update metadata from JSON header:
 	let match = (/<!--\s*(\{[\S\s]+?\})\s*-->/gm).exec(src)
 	if (match) {
@@ -50,25 +45,70 @@ function generate(file) {
 		//console.warn("unable to find/parse title")
 	}
 
-	// TODO create TOC
+	const isSlides = meta.template == "slides.html";
 
-	// https://vimeo.zendesk.com/hc/en-us/articles/360001494447-Using-Player-Parameters
-	meta.src = src
-		// auto slide break at heading 1 titles:
+	if (isSlides) {
+		meta.src = meta.src
+			// auto slide break at any heading titles:
+			.replace(/\n(#+\s[^\n]+)/g, "\n---\n\n$1")
+			// replace @image:path as background contain 
+			.replace(/\n---image:([^\s]+)/g, `\n---\n<!-- .slide: data-background-image="$1" data-background-size="contain" -->\n\nnotes:\n`)
+			// // replace @youtube:ID as background video
+			.replace(/\n---youtube:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://youtube.com/embed/$1?rel=0&autoplay=1&start=0" -->\n\nnotes:\n`)
+	} else {
+		meta.src = meta.src
+		// auto hr break at heading 1 titles:
 		.replace(/\n(#\s[^\n]+)/g, "\n---\n\n$1")
 		// replace @image:path as background contain 
-		.replace(/\n---image:([^\s]+)/g, `\n---\n<!-- .slide: data-background-image="$1" data-background-size="contain" -->`)
+		.replace(/\n---image:([^\s]+)/g, `\n<img src="$1" />\n`)
 		// // replace @youtube:ID as background video
-		.replace(/\n---youtube:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://youtube.com/embed/$1?rel=0&autoplay=1&start=0" -->\n\nnotes:\n`)
-		.replace(/\n---vimeo:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://player.vimeo.com/video/$1?rel=0&autoplay=1&start=0&muted=0" -->\n\nnotes:\n`)
+		.replace(/\n---youtube:([^\s]+)/g, `<iframe width="720" height="540" src="https://youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>`)
+
+	}
+
+	// // https://vimeo.zendesk.com/hc/en-us/articles/360001494447-Using-Player-Parameters
+	// meta.src = src
+	// 	// auto slide break at heading 1 titles:
+	// 	.replace(/\n(#\s[^\n]+)/g, "\n---\n\n$1")
+	// 	// replace @image:path as background contain 
+	// 	.replace(/\n---image:([^\s]+)/g, `\n---\n<!-- .slide: data-background-image="$1" data-background-size="contain" -->`)
+	// 	// // replace @youtube:ID as background video
+	// 	.replace(/\n---youtube:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://youtube.com/embed/$1?rel=0&autoplay=1&start=0" -->\n\nnotes:\n`)
+	// 	.replace(/\n---vimeo:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://player.vimeo.com/video/$1?rel=0&autoplay=1&start=0&muted=0" -->\n\nnotes:\n`)
+
+	let toc = []
+	let renderer = new marked.Renderer();
+	let heading = renderer.heading.bind(renderer);
+	renderer.heading = function(text, level, ...args) {
+		const html = heading(text, level, ...args)
+		const match = /id="(.+)"/gm.exec(html)
+		if (match && match.length > 1) {
+			const id = match[1]
+			console.log(text, level, id)
+			toc.push({
+				level: level,
+				text: text,
+				id: id,
+			})
+		}
+		return html
+	}
+	marked.setOptions({
+		renderer: renderer,
+		highlight: function(code, lang) {
+			return hljs.highlight(lang, code).value;
+		}
+	});
 
 	meta.body = marked(meta.src);
+	meta.toc = toc.length > 1 ? marked(toc.map(item => `${"  ".repeat(item.level-1)}- [${item.text}](#${item.id})`).join("\n")) : "";
 
 	let html = template(fs.readFileSync(meta.template, "utf8"), meta);
 
-	const writepath = path.join(__dirname, `${file.name}.html`)
+	const writename = `${file.name}.html`
+	const writepath = path.join(__dirname, writename)
 	fs.writeFileSync(writepath, html)
-	return writepath;
+	return writename;
 }
 
 console.log("written:", fs.readdirSync(__dirname, "utf8").map(file=>path.parse(file)).filter(file=>file.ext==".md").map(generate))
