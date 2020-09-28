@@ -93,7 +93,8 @@ All Zoom sesions will be recorded and posted online using MS Teams.
       - Be sure to focus on the most complex, innovative, or otherwise interesting parts of the code, beyond what we cover in class.
     - Evaluate the result. Are there significant variable changes that can produce different behaviour (if so, show them!) Did you try several variations of your system (if so, show them!)  If you had an idea that you explored, but it didn't work as expected, show that too -- and offer your ideas about why you think it didn't. This is valid research! Talk about what you might do next.
     - You can record a video using Zoom, Quicktime, OBS, or several other options. Recording with a cellphone is not acceptable.  If you are having difficulties with screen recording, we can schedule a session in-class to do this live instead.
-
+    - Submit via the **Assignments** tab in [Teams](https://teams.microsoft.com/l/channel/19%3aef5cfda6bcf0493e8ecae3b0e05d163f%40thread.tacv2/General?groupId=2286cd4d-8394-4a66-9c74-0d27ffd875b1&tenantId=34531318-7011-4fd4-87f0-a43816c49bd0)
+     
 - Final Project: 30%. Realized individually or in groups, demonstrate the effective application of understanding through the course in novel expressions of adaptive media and art. Projects will be presented to the class at the end of the term and will be in the form of a critical discussion that reflects on the results of the experience gained over duration of the course.
   
 - Final project report: 20% (graduate students only). 
