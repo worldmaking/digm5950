@@ -27,6 +27,52 @@ footer {
 
 <body class="centremaxwidth960">
 <header><a href="index.html">Home</a></header>
+<ul>
+<li><a href="#cellular-automata-and-related-lattice-models">Cellular automata (and related lattice models)</a><ul>
+<li><a href="#conways-game-of-life">Conway&#39;s Game of Life</a><ul>
+<li><a href="#implementation">Implementation</a></li>
+<li><a href="#variations">Variations</a></li>
+</ul>
+</li>
+<li><a href="#probabilisticstochastic-ca">Probabilistic/Stochastic CA</a></li>
+<li><a href="#non-homogenous-ca">Non-homogenous CA</a></li>
+<li><a href="#asynchronous-ca">Asynchronous CA</a><ul>
+<li><a href="#mobile-ca">Mobile CA</a><ul>
+<li><a href="#langtons-ant">Langton&#39;s Ant</a></li>
+</ul>
+</li>
+<li><a href="#termites">Termites</a></li>
+</ul>
+</li>
+<li><a href="#particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</a><ul>
+<li><a href="#block-rule-ca">Block rule CA</a></li>
+<li><a href="#some-observations">Some observations</a></li>
+</ul>
+</li>
+<li><a href="#probabilistic-asynchronous-ca">Probabilistic Asynchronous CA</a><ul>
+<li><a href="#largeunboundedcomplex-states">Large/unbounded/complex states</a></li>
+</ul>
+</li>
+<li><a href="#continuous-automata">Continuous automata</a><ul>
+<li><a href="#smoothlife">Smoothlife</a></li>
+<li><a href="#lenia">Lenia</a></li>
+<li><a href="#reaction-diffusion">Reaction Diffusion</a></li>
+</ul>
+</li>
+<li><a href="#spatial-transformation-systems">Spatial transformation systems</a><ul>
+<li><a href="#ima-traveller">Ima Traveller</a></li>
+<li><a href="#multi-scale-systems">Multi-scale systems</a></li>
+</ul>
+</li>
+<li><a href="#multi-way-ca--parallel-histories">Multi-way CA &amp; parallel histories</a></li>
+</ul>
+</li>
+</ul>
+
+<!--{
+    title: "Cellular Automata"
+}-->
+
 <hr>
 <h1 id="cellular-automata-and-related-lattice-models">Cellular automata (and related lattice models)</h1>
 <p><img src="img/finiteStateMachine.png" alt=""></p>
@@ -74,7 +120,7 @@ footer {
 </ul>
 <p><a href="https://en.wikibooks.org/wiki/Cellular_Automata">The wikibooks on CA</a>.</p>
 <hr>
-<h3 id="conways-game-of-life">Conway&#39;s Game of Life</h3>
+<h2 id="conways-game-of-life">Conway&#39;s Game of Life</h2>
 <p>The most famous CA is probably the <strong>Game of Life</strong>. It is a 2D, class 4 automata, which uses the Moore neighbourhood (8 neighbours), and synchronous update. The transition rule can be stated as follows:</p>
 <ul>
 <li>If the current state is 1 (&quot;alive&quot;):<ul>
@@ -107,7 +153,7 @@ footer {
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 <hr>
-<h2 id="variations">Variations</h2>
+<h3 id="variations">Variations</h3>
 <p>There are many ways we can modulate this into more complex CA. For example, by allowing more than two states. For example, here is &quot;Brian&#39;s Brain&quot;:</p>
 <p data-height="300" data-theme-id="18447" data-slug-hash="JwaQqV" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Brian's Brain: 2019 DATT4950" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/JwaQqV/">Brian's Brain: 2019 DATT4950</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
@@ -218,7 +264,7 @@ footer {
 <p>In 1969, German computer pioneer (and painter) Konrad Zuse published his book <a href="ftp://ftp.idsia.ch/pub/juergen/zuserechnenderraum.pdf">Calculating Space</a>, proposing that the physical laws of the universe are discrete by nature, and that the entire universe is the output of a deterministic computation on a single cellular automaton. This became the foundation of the field of study called <em>digital physics</em>. Zuse&#39;s first model is a 3D particle CA.</p>
 </blockquote>
 <p>A CA-inspired digital physics hypothesis is currently being promoted by Stephen Wolfram, as described in his magnum opus <a href="http://www.wolframscience.com/nksonline/toc.html">A New Kind Of Science</a>.</p>
-<h3 id="probabilistic-asynchronous-ca">Probabilistic Asynchronous CA</h3>
+<h2 id="probabilistic-asynchronous-ca">Probabilistic Asynchronous CA</h2>
 <p>Chooses the next active cell according to a random selection.</p>
 <p>The <em>Ising model</em> of ferromagnetism in statistical mechanics can be simulated in a <em>Monte Carlo</em> fashion: Each site (cell) has either positive or negative spin (we can encode that as 0 or 1 value). At each time step, consider a site at random, and evaluate the probability of changing state. If changing state moves the site closer to energetic equilibrium with its neighbors (determined according to the <a href="https://en.wikipedia.org/wiki/Hamiltonian_(quantum_mechanics)">Hamiltonian</a> of the site), then the change is made. Otherwise, the change is made only with a small probability that is dependent on the energetic difference and overall temperature. Thus at high temperatures, the system remains noisy, while at low temperatures it gradually self-organizes into all sites with equal spin.</p>
 <p>A simplified Ising model on codepen -- try changing the temperature:</p>

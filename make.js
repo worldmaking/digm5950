@@ -26,6 +26,7 @@ function generate(file) {
 	console.log("parsing", file.name)
 	// lazy deep copy of meta defaults:
 	let meta = JSON.parse(JSON.stringify(meta_default)) 
+	meta.src = src;
 	
 	// update metadata from JSON header:
 	let match = (/<!--\s*(\{[\S\s]+?\})\s*-->/gm).exec(src)

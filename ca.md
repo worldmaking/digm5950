@@ -66,7 +66,7 @@ The essential components that define a cellular system are:
 
 ---
 
-### Conway's Game of Life
+## Conway's Game of Life
 
 The most famous CA is probably the **Game of Life**. It is a 2D, class 4 automata, which uses the Moore neighbourhood (8 neighbours), and synchronous update. The transition rule can be stated as follows:
 
@@ -101,7 +101,7 @@ One complication is that the states of the whole lattice must update synchronous
 
 ---
 
-## Variations
+### Variations
 
 There are many ways we can modulate this into more complex CA. For example, by allowing more than two states. For example, here is "Brian's Brain":
 
@@ -227,7 +227,7 @@ Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell
 
 A CA-inspired digital physics hypothesis is currently being promoted by Stephen Wolfram, as described in his magnum opus [A New Kind Of Science](http://www.wolframscience.com/nksonline/toc.html).
 
-### Probabilistic Asynchronous CA
+## Probabilistic Asynchronous CA
 
 Chooses the next active cell according to a random selection.
 

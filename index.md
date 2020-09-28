@@ -69,7 +69,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
 
 ---
 
-# Format
+## Format
 
 In 2020 this course will be remotely delivered in a mixture of synchronous and asynchronous learning. Lectures and lab practice sessions will be held every Monday morning via Zoom. Lectures focus on the introduction of theoretical, aesthetic and conceptual content of the course. Labs focus on the application of lecture material in the form of instructor-led reconstructions, excercises/studies, and larger projects.
 
@@ -83,7 +83,7 @@ All Zoom sesions will be recorded and posted online using MS Teams.
 - Leverage experience in the application of cutting-edge creative coding in generative and interactive arts in order to intelligently extrapolate into future culture technologies.
 - Have refined advanced coding skills.
 
-## Evaluation
+### Evaluation
 
 - [Assignments: 40%](assignments.html). Exercises will assigned throughout the course. Exercises develop essential practice-informed critique and experiential learning. For each assessed exercise you will be asked to submit your code. Be sure to read & follow the instructions below regarding formatting.
 
