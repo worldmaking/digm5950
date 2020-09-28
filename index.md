@@ -43,6 +43,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Action items:
      - Continue developing your CA for [Assignment 1](assignments.html)
 3. [**Cellular Automata III**](ca.html)
+   - Sharing CA variants
    - Action items:
      - **Due Oct 1: [Assignment 1](assignments.html) (CA)**
 4. **Special Topic** *Oct 5* 
