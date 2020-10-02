@@ -46,13 +46,13 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Sharing CA variants
    - Action items:
      - **Due Oct 4: [Assignment 1](assignments.html) (CA)**
-4. **Special Topic** *Oct 5* 
+4. [**Agents I**](agent.html) *Oct 5* 
    - Action items:
 5. **Reading Week**
+   - Action items: Begin developing a new agent-based simulation
+6. [**Agents II**](agent.html)
    - Action items:
-6. [**Agents I**](agent.html)
-   - Action items:
-7. [**Agents II**](agent.html)
+7. **Special Topic**
    - Action items:
 8. [**Evolution I**](evo.html) *Nov 2* 
    - Action items:
@@ -102,7 +102,9 @@ All Zoom sesions will be recorded and posted online using MS Teams.
 
 - Readings and participation: 10%. Readings are short selections from books or landmark papers, chosen to directly support the assignments and tutorial discussion. Participation incorporates contributions to tutorial discussions, awareness of issues in readings, and the ability to relate tutorial issues to the broader concerns of the course.
 
----
+## Labs
+
+The examples we will work though in class, and for assignments, will use the JavaScript programming language, embedded in web browsers. To make this easier, I have prepared a starter template and library in Codepen.io's online editor.  This starter-kit will be used in all labs. [The features provided by this kit are documented here](labs.html)
 
 ## Suggested Readings
 
