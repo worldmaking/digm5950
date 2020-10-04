@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="description" content="">
+<meta name="author" content="Graham Wakefield">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="css/basic.css" type="text/css" />
+<link rel="stylesheet" href="css/github.css" type="text/css" />
+<style>
+header {
+	background-color:#f5f5f5;
+	font-size: 75%;
+	padding: 0.5em;
+}
+
+footer {
+	background-color:#f5f5f5;
+	font-size: 75%;
+	padding: 0.5em;
+}
+</style>
+</head>
+
+<body class="centremaxwidth960">
+<header><a href="index.html">Home</a></header>
+<ul>
+<li><a href="#multi-agent-systems">Multi-Agent Systems</a><ul>
+<li><a href="#a-minimal-agent-model">A minimal agent model</a><ul>
+<li><a href="#boundary-conditions">Boundary conditions</a></li>
+<li><a href="#random-walks-in-nature">Random walks in nature</a></li>
+<li><a href="#multiple-agents">Multiple agents</a></li>
+</ul>
+</li>
+<li><a href="#system-components">System components</a></li>
+<li><a href="#agent-environment-dynamics">Agent-environment Dynamics</a><ul>
+<li><a href="#traversing-environmental-gradients">Traversing environmental gradients</a></li>
+<li><a href="#generating-landscapes">Generating landscapes</a></li>
+<li><a href="#sensing-the-field">Sensing the field</a></li>
+</ul>
+</li>
+<li><a href="#action-selection-chemotaxis">Action Selection: Chemotaxis</a><ul>
+<li><a href="#modeling-e-coli">Modeling E. Coli</a></li>
+<li><a href="#dynamic-fields">Dynamic fields</a></li>
+<li><a href="#background-noise">Background Noise</a></li>
+<li><a href="#evaporation-and-consumption">Evaporation and Consumption</a></li>
+<li><a href="#other-field-dynamics">Other field dynamics</a></li>
+<li><a href="#other-taxes">Other taxes</a></li>
+</ul>
+</li>
+<li><a href="#are-two-sensors-are-better-than-one">Are two sensors are better than one?</a><ul>
+<li><a href="#stigmergy-and-pheromone-trails">Stigmergy and Pheromone Trails</a></li>
+<li><a href="#implementation">Implementation</a></li>
+</ul>
+</li>
+<li><a href="#death-note-addingremoving-agents-from-an-array">Death Note: adding/removing agents from an array</a><ul>
+<li><a href="#method-1-iterate-backwards">Method 1: Iterate backwards</a></li>
+<li><a href="#method-2-double-buffer">Method 2: Double-buffer</a></li>
+<li><a href="#practical-limits-of-population-sizes">Practical limits of population sizes</a></li>
+<li><a href="#energy-dynamics">Energy dynamics</a></li>
+</ul>
+</li>
+<li><a href="#agent-agent-interactions">Agent-Agent Interactions</a><ul>
+<li><a href="#steering-behaviors">Steering Behaviors</a></li>
+<li><a href="#boids-flocking-swarms">Boids, flocking, swarms</a></li>
+<li><a href="#implementation-1">Implementation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<h1 id="multi-agent-systems">Multi-Agent Systems</h1>
+<p>Some of the most beautiful, fascinating or strange phenomena of nature can be understood as emerging from the behaviors of interacting agents. Widely acknowledged examples include the murmuration of birds (or swarming insects, schools of fish), and the societal &#39;superorganisms&#39; of ant colonies. We have come to understand that despite the obvious organization that we see at the macro-scale, there is no hierarchical center of coordination, but rather the whole emerges from simple interactions at local levels. These have been suggested as examples of emergence, or of self-organization. Which is to say, the whole is greater than a naive sum of its parts. </p>
+<iframe width="720" height="540" src="https://youtube.com/embed/V4f_1_r80RY" frameborder="0" allowfullscreen></iframe>
+
+<p>Agent-based models, or multi-agent systems, attempt to understand how non-trivial organized macro-behavior emerges from individuals, known as <strong>agents</strong>, who are typically mobile, and sense and respond to their world primarily at a local-level. Agent-based abstractions have arisen somewhat independently in several fields, thus their definition can vary widely. However, in most cases, agent-based models consist of <strong>populations</strong> that typically operate in parallel within a spatial environment. Each autonomous agent interacts locally within an environment populated by other agents, but behaves independently without taking direct commands from other agents nor a global planner or leader.</p>
+<p>Agent-based models have applications from microbiology to sociology, as well as video games and computer graphics. As a biological approximation, an agent could refer to anything from an individual protein, virus, cell, bacterium, organism, or deme (a population group). Agent systems also share many features with particle systems, and the two are sometimes conflated.</p>
+<p>Just like CA, agents sense and act at local distances, and at times, the self-organizing behavior of systems of even relatively simple agents can be unpredictable, complex, and generate new emergent structures of order. But unlike CA, which roots a program in a particular spatial location (the cell), an agent-based program is mobile in free space.</p>
+<h2 id="a-minimal-agent-model">A minimal agent model</h2>
+<p>The first distinction between CA and agent-based systems are that agents are not typically distributed in a grid, and are quite often mobile: a potentially <strong>variable position</strong> in potentially continuous space. The second distinction is that agents may have a number of other <strong>properties</strong> (persistent individual variances) besides position. At the least, a mobile agent may have a <strong>direction</strong> and/or a <strong>velocity</strong>. </p>
+<p>For our purposes, the Javascript <code>Object</code> is a general container for properties, and may serve as the representation of agents:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> agent = {
+    <span class="hljs-attr">pos</span>: [<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>],  <span class="hljs-comment">// position, x and y components</span>
+    <span class="hljs-attr">vel</span>: [<span class="hljs-number">0.01</span>, <span class="hljs-number">0</span>],  <span class="hljs-comment">// velocity, x and y components</span>
+    <span class="hljs-attr">size</span>: <span class="hljs-number">0.1</span>,
+};
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">draw</span>(<span class="hljs-params">ctx</span>) </span>{
+    <span class="hljs-comment">// draw a circle at the agent&#x27;s position,</span>
+    <span class="hljs-comment">// matching the agent&#x27;s size:</span>
+    <span class="hljs-built_in">draw2D</span>.circle(agent.pos, agent.size);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update</span>(<span class="hljs-params">dt</span>) </span>{
+    <span class="hljs-comment">// apply motion:</span>
+    agent.pos[<span class="hljs-number">0</span>] += agent.vel[<span class="hljs-number">0</span>];
+    agent.pos[<span class="hljs-number">1</span>] += agent.vel[<span class="hljs-number">1</span>];
+}</code></pre>
+<p>We could also use a vector object to represent position &amp; velocity, which would offer more useful methods (see the <a href="labs.html">Labs</a> page for details on <code>vec2</code>):</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> agent = {
+    <span class="hljs-attr">pos</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>),  <span class="hljs-comment">// position, x and y components</span>
+    <span class="hljs-attr">vel</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.01</span>, <span class="hljs-number">0</span>),  <span class="hljs-comment">// velocity, x and y components</span>
+    <span class="hljs-attr">size</span>: <span class="hljs-number">0.1</span>,
+};
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update</span>(<span class="hljs-params">dt</span>) </span>{
+    <span class="hljs-comment">// apply motion:</span>
+    agent.pos.add(agent.vel);
+}</code></pre>
+<h3 id="boundary-conditions">Boundary conditions</h3>
+<p>This agent wanders off the page. As with CA, we can decide how to handle the <strong>boundary conditions</strong> of an agent-based system in a few different ways, including:</p>
+<ul>
+<li><strong>clamping</strong> agents at the borders; use <code>agent.pos.clip(1)</code></li>
+<li><strong>wrapping</strong> agents around opposite borders (making a &#39;toroidal&#39; space); use <code>agent.pos.wrap(1)</code> </li>
+<li>other strategies can respond to the <em>condition</em> of being &#39;out of bounds&#39;, using <code>if (agent.pos.oob(1))...</code>, by: </li>
+<li><strong>modifying</strong> their velocities/directions to point them back toward the center, etc., or</li>
+<li><strong>resetting</strong> agents with a new position, such as at the centre of the world (<code>agent.pos.set(0.5)</code>), or at a random position (<code>agent.pos.set(random(),random())</code>), or some variant, such as random distance from centre of the world (<code>agent.pos.random(random()*0.1).add(0.5)</code>), and possibly also changing other properties</li>
+<li>simply letting them die (see below on how to manage variable population sizes)</li>
+</ul>
+<p>Note that we might also consider different boundary regions -- it doesn&#39;t have to be a square!</p>
+<h3 id="random-walks-in-nature">Random walks in nature</h3>
+<p>The agent also moves very robotically at present. We can give it some &quot;life&quot; by introducing variations into its motion, suggestive of it making decisions in response to an environment. </p>
+<p>The simplest way is to introduce stochastic changes to the velocity in direction and magnitute (speed). For direction, we would typically want to turn up to a certain limit (in radians), with equal chance of clockwise and anticlockwise rotation: <code>agent.vel.rotate((random()-0.5)*turnfactor)</code>. For speed, we can randomize the length of the velocity up to a certain limit: <code>agent.vel.len(random()*maxspeed)</code></p>
+<p>The result is a <strong>random walk</strong>. Random walks are a well-established model in mathematics, with a physical interpretation as <a href="https://en.wikipedia.org/wiki/Brownian_motion">Brownian motion</a> -- though, a more physically accurate form of Brownian motion would update the velocity sporadically (modeling random collision by a particle), rather than on every frame. </p>
+<p>Essentially, for an agent a <strong>random walk</strong> involves small random deviations to steering. This form of movement is widely utilized by nature, whether purposefully or simply through environmental interactions. Can you think why?</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="YwEbRO" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/YwEbRO">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<h3 id="multiple-agents">Multiple agents</h3>
+<p>A good way of seeing why random walks work is to deploy a <strong>population</strong> of agents, rather than a single one. We can do this by storing our agents in an array:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> agents = [];
+<span class="hljs-keyword">let</span> population_size = <span class="hljs-number">24</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">reset</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i&lt;population_size; i++) {
+        <span class="hljs-comment">// create a randomized agent:</span>
+        <span class="hljs-keyword">let</span> agent = {
+            <span class="hljs-attr">pos</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-built_in">random</span>(), <span class="hljs-built_in">random</span>()),
+            <span class="hljs-attr">vel</span>: <span class="hljs-built_in">vec2</span>.random(),
+            <span class="hljs-attr">size</span>: <span class="hljs-number">0.1</span>,
+        };
+        <span class="hljs-comment">// store in population array:</span>
+        agents[i] = agent;
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update</span>(<span class="hljs-params">dt</span>) </span>{
+    <span class="hljs-comment">// iterate over population:</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> agent <span class="hljs-keyword">of</span> agents) {
+        <span class="hljs-comment">// update agent as before</span>
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">draw</span>(<span class="hljs-params">ctx</span>) </span>{
+    <span class="hljs-comment">// iterate over population:</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> agent <span class="hljs-keyword">of</span> agents) {
+        <span class="hljs-comment">// draw agent as before</span>
+    }
+}</code></pre>
+<h2 id="system-components">System components</h2>
+<p>At this point, we have enough to constitute an <strong>agent-based model</strong> or <strong>multi-agent system</strong>, and we can turn our attention to the components of agents and systems. Here are some of the features often considered in agent-based models:</p>
+<ul>
+<li>A <strong>population</strong> of agents, each with:<ul>
+<li><strong>Properties</strong>: Persistent but variable features of an agent (varying between population members and over time), <strong>location</strong> such as position, direction; <strong>mobility</strong>. such as speed, velocity; <strong>external features</strong>, such as size, color, and <strong>internal features</strong> such as energy level, and so on.     </li>
+<li><strong>Affects</strong>: Limited capacities of sensing (or receiving messages from) the environment (possibly but not necessarily other agents). Importantly, these senses are <strong>egocentric</strong> rather than <strong>allocentric</strong>; and usually at a short distance.</li>
+<li><strong>Effects</strong>: Limited capacities of performing actions on (or sending messages to) the environment, or its own properties. Usually this includes some capacity to move through space. Again, these are egocentric rather than allocentric.</li>
+<li><strong>Processing</strong>: An information processing capacity to select responses to sensations and states. <ul>
+<li>This can be seen as a form of <strong>decision making</strong> or more generally <strong>action selection</strong></li>
+<li>This capacity may also include information storage (memory).</li>
+</ul>
+</li>
+<li><strong>Higher-level individuation/agency</strong>: For example, the agent may also incorporate explicit needs or purposes in the form of self-evaluation and self-adaptation; or these may be implict in the design of the processing algorithm.</li>
+</ul>
+</li>
+<li>An <strong>environment</strong>: an essential and sometimes overlooked aspect of models is the environment the agent inhabits -- which may include:<ul>
+<li>other agents, with physical and/or communication interactions, as well as </li>
+<li>other spatial dynamics that can affect and be effected by the agents therein, including addition, removal, diffusion, limiting, stochastics, etc.</li>
+</ul>
+</li>
+<li><strong>Initial conditions</strong> and <strong>limiting conditions</strong> of the above</li>
+</ul>
+<h2 id="agent-environment-dynamics">Agent-environment Dynamics</h2>
+<p>Our agent however still lives in a void, with no environment to respond to. Even the simplest organisms have the ability to sense their environment, and direct their motions accordingly; they depend on it for survival. </p>
+<h3 id="traversing-environmental-gradients">Traversing environmental gradients</h3>
+<p>One of the simplest examples is <strong>chemotaxis</strong>. Chemotaxis is the phenomenon whereby somatic cells, bacteria, and other single-cell or multicellular organisms direct their movements according to certain chemicals in their environment. This is important for bacteria to find food (for example, glucose) by swimming towards the highest <strong>concentration</strong> of food molecules, or to flee from poisons (for example, phenol). For example, the E. Coli bacterium&#39;s <em>goal</em> is to find the highest sugar concentration (see video below). In multicellular organisms, chemotaxis is critical to early development (e.g. movement of sperm towards the egg during fertilization) and subsequent phases of development (e.g. migration of neurons or lymphocytes) as well as in normal function. <a href="https://en.wikipedia.org/wiki/Chemotaxis">wikipedia</a></p>
+<iframe width="720" height="540" src="https://youtube.com/embed/F6QMU3KD7zw" frameborder="0" allowfullscreen></iframe>
+
+<p>Sensing a <strong>concentration</strong> is rather like smell: the feature being detected is local to the agent, but is not a solid object with a distinct boundary. It is <em>diffuse</em>: it seems instead to occupy all parts of space to varying degrees. We model such kinds of spatial properties as intensity <strong>fields</strong>, such as density fields, probability fields, magnetic fields, etc. Fields occupy all space but in different intensities. But since our simulations are limited in memory, we <em>simulate</em> such continuous fields with discrete approximations, such as grids. Thus we can re-use the <code>field2D</code> to represent enviornmental features for agents to sense. </p>
+<p>The choice of <strong>environment</strong> agents will respond is just as important as the design of agents themselves, including both its <strong>initial state</strong> and its <strong>continuous processes</strong>. If the field is entirely homogenous, in which there are no spatial variations, there is nothing significant to sense. On the other hand, if the field is too noisy, it can be too difficult to make sense of. How can we make a better environment?</p>
+<p><img src="img/fitness_landscape.png" alt=""></p>
+<p>It is helpful to think of the environment as a landscape, with mountain tops where the intensity is high, and valleys where the intensity is low. (Keep this image in mind -- we&#39;ll return to this again.)</p>
+<p><strong>What makes an interesting landscape to explore &amp; make sense of?</strong> A homongenous landscape is like a flat plain -- no place is better than any other. But a noisy landscape is like a city block designed by a madman -- difficult to do anything but get lost. Perhaps one that has an interesting distribution of hills and valleys; where height (intensity) tends to be more similar at shorter distances but tends to be more different at larger distances. </p>
+<blockquote>
+<p><a href="https://en.wikipedia.org/wiki/Variety_(cybernetics)#Law_of_requisite_variety">Law of requisite variety</a>: The term &#39;variety&#39; was introduced by W. Ross Ashby to denote the count of the total number of states of a system. The condition for dynamic stability under perturbation (or input) was described by his Law of Requisite Variety. If a system is to be stable, the number of states of its control mechanism must be greater than or equal to the number of states in the system being controlled. (Paraphrased: if an agent is to exploit the ways of living of an environment, it must have at least the variety of complexity of the environment; or, if a landscape is to satisfy the complexity of its agents, it must have at least the variety of complexity of them.) </p>
+</blockquote>
+<h3 id="generating-landscapes">Generating landscapes</h3>
+<p>Here&#39;s a single central &quot;intensity mountain&quot;, by computing the distance from the centre:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> dim = <span class="hljs-number">256</span>;
+<span class="hljs-keyword">let</span> sugar = <span class="hljs-keyword">new</span> <span class="hljs-built_in">field2D</span>(dim);
+<span class="hljs-keyword">let</span> center = <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>);
+
+sugar.set(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x, y</span>) </span>{
+    <span class="hljs-comment">// convert x, y in to 0..1 range:</span>
+    <span class="hljs-keyword">let</span> p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(x / dim, y / dim);
+    <span class="hljs-comment">// get distance from center:</span>
+    <span class="hljs-keyword">let</span> d = p.distance(center);
+    <span class="hljs-comment">// make concentration high at center, lower with increasing distance:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> - d;
+})</code></pre>
+<p>Or, for a more interesting and variegated landscape, we can start from uniform noise, and then smoothen it out:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// fill with uniform noise</span>
+sugar.set(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x, y</span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-built_in">random</span>(); });
+<span class="hljs-comment">// smoothen it out by long-range diffusion:</span>
+sugar.diffuse(sugar.clone(), sugar.width, <span class="hljs-number">100</span>);
+<span class="hljs-comment">// make it vary between 0 and 1:</span>
+sugar.normalize();</code></pre>
+<p>Or, we could design a CA to generate an interesting landscape, such as using a stochastic Monte Carlo process that prefers making neigbhour cells more similar, starting from a field of noise.</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// fill with uniform noise</span>
+  sugar.set(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x, y</span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-built_in">random</span>(); });
+  <span class="hljs-comment">// run a stochastic CA for a while:</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i&lt;dim*dim*<span class="hljs-number">40</span>; i++) {
+    <span class="hljs-comment">// pick a random cell:</span>
+    <span class="hljs-keyword">let</span> x0 = <span class="hljs-built_in">random</span>(dim);
+    <span class="hljs-keyword">let</span> y0 = <span class="hljs-built_in">random</span>(dim);
+    <span class="hljs-keyword">let</span> v0 = sugar.get(x0, y0);
+    <span class="hljs-comment">// pick a random neighbor:</span>
+    <span class="hljs-keyword">let</span> x1 = x0 + <span class="hljs-built_in">random</span>(<span class="hljs-number">3</span>)<span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">let</span> y1 = y0 + <span class="hljs-built_in">random</span>(<span class="hljs-number">3</span>)<span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">let</span> v1 = sugar.get(x1, y1);
+    <span class="hljs-comment">// average them:</span>
+    <span class="hljs-keyword">let</span> v2 = (v0 + v1)*<span class="hljs-number">0.5</span>;
+    <span class="hljs-comment">// and update cell with this new value</span>
+    sugar.set(v2, x0, y0);
+  }
+  <span class="hljs-comment">// make it vary between 0 and 1:</span>
+  sugar.normalize();</code></pre>
+<h3 id="sensing-the-field">Sensing the field</h3>
+<p>The simplest way to sense a field by &quot;smell&quot; is to sample the field&#39;s value at the agent&#39;s location. (More accurately, we could sample at the location of a sense-organ on the agent&#39;s body). </p>
+<p>We could compute the nearest cell index to the agent/sensor location, and then get the value:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// scale position (0..1) to field cell width</span>
+<span class="hljs-comment">// and use Math.floor to round this to a whole number:</span>
+<span class="hljs-keyword">let</span> x = <span class="hljs-built_in">Math</span>.floor(agent.pos[<span class="hljs-number">0</span>] * sugar.width);
+<span class="hljs-keyword">let</span> y = <span class="hljs-built_in">Math</span>.floor(agent.pos[<span class="hljs-number">1</span>] * sugar.height);
+<span class="hljs-comment">// get field value at this cell:</span>
+agent.sense = sugar.get(x, y);</code></pre>
+<p>This is fine so long as we think of the environment as being really made up of discrete blocks in a grid. But in many cases, our grid-based field is only a <em>discrete approximation</em> of a continuous field. In that case, sensing single discrete cells breaks the approximation. What we really want is an approximate value taken between <em>all</em> the nearest cells. We can do this by <em>bilinear interpolation</em> between the four nearest cells. That just means a weighted average: weighted according to which ones are closer or further from the specific agent position. This involves a lengthier bit of code, so the <code>field2D</code> object provides a convenient method for us:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// get an interpolated value from the field, </span>
+<span class="hljs-comment">// using the nearest four cells to the agent&#x27;s position:</span>
+agent.sense = sugar.sample(agent.pos);</code></pre>
+<p>We can test whether this is working by for example setting the hue of an agent before drawing:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// before drawing the agent:</span>
+<span class="hljs-built_in">draw2D</span>.color = hsl(agent.sense);</code></pre>
+<h2 id="action-selection-chemotaxis">Action Selection: Chemotaxis</h2>
+<p>Once we have a sense, how should we respond? Here we need to equip our agent with some capabilities of taking <strong>action</strong>, and likely <strong>decision-making</strong>, sometimes known as <strong>action selection</strong>, that uses the input of sense to map to the output of action, in order to achieve a desired result. (The random walker&#39;s action was to change velocity, while decision-making was a simple random choice.)</p>
+<p>When we look at microbiology we can find some remarkably simple action &amp; decision-making mechanisms to achieve effective goal satisfaction. Let&#39;s look at chemotaxis with the E. Coli again: </p>
+<iframe width="720" height="540" src="https://youtube.com/embed/ZV5CfOkV6ek" frameborder="0" allowfullscreen></iframe>
+
+<p>An E. Coli bacterium lives in a very limited world:</p>
+<ul>
+<li>It has no eyes or ears to sense at a distance, it can only sense the sugar concentration at its current location. </li>
+<li>It has no real sense of space: no internal &quot;map&quot;, not even a sense of direction!  </li>
+<li>Worse, its range of actions are limited to twisting its flagella either clockwise or anticlockwise, resulting in just two possible modes of <em>locomotion</em>: <ul>
+<li>Move forward (more or less straight)</li>
+<li>Tumble about (fairly randomly)</li>
+</ul>
+</li>
+</ul>
+<p>This is a very limited <a href="https://en.wikipedia.org/wiki/Umwelt">umwelt</a>.</p>
+<p>We can certainly model these two modes of locomotion in an agent, by varing the factors of our random walker:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// tumbling behaviour:</span>
+turnfactor = <span class="hljs-number">2</span>;
+maxspeed = <span class="hljs-number">0.01</span>;
+agent.vel
+  .rotate((<span class="hljs-built_in">random</span>() - <span class="hljs-number">0.5</span>) * turnfactor)
+  .len(<span class="hljs-built_in">random</span>() * maxspeed * <span class="hljs-built_in">dt</span>);
+
+<span class="hljs-comment">// swimming behaviour:</span>
+turnfactor = <span class="hljs-number">0.01</span>;
+maxspeed = <span class="hljs-number">0.5</span>;
+agent.vel
+  .rotate((<span class="hljs-built_in">random</span>() - <span class="hljs-number">0.5</span>) * turnfactor)
+  .len(<span class="hljs-built_in">random</span>() * maxspeed * <span class="hljs-built_in">dt</span>);</code></pre>
+<p>But how does this solve the problem of climbing the sugar gradient?</p>
+<h3 id="modeling-e-coli">Modeling E. Coli</h3>
+<p>E. Coli uses a very simple chemical <strong>memory</strong> to detect whether the concentration at the current moment is better, worse, or not much different to how it was a few moments ago. That is, it detects the differential-as-experienced, or gradient traversed, by measuring its change over time. </p>
+<p>Even the actual intensity of the sugar concentration no longer matters; <strong>all that matters is whether life is getting better or worse</strong>, and acting accordingly. If things are getting better, keep swimming; otherwise, prefer tumbling. With just a few tuning parameters, the method can lead to a very rapid success. </p>
+<p>So all we need is to compare the sugar concentration with the agent&#39;s memory (a stored member variable) of the concentration on the last time step, and choose the behaviour accordingly (and of course, store our sensed value in memory for the next update).</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// sense field here</span>
+agent.sense = sugar.sample(agent.pos);
+<span class="hljs-comment">// is life getting worse?</span>
+<span class="hljs-keyword">if</span> (agent.sense &lt; agent.memory) {
+  <span class="hljs-comment">// tumbling behaviour:</span>
+  turnfactor = <span class="hljs-number">2</span>;
+  maxspeed = <span class="hljs-number">0.01</span>;
+} <span class="hljs-keyword">else</span> {
+  <span class="hljs-comment">// swimming behaviour:</span>
+  turnfactor = <span class="hljs-number">0.01</span>;
+  maxspeed = <span class="hljs-number">0.5</span>;
+}
+<span class="hljs-comment">// adjusted random walk:</span>
+agent.vel
+  .rotate((<span class="hljs-built_in">random</span>() - <span class="hljs-number">0.5</span>) * turnfactor)
+  .len(<span class="hljs-built_in">random</span>() * maxspeed * <span class="hljs-built_in">dt</span>);
+<span class="hljs-comment">// remember this:</span>
+agent.memory = agent.sense;</code></pre>
+<p>Note that not all kinds of landscapes are <strong>significant</strong> to this life strategy. The strategy only works when the variations of sugar concentration in the environment are fairly smooth, which is generally true for an environment in which concentrations diffuse. Try again with noisy or homogenous environments, and see how well the agent fares. </p>
+<h3 id="dynamic-fields">Dynamic fields</h3>
+<p>So far, our sugar field is static. It would be nice to see what a continuously dynamic field offers. </p>
+<p>For example, we could let the mouse add more sugar to the space, and watch it gradually diffuse away. Adding sugar in response to the mouse is fairly easy, by making use of the <code>deposit</code> method of field2D. This method accumulates into the field at a point coordinate, adding to its existing values. Note that the coordinate is in the normalized 0..1 range, and that it will spread the value over the nearest four cells:</p>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mouse</span>(<span class="hljs-params">e, pt</span>) </span>{
+    <span class="hljs-comment">// add one unit of sugar at the location of the mouse:</span>
+    sugar.deposit(<span class="hljs-number">1</span>, pt);
+}</code></pre>
+<p>We could also remove the need of human input by creating another kind of agent, as the &quot;source&quot;, randomly wandering the space and depositing sugar as it goes. </p>
+<p>This might not be completely effective to attract agents, as there can be large spatial discontinuities. If agents happen to be on part of a drawn path, they might follow it, but otherwise they are unlikely to find it. </p>
+<p>To create a smoother gradient, we must diffuse the field continuously. To add continuous dynamics, we need to add field processing to our <code>update()</code> routine. And since the <code>diffuse()</code> method requires a distinct source field, we&#39;ll need to double buffer like before:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> sugar_past = sugar.clone();
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-comment">// swap fields:</span>
+    <span class="hljs-keyword">let</span> tmp = sugar_past;
+    sugar_past = sugar;
+    sugar = tmp;
+    <span class="hljs-comment">// diffuse it</span>
+    sugar.diffuse(sugar_past, <span class="hljs-number">1</span>);
+
+    <span class="hljs-comment">//... update agents as before</span>
+}</code></pre>
+<p>Now the agents are able to find the areas of sugar more easily -- and might even show something like trail-following.</p>
+<h3 id="background-noise">Background Noise</h3>
+<p>We might also notice that even when the sugar is quite dissipated, the agents can still find the strongest concentrations. If we don&#39;t find this realistic, one thing we might consider adding is a low level of background noise. The rationale is that even if sensing is perfectly accurate, small fluctuations in the world (such as due to the Brownian motion of water and sugar molecules) make it impossible to discern very small differences. The randomness added must be signed noise, balanced around zero such that overall the total intensity is statistically preserved. Note that the amplitude of this noise will have to be extremely high if it is applied <em>before</em> the diffusion, or very low if applied <em>after</em> diffusion. The effective results are also quite different.</p>
+<pre><code class="language-javascript">    <span class="hljs-comment">// applied after sugar.diffuse:</span>
+    <span class="hljs-comment">// use field2D.map() to modify a cell value</span>
+    <span class="hljs-comment">// adding a small random deviation</span>
+    <span class="hljs-comment">// whose average is zero</span>
+    sugar.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>) </span>{ 
+        <span class="hljs-keyword">return</span> v + <span class="hljs-number">0.1</span>*(<span class="hljs-built_in">random</span>() - <span class="hljs-number">0.5</span>);
+    });</code></pre>
+<p>Or instead, we could add small deviations to the sensors in the agents themselves, emulating a limited accuracy of sense:</p>
+<pre><code class="language-javascript">agent.sense = sugar.sample(agent.pos) + <span class="hljs-number">0.1</span>*(<span class="hljs-built_in">random</span>()<span class="hljs-number">-0.5</span>);</code></pre>
+<h3 id="evaporation-and-consumption">Evaporation and Consumption</h3>
+<p>If we are continuously adding sugar, it will accumulate over time, and the more we draw, the more the screen tends to fill with grey. This is because our <code>diffuse()</code> method spreads intensity out, but does not change the total quantity. We need some other process to reduce this total quantity to make a balance. One way to do that is to add a very weak overall decay to the field -- as if some particles of sugar occasionally evaporate:</p>
+<pre><code class="language-javascript">    <span class="hljs-comment">// in update():</span>
+    <span class="hljs-comment">// multiply all cells with a number slightly less than 1</span>
+    sugar.mul(<span class="hljs-number">0.995</span>);</code></pre>
+<p>Of course, our agents aren&#39;t just looking for sugar to show it to us -- they want to eat it! We can also add the effect of this on the environment by <em>removing</em> intensity from the field by each agent. We can do this by calling the <code>field2D.deposit()</code> method with a negative argument (i.e. a debit!):</p>
+<pre><code class="language-javascript">    <span class="hljs-comment">// get the sugar level at this location:</span>
+    <span class="hljs-keyword">let</span> sense = <span class="hljs-built_in">Math</span>.max(sugar.sample(a.pos), <span class="hljs-number">0</span>);
+    <span class="hljs-comment">// update the field to show that we removed sugar here:</span>
+    sugar.deposit(-sense, agent.pos);</code></pre>
+<p>Note however this might lead to some locations getting negative concentrations -- a physical impossibility? We could fix this by clamping the field values as another step:</p>
+<pre><code class="language-javascript">    sugar.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>) </span>{ 
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.max(v, <span class="hljs-number">0</span>); 
+    });</code></pre>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="QYjpKb" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/QYjpKb">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<h3 id="other-field-dynamics">Other field dynamics</h3>
+<p>A very different alternative to diffusion, scaling, adding noise, clamping etc. is to use something closer to an asynchronous CA, in continuous process, rather as we did before for field initialization. This makes a more challenging, but more interesting, dynamic landscape for the agents to navigate:</p>
+<pre><code class="language-javascript">  <span class="hljs-comment">// some swaps:</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">10000</span>; i++) {
+    <span class="hljs-comment">// pick a point at random</span>
+    <span class="hljs-keyword">let</span> x = <span class="hljs-built_in">random</span>(sugar.width);
+    <span class="hljs-keyword">let</span> y = <span class="hljs-built_in">random</span>(sugar.height);
+    <span class="hljs-comment">// pick a neighbour</span>
+    <span class="hljs-keyword">let</span> x1 = x + <span class="hljs-built_in">random</span>(<span class="hljs-number">3</span>)<span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">let</span> y1 = y + <span class="hljs-built_in">random</span>(<span class="hljs-number">3</span>)<span class="hljs-number">-1</span>;
+    <span class="hljs-comment">// get the values</span>
+    <span class="hljs-keyword">let</span> a = sugar.get(x, y);
+    <span class="hljs-keyword">let</span> b = sugar.get(x1, y1);
+    <span class="hljs-comment">// pick a random interpolation factor</span>
+    <span class="hljs-keyword">let</span> t = <span class="hljs-number">0.5</span>*<span class="hljs-built_in">random</span>();
+    <span class="hljs-comment">// blend a and b into each other accordingly</span>
+    <span class="hljs-keyword">let</span> a1 = a + t*(b-a);
+    <span class="hljs-keyword">let</span> b1 = b + t*(a-b);
+    <span class="hljs-comment">// write these values back to the field</span>
+    sugar.set(a1, x, y);
+    sugar.set(b1, x1, y1);
+  }
+  <span class="hljs-comment">// some removals:</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">100</span>; i++) {
+    <span class="hljs-keyword">let</span> x = <span class="hljs-built_in">random</span>(sugar.width);
+    <span class="hljs-keyword">let</span> y = <span class="hljs-built_in">random</span>(sugar.height);
+    sugar.set(<span class="hljs-number">0</span>, x, y);
+  }</code></pre>
+<blockquote>
+<p>Obviously there&#39;s a hint here of how it might be interesting to pair our agents with some other CAs for field processes... perhaps the Forest Fire model, for example.</p>
+</blockquote>
+<h3 id="other-taxes">Other taxes</h3>
+<p>A variety of other <em>taxes</em> worth exploring can be found on the <a href="https://en.wikipedia.org/wiki/Taxis#Aerotaxis">wikipedia page</a>. Note how chemotaxis (and other taxes) can be divided into positive (attractive) and negative (repulsive) characters, just like forces (as we shall see in steering forces). This is closely related to the concepts of positive and negative feedback and the explorations of cybernetics.</p>
+<h2 id="are-two-sensors-are-better-than-one">Are two sensors are better than one?</h2>
+<p>Many arachnids and other organisms perform environmental sensing using a pair of antennae extended from their body; effectively &#39;sampling&#39; the environment at two physical locations. What advantage might this have for chemotaxis? Perhaps, by sampling at two points in <em>space</em>, rather than at two points in <em>time</em>, we can determine the field gradient immediately without latency, and perhaps this can create a more responsive and continuous selection of swimming/turning choices?</p>
+<p>We can try giving agents two sensors, both ahead of the agent (to draw movement forward) and to the left and right of the agent (to discriminate which direction is better to turn). </p>
+<p>Let&#39;s call these sensors &quot;antennae&quot;. A bit of math is needed to compute where each antenna is located in the world. Starting from a basic vector representing the antenna relative to tha agent, we can then scale, rotate, and translate the location, resulting in a location relative to the world (or, if we had agent pose as a matrix, we could have simply used matrix multiplication):</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// antenna is 50% forward and 50% to the left of the agent:</span>
+<span class="hljs-keyword">let</span> antennaleft = <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>);
+<span class="hljs-comment">// compute what this is as a world location:</span>
+antennaleft
+    .mul(agent.size) <span class="hljs-comment">// scale to agent size</span>
+    .rotate(agent.vel.angle()) <span class="hljs-comment">// rotate to agent direction</span>
+    .add(agent.pos); <span class="hljs-comment">// move to agent location</span></code></pre>
+<p>With this, and of course also <code>antennaright</code>, we can sample the environmental field at both locations to get two sensor values:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> smellleft = sugar.sample(antennaleft);
+<span class="hljs-keyword">let</span> smellright = sugar.sample(antennaright);</code></pre>
+<p>Now the decision-making can respond to these values. We might consider which direction has a better smell (left or right), we might consider the difference between the smells, we might consider the total of the smells too, in order to determine which way to turn, and how much to turn:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="yeKWax" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/yeKWax">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>It turns out that this strategy is not only great for diffuse fields, but also can function very well for following narrow lines of sugar. That is, aligning movement along given &quot;trails&quot; -- paths of more intense chemical markers, such as the pheromone trails laid down by ants:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="qgPZBK" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/qgPZBK">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>From here it is relatively trivial to let the agents also <em>create</em> the trails, as well as following them:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="pGWbWx" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/pGWbWx">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>This process is integral to the agents navigating city data in the <a href="https://artificialnature.net">Infranet</a> artwork:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/AbcZ2f5fdNc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+<h3 id="stigmergy-and-pheromone-trails">Stigmergy and Pheromone Trails</h3>
+<p><em>Stigmergy</em> is a mechanism of indirect coordination between agents by leaving traces in the environment as a mode of stimulating future action by agents in the same location. For example, ants (and some other social insects) lay down a trace of pheromones when returning to the nest while carrying food. Future ants are attracted to follow these trails, increasing the likelihood of encountering food. This environmental marking constitutes a shared external memory (without needing a map). However if the food source is exhausted, the pheromone trails will gradually fade away, leading to new foraging behavior. </p>
+<p>Traces evidently lead to self-reinforcement and self-organization: complex and seeminly intelligent structures without global planning or control. Since the term stigmergy focuses on self-reinforcing, task-oriented signaling, E. O. Wilson suggested a more general term <em>sematectonic communication</em> for environmental communication that is not necessarily task-oriented.</p>
+<p>Stigmergy has become a key concept in the field of <a href="https://en.wikipedia.org/wiki/Swarm_intelligence">swarm intelligence</a>, and the method of <em>ant colony optimization</em> in particular. In ACO, the landscape is a parameter space (possibly much larger than two or three dimensions) in which populations of virtual agents leave pheromone trails to high-scoring solutions.</p>
+<p>Related environmental communication strategies include social nest construction (e.g. termites) and territory marking.</p>
+<h3 id="implementation">Implementation</h3>
+<p>Being able to leave pheromones behind depends on having a specific signature marker in space, such as a particular smell. A simple way to emulate this is to have a field for each pheromone. For example, we may want one pheromone to signal &quot;food this way&quot;, and another to signal &quot;nest this way&quot;. (An alternative method would be to use a single field and use a different R, G, B channel for each pheromone in that field; but for simplicity here we&#39;ll go with multiple fields.)</p>
+<p>To draw multiple fields, we can turn on blending and apply different colors for each one:</p>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">draw</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-built_in">draw2D</span>.blend(<span class="hljs-literal">true</span>);
+        <span class="hljs-built_in">draw2D</span>.color(<span class="hljs-string">&quot;navy&quot;</span>);
+        phero1.draw();
+        <span class="hljs-built_in">draw2D</span>.color(<span class="hljs-string">&quot;orange&quot;</span>);
+        phero2.draw();
+    <span class="hljs-built_in">draw2D</span>.blend(<span class="hljs-literal">false</span>);
+
+    ... now <span class="hljs-built_in">draw</span> agents
+}</code></pre>
+<p>We already saw in the chemotaxis example how to leave trails in a field, as well as how to let these diffuse and dissipate in order to attract more distant agents and make way for new trails to be made, and similar processing will be needed for each pheromone field. And we saw how use pairs of antennae can estimate the <em>spatial gradient</em> of the field, and turn accordingly.</p>
+<p>Here&#39;s a start in that direction:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="gPeyPV" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/gPeyPV">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+
+<hr>
+<h2 id="death-note-addingremoving-agents-from-an-array">Death Note: adding/removing agents from an array</h2>
+<p>If we want to extend our model to support death, such as being eaten by a predator, infected by a disease, starvation, poison, fire, etc., we will need a way to remove items from our array of agents. Assuming that we can mark death by some property (such as <code>a.dead = true</code>), you might expect to remove it from the <code>agents</code> array as follows:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">if</span> (agents[n].dead) {
+    agents.splice(n, <span class="hljs-number">1</span>);
+}</code></pre>
+<blockquote>
+<p>(Note that <code>delete agents[n]</code> won&#39;t work at all, it doesn&#39;t reshuffle the array to accommodate the gap, it just leaves the gap right there.)</p>
+</blockquote>
+<p>Similarly, if an agent gives birth, you might expect to add the child as follows:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">if</span> (child) {
+    agents.push(child);
+}</code></pre>
+<p>But in general, <strong>adding to or removing from an array is not safe while iterating the array</strong>, which is almost certainly the time that you would want to do it. The reason is that you may end up skipping an item, or trying to iterate over an item that no longer exists, or visiting an item twice, because the exact positions of items and the array length have changed. This is one of the classic problems commonly encountered in many imperative programming languages (e.g. C++ too). </p>
+<p>Here are two suggested solutions:</p>
+<h3 id="method-1-iterate-backwards">Method 1: Iterate backwards</h3>
+<p>It is safe to splice and push while iterating backwards, because reshuffling an array only affects later items:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> i = agents.length;
+<span class="hljs-keyword">while</span> (i--) {
+    <span class="hljs-keyword">let</span> a = agents[i];
+
+    <span class="hljs-comment">//.. do stuff, </span>
+    <span class="hljs-comment">// possibly setting dead = true </span>
+    <span class="hljs-comment">// or creating a chil</span>
+
+    <span class="hljs-keyword">if</span> (dead) {
+        <span class="hljs-comment">// remove safely:</span>
+        agents.splice(i, <span class="hljs-number">1</span>);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (child) {
+        <span class="hljs-comment">// add a child:</span>
+        agents.push(child);
+    }
+}</code></pre>
+<p>Note that in this case, new births will not be visited until the next frame. This is probably what you want, since otherwise you might end up creating an infinite loop!</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="xMPbqE" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/xMPbqE">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3 id="method-2-double-buffer">Method 2: Double-buffer</h3>
+<p>Rather than modifying the array in-place, we build a new array on each iteration, and replace the original when done. This has the advantage of working with for-of loops:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// create new array for the next frame&#x27;s population:</span>
+<span class="hljs-keyword">let</span> new_population = [];
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> a <span class="hljs-keyword">of</span> agents) {
+
+    <span class="hljs-comment">//.. do stuff, </span>
+    <span class="hljs-comment">// possibly setting dead = true </span>
+    <span class="hljs-comment">// or creating a child</span>
+
+    <span class="hljs-comment">// preserve only living agents:</span>
+    <span class="hljs-keyword">if</span> (!dead) new_population.push(a);
+    <span class="hljs-comment">// add a child?</span>
+    <span class="hljs-keyword">if</span> (child) new_population.push(child);        
+}
+<span class="hljs-comment">// replace original</span>
+agents = new_population;</code></pre>
+<p>Note that new children are added to <code>newagents</code>, ensuring they are visited next frame. If we added them to <code>agents</code>, they would also be included in the iterating for loop on the current frame, which could potentially lead to an infinite loop. </p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="RvjPMm" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/RvjPMm">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<h3 id="practical-limits-of-population-sizes">Practical limits of population sizes</h3>
+<p>Clearly if a population ever drops to zero, we will never see any organisms again. This may be problematic for an ongoing exhibition! Methods to overcome this include preventing death of the last (few?) creatures, or introducing new randomly seeded organisms (perhaps out of view) at low population sizes. </p>
+<p>At the other end, a population that grows excessively large can slow down the simulation, perhaps even crash it. Again, this is problematic for an ongoing exhibition. It may be necessary to set an absolute population size limit (preventing new agents from being added at this point). </p>
+<p>It would be preferable if a simulation didn&#39;t hit these externally-imposed limits; or at least, not very often. It would be preferable if some kind of <em>endogenous</em> forces, some processes that are part of the world itself, automatically avoid these events. Perhaps an overly-large population is sporadically decimated by extreme weather events, or a mass infection, for example. Whatever the solution, it involves macroscopic behaviour (population size) affecting microscopic behaviour (individual agents reproduction/death).</p>
+<h3 id="energy-dynamics">Energy dynamics</h3>
+<p>If we are careful to apply an energetic cost to every agent activity, and energetic gain through eating/respiration/metabolism, we can count the total energy balance over the entire system on each frame. We can then apply that energy deficit/surplus back into the system in an environmental way, ensuring that the total energy of the system remains constant. </p>
+<ul>
+<li>Each agent needs a representation of its currently available potential energy. </li>
+<li>Each activity of an agent: metabolism, moving, eating, growing, reproducing, etc., has some energetic cost that reduces the agent&#39;s store.</li>
+<li>Certain activities (eating, respiring, etc.) may increase the he agent&#39;s energy store.</li>
+<li>Total energy in a population can be computed by summing the store of each member agent</li>
+</ul>
+<p>This is the population&#39;s <strong>total energy expenditure</strong> (which incidentally may also be a useful indicator of the liveliness of a system).</p>
+<ul>
+<li>Total energy in the environment (such as a &#39;sugar&#39; field2D) by adding up the total in each field cell (by <code>sugar.sum()</code>)</li>
+</ul>
+<p>Adding together the population and environmental totals gives is the measure of the <strong>total available energy</strong> in the world. The goal is for this total available energy to remain fairly constant, at an <strong>ideal energetic carrying capacity</strong>. Compute the difference of <code>available - ideal</code>: if there is surplus, remove it from the environment; if there is deficit, distribute new energy to the environment. So, if this total energy level is below the chosen carrying capacity for the world, we can then introduce energy back in, to ensure that the whole system doesn&#39;t wind down to zero. Re-introducing energy could be done by distributing it somewhat randomly in the space, or by probabilistic expansion of a current growth area, etc. Similarly, if it somehow exceeds the capacity, it can be randomly or gradually removed from the environment. </p>
+<p>Energy dynamics should help keep a population size in reasonable ranges, however it may still be necessary to also implement the hard limit cases.</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="PZxrbo" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/PZxrbo">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>Here combined with Chemotaxis:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="QKXaGb" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/QKXaGb">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<hr>
+<h2 id="agent-agent-interactions">Agent-Agent Interactions</h2>
+<p>As well as communicating via fields, agents may be aware of each other directly; perhaps through <strong>distal senses</strong> such as vision or hearing. Since agents are mobile, the set of agents that are close neighbours to another can change over time. We thus need to add routines to compute lists of near-neighbours on each frame.  </p>
+<p>The simplest, naive method is to compare each agent against each other; being careful to skip the test against oneself:</p>
+<pre><code class="language-js"><span class="hljs-comment">// for each agent:</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> a <span class="hljs-keyword">of</span> agents) {
+    <span class="hljs-comment">// for each possible neighbour agent:</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> n <span class="hljs-keyword">of</span> agents) {
+        <span class="hljs-comment">// don&#x27;t compare with self:</span>
+        <span class="hljs-keyword">if</span> (a == n) <span class="hljs-keyword">continue</span>;
+
+        <span class="hljs-comment">//...</span>
+    }
+}</code></pre>
+<p>This method would then filter the results by constraints such as distance (range of hearing/sight) and perhaps angle, colour, etc:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// find neighbours:</span>
+<span class="hljs-comment">// for each agent:</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> a <span class="hljs-keyword">of</span> agents) {
+  <span class="hljs-comment">// we will create lists of agents that are</span>
+  <span class="hljs-comment">// visible neighbours, or colliding neighbours</span>
+  <span class="hljs-comment">// of agent `a`:</span>
+  a.neighbours = [];
+  a.collisions = [];
+  <span class="hljs-comment">// consider all possible agents:</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> n <span class="hljs-keyword">of</span> agents) {
+    <span class="hljs-comment">// don&#x27;t compare with self:</span>
+    <span class="hljs-keyword">if</span> (a == n) <span class="hljs-keyword">continue</span>;
+    <span class="hljs-comment">// get relative vector to neighbour:</span>
+    <span class="hljs-keyword">let</span> rel = n.pos.clone().sub(a.pos);
+    <span class="hljs-comment">// wrap around world boundaries?</span>
+    <span class="hljs-comment">//rel.relativewrap();</span>
+    <span class="hljs-comment">// turn `rel` into a&#x27;s directional frame:</span>
+    rel.rotate(-a.vel.angle());
+    <span class="hljs-comment">// get distance</span>
+    <span class="hljs-keyword">let</span> distance = rel.len();
+    <span class="hljs-comment">// take into account agent sizes:</span>
+    distance = <span class="hljs-built_in">Math</span>.max(distance - (a.size + n.size), <span class="hljs-number">0</span>);
+    <span class="hljs-comment">// detect overlap:</span>
+    <span class="hljs-keyword">if</span> (distance &lt;= <span class="hljs-number">0</span>) {
+      <span class="hljs-comment">// they are overlapping</span>
+      a.collisions.push(n);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (distance &lt; visible_range) {
+      <span class="hljs-comment">// they are in sight range</span>
+      <span class="hljs-comment">// check visible angle:</span>
+      <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.abs(rel.angle()) &lt; field_of_view) {
+        <span class="hljs-comment">// agent `a` can see agent `n`</span>
+        <span class="hljs-comment">// add to list of neighbours</span>
+        a.neighbours.push(n);
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">continue</span>;
+    }
+  }
+}    </code></pre>
+<p>Notice how:</p>
+<ul>
+<li>we reset the <code>a.neighbours</code> list on each frame -- otherwise it would grow infinitely!  </li>
+<li>we make sure not to count ourselves (<code>if (a == b) continue</code>)</li>
+<li>we take into account the sizes of agents in computing the distance, so that it is distance between their edges rather than distance between their centres</li>
+<li>we can use <code>relativewrap</code> to deal with toroidal space</li>
+<li>we take into account field of view...</li>
+</ul>
+<p>Note that this naive checking of all agents against all agents isn&#39;t especially efficient (it has ON^2 complexity), but for small populations it is quite reasonable. See the <a href="labs.html#hashspace2d">note in the labs page on hashspace lookup</a> for a potentially more optimal method using a spatial acceleration structure. Another tip: in some cases we can save some CPU by using the dot product to detect angle similarity between an agent&#39;s heading and the relative vector.</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="VgrYXr" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/VgrYXr">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<h3 id="steering-behaviors">Steering Behaviors</h3>
+<p>In the late 1980s Craig Reynolds proposed a model of animal motion to model flocks, herds and schools, which he named <em>boids</em>. Reynolds&#39; paper <a href="https://www.red3d.com/cwr/steer/gdc99/">Steering Behaviors for Autonomous Characters</a> covers boids as an aggregate of other steering behaviours. The paper has been very influential in robotics, game design, special effects and simulation, and remains well worth exploring as a collection of patterns for autonomous agent movements, so we will work through it in more detail. </p>
+<p><a href="https://www.red3d.com/cwr/steer/gdc99/">His paper</a> breaks agent movement in general into three layers:</p>
+<ul>
+<li><strong>Action Selection</strong>: selecting actions to perform according to environmental input and goals to achieve. </li>
+<li><strong>Steering</strong>: path determination according to the action selected. Many different behaviors can be used; the essential strategy is <code>steering force = desired_velocity - current_velocity</code>.</li>
+<li><strong>Locomotion</strong>: mechanisms of conversion of steering into actual movement.</li>
+</ul>
+<p>His paper concentrates on several different steering algorithms. Locomotion is extremely simple -- equivalent to a single force vector on a point mass -- but a more complex (and thus constrained) locomotion system could be swapped in without changing the steering model significantly. Action selection is not dealt with, but also arguably independent.</p>
+<p>Here for example is the &quot;seek&quot; and &quot;flee&quot; steering methods, which derive desired velocity from a the relative vector toward (or away from) a target point. Given a desired velocity, the steering force is obtained by subtracting the current velocity:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="xZPeNV" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/xZPeNV">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>Here for &quot;seek&quot; extended with obstacle avoidance. The basic concept is to project forward a rectangle of the same width as the agent, up to a limit of visible range, and see if it intersects with the obstacle. If it does, a lateral force opposite in magnitude to the expected overlap is added to prevent a collision happening:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="Bjmepv" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/Bjmepv">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+
+<h3 id="boids-flocking-swarms">Boids, flocking, swarms</h3>
+<p>Reynolds&#39; most significant contribution combined several steering forces to a proposed model of animal motion emulating flocks, herds and schools. Each agent, or <strong>&quot;boid&quot;</strong>, follows a set of rules based on simple principles:</p>
+<ul>
+<li><strong>Avoidance</strong>: Move away from other boids that are too close (avoid collision)</li>
+<li><strong>Copy</strong>: Fly in the same general direction as other nearby boids</li>
+<li><strong>Center</strong>: Move toward the center of the flock (avoid exposure)</li>
+</ul>
+<p>In addition, if none of the conditions above apply, i.e. the boid cannot perceive any others, it may move by random walk. </p>
+<p>To make this more realistic, we can consider that each boid can only perceive other boids within a certain distance and viewing angle. We should also restrict how quickly boids can change direction and speed (to account for momentum). Additionally, the avoidance rule may carry greater <em>weight</em> or take precedence over the other rules. Gary Flake also recommends adding an influence for <em>View</em>: to move laterally away from any boid blocking the view.</p>
+<p>Evidently the <em>properties</em> of a boid (apart from location) include direction and speed. It could be assumed that viewing angle and range are shared by all boids, or these could also vary per individual. The <em>sensors</em> of a boid include an ability to detect the density of boids in different directions (to detect the center of the flock), as well as the average speed and direction of boids, within a viewable area. The <em>actions</em> of a boid principally are to alter the direction and speed of flight. </p>
+<h3 id="implementation-1">Implementation</h3>
+<p>The behavior of an agent depends on the other agents that it can perceive (the <em>neighborhood</em>), as described above. Once a set of visible neighbors is calculated, it can be used to derive the steering influences of the agent. </p>
+<ul>
+<li>The center force depends on the average location of neighbors, relative to the agent. </li>
+<li>The copy force depends on the average velocity of neighbors. </li>
+<li>The avoidance force applies if a neighbor is too close.</li>
+</ul>
+<blockquote>
+<p>Note that since the agents are dependent on each other, it also makes sense to perform movements and information processing in separate steps. Otherwise, the order in which the agent list is iterated may cause unwanted side-effects on the behavior. (This multi-pass approach is similar in motivation to the double buffering required in many cellular automata).</p>
+</blockquote>
+<p>Several choices have to be made to balance the forces well -- how far agents can see, over what radius, what kind of clipping on the strength of forces, or clipping on the resulting velocities, what range and sensitivity does the avoidance force have, what relative weight does the center force have, etc. Varying these can produce quite different behaviours. Do some forces (e.g. avoidance) completely override others? Do some forces apply only intermittently (by probability)? Etc.</p>
+<p>See one example of flocking boids here:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="LGzgpO" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/LGzgpO">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>One of the attractive features of the Boids model is how they behave when attempting to avoid immobile obstacles. For a small number of obstacles, we can simply use a list with a similar avoidance force routine.</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="XXevBb" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/XXevBb">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+
+
+<!-- 
+
+### Subsumption architecture
+
+### Neural networks
+
+The neuron, von Neumann, biological & artificial plasticity, artificial neural networks (ANNs), supervised, unsupervised & reinforcement learning.
+
+### Complex adaptive systems
+-->
+<footer>2020</footer>
+
+</body>
+</html>

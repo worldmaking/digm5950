@@ -513,8 +513,16 @@ In general, a naive but effective approach to detect nearby objects is to iterat
 ```javascript
 for (let a of agents) {
 	for (let n of agents) {
-		let rel = vec2.distance(a.pos, n.pos);
-		if (rel < (a.size + n.size)) {
+		// don't compare with self:
+		if (a == n) continue;
+		// get relative vector to neighbour:
+		let rel = n.pos.clone().sub(a.pos);
+		// to wrap around world boundaries:
+		rel.relativewrap(1); 
+		// turn `rel` into a's directional frame:
+		rel.rotate(-a.dir);
+		// detect overlap:
+		if (rel.length < (a.size + n.size)) {
 			// they are overlapping 
 		}
 	}

@@ -87,6 +87,12 @@ pre {
 	color: #333;
 }
 
+blockquote {
+	border-left: 15px solid #eee;
+	margin: 1.5em 0px;
+  	padding: 0em 15px;
+}
+
 a {
 	color: #e31837;
 	text-decoration: none;
@@ -112,4 +118,8 @@ a:hover {
 .centremaxwidth960 {
 	margin:    0 auto;
     max-width: 920px;
+}
+
+.codepen {
+	height: 520px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid black; margin: 1em 0; padding: 1em;
 }

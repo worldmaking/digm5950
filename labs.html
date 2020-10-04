@@ -402,8 +402,16 @@ v0.wrap(d);
 <p>In general, a naive but effective approach to detect nearby objects is to iterate over all objects and compute the relative distances. For example: </p>
 <pre><code class="language-javascript"><span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> a <span class="hljs-keyword">of</span> agents) {
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> n <span class="hljs-keyword">of</span> agents) {
-        <span class="hljs-keyword">let</span> rel = <span class="hljs-built_in">vec2</span>.distance(a.pos, n.pos);
-        <span class="hljs-keyword">if</span> (rel &lt; (a.size + n.size)) {
+        <span class="hljs-comment">// don&#x27;t compare with self:</span>
+        <span class="hljs-keyword">if</span> (a == n) <span class="hljs-keyword">continue</span>;
+        <span class="hljs-comment">// get relative vector to neighbour:</span>
+        <span class="hljs-keyword">let</span> rel = n.pos.clone().sub(a.pos);
+        <span class="hljs-comment">// to wrap around world boundaries:</span>
+        rel.relativewrap(<span class="hljs-number">1</span>); 
+        <span class="hljs-comment">// turn `rel` into a&#x27;s directional frame:</span>
+        rel.rotate(-a.dir);
+        <span class="hljs-comment">// detect overlap:</span>
+        <span class="hljs-keyword">if</span> (rel.length &lt; (a.size + n.size)) {
             <span class="hljs-comment">// they are overlapping </span>
         }
     }
@@ -446,6 +454,6 @@ space.remove(obj);
 <p>The in-class scripts and examples will all be collected here: <a href="">https://codepen.io/collection/nRZQOO?grid_type=list</a></p>
 
 <footer>2020</footer>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
 </body>
 </html>

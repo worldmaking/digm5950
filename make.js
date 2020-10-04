@@ -56,7 +56,10 @@ function generate(file) {
 			.replace(/\n---image:([^\s]+)/g, `\n---\n<!-- .slide: data-background-image="$1" data-background-size="contain" -->\n\nnotes:\n`)
 			// // replace @youtube:ID as background video
 			.replace(/\n---youtube:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://youtube.com/embed/$1?rel=0&autoplay=1&start=0" -->\n\nnotes:\n`)
+
+			
 	} else {
+
 		meta.src = meta.src
 		// auto hr break at heading 1 titles:
 		.replace(/\n(#\s[^\n]+)/g, "\n---\n\n$1")
@@ -64,18 +67,15 @@ function generate(file) {
 		.replace(/\n---image:([^\s]+)/g, `\n<img src="$1" />\n`)
 		// // replace @youtube:ID as background video
 		.replace(/\n---youtube:([^\s]+)/g, `<iframe width="720" height="540" src="https://youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>`)
+		// auto-embed codepens:
+		.replace(/\n---codepen:https?:\/\/codepen.io\/+([^\/]+)\/pen\/([^\/\n]+)\/?/g, 
+			`<p class="codepen" data-height="520" data-default-tab="js,result" data-user="$1" data-slug-hash="$2" data-preview="true"><span><a href="https://codepen.io/$1/pen/$2">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>`)
 
 	}
 
 	// // https://vimeo.zendesk.com/hc/en-us/articles/360001494447-Using-Player-Parameters
-	// meta.src = src
-	// 	// auto slide break at heading 1 titles:
-	// 	.replace(/\n(#\s[^\n]+)/g, "\n---\n\n$1")
-	// 	// replace @image:path as background contain 
-	// 	.replace(/\n---image:([^\s]+)/g, `\n---\n<!-- .slide: data-background-image="$1" data-background-size="contain" -->`)
-	// 	// // replace @youtube:ID as background video
-	// 	.replace(/\n---youtube:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://youtube.com/embed/$1?rel=0&autoplay=1&start=0" -->\n\nnotes:\n`)
 	// 	.replace(/\n---vimeo:([^\s]+)/g, `\n---\n<!-- .slide: data-background-interactive data-background-iframe="https://player.vimeo.com/video/$1?rel=0&autoplay=1&start=0&muted=0" -->\n\nnotes:\n`)
+
 
 	let toc = []
 	let renderer = new marked.Renderer();
