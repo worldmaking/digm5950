@@ -54,3 +54,13 @@ The first assignment is to construct a new cellular system. You can start from o
 Look through the [cellular systems](ca.html) page for ideas of variations to try and implement. 
 
 Follow all the guidelines above on taking notes, formatting your code, and recording comments. 
+
+## Assignment 2
+
+**Multi-Agent System**
+
+The assignment is to construct a new multi-agent system. You can develop an idea blending or mutating one of the systems or aspects we have looked at in the classes, or design and create a new one to explore a different idea you have. Use the starter-kit from the [labs](labs.html). 
+
+Look through the [agent-based systems](agent.html) page for ideas. 
+
+Follow all the guidelines above on taking notes, formatting your code, and recording comments. 

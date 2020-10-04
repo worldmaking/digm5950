@@ -52,16 +52,16 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Action items: Begin developing a new agent-based simulation
 6. [**Agents II**](agent.html)
    - Action items:
-7. **Special Topic**
+     - **Due Oct 22: [Assignment 2](assignments.html) (Agents)**
+7. [**Evolution I**](evo.html)
    - Action items:
-8. [**Evolution I**](evo.html) *Nov 2* 
+8. [**Evolution II**](evo.html) *Nov 2* 
    - Action items:
-9.  [**Evolution II**](evo.html)
-   - Action items:
-11. [**Neural Networks I**](nn.html)
+9.  [**Neural Networks I**](nn.html)
    - Action items:
 11. [**Neural Networks II**](nn.html)
-   - Game of Life
+   - Action items:
+11. **Special Topic**
    - Action items:
 12. **Special Topic**
    - Action items:
