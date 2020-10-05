@@ -56,7 +56,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Action items: Begin developing a new agent-based simulation
 6. [**Agents II**](agent.html)
    - Action items:
-     - **Due Oct 22: [Assignment 2](assignments.html) (Agents)**
+     - **Due Oct 25: [Assignment 2](assignments.html) (Agents)**
 7. [**Evolution I**](evo.html)
    - Action items:
 8. [**Evolution II**](evo.html) *Nov 2* 
