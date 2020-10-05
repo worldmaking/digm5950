@@ -48,6 +48,9 @@ The course has a strongly practical emphasis, exploring frameworks through appli
      - **Due Oct 4: [Assignment 1](assignments.html) (CA)**
      - For anyone who was unable to submit the assignment 1 (CA) using the form in Teams, please use this form instead: [https://forms.gle/eF94SeKn5NL2bSX3A]()
 4. [**Agents I**](agent.html) *Oct 5* 
+   - Today's scripts:
+     - [Chemotaxis with one nostril](https://codepen.io/grrrwaaa/pen/pobzgqK?editors=0010)
+     - [Chemotaxis with two nostrils](https://codepen.io/grrrwaaa/pen/GRqKjLr?editors=0010)
    - Action items:
 5. **Reading Week**
    - Action items: Begin developing a new agent-based simulation
