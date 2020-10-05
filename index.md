@@ -46,6 +46,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Sharing CA variants
    - Action items:
      - **Due Oct 4: [Assignment 1](assignments.html) (CA)**
+     - For anyone who was unable to submit the assignment 1 (CA) using the form in Teams, please use this form instead: [https://forms.gle/eF94SeKn5NL2bSX3A]()
 4. [**Agents I**](agent.html) *Oct 5* 
    - Action items:
 5. **Reading Week**
