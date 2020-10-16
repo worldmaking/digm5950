@@ -507,6 +507,9 @@ Here's a start in that direction:
 
 ---codepen:https://codepen.io/grrrwaaa/pen/gPeyPV
 
+Stigmergy, and other agent behaviours as seen in this course section, were utilized in the Archipelago series of works by Artificial Nature:
+
+---vimeo:89884440
 
 ---
 
@@ -751,6 +754,9 @@ One of the attractive features of the Boids model is how they behave when attemp
 
 ---codepen:https://codepen.io/grrrwaaa/pen/XXevBb
 
+Flocking has become integral to many media artworks, including again in the Artificial Nature series, for example:
+
+---vimeo:120987833
 
 
 <!-- 
