@@ -86,7 +86,7 @@ function generate(file) {
 		const match = /id="(.+)"/gm.exec(html)
 		if (match && match.length > 1) {
 			const id = match[1]
-			console.log(text, level, id)
+			//console.log(text, level, id)
 			toc.push({
 				level: level,
 				text: text,
@@ -98,8 +98,8 @@ function generate(file) {
 	marked.setOptions({
 		renderer: renderer,
 		highlight: function(code, lang) {
-			return hljs.highlight(lang, code).value;
-		}
+			return hljs.highlight(hljs.getLanguage(lang) ? lang : 'plaintext', code).value;
+		},
 	});
 
 	meta.body = marked(meta.src);

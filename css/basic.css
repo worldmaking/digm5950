@@ -114,9 +114,9 @@ a:hover {
 	background: #dd7b89;
 	text-shadow: none; }
 	  
-
 .centremaxwidth960 {
 	margin:    0 auto;
+	padding:   0 10px; /* a bit of space for mobile screen edges */
     max-width: 920px;
 }
 
