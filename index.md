@@ -56,10 +56,11 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Action items: Begin developing a new agent-based simulation
 6. [**Agents II**](agent.html)
    - [Today's script: random walk, avoidance, and cohesion](https://codepen.io/grrrwaaa/pen/pobbxPz?editors=0011)
+7. [**Agents III**](agent.html)
+   - [Continuation of flocking](https://codepen.io/grrrwaaa/pen/PozWpvG?editors=0011)
+   - [**Evolution I**](evo.html)
    - Action items:
      - **Due Oct 30: [Assignment 2](assignments.html) (Agents)**
-7. [**Evolution I**](evo.html)
-   - Action items:
 8. [**Evolution II**](evo.html) *Nov 2* 
    - Action items:
 9.  [**Neural Networks I**](nn.html)

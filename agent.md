@@ -748,6 +748,10 @@ Several choices have to be made to balance the forces well -- how far agents can
 
 See one example of flocking boids here:
 
+---codepen:https://codepen.io/grrrwaaa/pen/PozWpvG
+
+Here's another one:
+
 ---codepen:https://codepen.io/grrrwaaa/pen/LGzgpO
 
 One of the attractive features of the Boids model is how they behave when attempting to avoid immobile obstacles. For a small number of obstacles, we can simply use a list with a similar avoidance force routine.

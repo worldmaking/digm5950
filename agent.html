@@ -625,6 +625,9 @@ agents = new_population;</code></pre>
 </blockquote>
 <p>Several choices have to be made to balance the forces well -- how far agents can see, over what radius, what kind of clipping on the strength of forces, or clipping on the resulting velocities, what range and sensitivity does the avoidance force have, what relative weight does the center force have, etc. Varying these can produce quite different behaviours. Do some forces (e.g. avoidance) completely override others? Do some forces apply only intermittently (by probability)? Etc.</p>
 <p>See one example of flocking boids here:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="PozWpvG" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/PozWpvG">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>Here&#39;s another one:</p>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="LGzgpO" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/LGzgpO">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 <p>One of the attractive features of the Boids model is how they behave when attempting to avoid immobile obstacles. For a small number of obstacles, we can simply use a list with a similar avoidance force routine.</p>
