@@ -750,6 +750,10 @@ See one example of flocking boids here:
 
 ---codepen:https://codepen.io/grrrwaaa/pen/PozWpvG
 
+Here it has been extended with the most simple start of social dynamics (cohesion of hue):
+
+---codepen:https://codepen.io/grrrwaaa/pen/GRqWxMx
+
 Here's another one:
 
 ---codepen:https://codepen.io/grrrwaaa/pen/LGzgpO
