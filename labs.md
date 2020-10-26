@@ -8,7 +8,7 @@ Before anything:
 - Make sure you have a recent version of Chrome or Firefox to work with, and you know how to open it's developer console.
 - Then, make sure you have signed up for a (free) account on [Codepen](https://codepen.io).
 
-**To create a new script, [Fork this example](https://codepen.io/grrrwaaa/pen/YdYMwB)**
+**To create a new script, [Fork this example](https://codepen.io/grrrwaaa/pen/YdYMwB?editors=0011)**
 
 > Alternatively, create a new pen on Codepen, open up the JS settings, and add paste the following into the External Scripts list: `https://alicelab.world/digm5950/al2019.js`
 

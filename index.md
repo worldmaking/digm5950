@@ -59,6 +59,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
 7. [**Agents III**](agent.html)
    - [Continuation of flocking](https://codepen.io/grrrwaaa/pen/PozWpvG?editors=0011)
    - [**Evolution I**](evo.html)
+     - [Today's first steps toward evolving computing PI](https://codepen.io/grrrwaaa/pen/gOMmjGz?editors=0012)
    - Action items:
      - **Due Oct 30: [Assignment 2](assignments.html) (Agents)**
 8. [**Evolution II**](evo.html) *Nov 2* 
