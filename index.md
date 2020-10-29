@@ -62,6 +62,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
      - [Today's first steps toward evolving computing PI](https://codepen.io/grrrwaaa/pen/gOMmjGz?editors=0012)
    - Action items:
      - **Due Oct 30: [Assignment 2](assignments.html) (Agents)**
+       - [Submit via the Form here](https://forms.gle/oWKbnwBefjhmZQkp9)
 8. [**Evolution II**](evo.html) *Nov 2* 
    - Action items:
 9.  [**Neural Networks I**](nn.html)
