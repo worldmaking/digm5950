@@ -10,7 +10,7 @@ Before anything:
 
 **To create a new script, [Fork this example](https://codepen.io/grrrwaaa/pen/YdYMwB?editors=0011)**
 
-> Alternatively, create a new pen on Codepen, open up the JS settings, and add paste the following into the External Scripts list: `https://alicelab.world/digm5950/al2019.js`
+> Alternatively, create a new pen on Codepen, open up the JS settings, and add paste the following into the External Scripts list: [`https://alicelab.world/digm5950/al2019.js`](https://alicelab.world/digm5950/al2019.js)
 
 ### Tips
 
@@ -151,6 +151,14 @@ draw2D.triangle([center_x, center_y])
 draw2D.triangle(diameter_x, diameter_y);
 draw2D.triangle(diameter);
 draw2D.triangle()
+
+// line
+draw2D.line([x1,y1], [x2,y2], thickness)
+draw2D.line([x1,y1], [x2,y2]) // thickness=1
+draw2D.line([x1,y1]) // draws to [0,0], thickness=1
+draw2D.line() // line between [0,0] and [1,1], thickness=1
+// more efficiently:
+draw2D.lines([list of [x,y] points], thickness=1)
 ```
 
 ### Colors

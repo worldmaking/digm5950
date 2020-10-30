@@ -240,7 +240,8 @@ function render() {
     ctxpixelscale = 1/ctxtransform[0];
     ctx.lineWidth = ctxpixelscale;
     ctx.fillStyle = "white";
-    ctx.strokeStyle = "white";
+	ctx.strokeStyle = "white";
+	ctx.font = "10px sans-serif";
     draw(ctx);
   }
   
@@ -1363,7 +1364,7 @@ draw2D = {
     }
     let p0 = args[0];
     if (typeof p0 != "object") {
-      p0 = [0, 0];
+      p0 = [1, 0];
     }
     ctx.lineWidth = thickness/ctxtransform[0];
     ctx.beginPath();
@@ -1383,9 +1384,14 @@ draw2D = {
 		ctx.beginPath();
 		for (let i=0; i<list.length; i+=2) {
 			ctx.moveTo(list[i][0], list[i][1]);
-    	ctx.lineTo(list[i+1][0], list[i+1][1]);
+    		ctx.lineTo(list[i+1][0], list[i+1][1]);
 		}
     ctx.stroke();
+  },
+
+  text(message, pt=[0,0]) {
+	ctx.font = '48px serif';
+  	ctx.fillText(message, pt[0], pt[1]);
   },
   
   // color("red") 

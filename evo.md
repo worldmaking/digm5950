@@ -217,11 +217,29 @@ We must also introduce some variation (mutations) while generating new genotypes
  }
 ```
 
+---codepen:https://codepen.io/grrrwaaa/pen/RwRMQdZ
+
+With this in play, we might already see some clear evolutionary behaviour.  
+
+But it's hard to see what's actually going on, with so many individuals flying by on each frame. To make sense of what's going on, we can introduce some statistical graphing. We can divide up the canvas into quadrants using `draw2D.push().scale(0.5).translate(x, y)` and `draw2D.pop()`, which will make it easier to separate graphs. Let's graph the following:
+
+- A bar graph of the fitness of each individual
+  - We can compute a width (1/population.length) and loop over each individual, placing a `draw2D.rect()` according to the individual fitness. 
+- A colour chart of the genetic data of each individual
+  - We can use a nested loop, first over indidviduals as above, and then over an individual's genes, mapping the gene values to hue via `draw2D.hsl()` and placing an appropriate `draw2D.rect()`. 
+- A graph of the evolving fitness over generations, including peak, mean, and standard deviation.
+  - To do this we'll have to keep track of data over the last N generations. This can be a list that is appended to after each generation, storing the information we need. To compute the mean fitness, take the average of all individuals' fitnesses. To compute the [standard deviation](https://en.wikipedia.org/wiki/Standard_deviation), we use the square root of the average of the square of the individual's fitness difference from the mean (see below). We can then graph the peak and mean as points, and the standard deviation as 'error bars' around the mean.
+
+```js
+// compute mean fitness:
+let mean = pop.reduce((s, a) => s + a.fitness/pop.length, 0);
+// compute standard deviation:
+let stddev = Math.sqrt(pop.reduce((s, a) => s + Math.pow(a.fitness - mean, 2)/pop.length, 0))
+```
+
 ---codepen:https://codepen.io/grrrwaaa/pen/dyXMEaq
 
-With this in play, we might already see some clear evolutionary behaviour. (If not, can you think of ideas why? Any ideas to improve it?)
-
-Generally, by observing the behaviour, what insights can you draw, and what ideas have you for improving it?
+Armed with these statistical data-visualization perspectives, and by observing the behaviour, what insights can you draw, and what ideas have you for improving it?
 
 - You may notice [punctuated equilibria](https://en.wikipedia.org/wiki/Punctuated_equilibrium). Run the simulation many times (hit enter), and you may notice that the fittest candidate is not always converging to the same result. There are clearly multiple distant fitness peaks here. Does it sometimes seem to get stuck? Can you suggest why? Can you think of any way to modify the mutation, evaluation, or even the genetic representation to overcome this?
 
@@ -229,9 +247,11 @@ Generally, by observing the behaviour, what insights can you draw, and what idea
   - The mutation rate acts a bit like a temperature control -- too high and good results can't remain viable, too low and it takes to long to get anywhere. This is a **meta-parameter**, not part of the evolution itself, but has a strong effect on it. Maybe let your mouse control it to 'perform' the evolution?
   - Larger populations help to generate more chances of leaping off a local peak. Too short genome sizes can be a tough challenge, but too long genomes make it less likely to find a result quickly -- and add more noise. Is there a way to make genome size variable, and give shorter results higher fitness? What other mutation methods could help? What other developmental models could be tried? Is there a better way to pick parents?
 
-- You may notice that the code generated sometimes looks odd -- and that the evolution has discovered tricks such as adding numbers multiplied by zero, prefixing zeroes to numbers, and even placing two slashes to create a comment (followed by "junk DNA"), in order to get a result with the specific gene length. We could easily prevent this by turning our `"/"` symbol into a `" / "` symbol, but perhaps there is an advantage not to? Even when a stable result is found, the content behind the `//` commments continues to change. 
-  - Try changing the symbol list. What happens if you add the "." character? How about "(" and ")"?
+- You may notice that the code generated sometimes looks odd -- and that the evolution has discovered tricks such as adding numbers multiplied by zero, prefixing zeroes to numbers, and even placing two slashes to create a comment (followed by "junk DNA"), in order to get a result with the specific gene length. (You might even see block comments like `/*7493*/`!) We could easily prevent this by turning our `"/"` symbol into a `" / "` symbol, but perhaps there is an advantage not to? Even when a stable result is found, the content behind the `//` commments continues to change.  
+  - Try changing the symbol list. What happens if you reduce the set of numbers (e.g. only even or odd)? What happens if you add the "." character? How about "(" and ")"?
   - How would you be able to add operators such as `Math.sin()`?  
+  
+- Can you think of a way to allow different genome sizes? Can we factor in shorter genomes as a positive fitness trait?
 
 What other problems could you imagine addressing, other than calculating numbers? (What kinds of problems is this method suited for?)
 
