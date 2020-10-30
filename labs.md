@@ -163,8 +163,8 @@ draw2D.lines([list of [x,y] points], thickness=1)
 // drawing text can be expensive
 // consider using `write()` for displaying text as an overlay instead
 draw2D.text(message, [x,y], size)
-draw2D.text(message, [x,y]) // size=1
-draw2D.text(message) // draws at [0,0], size=1
+draw2D.text(message, [x,y]) // size=0.02
+draw2D.text(message) // draws at [0,0], size=0.02
 ```
 
 ### Colors

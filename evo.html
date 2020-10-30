@@ -249,10 +249,31 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
      child[j] = parent[j];
    }
  }</code></pre>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="RwRMQdZ" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/RwRMQdZ">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>With this in play, we might already see some clear evolutionary behaviour.  </p>
+<p>But it&#39;s hard to see what&#39;s actually going on, with so many individuals flying by on each frame. To make sense of what&#39;s going on, we can introduce some statistical graphing. We can divide up the canvas into quadrants using <code>draw2D.push().scale(0.5).translate(x, y)</code> and <code>draw2D.pop()</code>, which will make it easier to separate graphs. Let&#39;s graph the following:</p>
+<ul>
+<li>A bar graph of the fitness of each individual<ul>
+<li>We can compute a width (1/population.length) and loop over each individual, placing a <code>draw2D.rect()</code> according to the individual fitness. </li>
+</ul>
+</li>
+<li>A colour chart of the genetic data of each individual<ul>
+<li>We can use a nested loop, first over indidviduals as above, and then over an individual&#39;s genes, mapping the gene values to hue via <code>draw2D.hsl()</code> and placing an appropriate <code>draw2D.rect()</code>. </li>
+</ul>
+</li>
+<li>A graph of the evolving fitness over generations, including peak, mean, and standard deviation.<ul>
+<li>To do this we&#39;ll have to keep track of data over the last N generations. This can be a list that is appended to after each generation, storing the information we need. To compute the mean fitness, take the average of all individuals&#39; fitnesses. To compute the <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a>, we use the square root of the average of the square of the individual&#39;s fitness difference from the mean (see below). We can then graph the peak and mean as points, and the standard deviation as &#39;error bars&#39; around the mean.</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-js"><span class="hljs-comment">// compute mean fitness:</span>
+<span class="hljs-keyword">let</span> mean = pop.reduce(<span class="hljs-function">(<span class="hljs-params">s, a</span>) =&gt;</span> s + a.fitness/pop.length, <span class="hljs-number">0</span>);
+<span class="hljs-comment">// compute standard deviation:</span>
+<span class="hljs-keyword">let</span> stddev = <span class="hljs-built_in">Math</span>.sqrt(pop.reduce(<span class="hljs-function">(<span class="hljs-params">s, a</span>) =&gt;</span> s + <span class="hljs-built_in">Math</span>.pow(a.fitness - mean, <span class="hljs-number">2</span>)/pop.length, <span class="hljs-number">0</span>))</code></pre>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="dyXMEaq" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/dyXMEaq">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-<p>With this in play, we might already see some clear evolutionary behaviour. (If not, can you think of ideas why? Any ideas to improve it?)</p>
-<p>Generally, by observing the behaviour, what insights can you draw, and what ideas have you for improving it?</p>
+<p>Armed with these statistical data-visualization perspectives, and by observing the behaviour, what insights can you draw, and what ideas have you for improving it?</p>
 <ul>
 <li><p>You may notice <a href="https://en.wikipedia.org/wiki/Punctuated_equilibrium">punctuated equilibria</a>. Run the simulation many times (hit enter), and you may notice that the fittest candidate is not always converging to the same result. There are clearly multiple distant fitness peaks here. Does it sometimes seem to get stuck? Can you suggest why? Can you think of any way to modify the mutation, evaluation, or even the genetic representation to overcome this?</p>
 </li>
@@ -262,11 +283,13 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <li>Larger populations help to generate more chances of leaping off a local peak. Too short genome sizes can be a tough challenge, but too long genomes make it less likely to find a result quickly -- and add more noise. Is there a way to make genome size variable, and give shorter results higher fitness? What other mutation methods could help? What other developmental models could be tried? Is there a better way to pick parents?</li>
 </ul>
 </li>
-<li><p>You may notice that the code generated sometimes looks odd -- and that the evolution has discovered tricks such as adding numbers multiplied by zero, prefixing zeroes to numbers, and even placing two slashes to create a comment (followed by &quot;junk DNA&quot;), in order to get a result with the specific gene length. We could easily prevent this by turning our <code>&quot;/&quot;</code> symbol into a <code>&quot; / &quot;</code> symbol, but perhaps there is an advantage not to? Even when a stable result is found, the content behind the <code>//</code> commments continues to change. </p>
+<li><p>You may notice that the code generated sometimes looks odd -- and that the evolution has discovered tricks such as adding numbers multiplied by zero, prefixing zeroes to numbers, and even placing two slashes to create a comment (followed by &quot;junk DNA&quot;), in order to get a result with the specific gene length. (You might even see block comments like <code>/*7493*/</code>!) We could easily prevent this by turning our <code>&quot;/&quot;</code> symbol into a <code>&quot; / &quot;</code> symbol, but perhaps there is an advantage not to? Even when a stable result is found, the content behind the <code>//</code> commments continues to change.  </p>
 <ul>
-<li>Try changing the symbol list. What happens if you add the &quot;.&quot; character? How about &quot;(&quot; and &quot;)&quot;?</li>
+<li>Try changing the symbol list. What happens if you reduce the set of numbers (e.g. only even or odd)? What happens if you add the &quot;.&quot; character? How about &quot;(&quot; and &quot;)&quot;?</li>
 <li>How would you be able to add operators such as <code>Math.sin()</code>?  </li>
 </ul>
+</li>
+<li><p>Can you think of a way to allow different genome sizes? Can we factor in shorter genomes as a positive fitness trait?</p>
 </li>
 </ul>
 <p>What other problems could you imagine addressing, other than calculating numbers? (What kinds of problems is this method suited for?)</p>

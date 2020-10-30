@@ -65,7 +65,7 @@ footer {
 </ul>
 <p><strong>To create a new script, <a href="https://codepen.io/grrrwaaa/pen/YdYMwB?editors=0011">Fork this example</a></strong></p>
 <blockquote>
-<p>Alternatively, create a new pen on Codepen, open up the JS settings, and add paste the following into the External Scripts list: <code>https://alicelab.world/digm5950/al2019.js</code></p>
+<p>Alternatively, create a new pen on Codepen, open up the JS settings, and add paste the following into the External Scripts list: <a href="https://alicelab.world/digm5950/al2019.js"><code>https://alicelab.world/digm5950/al2019.js</code></a></p>
 </blockquote>
 <h3 id="tips">Tips</h3>
 <ul>
@@ -168,7 +168,21 @@ footer {
 <span class="hljs-built_in">draw2D</span>.triangle([center_x, center_y])
 <span class="hljs-built_in">draw2D</span>.triangle(diameter_x, diameter_y);
 <span class="hljs-built_in">draw2D</span>.triangle(diameter);
-<span class="hljs-built_in">draw2D</span>.triangle()</code></pre>
+<span class="hljs-built_in">draw2D</span>.triangle()
+
+<span class="hljs-comment">// line</span>
+<span class="hljs-built_in">draw2D</span>.line([x1,y1], [x2,y2], thickness)
+<span class="hljs-built_in">draw2D</span>.line([x1,y1], [x2,y2]) <span class="hljs-comment">// thickness=1</span>
+<span class="hljs-built_in">draw2D</span>.line([x1,y1]) <span class="hljs-comment">// draws to [0,0], thickness=1</span>
+<span class="hljs-built_in">draw2D</span>.line() <span class="hljs-comment">// line between [0,0] and [1,1], thickness=1</span>
+<span class="hljs-comment">// more efficiently:</span>
+<span class="hljs-built_in">draw2D</span>.lines([list <span class="hljs-keyword">of</span> [x,y] points], thickness=<span class="hljs-number">1</span>)
+
+<span class="hljs-comment">// drawing text can be expensive</span>
+<span class="hljs-comment">// consider using `write()` for displaying text as an overlay instead</span>
+<span class="hljs-built_in">draw2D</span>.text(message, [x,y], size)
+<span class="hljs-built_in">draw2D</span>.text(message, [x,y]) <span class="hljs-comment">// size=0.02</span>
+<span class="hljs-built_in">draw2D</span>.text(message) <span class="hljs-comment">// draws at [0,0], size=0.02</span></code></pre>
 <h3 id="colors">Colors</h3>
 <p>Graphics are drawn using whatever color is currently set. The current drawing colour can be set by assigning to <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle"><code>ctx.fillStyle</code></a>, or using these helpers:</p>
 <pre><code class="language-javascript"><span class="hljs-built_in">draw2D</span>.color(<span class="hljs-string">&quot;red&quot;</span>) 
