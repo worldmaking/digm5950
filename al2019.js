@@ -1389,9 +1389,13 @@ draw2D = {
     ctx.stroke();
   },
 
-  text(message, pt=[0,0]) {
-	ctx.font = '48px serif';
-  	ctx.fillText(message, pt[0], pt[1]);
+  text(message, pt=[0,0], size=1) {
+	ctx.save();
+	ctx.translate(pt[0], pt[1]+1);
+	let s = size/10
+	ctx.scale(s, s);
+	ctx.fillText(message, -0.5, -0.5);
+	ctx.restore();
   },
   
   // color("red") 
