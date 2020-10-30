@@ -242,7 +242,7 @@ function render() {
     ctx.fillStyle = "white";
 	ctx.strokeStyle = "white";
 	ctx.font = "10px sans-serif";
-    draw(ctx);
+    draw(ctx);	
   }
   
   if (pretext !== "") {
@@ -1389,12 +1389,12 @@ draw2D = {
     ctx.stroke();
   },
 
-  text(message, pt=[0,0], size=1) {
+  text(message, pt=[0,0], size=0.02) {
 	ctx.save();
-	ctx.translate(pt[0], pt[1]+1);
+	ctx.translate(pt[0]-0.05, pt[1]);
 	let s = size/10
 	ctx.scale(s, s);
-	ctx.fillText(message, -0.5, -0.5);
+	ctx.fillText(message, 0,0);
 	ctx.restore();
   },
   
