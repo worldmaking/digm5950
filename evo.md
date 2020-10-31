@@ -103,7 +103,7 @@ An excellent discussion of [the genetic algorithm in art and its relation to Del
 
 ---
 
-## A simple math solver
+## A simple arithmetic genetic algorithm
 
 As a simple starting point, let's consider the space of *simple arithmetic* as our environment. Arithmietic is a good, non-trivial space because a) there are many ways to arrive at a solution, and b) there are many cases where the solution isn't obvious at the outset. It is also good, because arithmetic statements can be constructed from a very simple alphabet of terms: 
 
@@ -219,6 +219,8 @@ We must also introduce some variation (mutations) while generating new genotypes
 
 ---codepen:https://codepen.io/grrrwaaa/pen/RwRMQdZ
 
+### Visualizing the evolution
+
 With this in play, we might already see some clear evolutionary behaviour.  
 
 But it's hard to see what's actually going on, with so many individuals flying by on each frame. To make sense of what's going on, we can introduce some statistical graphing. We can divide up the canvas into quadrants using `draw2D.push().scale(0.5).translate(x, y)` and `draw2D.pop()`, which will make it easier to separate graphs. Let's graph the following:
@@ -239,6 +241,8 @@ let stddev = Math.sqrt(pop.reduce((s, a) => s + Math.pow(a.fitness - mean, 2)/po
 
 ---codepen:https://codepen.io/grrrwaaa/pen/dyXMEaq
 
+### Observations
+
 Armed with these statistical data-visualization perspectives, and by observing the behaviour, what insights can you draw, and what ideas have you for improving it?
 
 - You may notice [punctuated equilibria](https://en.wikipedia.org/wiki/Punctuated_equilibrium). Run the simulation many times (hit enter), and you may notice that the fittest candidate is not always converging to the same result. There are clearly multiple distant fitness peaks here. Does it sometimes seem to get stuck? Can you suggest why? Can you think of any way to modify the mutation, evaluation, or even the genetic representation to overcome this?
@@ -253,79 +257,38 @@ Armed with these statistical data-visualization perspectives, and by observing t
   
 - Can you think of a way to allow different genome sizes? Can we factor in shorter genomes as a positive fitness trait?
 
-What other problems could you imagine addressing, other than calculating numbers? (What kinds of problems is this method suited for?)
+Obviously, computing Pi is a 'toy problem', and not especially useful other than in revealing certain characteristics of artificial evolution, but the genetic algorithm can be applied to much more interesting and useful problems. What other problems could you imagine using it for? More generally, what kinds of problems might this method suited for? What kinds of problems might it not?
 
-### Tournament Selection
-
-We can continue using the *fitness-proportionate* selection as before, via stochastic universal sampling, however many systems use a different form of selection known as **tournament selection**, in which a number of individuals are chosen at random from the population to create a temporary neighbourhood set, and the fittest of this neighbourhood set is chosen as parent to create a new individual. (Or sometimes, a weighted probability veering toward the fittest in the neighbourhood set, to make it less deterministic.) In pseudo-code:
-
-```js
-	new_population = []
-	for each child {
-		set = []	
-		for i = 0, n {
-			set.push( get_random_item(population) )
-		}
-		set.sort(fitness_comparator)
-		parent = set[0]
-		child = clone(parent)
-		// apply mutations
-		new_population.push(child)
-	}
-	population = new_population
-```
-
-In part this helps to mirror the spatial/network effects of populations, in that it is unlikely for every member of a population to meet every other; selection is made on the somewhat random subset of the population that is encountered.
-
-Selection pressure is easily adjusted by changing the tournament neighbourhood set size. If the size is larger, weak individuals have a smaller chance to be selected. 
-
-[Here's the Pi hunting example modified to use probabilistic tournament selection](http://codepen.io/grrrwaaa/pen/zrLZvK?editors=001)
+The genetic algorithm as presented here is one of the simplest kinds of artificial evolution; we can look at different approaches to each of its aspects, such as genetic representation, variation, selection, etc. 
 
 ---
 
-### Genetic representation
-
-Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits. Some systems use more elaborate structures (trees, networks), but these are usually reducible to and encoded as  linear sequences. After all, our genes wind up in complex structures with different reactive regions, but at the lowest level are just a long singular chain of A, G, C or T molecules. The simplest systems have a fixed length, but nature shows quite a lot of variance (not particularly correlated with the size, complexity, or evolutionary age of a species). 
-
-### Development
-
-In some systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
-
-### Selection
+## Selection
 
 **For problem solving in data mining, engineering, design, architecture, etc.**: If the fitness criterion is static and designed around a particular problem we wish to find a solution for, evolution can help evaluate & test candidate solutions and selectively breed them to produce better solutions, ideally converging on an optimal one, without having to understand or derive by proof. It is a form of optimization. However this process may take a long time or a lot of processing power to find a satisfactory result, or may not reach a result at all. Not all problems are suitable for evolutionary search.
 
-Evidently, these systems differ markedly from natural evolution by having a static measure, and thus a singular teleological character, a meaningful sense of progress, across the entire history of the system. This is more akin to *selective breeding* than natural evolution. 
+> Note that simply taking the best candidate alone is not necessarily the ideal strategy; selecting randomly by proportion to fitness ("roulette wheel" selection) may better overcome local maxima. However many systems use a different form of selection known as **tournament selection**, in which a number of individuals are chosen at random from the population to create a temporary neighbourhood set, and a fitness-skewed selection is made from that set. In part this helps to mirror the spatial/network effects of populations, in that it is unlikely for every member of a population to meet every other; selection is made on the somewhat random subset of the population that is encountered. Selection pressure is easily adjusted by changing the tournament neighbourhood set size. [Here's the Pi hunting example modified to use probabilistic tournament selection](http://codepen.io/grrrwaaa/pen/zrLZvK?editors=001)
 
-Note that simply taking the best candidate alone is not necessarily the ideal strategy; selecting randomly by proportion to fitness ("roulette wheel" selection) may better overcome local maxima.
+Evidently, these systems differ markedly from natural evolution by having a static measure, and thus a singular teleological character, a meaningful sense of progress, across the entire history of the system. This is a pragatic approach, and highly artificial: there is no absolute or static fitness function in biology.
 
 **For art, music, and other less formalized domains** we may need to consider other methods of selection, since a formal measure may not be possible, or the problem may not be clearly statable in advance. E.g. can we measure aesthetic quality in formal terms?
 
-- Interactive selection. Pioneered by Dawkins' Biomorphs program and Karl Sims' evolved images, in which several candidates are presented to human observers, who apply the selection manually. Also known as aesthetic selection. A problem here is that the human becomes the bottleneck of evolution, constraining population sizes and rates of evolution to very small scales. It may arguably also tend toward selecting for the aesthetic average rather than the remarkable.
-	- Examples of aesthetic selection from previous classes
-		- [Malevich Generator by Sophie Roginsky](http://codepen.io/grrrwaaa/pen/mrZqoK?editors=0010)
-		- [Strange Attractor by Rose Zhou](http://codepen.io/grrrwaaa/pen/vXqWwj?editors=0010)
-	- An interesting variation is to make the selection continuous and implicit. Jon McCormack's Eden measured fitness globally according to how long gallery visitors remained in front of a particular evolving sub-population.
+- Interactive selection. Pioneered by Dawkins' Biomorphs (see below) and Karl Sims' evolved images, in which several candidates are presented to human observers, who apply the selection manually. Also known as **aesthetic selection**. It is more like **selective breeding** than natural evolution. 
+  - Examples of aesthetic selection from previous classes:
+    - [Malevich Generator by Sophie Roginsky](http://codepen.io/grrrwaaa/pen/mrZqoK?editors=0010)
+    - [Strange Attractor by Rose Zhou](http://codepen.io/grrrwaaa/pen/vXqWwj?editors=0010)
+  - A problem here is that the human becomes the bottleneck of evolution, constraining population sizes and rates of evolution to very small scales. 
+    - Opening up the system to online interaction is one way to scale a system to the massive numbers of generations needed.
+  - It may also tend toward selecting for the aesthetic average rather than the remarkable; or toward the human-centric rather than the abstract. See [Picbreeder](http://picbreeder.org) for a current variation on Karl Sims' idea. What do you notice about the highly-ranked images?
+  - An interesting variation, which might reduce these problems, is to make the selection continuous and implicit. [Jon McCormack's Eden](http://jonmccormack.info/artworks/eden/) measured fitness globally according to how long gallery visitors remained in front of a particular evolving sub-population.
 - Evolved/evolving selection. First evolve a population of artificial art critics, trained from human-evaluated examples, and then use these to apply selection criteria to a population of candidate artworks. Some projects have also proposed a form where one population represents the candidate products, and the other population represents artificial critics.
-- A viability-oriented form of artificial evolution may be used for more theoretical and aesthetic branches of artificial life research. The viability measure arises as an emergent property of underlying laws of the world, such as the requirement to maintain energetic/metabolic balance or to maintain structural integrity, as well as the collective effects of multiple species and non-living dynamics within the environment. For this reason it is sometimes referred to as *ecosystemic selection*. [See discussion here](http://link.springer.com/chapter/10.1007%2F978-3-540-78761-7_42). This may still incorporate indirect interaction from human agents if desired.
-
-### Variation
-
-The mechanisms of variation possible partly depend on the representation chosen. The two most common principles of variation in artificial evolution are naturally inspired:
-
-- Random **mutation**; akin to errors copying DNA. If the genome is represented as a binary string, then random locations in the string may be replaced by new random characters. For example, a parent "dog" could produce children such as "fog", "dqg", and so on. Obviously some mutations will not create viable individuals.
-- Sexual **cross-over**: akin to sexual reproduction in biology. As a binary string, the child takes the first fraction from one parent, and the remainder from the other. For example, breeding the strings "dog" and "cat" could generate children such as "dot", "dat", "cag" and "cog". 
-- Other forms of fragment **recombination**, such as insertion, deletion, reversal. So a more flexible system might also permit "doat", "caog", "dt", "tac", etc. 
-
-> Why use reproduction for evolution? In the face of an unpredictable environment, we cannot know which strategy will be best; we can try small variations, and hedge our bets by making very many of them (population diversity). An individual loss is not catastrophic, but a few successes can be learned from. Furthermore, the face of unpredictibility implies that what was true today may not be tomorrow, so the flexibility to avoid timeless commitment is also a good strategy; but the inheritance of choices is a useful option when the environment retains some stability. If the world were fully predictable, a rational, teleological, monothematic strategy would be preferable. But the world isn't totally random either (if it was, there would be no valid strategy worth pursuing.) 
-
-As with temperature-like parameters we saw in CA, a crucial factor in evolution is the rate or probability of variation. Too much, and the population may never significantly diverge from a randomly initialized one; too little, and it may find itself stuck on the first solution it finds, with a largely homogenous population. It may be wise to have different mutation rates for different genes, or for different members of a population, or by fitness rank etc. It is likely desirable to gradually reduce mutation rates over time, unless the population appears to be stagnating. (See also simulated annealing.)
+- A viability-oriented form of artificial evolution may be used for more theoretical and aesthetic branches of artificial life research. The viability measure arises as an emergent property of underlying complexity of the world, such as the requirement to maintain energetic/metabolic balance or to maintain structural integrity, as well as the collective effects of multiple species and non-living dynamics within the environment. For this reason it is sometimes referred to as **ecosystemic selection**. [See discussion here](http://link.springer.com/chapter/10.1007%2F978-3-540-78761-7_42). This may still incorporate indirect interaction from human agents if desired.
 
 ---
 
-## Aesthetic selection of biomorphs
+## Aesthetic selection of Biomorphs
 
-Biomorphs are virtual entities that were devised by Richard Dawkins in his book [The Blind Watchmaker](https://en.wikipedia.org/wiki/The_Blind_Watchmaker) as a way to visualize the power of evolution. Dawkins used a simple symbolic rendering of lines at fixed angles, grown in a kind of tree structure, as his phenotypes. Of a given generation, he selected the biomorph he found most aesthetically pleasing, making this the parent of the next generation.
+Biomorphs are virtual entities that were devised by Richard Dawkins in his book [The Blind Watchmaker](https://en.wikipedia.org/wiki/The_Blind_Watchmaker) as a way to visualize the power of evolutionary processes. Dawkins used a simple symbolic rendering of lines at limited angles, grown in a kind of tree structure, as his phenotypes. Of a given generation, he selected the biomorph he found most aesthetically pleasing, making this the parent of the next generation.
 
 ![biomorph](https://upload.wikimedia.org/wikipedia/commons/f/fc/BiomorphBounce.png)
 
@@ -337,9 +300,7 @@ One of the simplest ways to create a biomorph is to interpret strings as instruc
 
 ### Aside: Turtle graphics
 
-We'd like to generate biomorphs in a similar way. What we want to create is a function that maps genome strings into biomorph shapes. The genotype is a string of symbols, the phenotype is the graphics that result. 
-
-The biomorphs are all made out of simple line drawings. For efficiency, we can use the ```draw2D.lines()``` method to draw a list of lines at once. Here's how it works:
+We'd like to generate biomorphs in a similar way. The biomorphs are all made out of simple line drawings. For efficiency, we can use the ```draw2D.lines()``` method to draw a list of lines at once. Here's how it works:
 
 ```javascript
 // draws a plus (two pairs of points for each line)
@@ -349,105 +310,45 @@ draw2D.lines([
 ]);
 ```
 
-The classic example is using the genotype strings as instructions for a "turtle graphics" interpreter. A minimal alphabet & semantics could be something like this:
-
-- **F**: move forward one unit, drawing a line.
-- **+**: turn a certain amount to the left.
-- **-**: turn a certain amount to the right.
-
-To draw in the Turtle style, we need to represent a turtle's properties, which are a position and a direction. Then, we can manipulate these properties to capture the turtle's movement, collecting points of a line as it moves. 
-
-We can start by building a function that creates a turtle, and uses it to collect points to draw a specific shape, such as a square.
-
-Be careful to insert copies of the turtle location into the list of line points, rather than insert a reference. If we didn't clone a copy of the point, we would end up with many references to the same ```vec2``` object in the list.
-
-It should be apparent that the code is highly repetitive. Conceptually, we could instead represent this as a data structure: a list of commands such as "forward, turn, forward, turn, forward, turn, forward". Let us rewrite our function as an **interpreter** of such a list of commands. This becomes powerful as it would allow us to generate different shapes in a data-driven way, simply by passing in a list of **commands**. We could even compress these commands to simple turtle mnemonics, of ```"F+F+F+F"```.
-
-Once we have an interpreter, we could go one step further and turn into a **compiler**; a compiler is just an interpreter that *generates executable code* rather than *executes code*. We can take our interpreter and change all of its actions into the generation of strings of code, collecting all these lines of code into a big list. Finally, we join all those strings together (with newlines between) and convert them into a ```new Function```. With this we can generate any arbitrary string of commands and turn it into a re-usable graphics function!
-
-And, of course, since these functions are generated from strings, they can be generated from string genomes!
-
----
-
-With this in place, we could now expand our vocabulary of actions in our mini-language, to include things like these:
-
-- **f**: move forward half a unit, drawing a line.
-- **>**: turn a different amount to the left.
-- **<**: turn a different amount to the right.
-- **(**: "push": spawn a clone of the turtle and continue interpreting
-- **)**: "pop": stop interpreting with the current turtle and return to its parent turtle
-- **=**: face the opposite direction; (possibly also push with a copy of the remaining code for symmetry)
-- **|**: swap left/right chirality; (possibly also push with a copy of the remaining code for symmetry)
-- **.**: do nothing
-- etc.
-
-We could also make our shapes more dynamic. For example, we could generate rotation angles in the function according to the current time (e.g. ```let a = Math.sin(now)```). 
-
-One of the advantages of using strings of symbols as genotypes is their readability, but another is the flexibility to perform different kinds of mutations:
-
-- Replace a symbol with another randomly chosen from the alphabet
-- At a random location, remove a symbol
-- At a random location, insert a symbol randomly chosen from the alphabet
-- Split the string into two parts, and join them the other way around
-- Repeat a subsection of the string
-- Reverse, or shuffle, a subsection of the string
-	
-> Some of these mutations can change the length of the string. It may be advisable to add limits on the minimum or maximum length of the string mutations can produce.
-
-Now we can show all members of a generation side-by-side, and use the mouse to choose the member we prefer to form the parent of the next generation.
-
-See this example of [evolving biomorphs](http://codepen.io/grrrwaaa/pen/BjvQLq?editors=001)
-
-[Here's a variation of the biomorphs example that displays candidates on a grid](http://codepen.io/grrrwaaa/pen/dGwWOz?editors=001)
-
-Possible extensions:
-
-- Make the fixed amounts (segment angles, lengths) variable over time, for animated biomorphs
-- Extend the alphabet with more drawing components
-- Show the creatures growth by interpreting less than the whole string during a childhood period
-- Extend into more complex *rewriting systems*, such as L-systems, by embedding *production rules*, to create evolutionary-developmental systems! I.e., the genome isn't interpreted immediately into graphics, but instead/also into the production of more code for interpreting. 
-
-The last point is important to consider. A convincing form of bilateral symmetry (something found in many organisms) can be achieved by L-system production rules, rather than by embedding this into the interpreter. 
-
----
-
-To draw in the Turtle style, we need to represent a turtle's properties, which are a position and a direction. Then, we can manipulate these properties to capture the turtle's movement, collecting points of a line as it moves. For example, here's a turtle drawing a square:
+To draw in the Turtle style, we need to represent a turtle's properties, which are a position and a direction. Then, we can manipulate these properties to capture the turtle's movement, collecting points of a line as it moves. We can start by building a function that creates a turtle, and uses it to collect points to draw a specific shape, such as a square.
 
 ```javascript
 function square() {
 	// turtle start state:
-	let p = new vec2(0.5, 0.5);
-	let dir = new vec2(0, 0.1);
+	let t = {
+		pos: new vec2(0.5, 0.5),
+		dir: new vec2(0, 0.1),
+	}
 	let lines = [];
 
 	// move forward, drawing a line:
-	lines.push(p.clone());  
-	p.add(dir) // move
-	lines.push(p.clone());
+	lines.push(t.pos.clone());  
+	t.pos.add(t.dir) // move
+	lines.push(t.pos.clone());
 
 	// rotate 90 degrees:
-	dir.rotate(Math.PI/2)
+	t.dir.rotate(Math.PI/2)
 
 	// move forward, drawing a line:
-	lines.push(p.clone());  
-	p.add(dir) // move
-	lines.push(p.clone());
+	lines.push(t.pos.clone());  
+	t.pos.add(t.dir) // move
+	lines.push(t.pos.clone());
 
 	// rotate 90 degrees:
-	dir.rotate(Math.PI/2)
+	t.dir.rotate(Math.PI/2)
 
 	// move forward, drawing a line:
-	lines.push(p.clone());  
-	p.add(dir) // move
-	lines.push(p.clone());
+	lines.push(t.pos.clone());  
+	t.pos.add(t.dir) // move
+	lines.push(t.pos.clone());
 
 	// rotate 90 degrees:
-	dir.rotate(Math.PI/2)
+	t.dir.rotate(Math.PI/2)
 
 	// move forward, drawing a line:
-	lines.push(p.clone());  
-	p.add(dir) // move
-	lines.push(p.clone());
+	lines.push(t.pos.clone());  
+	t.pos.add(t.dir) // move
+	lines.push(t.pos.clone());
 
 	return lines;
 }
@@ -456,46 +357,67 @@ let lines = square();
 draw2D.lines(lines);
 ```
 
+> Note: We have to be careful to insert copies of the turtle location (via `.clone()`) into the list of line points. If we didn't clone a copy of the point, we would end up with many references to the same ```vec2``` object in the list.
+
+It should be apparent that the code is highly repetitive. Conceptually, we could instead represent this as a data structure: a list of commands such as "forward, turn, forward, turn, forward, turn, forward". Let us rewrite our function as an **interpreter** of such a list of commands. A minimal alphabet & semantics could be something like this:
+
+- `F`: move forward one unit, drawing a line.
+- `+`: turn a certain amount to the left.
+- `-`: turn a certain amount to the right.
+
 ```javascript
-
-// this is what we want:
-let lines = interpret("F+F+F+F"); 
-draw2D.lines(lines);
-
-// this is how to do it:
-function interpret(encoded) {
-	// convert encoded input into a list of commands
-	// e.g. "F+F+F+F" => ["F", "+", "F", "+", "F", "+", "F"]
-	let commands = encoded.split(""); 
-
+function turtle_draw(commands, lines) {
 	// turtle start state:
-	let p = new vec2(0.5, 0.5);
-	let dir = new vec2(0, 0.1);
-	let lines = [];
-
-	for (let i=0; i<commands.length; i++) {
-		let cmd = commands[i];
-
+	let t = {
+		pos: new vec2(0.5, 0.5),
+		dir: new vec2(0, 0.1),
+	}
+	// interpret commands:
+	for (let cmd of commands) {
 		if (cmd == "F") {
 			// move forward, drawing a line:
-			lines.push(p.clone());  
-			p.add(dir) // move
-			lines.push(p.clone());
+			lines.push(t.pos.clone());  
+			t.pos.add(t.dir) // move
+			lines.push(t.pos.clone());
 		} else if (cmd == "+") {
 			// rotate 90 degrees:
-  			dir.rotate(Math.PI/2)
+			t.dir.rotate(Math.PI/2)
 		} else if (cmd == "-") {
-			// rotate -90 degrees:
-  			dir.rotate(-Math.PI/2)
-		}
+			// rotate 90 degrees:
+			t.dir.rotate(-Math.PI/2)
+		} 
 	}
-
-	return lines;
 }
+
+let lines = []
+turtle_draw("F+F+F+F".split(""), lines)
+draw2D.lines(lines);
 ```
 
-```javascript
+Now our code is not only shorter, it is far more powerful: it allows us to generate different shapes in a data-driven way, simply by passing in a different list of **commands**. It may already be tempting to think of what other commands we could add to this interpreter's capabilities.
 
+With this in place, we could now expand our vocabulary of actions in our mini-language. Here are some ideas:
+
+- **.**: do nothing
+- **f**: move forward half a unit, drawing a line
+- **>**: turn a different amount to the left
+- **<**: turn a different amount to the right
+- **/**: reduce the rotation angle in the current turtle
+- **\**: increase the rotation angle in the current turtle 
+
+We could also make our shapes more dynamic. For example, we could generate rotation angles in the function according to the current time (e.g. `let a = Math.sin(now)`). 
+  
+Turtle graphics can also create *fractals*, that is, objects with partial symmetries. One way of doing this is rather similar to how we created graphics state stacks with `draw2D.push()` and `pop()`: duplicating the current renderer for a sequence of operations, then returning to the prior coordinate space. With turtles being the renderer, can you imagine how to do these:
+
+- **(**: "push": spawn a clone of the turtle and continue interpreting
+- **)**: "pop": stop interpreting with the current turtle and return to its parent turtle
+- **=**: spawn a clone facing the opposite direction (for symmetry)
+- **|**: spawn a clone with reversed chirality (for symmetry)
+- etc.
+
+> Bearing in mind what we learned with the math solver, we could go one step further and turn the interpreter a **compiler**; a compiler is just an interpreter that *generates executable code* rather than *executes code*. We can take our interpreter and change all of its actions into the generation of strings of code, collecting all these lines of code into a big list. Finally, we join all those strings together (with newlines and/or semicolons) and convert them into a ```new Function``` as before. And, rather than building strings directly, we could select operators using numbers. With this we can take any arbitrary list of numbers and turn it into a re-usable graphics function! Here's an example of how this might look:
+
+```js
 // this is what we want to do:
 let square = compile("F+F+F+F");
 let lines = square(); 
@@ -512,7 +434,6 @@ function compile(encoded) {
 		"let dir = new vec2(0, 0.1);",
 		"let lines = [];"
 	]
-
 	// for each command, add more code:
 	for (let i=0; i<commands.length; i++) {
 		let cmd = commands[i];
@@ -521,24 +442,22 @@ function compile(encoded) {
 			code.push(
 				"// move forward, drawing a line:",
 				"lines.push(p.clone());",  
-				"p.add(dir) // move",
+				"p.add(dir);",
 				"lines.push(p.clone());"
 			);
 		} else if (cmd == "+") {
 			code.push(
 				"// rotate 90 degrees:",
-  				"dir.rotate(Math.PI/2)"
+  				"dir.rotate(Math.PI/2);"
 			);
 		} else if (cmd == "-") {
 			code.push(
 				"// rotate 90 degrees:",
-  				"dir.rotate(-Math.PI/2)"
+  				"dir.rotate(-Math.PI/2);"
 			);
 		}
 	}
-
 	code.push("return lines;");
-
 	// convert the resulting code into a string (with newlines)
 	let finalcode = code.join("\n");
 	// convert this into a Javascript Function:
@@ -547,26 +466,64 @@ function compile(encoded) {
 }
 ```
 
----
+### Biomorph genetics
 
----
+Since turtle graphics are generated from strings, they can be generated from string genomes! That is, we can create genotype strings as instructions for a "turtle graphics" interpreter to draw biomorph shapes. Which is therefore a function that maps genome strings into phenotypes, or into functions that create genotypes -- that is, the interpreter/compiler is the **development** component of artifiical evolution. 
 
----
+But first we need a population, and a method to generate random candidates of this population. 
+
+And, we need a way to show all the population members side-by-side or in a grid. We can re-use the `draw2D.push()` method to set up a grid of coordinate-frames per biomorph. If we have 16 candidates we can arrange in a 4x4 grid, using a simple method to convert population index to grid row/column and vice versa:
+
+```js
+// get number of columns/rows from population size:
+let cols = Math.ceil(Math.sqrt(pop.length))
+
+// get row/col from population index `i`
+let row = Math.floor(i/cols);
+let col = i % cols;
+
+// get population index from row, col
+let index = row*cols + col;
+```
+
+With the above methods we can lay out the candidates in space; and, we can use the mouse to select a new individual as the parent of a new generation:
+
+```js
+function mouse(kind, pt) {
+	// scale point up to grid size:
+	let col = Math.floor(pt[0] * cols);
+	let row = Math.floor(pt[1] * cols);
+	let index = row*cols + col;
+
+	// now create a new generation with `pop[index]`...
+}
+```
+
+For the new generation we want to apply mutations to the chosen genotype and thus produce variants. One of the advantages of using lists (of symbols or numbers) as genotypes is the flexibility to perform different kinds of mutations. The following are all effective mutations that are comparable to those that happen with DNA:
+
+- Replace an element with another randomly chosen from the lexicon
+- At a random location, remove a element
+- At a random location, insert a element randomly chosen from the alphabet
+- Split the list into two parts, and join them the other way around
+- Repeat a subsection of the list
+- Reverse, or shuffle, a subsection of the list
+- Combine a section of one list with a section of another
+	
+> Some of these mutations can change the length of the string. It may be advisable to add limits on the minimum or maximum length of the string mutations can produce.
+
+Some of these are implemented here, along with a few extensions:
+- Making the fixed amounts (segment angles, lengths) variable over time, for animated biomorphs
+- Extending the alphabet with more drawing components
+- Showing the creatures growth by interpreting less than the whole string during a childhood period
+
+---codepen:https://codepen.io/grrrwaaa/pen/dGwWOz
+
+An interesting challenge could be to extend this into more complex *rewriting systems*, such as L-systems, by embedding *production rules*, to create evolutionary-developmental systems! I.e., the genome isn't necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting. This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. In fact one of the most important operations DNA performs is to regulate itself: some parts of our genetic code enable or disable other parts our genetic code, in a complex [**regulatory network**](https://en.wikipedia.org/wiki/Gene_regulatory_network). 
 
 
-**Artificial evolution** is a form of computational simulation whose process mirrors the abstract structure of natural evolution:
+<!--
 
-- Maintain a population of finite individuals (which can reproduce)
-- Support variation (including new characteristics) in the population
-- Provide a mechanism of heredity between generations
-- Provide a mechanism of selection 
-
-The main systematic differences are that the underlying mechanisms specified by us in advance, as are the initial populations and the method of selection and/or environmental conditions. And of course, artificial evolution occurs in a much simpler substrate than real chemistry.
-
-[A fantastic list of practical applications of genetic algorithm & evolutionary programming](http://www.talkorigins.org/faqs/genalg/genalg.html#examples) 
-
-
-### Genetic representation
+### Genetic representations
 
 Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits. Some systems use more elaborate structures (trees, networks), but these are usually reducible to and encoded as  linear sequences. After all, our genes wind up in complex structures with different reactive regions, but at the lowest level are just a long singular chain of A, G, C or T molecules.
 
@@ -574,28 +531,9 @@ The simplest systems have a fixed length, but nature shows quite a lot of varian
 
 Initializing the genotypes implies generating randomized candidates that stay within its bounds but hopefully give a sufficiently diverse range of the possibilities of the genotype. For a simple sequence of bits, symbols, or numbers, this is fairly easy to do.
 
-### Development
+#### Development
 
-In some systems the developmental process is little more than a trivial mapping, but this potentially misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
-
-### Selection
-
-**For problem solving in data mining, engineering, design, architecture, etc.**: If the fitness criterion is static and designed around a particular problem we wish to find a solution for, evolution can help evaluate & test candidate solutions and selectively breed them to produce better solutions, ideally converging on an optimal one, without having to understand or derive by proof. It is a form of optimization. However this process may take a long time or a lot of processing power to find a satisfactory result, or may not reach a result at all. Not all problems are suitable for evolutionary search.
-
-Evidently, these systems differ markedly from natural evolution by having a static measure, and thus a singular teleological character, a meaningful sense of progress, across the entire history of the system. This is more akin to *selective breeding* than natural evolution. 
-
-Note that simply taking the best candidate alone is not necessarily the ideal strategy; selecting randomly by proportion to fitness ("roulette wheel" selection) may better overcome local maxima.
-
-**For art, music, and other less formalized domains** we may need to consider other methods of selection, since a formal measure may not be possible, or the problem may not be clearly statable in advance. E.g. can we measure aesthetic quality in formal terms?
-
-- Interactive **aesthetic selection**. Pioneered by Dawkins' Biomorphs program and Karl Sims' evolved images, in which several candidates are presented to human observers, who apply the selection manually. Also known as aesthetic selection. A problem here is that the human becomes the bottleneck of evolution, constraining population sizes and rates of evolution to very small scales. It may arguably also tend toward selecting for the aesthetic average rather than the remarkable.
-	- An interesting variation is to make the selection continuous and implicit. Jon McCormack's Eden measured fitness globally according to how long gallery visitors remained in front of a particular evolving sub-population.
-	- Examples of aesthetic selection from previous classes
-		- [Malevich Generator by Sophie Roginsky](http://codepen.io/grrrwaaa/pen/mrZqoK?editors=0010)
-		- [Strange Attractor by Rose Zhou](http://codepen.io/grrrwaaa/pen/vXqWwj?editors=0010)
-- Evolved/evolving selection. First evolve a population of artificial art critics, trained from human-evaluated examples, and then use these to apply selection criteria to a population of candidate artworks. Some projects have also proposed a form where one population represents the candidate products, and the other population represents artificial critics.
-- A viability-oriented form of artificial evolution may be used for more theoretical and aesthetic branches of artificial life research. The viability measure arises as an emergent property of underlying laws of the world, such as the requirement to maintain energetic/metabolic balance or to maintain structural integrity, as well as the collective effects of multiple species and non-living dynamics within the environment. For this reason it is sometimes referred to as *ecosystemic selection*. [See discussion here](http://link.springer.com/chapter/10.1007%2F978-3-540-78761-7_42). This may still incorporate indirect interaction from human agents if desired.
-
+In some systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
 
 ### Variation
 
@@ -609,9 +547,13 @@ The mechanisms of variation possible partly depend on the representation chosen.
 
 As with temperature-like parameters we saw in CA, a crucial factor in evolution is the rate or probability of variation. Too much, and the population may never significantly diverge from a randomly initialized one; too little, and it may find itself stuck on the first solution it finds, with a largely homogenous population. It may be wise to have different mutation rates for different genes, or for different members of a population, or by fitness rank etc. It is likely desirable to gradually reduce mutation rates over time, unless the population appears to be stagnating. (See also simulated annealing.)
 
-----
+---
+
 
 ## Development & meta-evolution
+
+In some systems the developmental process is little more than a trivial mapping, but this potentially misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
+
 
 In some cases, there may be several stages of code development. The biomorphs example hints at this, and already grants built-in symmetries and modular structures as are frequently found in nature -- this is partly why we respond to them. But the developmental approach can be taken much further. Sims' evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape, but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neural program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. 
 
@@ -991,3 +933,5 @@ Darwin's theory is sometimes misconceived as "survival of the fittest" or even t
 
 - To support diversity, an environment must be complex enough to provide multiple methods of making a living (**evolutionary "niches"**). There is a cybernetic theory that, for life to take advantage of the variety of niches present in an environment, and the variety of problems to overcome, life must have a corresponding **requisite variety** with which to adapt; that is, sufficient potential diversity.  
    - **Evolution alone is not creative**, and its importance may have been over-stated. The theory of natural selection does not account for how novel diversity and new characteristics arise; it merely requires that such a mechanism exists, which usually is assumed to operate primarily during reproduction.  
+
+-->

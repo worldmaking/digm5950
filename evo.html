@@ -37,42 +37,15 @@ footer {
 <li><a href="#some-inspiration">Some inspiration</a></li>
 </ul>
 </li>
-<li><a href="#a-simple-math-solver">A simple math solver</a><ul>
-<li><a href="#tournament-selection">Tournament Selection</a></li>
-<li><a href="#genetic-representation">Genetic representation</a></li>
-<li><a href="#development">Development</a></li>
+<li><a href="#a-simple-arithmetic-genetic-algorithm">A simple arithmetic genetic algorithm</a><ul>
+<li><a href="#visualizing-the-evolution">Visualizing the evolution</a></li>
+<li><a href="#observations">Observations</a></li>
+</ul>
+</li>
 <li><a href="#selection">Selection</a></li>
-<li><a href="#variation">Variation</a></li>
-</ul>
-</li>
-<li><a href="#aesthetic-selection-of-biomorphs">Aesthetic selection of biomorphs</a><ul>
+<li><a href="#aesthetic-selection-of-biomorphs">Aesthetic selection of Biomorphs</a><ul>
 <li><a href="#aside-turtle-graphics">Aside: Turtle graphics</a></li>
-<li><a href="#genetic-representation-1">Genetic representation</a></li>
-<li><a href="#development-1">Development</a></li>
-<li><a href="#selection-1">Selection</a></li>
-<li><a href="#variation-1">Variation</a></li>
-</ul>
-</li>
-<li><a href="#development--meta-evolution">Development &amp; meta-evolution</a></li>
-<li><a href="#agent-based-evolution">Agent-based evolution</a><ul>
-<li><a href="#viability-based-selection-and-ecosystemic-evolution">Viability-based selection and ecosystemic evolution</a></li>
-<li><a href="#parametric-variation">Parametric variation</a></li>
-<li><a href="#energy-conservation-and-global-adaptive-constraints">Energy conservation and global adaptive constraints</a></li>
-<li><a href="#the-genetic-representation">The Genetic Representation</a></li>
-<li><a href="#programmatic-variation">Programmatic variation</a></li>
-</ul>
-</li>
-<li><a href="#an-ecosystemic-evolving-agent-environment-world">An ecosystemic, evolving agent-environment world</a></li>
-<li><a href="#genetic-programming">Genetic Programming</a><ul>
-<li><a href="#interpretation-development">Interpretation (development)</a></li>
-<li><a href="#choice-of-primitive-set">Choice of primitive set</a></li>
-<li><a href="#seed-generation">Seed generation</a></li>
-<li><a href="#mutations-and-recombinations">Mutations and recombinations</a></li>
-<li><a href="#alternative-representations">Alternative representations</a></li>
-</ul>
-</li>
-<li><a href="#further-reading">Further reading</a><ul>
-<li><a href="#subtleties-and-misconceptions">Subtleties and misconceptions</a></li>
+<li><a href="#biomorph-genetics">Biomorph genetics</a></li>
 </ul>
 </li>
 </ul>
@@ -168,7 +141,7 @@ Emphasize:
 <p><a href="http://www.talkorigins.org/faqs/genalg/genalg.html#examples">A fantastic list of practical applications of genetic algorithm &amp; evolutionary programming</a> </p>
 <p>An excellent discussion of <a href="http://www.youtube.com/watch?v=50-d_J0hKz0">the genetic algorithm in art and its relation to Deleuze, by Manuel Delanda</a></p>
 <hr>
-<h2 id="a-simple-math-solver">A simple math solver</h2>
+<h2 id="a-simple-arithmetic-genetic-algorithm">A simple arithmetic genetic algorithm</h2>
 <p>As a simple starting point, let&#39;s consider the space of <em>simple arithmetic</em> as our environment. Arithmietic is a good, non-trivial space because a) there are many ways to arrive at a solution, and b) there are many cases where the solution isn&#39;t obvious at the outset. It is also good, because arithmetic statements can be constructed from a very simple alphabet of terms: </p>
 <pre><code class="language-javascript"><span class="hljs-keyword">let</span> dictionary = [<span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;-&quot;</span>, <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-string">&quot;/&quot;</span>, <span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-string">&quot;2&quot;</span>, <span class="hljs-string">&quot;3&quot;</span>, <span class="hljs-string">&quot;4&quot;</span>, <span class="hljs-string">&quot;5&quot;</span>, <span class="hljs-string">&quot;6&quot;</span>, <span class="hljs-string">&quot;7&quot;</span>, <span class="hljs-string">&quot;8&quot;</span>, <span class="hljs-string">&quot;9&quot;</span>, <span class="hljs-string">&quot;0&quot;</span>];</code></pre>
 <p>The selection criterion can be how effectively an arithmetic expression computes a desired target number. To make things interesting, let&#39;s make the target an <em>irrational</em> number, such as the value of PI:</p>
@@ -251,6 +224,7 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
  }</code></pre>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="RwRMQdZ" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/RwRMQdZ">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
+<h3 id="visualizing-the-evolution">Visualizing the evolution</h3>
 <p>With this in play, we might already see some clear evolutionary behaviour.  </p>
 <p>But it&#39;s hard to see what&#39;s actually going on, with so many individuals flying by on each frame. To make sense of what&#39;s going on, we can introduce some statistical graphing. We can divide up the canvas into quadrants using <code>draw2D.push().scale(0.5).translate(x, y)</code> and <code>draw2D.pop()</code>, which will make it easier to separate graphs. Let&#39;s graph the following:</p>
 <ul>
@@ -273,6 +247,7 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <span class="hljs-keyword">let</span> stddev = <span class="hljs-built_in">Math</span>.sqrt(pop.reduce(<span class="hljs-function">(<span class="hljs-params">s, a</span>) =&gt;</span> s + <span class="hljs-built_in">Math</span>.pow(a.fitness - mean, <span class="hljs-number">2</span>)/pop.length, <span class="hljs-number">0</span>))</code></pre>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="dyXMEaq" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/dyXMEaq">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
+<h3 id="observations">Observations</h3>
 <p>Armed with these statistical data-visualization perspectives, and by observing the behaviour, what insights can you draw, and what ideas have you for improving it?</p>
 <ul>
 <li><p>You may notice <a href="https://en.wikipedia.org/wiki/Punctuated_equilibrium">punctuated equilibria</a>. Run the simulation many times (hit enter), and you may notice that the fittest candidate is not always converging to the same result. There are clearly multiple distant fitness peaks here. Does it sometimes seem to get stuck? Can you suggest why? Can you think of any way to modify the mutation, evaluation, or even the genetic representation to overcome this?</p>
@@ -292,62 +267,37 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <li><p>Can you think of a way to allow different genome sizes? Can we factor in shorter genomes as a positive fitness trait?</p>
 </li>
 </ul>
-<p>What other problems could you imagine addressing, other than calculating numbers? (What kinds of problems is this method suited for?)</p>
-<h3 id="tournament-selection">Tournament Selection</h3>
-<p>We can continue using the <em>fitness-proportionate</em> selection as before, via stochastic universal sampling, however many systems use a different form of selection known as <strong>tournament selection</strong>, in which a number of individuals are chosen at random from the population to create a temporary neighbourhood set, and the fittest of this neighbourhood set is chosen as parent to create a new individual. (Or sometimes, a weighted probability veering toward the fittest in the neighbourhood set, to make it less deterministic.) In pseudo-code:</p>
-<pre><code class="language-js">    new_population = []
-    <span class="hljs-keyword">for</span> each child {
-        set = []    
-        <span class="hljs-keyword">for</span> i = <span class="hljs-number">0</span>, n {
-            set.push( get_random_item(population) )
-        }
-        set.sort(fitness_comparator)
-        parent = set[<span class="hljs-number">0</span>]
-        child = clone(parent)
-        <span class="hljs-comment">// apply mutations</span>
-        new_population.push(child)
-    }
-    population = new_population</code></pre>
-<p>In part this helps to mirror the spatial/network effects of populations, in that it is unlikely for every member of a population to meet every other; selection is made on the somewhat random subset of the population that is encountered.</p>
-<p>Selection pressure is easily adjusted by changing the tournament neighbourhood set size. If the size is larger, weak individuals have a smaller chance to be selected. </p>
-<p><a href="http://codepen.io/grrrwaaa/pen/zrLZvK?editors=001">Here&#39;s the Pi hunting example modified to use probabilistic tournament selection</a></p>
+<p>Obviously, computing Pi is a &#39;toy problem&#39;, and not especially useful other than in revealing certain characteristics of artificial evolution, but the genetic algorithm can be applied to much more interesting and useful problems. What other problems could you imagine using it for? More generally, what kinds of problems might this method suited for? What kinds of problems might it not?</p>
+<p>The genetic algorithm as presented here is one of the simplest kinds of artificial evolution; we can look at different approaches to each of its aspects, such as genetic representation, variation, selection, etc. </p>
 <hr>
-<h3 id="genetic-representation">Genetic representation</h3>
-<p>Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits. Some systems use more elaborate structures (trees, networks), but these are usually reducible to and encoded as  linear sequences. After all, our genes wind up in complex structures with different reactive regions, but at the lowest level are just a long singular chain of A, G, C or T molecules. The simplest systems have a fixed length, but nature shows quite a lot of variance (not particularly correlated with the size, complexity, or evolutionary age of a species). </p>
-<h3 id="development">Development</h3>
-<p>In some systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. </p>
-<h3 id="selection">Selection</h3>
+<h2 id="selection">Selection</h2>
 <p><strong>For problem solving in data mining, engineering, design, architecture, etc.</strong>: If the fitness criterion is static and designed around a particular problem we wish to find a solution for, evolution can help evaluate &amp; test candidate solutions and selectively breed them to produce better solutions, ideally converging on an optimal one, without having to understand or derive by proof. It is a form of optimization. However this process may take a long time or a lot of processing power to find a satisfactory result, or may not reach a result at all. Not all problems are suitable for evolutionary search.</p>
-<p>Evidently, these systems differ markedly from natural evolution by having a static measure, and thus a singular teleological character, a meaningful sense of progress, across the entire history of the system. This is more akin to <em>selective breeding</em> than natural evolution. </p>
-<p>Note that simply taking the best candidate alone is not necessarily the ideal strategy; selecting randomly by proportion to fitness (&quot;roulette wheel&quot; selection) may better overcome local maxima.</p>
+<blockquote>
+<p>Note that simply taking the best candidate alone is not necessarily the ideal strategy; selecting randomly by proportion to fitness (&quot;roulette wheel&quot; selection) may better overcome local maxima. However many systems use a different form of selection known as <strong>tournament selection</strong>, in which a number of individuals are chosen at random from the population to create a temporary neighbourhood set, and a fitness-skewed selection is made from that set. In part this helps to mirror the spatial/network effects of populations, in that it is unlikely for every member of a population to meet every other; selection is made on the somewhat random subset of the population that is encountered. Selection pressure is easily adjusted by changing the tournament neighbourhood set size. <a href="http://codepen.io/grrrwaaa/pen/zrLZvK?editors=001">Here&#39;s the Pi hunting example modified to use probabilistic tournament selection</a></p>
+</blockquote>
+<p>Evidently, these systems differ markedly from natural evolution by having a static measure, and thus a singular teleological character, a meaningful sense of progress, across the entire history of the system. This is a pragatic approach, and highly artificial: there is no absolute or static fitness function in biology.</p>
 <p><strong>For art, music, and other less formalized domains</strong> we may need to consider other methods of selection, since a formal measure may not be possible, or the problem may not be clearly statable in advance. E.g. can we measure aesthetic quality in formal terms?</p>
 <ul>
-<li>Interactive selection. Pioneered by Dawkins&#39; Biomorphs program and Karl Sims&#39; evolved images, in which several candidates are presented to human observers, who apply the selection manually. Also known as aesthetic selection. A problem here is that the human becomes the bottleneck of evolution, constraining population sizes and rates of evolution to very small scales. It may arguably also tend toward selecting for the aesthetic average rather than the remarkable.<ul>
-<li>Examples of aesthetic selection from previous classes<ul>
+<li>Interactive selection. Pioneered by Dawkins&#39; Biomorphs (see below) and Karl Sims&#39; evolved images, in which several candidates are presented to human observers, who apply the selection manually. Also known as <strong>aesthetic selection</strong>. It is more like <strong>selective breeding</strong> than natural evolution. <ul>
+<li>Examples of aesthetic selection from previous classes:<ul>
 <li><a href="http://codepen.io/grrrwaaa/pen/mrZqoK?editors=0010">Malevich Generator by Sophie Roginsky</a></li>
 <li><a href="http://codepen.io/grrrwaaa/pen/vXqWwj?editors=0010">Strange Attractor by Rose Zhou</a></li>
 </ul>
 </li>
-<li>An interesting variation is to make the selection continuous and implicit. Jon McCormack&#39;s Eden measured fitness globally according to how long gallery visitors remained in front of a particular evolving sub-population.</li>
+<li>A problem here is that the human becomes the bottleneck of evolution, constraining population sizes and rates of evolution to very small scales. <ul>
+<li>Opening up the system to online interaction is one way to scale a system to the massive numbers of generations needed.</li>
+</ul>
+</li>
+<li>It may also tend toward selecting for the aesthetic average rather than the remarkable; or toward the human-centric rather than the abstract. See <a href="http://picbreeder.org">Picbreeder</a> for a current variation on Karl Sims&#39; idea. What do you notice about the highly-ranked images?</li>
+<li>An interesting variation, which might reduce these problems, is to make the selection continuous and implicit. <a href="http://jonmccormack.info/artworks/eden/">Jon McCormack&#39;s Eden</a> measured fitness globally according to how long gallery visitors remained in front of a particular evolving sub-population.</li>
 </ul>
 </li>
 <li>Evolved/evolving selection. First evolve a population of artificial art critics, trained from human-evaluated examples, and then use these to apply selection criteria to a population of candidate artworks. Some projects have also proposed a form where one population represents the candidate products, and the other population represents artificial critics.</li>
-<li>A viability-oriented form of artificial evolution may be used for more theoretical and aesthetic branches of artificial life research. The viability measure arises as an emergent property of underlying laws of the world, such as the requirement to maintain energetic/metabolic balance or to maintain structural integrity, as well as the collective effects of multiple species and non-living dynamics within the environment. For this reason it is sometimes referred to as <em>ecosystemic selection</em>. <a href="http://link.springer.com/chapter/10.1007%2F978-3-540-78761-7_42">See discussion here</a>. This may still incorporate indirect interaction from human agents if desired.</li>
+<li>A viability-oriented form of artificial evolution may be used for more theoretical and aesthetic branches of artificial life research. The viability measure arises as an emergent property of underlying complexity of the world, such as the requirement to maintain energetic/metabolic balance or to maintain structural integrity, as well as the collective effects of multiple species and non-living dynamics within the environment. For this reason it is sometimes referred to as <strong>ecosystemic selection</strong>. <a href="http://link.springer.com/chapter/10.1007%2F978-3-540-78761-7_42">See discussion here</a>. This may still incorporate indirect interaction from human agents if desired.</li>
 </ul>
-<h3 id="variation">Variation</h3>
-<p>The mechanisms of variation possible partly depend on the representation chosen. The two most common principles of variation in artificial evolution are naturally inspired:</p>
-<ul>
-<li>Random <strong>mutation</strong>; akin to errors copying DNA. If the genome is represented as a binary string, then random locations in the string may be replaced by new random characters. For example, a parent &quot;dog&quot; could produce children such as &quot;fog&quot;, &quot;dqg&quot;, and so on. Obviously some mutations will not create viable individuals.</li>
-<li>Sexual <strong>cross-over</strong>: akin to sexual reproduction in biology. As a binary string, the child takes the first fraction from one parent, and the remainder from the other. For example, breeding the strings &quot;dog&quot; and &quot;cat&quot; could generate children such as &quot;dot&quot;, &quot;dat&quot;, &quot;cag&quot; and &quot;cog&quot;. </li>
-<li>Other forms of fragment <strong>recombination</strong>, such as insertion, deletion, reversal. So a more flexible system might also permit &quot;doat&quot;, &quot;caog&quot;, &quot;dt&quot;, &quot;tac&quot;, etc. </li>
-</ul>
-<blockquote>
-<p>Why use reproduction for evolution? In the face of an unpredictable environment, we cannot know which strategy will be best; we can try small variations, and hedge our bets by making very many of them (population diversity). An individual loss is not catastrophic, but a few successes can be learned from. Furthermore, the face of unpredictibility implies that what was true today may not be tomorrow, so the flexibility to avoid timeless commitment is also a good strategy; but the inheritance of choices is a useful option when the environment retains some stability. If the world were fully predictable, a rational, teleological, monothematic strategy would be preferable. But the world isn&#39;t totally random either (if it was, there would be no valid strategy worth pursuing.) </p>
-</blockquote>
-<p>As with temperature-like parameters we saw in CA, a crucial factor in evolution is the rate or probability of variation. Too much, and the population may never significantly diverge from a randomly initialized one; too little, and it may find itself stuck on the first solution it finds, with a largely homogenous population. It may be wise to have different mutation rates for different genes, or for different members of a population, or by fitness rank etc. It is likely desirable to gradually reduce mutation rates over time, unless the population appears to be stagnating. (See also simulated annealing.)</p>
 <hr>
-<h2 id="aesthetic-selection-of-biomorphs">Aesthetic selection of biomorphs</h2>
-<p>Biomorphs are virtual entities that were devised by Richard Dawkins in his book <a href="https://en.wikipedia.org/wiki/The_Blind_Watchmaker">The Blind Watchmaker</a> as a way to visualize the power of evolution. Dawkins used a simple symbolic rendering of lines at fixed angles, grown in a kind of tree structure, as his phenotypes. Of a given generation, he selected the biomorph he found most aesthetically pleasing, making this the parent of the next generation.</p>
+<h2 id="aesthetic-selection-of-biomorphs">Aesthetic selection of Biomorphs</h2>
+<p>Biomorphs are virtual entities that were devised by Richard Dawkins in his book <a href="https://en.wikipedia.org/wiki/The_Blind_Watchmaker">The Blind Watchmaker</a> as a way to visualize the power of evolutionary processes. Dawkins used a simple symbolic rendering of lines at limited angles, grown in a kind of tree structure, as his phenotypes. Of a given generation, he selected the biomorph he found most aesthetically pleasing, making this the parent of the next generation.</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/f/fc/BiomorphBounce.png" alt="biomorph"></p>
 <blockquote>
 <p>Adding new lines (or removing them) based on simple developmental rules offered a discrete set of possible new shapes (mutations), which were displayed on screen so that the user could choose between them. The chosen mutation would then be the basis for another generation of biomorph mutants to be chosen from, and so on. Thus, the user, by selection, could steer the evolution of biomorphs. This process often produced images which were reminiscent of real organisms for instance beetles, bats, or trees. Dawkins speculated that the unnatural selection role played by the user in this program could be replaced by a more natural agent if, for example, colourful biomorphs could be selected by butterflies or other insects, via a touch sensitive display set up in a garden.</p>
@@ -355,141 +305,113 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <p><a href="http://www.mountimprobable.com">Check out this biomorphs recreation online!</a></p>
 <p>One of the simplest ways to create a biomorph is to interpret strings as instructions for another program. The genotype is a string of symbols, the phenotype is the graphics that result. The classic example is using them as instructions for a &quot;turtle graphics&quot; interpreter. </p>
 <h3 id="aside-turtle-graphics">Aside: Turtle graphics</h3>
-<p>We&#39;d like to generate biomorphs in a similar way. What we want to create is a function that maps genome strings into biomorph shapes. The genotype is a string of symbols, the phenotype is the graphics that result. </p>
-<p>The biomorphs are all made out of simple line drawings. For efficiency, we can use the <code>draw2D.lines()</code> method to draw a list of lines at once. Here&#39;s how it works:</p>
+<p>We&#39;d like to generate biomorphs in a similar way. The biomorphs are all made out of simple line drawings. For efficiency, we can use the <code>draw2D.lines()</code> method to draw a list of lines at once. Here&#39;s how it works:</p>
 <pre><code class="language-javascript"><span class="hljs-comment">// draws a plus (two pairs of points for each line)</span>
 <span class="hljs-built_in">draw2D</span>.lines([
     [<span class="hljs-number">0.2</span>, <span class="hljs-number">0</span>], [<span class="hljs-number">0.8</span>, <span class="hljs-number">0</span>], <span class="hljs-comment">// the horizontal line</span>
     [<span class="hljs-number">0</span>, <span class="hljs-number">0.2</span>], [<span class="hljs-number">0</span>, <span class="hljs-number">0.8</span>], <span class="hljs-comment">// the vertical line</span>
 ]);</code></pre>
-<p>The classic example is using the genotype strings as instructions for a &quot;turtle graphics&quot; interpreter. A minimal alphabet &amp; semantics could be something like this:</p>
-<ul>
-<li><strong>F</strong>: move forward one unit, drawing a line.</li>
-<li><strong>+</strong>: turn a certain amount to the left.</li>
-<li><strong>-</strong>: turn a certain amount to the right.</li>
-</ul>
-<p>To draw in the Turtle style, we need to represent a turtle&#39;s properties, which are a position and a direction. Then, we can manipulate these properties to capture the turtle&#39;s movement, collecting points of a line as it moves. </p>
-<p>We can start by building a function that creates a turtle, and uses it to collect points to draw a specific shape, such as a square.</p>
-<p>Be careful to insert copies of the turtle location into the list of line points, rather than insert a reference. If we didn&#39;t clone a copy of the point, we would end up with many references to the same <code>vec2</code> object in the list.</p>
-<p>It should be apparent that the code is highly repetitive. Conceptually, we could instead represent this as a data structure: a list of commands such as &quot;forward, turn, forward, turn, forward, turn, forward&quot;. Let us rewrite our function as an <strong>interpreter</strong> of such a list of commands. This becomes powerful as it would allow us to generate different shapes in a data-driven way, simply by passing in a list of <strong>commands</strong>. We could even compress these commands to simple turtle mnemonics, of <code>&quot;F+F+F+F&quot;</code>.</p>
-<p>Once we have an interpreter, we could go one step further and turn into a <strong>compiler</strong>; a compiler is just an interpreter that <em>generates executable code</em> rather than <em>executes code</em>. We can take our interpreter and change all of its actions into the generation of strings of code, collecting all these lines of code into a big list. Finally, we join all those strings together (with newlines between) and convert them into a <code>new Function</code>. With this we can generate any arbitrary string of commands and turn it into a re-usable graphics function!</p>
-<p>And, of course, since these functions are generated from strings, they can be generated from string genomes!</p>
-<hr>
-<p>With this in place, we could now expand our vocabulary of actions in our mini-language, to include things like these:</p>
-<ul>
-<li><strong>f</strong>: move forward half a unit, drawing a line.</li>
-<li><strong>&gt;</strong>: turn a different amount to the left.</li>
-<li><strong>&lt;</strong>: turn a different amount to the right.</li>
-<li><strong>(</strong>: &quot;push&quot;: spawn a clone of the turtle and continue interpreting</li>
-<li><strong>)</strong>: &quot;pop&quot;: stop interpreting with the current turtle and return to its parent turtle</li>
-<li><strong>=</strong>: face the opposite direction; (possibly also push with a copy of the remaining code for symmetry)</li>
-<li><strong>|</strong>: swap left/right chirality; (possibly also push with a copy of the remaining code for symmetry)</li>
-<li><strong>.</strong>: do nothing</li>
-<li>etc.</li>
-</ul>
-<p>We could also make our shapes more dynamic. For example, we could generate rotation angles in the function according to the current time (e.g. <code>let a = Math.sin(now)</code>). </p>
-<p>One of the advantages of using strings of symbols as genotypes is their readability, but another is the flexibility to perform different kinds of mutations:</p>
-<ul>
-<li>Replace a symbol with another randomly chosen from the alphabet</li>
-<li>At a random location, remove a symbol</li>
-<li>At a random location, insert a symbol randomly chosen from the alphabet</li>
-<li>Split the string into two parts, and join them the other way around</li>
-<li>Repeat a subsection of the string</li>
-<li>Reverse, or shuffle, a subsection of the string</li>
-</ul>
-<blockquote>
-<p>Some of these mutations can change the length of the string. It may be advisable to add limits on the minimum or maximum length of the string mutations can produce.</p>
-</blockquote>
-<p>Now we can show all members of a generation side-by-side, and use the mouse to choose the member we prefer to form the parent of the next generation.</p>
-<p>See this example of <a href="http://codepen.io/grrrwaaa/pen/BjvQLq?editors=001">evolving biomorphs</a></p>
-<p><a href="http://codepen.io/grrrwaaa/pen/dGwWOz?editors=001">Here&#39;s a variation of the biomorphs example that displays candidates on a grid</a></p>
-<p>Possible extensions:</p>
-<ul>
-<li>Make the fixed amounts (segment angles, lengths) variable over time, for animated biomorphs</li>
-<li>Extend the alphabet with more drawing components</li>
-<li>Show the creatures growth by interpreting less than the whole string during a childhood period</li>
-<li>Extend into more complex <em>rewriting systems</em>, such as L-systems, by embedding <em>production rules</em>, to create evolutionary-developmental systems! I.e., the genome isn&#39;t interpreted immediately into graphics, but instead/also into the production of more code for interpreting. </li>
-</ul>
-<p>The last point is important to consider. A convincing form of bilateral symmetry (something found in many organisms) can be achieved by L-system production rules, rather than by embedding this into the interpreter. </p>
-<hr>
-<p>To draw in the Turtle style, we need to represent a turtle&#39;s properties, which are a position and a direction. Then, we can manipulate these properties to capture the turtle&#39;s movement, collecting points of a line as it moves. For example, here&#39;s a turtle drawing a square:</p>
+<p>To draw in the Turtle style, we need to represent a turtle&#39;s properties, which are a position and a direction. Then, we can manipulate these properties to capture the turtle&#39;s movement, collecting points of a line as it moves. We can start by building a function that creates a turtle, and uses it to collect points to draw a specific shape, such as a square.</p>
 <pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">square</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-comment">// turtle start state:</span>
-    <span class="hljs-keyword">let</span> p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>);
-    <span class="hljs-keyword">let</span> dir = <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0.1</span>);
+    <span class="hljs-keyword">let</span> t = {
+        <span class="hljs-attr">pos</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>),
+        <span class="hljs-attr">dir</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0.1</span>),
+    }
     <span class="hljs-keyword">let</span> lines = [];
 
     <span class="hljs-comment">// move forward, drawing a line:</span>
-    lines.push(p.clone());  
-    p.add(dir) <span class="hljs-comment">// move</span>
-    lines.push(p.clone());
+    lines.push(t.pos.clone());  
+    t.pos.add(t.dir) <span class="hljs-comment">// move</span>
+    lines.push(t.pos.clone());
 
     <span class="hljs-comment">// rotate 90 degrees:</span>
-    dir.rotate(<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
+    t.dir.rotate(<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
 
     <span class="hljs-comment">// move forward, drawing a line:</span>
-    lines.push(p.clone());  
-    p.add(dir) <span class="hljs-comment">// move</span>
-    lines.push(p.clone());
+    lines.push(t.pos.clone());  
+    t.pos.add(t.dir) <span class="hljs-comment">// move</span>
+    lines.push(t.pos.clone());
 
     <span class="hljs-comment">// rotate 90 degrees:</span>
-    dir.rotate(<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
+    t.dir.rotate(<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
 
     <span class="hljs-comment">// move forward, drawing a line:</span>
-    lines.push(p.clone());  
-    p.add(dir) <span class="hljs-comment">// move</span>
-    lines.push(p.clone());
+    lines.push(t.pos.clone());  
+    t.pos.add(t.dir) <span class="hljs-comment">// move</span>
+    lines.push(t.pos.clone());
 
     <span class="hljs-comment">// rotate 90 degrees:</span>
-    dir.rotate(<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
+    t.dir.rotate(<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
 
     <span class="hljs-comment">// move forward, drawing a line:</span>
-    lines.push(p.clone());  
-    p.add(dir) <span class="hljs-comment">// move</span>
-    lines.push(p.clone());
+    lines.push(t.pos.clone());  
+    t.pos.add(t.dir) <span class="hljs-comment">// move</span>
+    lines.push(t.pos.clone());
 
     <span class="hljs-keyword">return</span> lines;
 }
 
 <span class="hljs-keyword">let</span> lines = square();
 <span class="hljs-built_in">draw2D</span>.lines(lines);</code></pre>
-<pre><code class="language-javascript">
-<span class="hljs-comment">// this is what we want:</span>
-<span class="hljs-keyword">let</span> lines = interpret(<span class="hljs-string">&quot;F+F+F+F&quot;</span>); 
-<span class="hljs-built_in">draw2D</span>.lines(lines);
-
-<span class="hljs-comment">// this is how to do it:</span>
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">interpret</span>(<span class="hljs-params">encoded</span>) </span>{
-    <span class="hljs-comment">// convert encoded input into a list of commands</span>
-    <span class="hljs-comment">// e.g. &quot;F+F+F+F&quot; =&gt; [&quot;F&quot;, &quot;+&quot;, &quot;F&quot;, &quot;+&quot;, &quot;F&quot;, &quot;+&quot;, &quot;F&quot;]</span>
-    <span class="hljs-keyword">let</span> commands = encoded.split(<span class="hljs-string">&quot;&quot;</span>); 
-
+<blockquote>
+<p>Note: We have to be careful to insert copies of the turtle location (via <code>.clone()</code>) into the list of line points. If we didn&#39;t clone a copy of the point, we would end up with many references to the same <code>vec2</code> object in the list.</p>
+</blockquote>
+<p>It should be apparent that the code is highly repetitive. Conceptually, we could instead represent this as a data structure: a list of commands such as &quot;forward, turn, forward, turn, forward, turn, forward&quot;. Let us rewrite our function as an <strong>interpreter</strong> of such a list of commands. A minimal alphabet &amp; semantics could be something like this:</p>
+<ul>
+<li><code>F</code>: move forward one unit, drawing a line.</li>
+<li><code>+</code>: turn a certain amount to the left.</li>
+<li><code>-</code>: turn a certain amount to the right.</li>
+</ul>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">turtle_draw</span>(<span class="hljs-params">commands, lines</span>) </span>{
     <span class="hljs-comment">// turtle start state:</span>
-    <span class="hljs-keyword">let</span> p = <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>);
-    <span class="hljs-keyword">let</span> dir = <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0.1</span>);
-    <span class="hljs-keyword">let</span> lines = [];
-
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i&lt;commands.length; i++) {
-        <span class="hljs-keyword">let</span> cmd = commands[i];
-
+    <span class="hljs-keyword">let</span> t = {
+        <span class="hljs-attr">pos</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>),
+        <span class="hljs-attr">dir</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0.1</span>),
+    }
+    <span class="hljs-comment">// interpret commands:</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> cmd <span class="hljs-keyword">of</span> commands) {
         <span class="hljs-keyword">if</span> (cmd == <span class="hljs-string">&quot;F&quot;</span>) {
             <span class="hljs-comment">// move forward, drawing a line:</span>
-            lines.push(p.clone());  
-            p.add(dir) <span class="hljs-comment">// move</span>
-            lines.push(p.clone());
+            lines.push(t.pos.clone());  
+            t.pos.add(t.dir) <span class="hljs-comment">// move</span>
+            lines.push(t.pos.clone());
         } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd == <span class="hljs-string">&quot;+&quot;</span>) {
             <span class="hljs-comment">// rotate 90 degrees:</span>
-              dir.rotate(<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
+            t.dir.rotate(<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
         } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd == <span class="hljs-string">&quot;-&quot;</span>) {
-            <span class="hljs-comment">// rotate -90 degrees:</span>
-              dir.rotate(-<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
-        }
+            <span class="hljs-comment">// rotate 90 degrees:</span>
+            t.dir.rotate(-<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>)
+        } 
     }
+}
 
-    <span class="hljs-keyword">return</span> lines;
-}</code></pre>
-<pre><code class="language-javascript">
-<span class="hljs-comment">// this is what we want to do:</span>
+<span class="hljs-keyword">let</span> lines = []
+turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span class="hljs-string">&quot;&quot;</span>), lines)
+<span class="hljs-built_in">draw2D</span>.lines(lines);</code></pre>
+<p>Now our code is not only shorter, it is far more powerful: it allows us to generate different shapes in a data-driven way, simply by passing in a different list of <strong>commands</strong>. It may already be tempting to think of what other commands we could add to this interpreter&#39;s capabilities.</p>
+<p>With this in place, we could now expand our vocabulary of actions in our mini-language. Here are some ideas:</p>
+<ul>
+<li><strong>.</strong>: do nothing</li>
+<li><strong>f</strong>: move forward half a unit, drawing a line</li>
+<li><strong>&gt;</strong>: turn a different amount to the left</li>
+<li><strong>&lt;</strong>: turn a different amount to the right</li>
+<li><strong>/</strong>: reduce the rotation angle in the current turtle</li>
+<li><strong>\</strong>: increase the rotation angle in the current turtle </li>
+</ul>
+<p>We could also make our shapes more dynamic. For example, we could generate rotation angles in the function according to the current time (e.g. <code>let a = Math.sin(now)</code>). </p>
+<p>Turtle graphics can also create <em>fractals</em>, that is, objects with partial symmetries. One way of doing this is rather similar to how we created graphics state stacks with <code>draw2D.push()</code> and <code>pop()</code>: duplicating the current renderer for a sequence of operations, then returning to the prior coordinate space. With turtles being the renderer, can you imagine how to do these:</p>
+<ul>
+<li><strong>(</strong>: &quot;push&quot;: spawn a clone of the turtle and continue interpreting</li>
+<li><strong>)</strong>: &quot;pop&quot;: stop interpreting with the current turtle and return to its parent turtle</li>
+<li><strong>=</strong>: spawn a clone facing the opposite direction (for symmetry)</li>
+<li><strong>|</strong>: spawn a clone with reversed chirality (for symmetry)</li>
+<li>etc.</li>
+</ul>
+<blockquote>
+<p>Bearing in mind what we learned with the math solver, we could go one step further and turn the interpreter a <strong>compiler</strong>; a compiler is just an interpreter that <em>generates executable code</em> rather than <em>executes code</em>. We can take our interpreter and change all of its actions into the generation of strings of code, collecting all these lines of code into a big list. Finally, we join all those strings together (with newlines and/or semicolons) and convert them into a <code>new Function</code> as before. And, rather than building strings directly, we could select operators using numbers. With this we can take any arbitrary list of numbers and turn it into a re-usable graphics function! Here&#39;s an example of how this might look:</p>
+</blockquote>
+<pre><code class="language-js"><span class="hljs-comment">// this is what we want to do:</span>
 <span class="hljs-keyword">let</span> square = compile(<span class="hljs-string">&quot;F+F+F+F&quot;</span>);
 <span class="hljs-keyword">let</span> lines = square(); 
 <span class="hljs-built_in">draw2D</span>.lines(lines);
@@ -505,7 +427,6 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
         <span class="hljs-string">&quot;let dir = new vec2(0, 0.1);&quot;</span>,
         <span class="hljs-string">&quot;let lines = [];&quot;</span>
     ]
-
     <span class="hljs-comment">// for each command, add more code:</span>
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i&lt;commands.length; i++) {
         <span class="hljs-keyword">let</span> cmd = commands[i];
@@ -514,360 +435,486 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
             code.push(
                 <span class="hljs-string">&quot;// move forward, drawing a line:&quot;</span>,
                 <span class="hljs-string">&quot;lines.push(p.clone());&quot;</span>,  
-                <span class="hljs-string">&quot;p.add(dir) // move&quot;</span>,
+                <span class="hljs-string">&quot;p.add(dir);&quot;</span>,
                 <span class="hljs-string">&quot;lines.push(p.clone());&quot;</span>
             );
         } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd == <span class="hljs-string">&quot;+&quot;</span>) {
             code.push(
                 <span class="hljs-string">&quot;// rotate 90 degrees:&quot;</span>,
-                  <span class="hljs-string">&quot;dir.rotate(Math.PI/2)&quot;</span>
+                  <span class="hljs-string">&quot;dir.rotate(Math.PI/2);&quot;</span>
             );
         } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (cmd == <span class="hljs-string">&quot;-&quot;</span>) {
             code.push(
                 <span class="hljs-string">&quot;// rotate 90 degrees:&quot;</span>,
-                  <span class="hljs-string">&quot;dir.rotate(-Math.PI/2)&quot;</span>
+                  <span class="hljs-string">&quot;dir.rotate(-Math.PI/2);&quot;</span>
             );
         }
     }
-
     code.push(<span class="hljs-string">&quot;return lines;&quot;</span>);
-
     <span class="hljs-comment">// convert the resulting code into a string (with newlines)</span>
     <span class="hljs-keyword">let</span> finalcode = code.join(<span class="hljs-string">&quot;\n&quot;</span>);
     <span class="hljs-comment">// convert this into a Javascript Function:</span>
     <span class="hljs-keyword">let</span> fun = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Function</span>(finalcode);
     <span class="hljs-keyword">return</span> fun;
 }</code></pre>
-<hr>
-<hr>
-<hr>
-<p><strong>Artificial evolution</strong> is a form of computational simulation whose process mirrors the abstract structure of natural evolution:</p>
-<ul>
-<li>Maintain a population of finite individuals (which can reproduce)</li>
-<li>Support variation (including new characteristics) in the population</li>
-<li>Provide a mechanism of heredity between generations</li>
-<li>Provide a mechanism of selection </li>
-</ul>
-<p>The main systematic differences are that the underlying mechanisms specified by us in advance, as are the initial populations and the method of selection and/or environmental conditions. And of course, artificial evolution occurs in a much simpler substrate than real chemistry.</p>
-<p><a href="http://www.talkorigins.org/faqs/genalg/genalg.html#examples">A fantastic list of practical applications of genetic algorithm &amp; evolutionary programming</a> </p>
-<h3 id="genetic-representation-1">Genetic representation</h3>
-<p>Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits. Some systems use more elaborate structures (trees, networks), but these are usually reducible to and encoded as  linear sequences. After all, our genes wind up in complex structures with different reactive regions, but at the lowest level are just a long singular chain of A, G, C or T molecules.</p>
-<p>The simplest systems have a fixed length, but nature shows quite a lot of variance (not particularly correlated with the size, complexity, or evolutionary age of a species). </p>
-<p>Initializing the genotypes implies generating randomized candidates that stay within its bounds but hopefully give a sufficiently diverse range of the possibilities of the genotype. For a simple sequence of bits, symbols, or numbers, this is fairly easy to do.</p>
-<h3 id="development-1">Development</h3>
-<p>In some systems the developmental process is little more than a trivial mapping, but this potentially misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. </p>
-<h3 id="selection-1">Selection</h3>
-<p><strong>For problem solving in data mining, engineering, design, architecture, etc.</strong>: If the fitness criterion is static and designed around a particular problem we wish to find a solution for, evolution can help evaluate &amp; test candidate solutions and selectively breed them to produce better solutions, ideally converging on an optimal one, without having to understand or derive by proof. It is a form of optimization. However this process may take a long time or a lot of processing power to find a satisfactory result, or may not reach a result at all. Not all problems are suitable for evolutionary search.</p>
-<p>Evidently, these systems differ markedly from natural evolution by having a static measure, and thus a singular teleological character, a meaningful sense of progress, across the entire history of the system. This is more akin to <em>selective breeding</em> than natural evolution. </p>
-<p>Note that simply taking the best candidate alone is not necessarily the ideal strategy; selecting randomly by proportion to fitness (&quot;roulette wheel&quot; selection) may better overcome local maxima.</p>
-<p><strong>For art, music, and other less formalized domains</strong> we may need to consider other methods of selection, since a formal measure may not be possible, or the problem may not be clearly statable in advance. E.g. can we measure aesthetic quality in formal terms?</p>
-<ul>
-<li>Interactive <strong>aesthetic selection</strong>. Pioneered by Dawkins&#39; Biomorphs program and Karl Sims&#39; evolved images, in which several candidates are presented to human observers, who apply the selection manually. Also known as aesthetic selection. A problem here is that the human becomes the bottleneck of evolution, constraining population sizes and rates of evolution to very small scales. It may arguably also tend toward selecting for the aesthetic average rather than the remarkable.<ul>
-<li>An interesting variation is to make the selection continuous and implicit. Jon McCormack&#39;s Eden measured fitness globally according to how long gallery visitors remained in front of a particular evolving sub-population.</li>
-<li>Examples of aesthetic selection from previous classes<ul>
-<li><a href="http://codepen.io/grrrwaaa/pen/mrZqoK?editors=0010">Malevich Generator by Sophie Roginsky</a></li>
-<li><a href="http://codepen.io/grrrwaaa/pen/vXqWwj?editors=0010">Strange Attractor by Rose Zhou</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Evolved/evolving selection. First evolve a population of artificial art critics, trained from human-evaluated examples, and then use these to apply selection criteria to a population of candidate artworks. Some projects have also proposed a form where one population represents the candidate products, and the other population represents artificial critics.</li>
-<li>A viability-oriented form of artificial evolution may be used for more theoretical and aesthetic branches of artificial life research. The viability measure arises as an emergent property of underlying laws of the world, such as the requirement to maintain energetic/metabolic balance or to maintain structural integrity, as well as the collective effects of multiple species and non-living dynamics within the environment. For this reason it is sometimes referred to as <em>ecosystemic selection</em>. <a href="http://link.springer.com/chapter/10.1007%2F978-3-540-78761-7_42">See discussion here</a>. This may still incorporate indirect interaction from human agents if desired.</li>
-</ul>
-<h3 id="variation-1">Variation</h3>
-<p>The mechanisms of variation possible partly depend on the representation chosen. The two most common principles of variation in artificial evolution are naturally inspired:</p>
-<ul>
-<li>Random <strong>mutation</strong>; akin to errors copying DNA. If the genome is represented as a binary string, then random locations in the string may be replaced by new random characters. For example, a parent &quot;dog&quot; could produce children such as &quot;fog&quot;, &quot;dqg&quot;, and so on. Obviously some mutations will not create viable individuals.</li>
-<li>Sexual <strong>cross-over</strong>: akin to sexual reproduction in biology. As a binary string, the child takes the first fraction from one parent, and the remainder from the other. For example, breeding the strings &quot;dog&quot; and &quot;cat&quot; could generate children such as &quot;dot&quot;, &quot;dat&quot;, &quot;cag&quot; and &quot;cog&quot;. </li>
-<li>Other forms of fragment <strong>recombination</strong>, such as insertion, deletion, reversal. So a more flexible system might also permit &quot;doat&quot;, &quot;caog&quot;, &quot;dt&quot;, &quot;tac&quot;, etc. </li>
-</ul>
-<blockquote>
-<p>Why use reproduction for evolution? In the face of an unpredictable environment, we cannot know which strategy will be best; we can try small variations, and hedge our bets by making very many of them (population diversity). An individual loss is not catastrophic, but a few successes can be learned from. Furthermore, the face of unpredictibility implies that what was true today may not be tomorrow, so the flexibility to avoid timeless commitment is also a good strategy; but the inheritance of choices is a useful option when the environment retains some stability. If the world were fully predictable, a rational, teleological, monothematic strategy would be preferable. But the world isn&#39;t totally random either (if it was, there would be no valid strategy worth pursuing.) </p>
-</blockquote>
-<p>As with temperature-like parameters we saw in CA, a crucial factor in evolution is the rate or probability of variation. Too much, and the population may never significantly diverge from a randomly initialized one; too little, and it may find itself stuck on the first solution it finds, with a largely homogenous population. It may be wise to have different mutation rates for different genes, or for different members of a population, or by fitness rank etc. It is likely desirable to gradually reduce mutation rates over time, unless the population appears to be stagnating. (See also simulated annealing.)</p>
-<hr>
-<h2 id="development--meta-evolution">Development &amp; meta-evolution</h2>
-<p>In some cases, there may be several stages of code development. The biomorphs example hints at this, and already grants built-in symmetries and modular structures as are frequently found in nature -- this is partly why we respond to them. But the developmental approach can be taken much further. Sims&#39; evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape, but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neural program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. </p>
-<p>Think back to the turtle example. Imagine that instead of drawing lines, it is generating richer code. <a href="http://codepen.io/grrrwaaa/pen/yadVLP?editors=001">Here&#39;s a variation of the biomorphs example that does just that: it generates code once rather than interpreting the genome on each frame</a> -- and this could be used as a template on which to add more behaviour than simply drawing, for example. </p>
-<p>Another interesting result is that the developmental program could also be gradual, meaning we can model the increase in complexity of an organism from embryo to adult through the rewriting of its behavioural programs.</p>
-<blockquote>
-<p>Taken to the most general form, it allows us to explore models in which the mechanisms of evolution are also subject to evolutionary pressures; see <a href="http://faculty.hampshire.edu/lspector/pubs/ace.pdf">Spector, Lee. &quot;Autoconstructive evolution: Push, pushGP, and pushpop.&quot; Proceedings of the Genetic and Evolutionary Computation Conference (GECCO-2001). Vol. 137. 2001.</a>. This is <strong>meta-evolution</strong>: that the mechanisms of evolution (including development, variation, etc.) are also subject to variation and selection. After all, sexual reproduction had to be <em>discovered</em>. It turns out that some parts of our genes have evolved to be far less volatile than others, for good reason. Jurgen Schmidhuber also proposed using genetic programming (GP) to evolve GP (meta-GP), since things like chromosomes, crossover etc. are themselves phenomena that have evolved. </p>
-</blockquote>
-<hr>
-<h2 id="agent-based-evolution">Agent-based evolution</h2>
-<h3 id="viability-based-selection-and-ecosystemic-evolution">Viability-based selection and ecosystemic evolution</h3>
-<p>So far we have replaced entire generations at a time, but of course in the real world creatures&#39; life spans interleave in all kinds of ways, with population booms and busts. Moreover we have rather artificially tested candidates against a pre-defined function, or against the whims of an interacting user or participant. But this isn&#39;t how nature works most of the time. As noted already, <em>viability-based selection</em> depends only on fundamental internal processes and exchanges with an environment (including other creatures of various species) to determine whether a creature can survive, and reproduce. Often this approach involves populations of <a href="agent.html">agents</a>. </p>
-<p>When a new agent is created from nothing, as happens at the start of the simulation, and also as a fail-safe if the population ever dwindles away, a randomized genome must be added to the agent. When an agent spawns a child, the child also needs a genome, created by mutation of the parent&#39;s. This could be extended by adding sexual reproduction, only occurring when agents meet, and implemented with crossover as well as mutation.</p>
-<p>But most importantly, parts of the genome must determine behavioural properties of the agent -- how it behaves and interacts with the world -- else there&#39;s no selection at all. (It can be useful to also modify how the agent appears graphically, but this has no effect on evolution.) </p>
-<h3 id="parametric-variation">Parametric variation</h3>
-<p>A good starting point may be to have the genome modify <em>parameters</em> of the agent; for example, the amount of random walk, ranges of sensing, the reproduction threshold, thresholds of probability for selecting different actions, etc. Be careful with features like speed -- you might want to model an energetic cost to go with it for realism (and to avoid breeding supersonic agents!). </p>
-<p>Also be careful not to oversimplify. Making a parameter of &quot;energy efficiency&quot; is clearly going to evolve toward maximum efficiency; there&#39;s nothing interesting about this. Things get more interesting when there are multiple constraints in play; if increasing one parameter weakens another, for example. </p>
-<p>Similarly, a direct mapping of each gene in the genome to each parameter is likely less interesting than a more complex mapping, in which multiple processes are applied to the genome data to determine the parameters. This is exactly why the evolution of math functions was more interesting than the evolution of text: the outcome of the math function is a very complex mapping of the genes that go in. Complex enough to have surprises.</p>
-<p>Another way of achieving this complexity in the mapping is to have the parameters drive features that have non-obvious effects or that depend on other parameters. For example, one could model a swimming organism by the speed it flaps its tail, the range it flaps over, and the average direction. Only together do these three parameters produce an arc of motion. Multiple such tails can lead to very complex motions. Similarly, taking Braitenberg&#39;s vehicles model, one could imagine placing a wire between every sensor and every motor, where the evolved parameters are the amplification weights on the wires.</p>
-<p><img src="http://www.cc.gatech.edu/home/turk/stickyfeet/zoo_scaled.png" alt="sticky feet"></p>
-<p>For example, see <a href="http://www.cc.gatech.edu/home/turk/stickyfeet/index.html">Sticky Feet: Evolution in a Multi-Creature Physical Simulation</a> -- including the <a href="http://www.cc.gatech.edu/home/turk/stickyfeet/sticky_feet.mp4">video</a>. In this example, the genome determines the structure of an organism as a set of point masses connected by springs. The springs are muscle-like in that their rest lengths oscillate, and the point masses also oscillate in their &#39;stickiness&#39; (environmental friction) in order to support locomotion. Each organism has a heart and a mouth -- if the mouth of one agent touches the heart of another, it can eat it, and is rewarded by reproduction. Organisms may also have antennae attached to a spring segment, which detect either mouths or hearts, and modulate the spring length or stickiness. (A simple 3-segment creature with two sensors can very easily result in similar behaviour to the Braitenberg vehicles.)</p>
-<h3 id="energy-conservation-and-global-adaptive-constraints">Energy conservation and global adaptive constraints</h3>
-<p>Naturally environmentally-based viability selection has also led to models of ecological or ecosystemic basis. A simple starting point may be to take <a href="http://codepen.io/grrrwaaa/pen/PZxrbo?editors=0010">the agent-based example of variable populations with energy-exchange and preservation</a>, and add genetics. In this case viability is principally determined by energy maintenance, so we have to take extra care in modeling this well. Every action an agent takes must cost energy, and this should be proportionate to the action taken. Sprinting takes more energy than sauntering. Locomotion models can estimate energy cost from the force actually applied; which is exactly the acceleration multiplied by the mass. We can approximate this by taking the difference between current &amp; new velocities (after all clamping) and multiplying by the organism size. It may also be wise to have a basic metabolism cost to remain alive, that perhaps may increase with size, and with age.</p>
-<p><a href="http://codepen.io/grrrwaaa/pen/amgjbb?editors=0010">Here&#39;s a start in this direction</a></p>
-<p>As organisms evolve better strategies, they can better utilize the finite energy resources of the world, and thus support greater populations. An adaptive <em>difficulty</em>, perhaps applied to the metabolism cost, or applied generally to the available energy in the world, may help keep selection pressure effective at maintaining population size. For example, we can gradually decrease the total energy in the ecosystem while populations are large, and increase it again while populations are small.</p>
-<p>Note that exactly how new energy is introduced can have quite drastic effect on the adaptive conditions -- since effectively organisms are trying to evolve strategies to be more viable, the distribution of energy in the world is the primary factor. The simplest option is to reintroduce the energy immediately, spread uniformly over the space, e.g. <code>field.add(energy_deficit/(field.width*field.height))</code>. More interesting behaviours can emerge when energy is redistributed more gradually and non-uniformly in space.</p>
-<h3 id="the-genetic-representation">The Genetic Representation</h3>
-<p>At this point, should be clear that the effectiveness of evolution depends very much on both the genetic representation as well as its behaviour in producing phenotypes. If we consider the genetic representation as a <em>language</em>, then the evolutionary effectiveness depends both on the <em>syntax</em> and the <em>semantics</em>. </p>
-<p>The syntax determines how a phenotype is encoded, what kinds of mutations are likely/unlikely/impossible, and what transformations these result in, how much space it takes up, the potential of redundancy and neutral data, and so on. </p>
-<p>The semantics define the basic primitive concepts from which phenotypes are produced, and thus what kinds of phenotypes are likely/unlikely/impossible, including the overal size of the set of all possible phenotypes, the resolution of variations between them, and so forth. Put another way: A very common and very general method of solving problems (mathematical, computational, and otherwise), is to translate the problem into a more convenient language. We saw that our agents could reason about neighbours more easily when the neighbour poses where translated out of global space and into the coordinate space of the agent itself. Similarly, the turtle graphics language made it very easy to create simple line drawings, and with just a handful of special tokens quite complex structures, but there are still many shapes this language is unable or very unlikely to express. Simply, some languages work better than others for certain problems. (This may related to the reason why so many species share huge sequences of the same DNA.)</p>
-<p>A good genetic representation should consider both syntax and semantics. We don&#39;t want to make our intermediate language to too restrictive, else it will not be powerful and extensible enough to encompass a wide enough range of expected and unexpected solutions. For example, we saw how creating an intermediate language of predefined words ensured we have readable (if nonsense) sentences, whereas translating into random numbers and arithmetic symbols opened the possibility of invalid expressions, but also was able to discover unexpected methods (such as using comment symbols for neutral drift). However, we also don&#39;t want our intermediate language so powerful and extensible that it becomes inefficient or intractable to actually apply, or upon which evolution has barely a chance to have impact. Our math &amp; turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. </p>
-<h3 id="programmatic-variation">Programmatic variation</h3>
-<p>For a more ambitious, but more interesting challenge, we can try to build up a population of evolving agents whose phenotypic behaviour is a unique <em>program</em>. That is, the &quot;update&quot; routine for each agent is different because it has different code, not just different parametric values. The biomorphs were a good example of this. Arguably this permits a vaster range of possible behaviours, because less of an organism&#39;s architecture is fixed for all time.</p>
-<p>One model to achieve this is to think of the agent as comprising a collection of sensors, a collection of internal nodes of computing, and a number of output nodes (as actuator potentials) that cause actions in the world:</p>
-<p><img src="img/agent_diagram.png" alt="agent diagram"> </p>
-<p><strong>Possible outputs include:</strong></p>
-<ul>
-<li>Locomotion. Ideally modeled as signals sent to simulated locomotory systems, rather than simple changes of velocity/orientation. </li>
-<li>Consumption. Extraction of materials from the environment, e.g. food. <ul>
-<li>Vice versa, expulsion of materials back into the environment, e.g. building, defecation. </li>
-</ul>
-</li>
-<li>Changing internal mental states, such as memory stores, or dispositions.</li>
-<li>Communication. Pheromone deposits, noises, visual signals, etc.</li>
-<li>Growth. Although this is not usually something under an organisms&#39; control for larger organisms, it may be at the cellular level.</li>
-<li>Reproduction. Clearly this is only an internal choice for organisms that reproduce asexually.</li>
-</ul>
-<blockquote>
-<p>If it is helpful, you may imagine the buttons you can press to control a videogame character. Each button is an output.</p>
-</blockquote>
-<p>It may also be worth asking whether actions can occur concurrently, or whether activating one will suppress others. E.g. can you reproduce while in motion? Can you change direction when not in motion? The simplest technique here is to limit output to one action per frame.</p>
-<p><strong>Possible inputs include:</strong></p>
-<ul>
-<li>Internal physiological states: At least, the current store of energy (the hungry/satiated axis), but possibly also other internal parametric states if they exist, such as temperature, digestive toxicity, ...</li>
-<li>Smell/taste/pressure/humidity/electroreception/magnetoception: Detection of concentrations/intensities in local fields, at the center location of the agent.<ul>
-<li>Alternatively, sensors on appendages: same as above, but at points removed from the center of the agent according to the bodily position of the sensor. E.g. eyestalks.</li>
-</ul>
-</li>
-<li>Touch: Detection of collision with objects in the environment. Could be a simple boolean true/false, could include a direction to the collided object, could include a magnitude according to the amount of overlap (i.e. a vector). </li>
-<li>Proximity/sight/hearing/echolocation: Detection of the number of agents/objects in close range. Could be converted to a loneliness/claustrophobia axis.<ul>
-<li>Or perhaps the center-of-mass of objects/agents in close range (the <em>cohesion</em> and <em>separation</em> senses of the boids), or some other average property of nearby objects/agents (such as the <em>alignment</em> sense of the boids, or perhaps average color of nearby agents). </li>
-<li>Could be refined to multiple senses, for different kinds of objects.</li>
-</ul>
-</li>
-<li>Proprioception/vestibular senses: The sense of motion from within, including balance, poise, etc. The simplest could be an accelerometer, reporting changes of velocity back to the agent. There could also be senses identifying the position or rate of movement of limbs.</li>
-<li>Temporal senses (Chronoception): The simplest being a function of the agent&#39;s age since birth.</li>
-<li>Pain (nociception), and perhaps other stimulations, triggered by other activity upon the agent, which dissipates over time.</li>
-<li>Internal mental states, such as memory or dispositions: Could simply be a bank of memory &quot;slots&quot;, that are written as one of the action outputs.</li>
-</ul>
-<p>It is likely necessary to conform inputs to ranges of sensitivity, such that external quantities are always mapped into internal ranges clamped in a unipolar 0..1 range, or perhaps a bipolar -1..1 range. Outputs may also need to map their intrinsic ranges (unipolar or bipolar) into useful ranges in the world. For example, a unipolar consumption range could be used as a proportion of available food that is actually ingested. Alternatively, it could be mapped to a range determined by the maximum eating rate an organism can sustain (a constant).</p>
-<p>For both inputs and outputs, we may need to distinguish between occasional &quot;events&quot; (think of buttons and impacts) and more continuously varying &quot;signals&quot; (think of knobs and rotations), though it is simpler if we do not need to. </p>
-<blockquote>
-<p>Event-like inputs can be treated as signals whose value is zero when no event is occurring. Event-like outputs can be treated as signals that pass a given threshold, or change by a significant margin. Thresholding is a general way to convert a signal to an event, possibly with some accumulation &amp; relaxation time, and sampling is a way to convert an event into a signal, possibly with some averaging/smoothing.</p>
-</blockquote>
-<p><strong>Possible internal operations:</strong></p>
-<p>The middle layers between inputs &amp; outputs may utilize a palette of mathematical mappings and simple signal-processing operators. For example, the set of &quot;neural nodes&quot; available in Karl Sims&#39; <a href="http://www.karlsims.com/papers/siggraph94.pdf">evolving virtual creatures</a> simulation included:</p>
-<blockquote>
-<p>sum, product, divide, greater-than, sign-of, min, max, abs, if, interpolate, sin, cos, atan, log, expt, sigmoid, </p>
-</blockquote>
-<p>Furthermore, a number of more complex &quot;stateful&quot; operators (i.e. operators which include their own history/memory) were included:</p>
-<blockquote>
-<p>sum-threshold, integrate, differentiate, smooth, oscillate-wave, and oscillate-saw.</p>
-</blockquote>
-<p>Sum-threshold refers to a unit that operates much like a real neuron, accumulating inputs until a threshold is reached, then outputting a pulse and relaxing to zero. That is, neural networks are often modeled using only the sum-threshold (or even simpler, sigmoid) operators. Integrate is a simple counter, but it may be wise to make it &quot;leaky&quot;, such that the accumulated value naturally decays over time. Smooth is a simple moving average, or low-pass filter, such as averaging the current and previous input. The oscillators are a combination of a counter with a trigonometric or modulo operation.</p>
-<p>Other kinds of internal operations could be structural, such as creating a sequence of actions (and possibly including policies to abort a sequence if an action cannot be completed) or a sequence of options (taking the first one that can be executed). </p>
-<hr>
-<h2 id="an-ecosystemic-evolving-agent-environment-world">An ecosystemic, evolving agent-environment world</h2>
-<p>For example, take a look at the agent model here:</p>
-<p><a href="http://codepen.io/grrrwaaa/pen/obQrZJ?editors=001">Starter agent model for continuous evolution</a></p>
-<p>The agent has a locomotion model based on a two-wheel engine. For movement, the agent has only two output signals -- the rates of turning of each wheel (stored in the property <code>wheel_rate</code>, which is a vec2). The <code>agent_locomotion()</code> method turns these wheel_rate signals into actual movement. </p>
-<p>The agent also has two external sensors to detect local fields, whose values are computed in the <code>agent_sensing()</code> method.</p>
-<p><strong>Energy preservation</strong> is essential to the ecosystemic viability model of selection here. Every action an agent takes must cost energy, and insufficient energy must result in death.</p>
-<ul>
-<li>The locomotion model incorporates this in terms of the force actually applied (i.e. the acceleration -- as difference between the current and new velocities -- multiplied by the mass).</li>
-<li>There is also a fixed mass-dependent metabolism cost, applied on each frame regardless whether the agent is moving.</li>
-<li>There is also a digestion cost, modeled simply as a certain portion of consumed food&#39;s energy being lost.</li>
-</ul>
-<p>Inevitably this means that over time, energy is being lost from the world. We can calculate how much energy is active in the system by adding up the total in each field cell (by <code>field.sum()</code>) as well as the energy stored in each agent. When this total energy level drops below our chosen carrying capacity for the world, we can then introduce energy back in, to ensure that the whole system doesn&#39;t wind down to zero. Exactly how this energy is re-introduced can have quite drastic effect on the adaptive conditions -- since effectively organisms are trying to evolve strategies to be more viable, the distribution of energy in the world is the primary factor. The simplest option is to reintroduce the energy immediately, spread uniformly over the space, e.g. <code>field.add(energy_deficit/(field.width*field.height))</code>. More interesting behaviours can emerge when energy is redistributed more gradually and non-uniformly in space.</p>
-<p>The population can shrink and grow (safely, because the main update loop iterates backwards). Still, <strong>population control</strong> is also essential at both ends. Clearly if the population ever drops to zero, we will never see any organisms again. Methods to overcome this include preventing death, or introducing new randomly seeded organisms (perhaps out of view) at low population sizes, as well as adaptively varying the reproduction cost/threshold. At the other end, a population that grows excessively large can slow down the simulation, perhaps even crash it. In theory the conservation of energy can prevent this, but in practice a hard limit may also be necessary. </p>
-<p>As organisms evolve better strategies, they can better utilize the finite energy resources of the world, and thus support greater populations. An adaptive <em>difficulty</em>, perhaps applied to the metabolism cost, or applied generally to the available energy in the world, may help keep selection pressure effective at maintaining population size. For example, we can gradually decrease the total energy in the ecosystem while populations are large, and increase it again while populations are small.</p>
-<p>Here&#39;s a work-in-progress template: <a href="http://codepen.io/grrrwaaa/pen/obQrZJ?editors=001">http://codepen.io/grrrwaaa/pen/obQrZJ?editors=001</a></p>
-<hr>
-<p><img src="img/agent_graph.png" alt="agent graph"></p>
-<h2 id="genetic-programming">Genetic Programming</h2>
-<p>Our math &amp; turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. We&#39;ll explore that in more detail via <em>genetic programming</em>. </p>
-<p>Genetic Programming was invented by Nigel Cramer in 1985, but greatly expanded through the work of John Koza. GP evolves programs; it is an example of <strong>metaprogramming</strong>. GP has been used to generate programs to solve hard problems, and to evolve control systems for artificial agents and robots. Karl Sims used GP for his genetic images as well as for his evolving virtual creatures. </p>
-<p>In GP that the generating a phenotype is a process of generating <em>programs</em>, however programs are usually expressed as syntax <em>trees</em> rather than as lines of code. The leaves of the tree are <em>terminals</em>, while the non-terminal branches are <em>functions</em>. Terminals have no inputs; typical terminals are constant numbers and external/global variable names, but this set can also include zero-argument functions such as &quot;random()&quot; or context-sensing such as &quot;get_orientation()&quot;. Non-terminal functions are specified according to their operator (such as mathematical addition, multiplication, cosine, etc.); they have one or more inputs (the number of inputs is the <em>arity</em>), which may be filled by terminals or other functions. The set of all possible terminals and non-terminal functions constitutes the <em>primitive set</em> of a GP system (a union of the <em>terminal set</em> and the <em>function set</em>). </p>
-<p>This structure is natural to LISP programs:</p>
-<pre><code class="language-lisp">(<span class="hljs-name">*</span> (<span class="hljs-name">sin</span> (<span class="hljs-name">+</span> x <span class="hljs-number">2</span>)) (<span class="hljs-name">cos</span> x))</code></pre>
-<p>In this case, the terminal set appears to include integers and &quot;x&quot;, the function set includes &quot;sin&quot;, &quot;cos&quot;, and binary operators such as &quot;+&quot;, and &quot;*&quot;. </p>
-<p>Javascript does not have this representational succinctness, but can get close to it by nested arrays:</p>
-<pre><code class="language-javascript">[<span class="hljs-string">&quot;*&quot;</span>, [<span class="hljs-string">&quot;sin&quot;</span>, [<span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;x&quot;</span>, <span class="hljs-number">2</span>]], [<span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-string">&quot;x&quot;</span>]]</code></pre>
-<p>Or more graphically:</p>
-<pre><code class="language-javascript">[
-    <span class="hljs-string">&quot;*&quot;</span>, 
-    [
-        <span class="hljs-string">&quot;sin&quot;</span>, 
-        [
-            <span class="hljs-string">&quot;+&quot;</span>, 
-            <span class="hljs-string">&quot;x&quot;</span>, 
-            <span class="hljs-number">2</span>]
-    ], 
-    [
-        <span class="hljs-string">&quot;cos&quot;</span>, 
-        <span class="hljs-string">&quot;x&quot;</span>
-    ]
-]</code></pre>
-<p>Note that our representation is more brittle than a simple string of symbols: any array beginning with &quot;sin&quot; must have one more element following it as the argument; any array beginning with &quot;+&quot; must have two elements (array length 3) following it as arguments. Moreover, those arguments must either be <em>terminal</em> nodes such as &quot;x&quot; or numbers, or they must be arrays -- that is, operator symbols like &quot;sin&quot; and &quot;+&quot; can only occupy the first position. Since we know that our operators require <em>at most</em> two arguments, we could simply give all functions two arguments, and ignore the un-used ones as neutral junk genetic data, e.g.:</p>
-<pre><code class="language-javascript">[
-    <span class="hljs-string">&quot;*&quot;</span>, 
-    [
-        <span class="hljs-string">&quot;sin&quot;</span>, 
-        [
-            <span class="hljs-string">&quot;+&quot;</span>, 
-            <span class="hljs-string">&quot;x&quot;</span>, 
-            <span class="hljs-number">2</span>], 
-        <span class="hljs-number">5</span>        <span class="hljs-comment">// junk</span>
-    ], 
-    [
-        <span class="hljs-string">&quot;cos&quot;</span>, 
-        <span class="hljs-string">&quot;x&quot;</span>, 
-        <span class="hljs-string">&quot;x&quot;</span>        <span class="hljs-comment">// junk</span>
-    ]
-]</code></pre>
-<h3 id="interpretation-development">Interpretation (development)</h3>
-<p>To turn this <em>data</em> into something we can actually run as <em>code</em>, we could spell it out as an expression:</p>
-<pre><code class="language-javascript"><span class="hljs-keyword">return</span> (<span class="hljs-built_in">Math</span>.sin(x + <span class="hljs-number">2</span>) * <span class="hljs-built_in">Math</span>.cos(x));</code></pre>
-<p>Here&#39;s a recursive solution:</p>
-<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">develop</span>(<span class="hljs-params">node</span>) </span>{
-    <span class="hljs-comment">// terminals:</span>
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> node == <span class="hljs-string">&quot;string&quot;</span> || <span class="hljs-keyword">typeof</span> node == <span class="hljs-string">&quot;number&quot;</span>) {
-        <span class="hljs-keyword">return</span> node;
-    }
-    <span class="hljs-comment">// non-terminals:</span>
-    <span class="hljs-keyword">let</span> op = node[<span class="hljs-number">0</span>];
-    <span class="hljs-keyword">let</span> a = node[<span class="hljs-number">1</span>];
-    <span class="hljs-keyword">let</span> b = node[<span class="hljs-number">2</span>];
-    <span class="hljs-keyword">if</span> (op == <span class="hljs-string">&quot;sin&quot;</span> || op == <span class="hljs-string">&quot;cos&quot;</span>) {
-        <span class="hljs-comment">// unary Math function call:</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Math.&quot;</span> + op + <span class="hljs-string">&quot;(&quot;</span> + develop(a) + <span class="hljs-string">&quot;)&quot;</span>;
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (op == <span class="hljs-string">&quot;+&quot;</span> || op == <span class="hljs-string">&quot;*&quot;</span> || op == <span class="hljs-string">&quot;-&quot;</span> || op == <span class="hljs-string">&quot;/&quot;</span> || op == <span class="hljs-string">&quot;%&quot;</span>) {
-        <span class="hljs-comment">// binary operator:</span>
-        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;(&quot;</span> + develop(a) + op + develop(b) + <span class="hljs-string">&quot;)&quot;</span>;
-    }
+<h3 id="biomorph-genetics">Biomorph genetics</h3>
+<p>Since turtle graphics are generated from strings, they can be generated from string genomes! That is, we can create genotype strings as instructions for a &quot;turtle graphics&quot; interpreter to draw biomorph shapes. Which is therefore a function that maps genome strings into phenotypes, or into functions that create genotypes -- that is, the interpreter/compiler is the <strong>development</strong> component of artifiical evolution. </p>
+<p>But first we need a population, and a method to generate random candidates of this population. </p>
+<p>And, we need a way to show all the population members side-by-side or in a grid. We can re-use the <code>draw2D.push()</code> method to set up a grid of coordinate-frames per biomorph. If we have 16 candidates we can arrange in a 4x4 grid, using a simple method to convert population index to grid row/column and vice versa:</p>
+<pre><code class="language-js"><span class="hljs-comment">// get number of columns/rows from population size:</span>
+<span class="hljs-keyword">let</span> cols = <span class="hljs-built_in">Math</span>.ceil(<span class="hljs-built_in">Math</span>.sqrt(pop.length))
+
+<span class="hljs-comment">// get row/col from population index `i`</span>
+<span class="hljs-keyword">let</span> row = <span class="hljs-built_in">Math</span>.floor(i/cols);
+<span class="hljs-keyword">let</span> col = i % cols;
+
+<span class="hljs-comment">// get population index from row, col</span>
+<span class="hljs-keyword">let</span> index = row*cols + col;</code></pre>
+<p>With the above methods we can lay out the candidates in space; and, we can use the mouse to select a new individual as the parent of a new generation:</p>
+<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mouse</span>(<span class="hljs-params">kind, pt</span>) </span>{
+    <span class="hljs-comment">// scale point up to grid size:</span>
+    <span class="hljs-keyword">let</span> col = <span class="hljs-built_in">Math</span>.floor(pt[<span class="hljs-number">0</span>] * cols);
+    <span class="hljs-keyword">let</span> row = <span class="hljs-built_in">Math</span>.floor(pt[<span class="hljs-number">1</span>] * cols);
+    <span class="hljs-keyword">let</span> index = row*cols + col;
+
+    <span class="hljs-comment">// now create a new generation with `pop[index]`...</span>
 }</code></pre>
-<h3 id="choice-of-primitive-set">Choice of primitive set</h3>
-<p>A couple of things to watch out for here: </p>
+<p>For the new generation we want to apply mutations to the chosen genotype and thus produce variants. One of the advantages of using lists (of symbols or numbers) as genotypes is the flexibility to perform different kinds of mutations. The following are all effective mutations that are comparable to those that happen with DNA:</p>
 <ul>
-<li>It is assumed that all functions return one value</li>
-<li>It is assumed that returned values are of a type that can be used in other functions. This gets trickier when introducing conditional functions (e.g. <code>(if x y)</code>), since numeric values need to be converted to booleans. More complex systems may introduce type metadata into the tree.</li>
-<li>Functions should not throw errors or cause invalid behaviour, so often &quot;protected&quot; versions of operations are used. For example, divide (or modulo) by zero may be detected and avoided, reducing the number of run-time exceptions to trap.</li>
-<li>There should be enough scope in the primitive set to generate satisfactory solutions to the problem</li>
+<li>Replace an element with another randomly chosen from the lexicon</li>
+<li>At a random location, remove a element</li>
+<li>At a random location, insert a element randomly chosen from the alphabet</li>
+<li>Split the list into two parts, and join them the other way around</li>
+<li>Repeat a subsection of the list</li>
+<li>Reverse, or shuffle, a subsection of the list</li>
+<li>Combine a section of one list with a section of another</li>
 </ul>
-<h3 id="seed-generation">Seed generation</h3>
-<p>To generate a random seed genotype, we can also use a recursive procedure. <strong>One thing to watch out for: we need to make sure we don&#39;t spawn infinitely large genotypes!</strong> To do that, we&#39;ll need to pass some information through the recursion to bail out at a certain depth, or when the genome has a certain size. For example, we could limit the recursive depth as follows:</p>
-<pre><code class="language-javascript"><span class="hljs-keyword">let</span> ops = [<span class="hljs-string">&quot;sin&quot;</span>, <span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;-&quot;</span>, <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-string">&quot;/&quot;</span>, <span class="hljs-string">&quot;%&quot;</span>];
+<blockquote>
+<p>Some of these mutations can change the length of the string. It may be advisable to add limits on the minimum or maximum length of the string mutations can produce.</p>
+</blockquote>
+<p>Some of these are implemented here, along with a few extensions:</p>
+<ul>
+<li>Making the fixed amounts (segment angles, lengths) variable over time, for animated biomorphs</li>
+<li>Extending the alphabet with more drawing components</li>
+<li>Showing the creatures growth by interpreting less than the whole string during a childhood period<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="dGwWOz" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/dGwWOz">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pick_random_operator</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">return</span> ops[<span class="hljs-built_in">random</span>(ops.length)];
+</li>
+</ul>
+<p>An interesting challenge could be to extend this into more complex <em>rewriting systems</em>, such as L-systems, by embedding <em>production rules</em>, to create evolutionary-developmental systems! I.e., the genome isn&#39;t necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting. This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. In fact one of the most important operations DNA performs is to regulate itself: some parts of our genetic code enable or disable other parts our genetic code, in a complex <a href="https://en.wikipedia.org/wiki/Gene_regulatory_network"><strong>regulatory network</strong></a>. </p>
+<!--
+
+### Genetic representations
+
+Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits. Some systems use more elaborate structures (trees, networks), but these are usually reducible to and encoded as  linear sequences. After all, our genes wind up in complex structures with different reactive regions, but at the lowest level are just a long singular chain of A, G, C or T molecules.
+
+The simplest systems have a fixed length, but nature shows quite a lot of variance (not particularly correlated with the size, complexity, or evolutionary age of a species). 
+
+Initializing the genotypes implies generating randomized candidates that stay within its bounds but hopefully give a sufficiently diverse range of the possibilities of the genotype. For a simple sequence of bits, symbols, or numbers, this is fairly easy to do.
+
+#### Development
+
+In some systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
+
+### Variation
+
+The mechanisms of variation possible partly depend on the representation chosen. The two most common principles of variation in artificial evolution are naturally inspired:
+
+- Random **mutation**; akin to errors copying DNA. If the genome is represented as a binary string, then random locations in the string may be replaced by new random characters. For example, a parent "dog" could produce children such as "fog", "dqg", and so on. Obviously some mutations will not create viable individuals.
+- Sexual **cross-over**: akin to sexual reproduction in biology. As a binary string, the child takes the first fraction from one parent, and the remainder from the other. For example, breeding the strings "dog" and "cat" could generate children such as "dot", "dat", "cag" and "cog". 
+- Other forms of fragment **recombination**, such as insertion, deletion, reversal. So a more flexible system might also permit "doat", "caog", "dt", "tac", etc. 
+
+> Why use reproduction for evolution? In the face of an unpredictable environment, we cannot know which strategy will be best; we can try small variations, and hedge our bets by making very many of them (population diversity). An individual loss is not catastrophic, but a few successes can be learned from. Furthermore, the face of unpredictibility implies that what was true today may not be tomorrow, so the flexibility to avoid timeless commitment is also a good strategy; but the inheritance of choices is a useful option when the environment retains some stability. If the world were fully predictable, a rational, teleological, monothematic strategy would be preferable. But the world isn't totally random either (if it was, there would be no valid strategy worth pursuing.) 
+
+As with temperature-like parameters we saw in CA, a crucial factor in evolution is the rate or probability of variation. Too much, and the population may never significantly diverge from a randomly initialized one; too little, and it may find itself stuck on the first solution it finds, with a largely homogenous population. It may be wise to have different mutation rates for different genes, or for different members of a population, or by fitness rank etc. It is likely desirable to gradually reduce mutation rates over time, unless the population appears to be stagnating. (See also simulated annealing.)
+
+---
+
+
+## Development & meta-evolution
+
+In some systems the developmental process is little more than a trivial mapping, but this potentially misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
+
+
+In some cases, there may be several stages of code development. The biomorphs example hints at this, and already grants built-in symmetries and modular structures as are frequently found in nature -- this is partly why we respond to them. But the developmental approach can be taken much further. Sims' evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape, but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neural program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. 
+
+Think back to the turtle example. Imagine that instead of drawing lines, it is generating richer code. [Here's a variation of the biomorphs example that does just that: it generates code once rather than interpreting the genome on each frame](http://codepen.io/grrrwaaa/pen/yadVLP?editors=001) -- and this could be used as a template on which to add more behaviour than simply drawing, for example. 
+
+Another interesting result is that the developmental program could also be gradual, meaning we can model the increase in complexity of an organism from embryo to adult through the rewriting of its behavioural programs.
+
+> Taken to the most general form, it allows us to explore models in which the mechanisms of evolution are also subject to evolutionary pressures; see [Spector, Lee. "Autoconstructive evolution: Push, pushGP, and pushpop." Proceedings of the Genetic and Evolutionary Computation Conference (GECCO-2001). Vol. 137. 2001.](http://faculty.hampshire.edu/lspector/pubs/ace.pdf). This is **meta-evolution**: that the mechanisms of evolution (including development, variation, etc.) are also subject to variation and selection. After all, sexual reproduction had to be *discovered*. It turns out that some parts of our genes have evolved to be far less volatile than others, for good reason. Jurgen Schmidhuber also proposed using genetic programming (GP) to evolve GP (meta-GP), since things like chromosomes, crossover etc. are themselves phenomena that have evolved. 
+
+---
+
+## Agent-based evolution
+
+### Viability-based selection and ecosystemic evolution
+
+So far we have replaced entire generations at a time, but of course in the real world creatures' life spans interleave in all kinds of ways, with population booms and busts. Moreover we have rather artificially tested candidates against a pre-defined function, or against the whims of an interacting user or participant. But this isn't how nature works most of the time. As noted already, *viability-based selection* depends only on fundamental internal processes and exchanges with an environment (including other creatures of various species) to determine whether a creature can survive, and reproduce. Often this approach involves populations of [agents](agent.html). 
+
+When a new agent is created from nothing, as happens at the start of the simulation, and also as a fail-safe if the population ever dwindles away, a randomized genome must be added to the agent. When an agent spawns a child, the child also needs a genome, created by mutation of the parent's. This could be extended by adding sexual reproduction, only occurring when agents meet, and implemented with crossover as well as mutation.
+
+But most importantly, parts of the genome must determine behavioural properties of the agent -- how it behaves and interacts with the world -- else there's no selection at all. (It can be useful to also modify how the agent appears graphically, but this has no effect on evolution.) 
+
+### Parametric variation
+
+A good starting point may be to have the genome modify *parameters* of the agent; for example, the amount of random walk, ranges of sensing, the reproduction threshold, thresholds of probability for selecting different actions, etc. Be careful with features like speed -- you might want to model an energetic cost to go with it for realism (and to avoid breeding supersonic agents!). 
+
+Also be careful not to oversimplify. Making a parameter of "energy efficiency" is clearly going to evolve toward maximum efficiency; there's nothing interesting about this. Things get more interesting when there are multiple constraints in play; if increasing one parameter weakens another, for example. 
+
+Similarly, a direct mapping of each gene in the genome to each parameter is likely less interesting than a more complex mapping, in which multiple processes are applied to the genome data to determine the parameters. This is exactly why the evolution of math functions was more interesting than the evolution of text: the outcome of the math function is a very complex mapping of the genes that go in. Complex enough to have surprises.
+
+Another way of achieving this complexity in the mapping is to have the parameters drive features that have non-obvious effects or that depend on other parameters. For example, one could model a swimming organism by the speed it flaps its tail, the range it flaps over, and the average direction. Only together do these three parameters produce an arc of motion. Multiple such tails can lead to very complex motions. Similarly, taking Braitenberg's vehicles model, one could imagine placing a wire between every sensor and every motor, where the evolved parameters are the amplification weights on the wires.
+
+![sticky feet](http://www.cc.gatech.edu/home/turk/stickyfeet/zoo_scaled.png)
+
+For example, see [Sticky Feet: Evolution in a Multi-Creature Physical Simulation](http://www.cc.gatech.edu/home/turk/stickyfeet/index.html) -- including the [video](http://www.cc.gatech.edu/home/turk/stickyfeet/sticky_feet.mp4). In this example, the genome determines the structure of an organism as a set of point masses connected by springs. The springs are muscle-like in that their rest lengths oscillate, and the point masses also oscillate in their 'stickiness' (environmental friction) in order to support locomotion. Each organism has a heart and a mouth -- if the mouth of one agent touches the heart of another, it can eat it, and is rewarded by reproduction. Organisms may also have antennae attached to a spring segment, which detect either mouths or hearts, and modulate the spring length or stickiness. (A simple 3-segment creature with two sensors can very easily result in similar behaviour to the Braitenberg vehicles.)
+
+### Energy conservation and global adaptive constraints
+
+Naturally environmentally-based viability selection has also led to models of ecological or ecosystemic basis. A simple starting point may be to take [the agent-based example of variable populations with energy-exchange and preservation](http://codepen.io/grrrwaaa/pen/PZxrbo?editors=0010), and add genetics. In this case viability is principally determined by energy maintenance, so we have to take extra care in modeling this well. Every action an agent takes must cost energy, and this should be proportionate to the action taken. Sprinting takes more energy than sauntering. Locomotion models can estimate energy cost from the force actually applied; which is exactly the acceleration multiplied by the mass. We can approximate this by taking the difference between current & new velocities (after all clamping) and multiplying by the organism size. It may also be wise to have a basic metabolism cost to remain alive, that perhaps may increase with size, and with age.
+
+[Here's a start in this direction](http://codepen.io/grrrwaaa/pen/amgjbb?editors=0010)
+
+As organisms evolve better strategies, they can better utilize the finite energy resources of the world, and thus support greater populations. An adaptive *difficulty*, perhaps applied to the metabolism cost, or applied generally to the available energy in the world, may help keep selection pressure effective at maintaining population size. For example, we can gradually decrease the total energy in the ecosystem while populations are large, and increase it again while populations are small.
+
+Note that exactly how new energy is introduced can have quite drastic effect on the adaptive conditions -- since effectively organisms are trying to evolve strategies to be more viable, the distribution of energy in the world is the primary factor. The simplest option is to reintroduce the energy immediately, spread uniformly over the space, e.g. `field.add(energy_deficit/(field.width*field.height))`. More interesting behaviours can emerge when energy is redistributed more gradually and non-uniformly in space.
+
+### The Genetic Representation
+
+At this point, should be clear that the effectiveness of evolution depends very much on both the genetic representation as well as its behaviour in producing phenotypes. If we consider the genetic representation as a *language*, then the evolutionary effectiveness depends both on the *syntax* and the *semantics*. 
+
+The syntax determines how a phenotype is encoded, what kinds of mutations are likely/unlikely/impossible, and what transformations these result in, how much space it takes up, the potential of redundancy and neutral data, and so on. 
+
+The semantics define the basic primitive concepts from which phenotypes are produced, and thus what kinds of phenotypes are likely/unlikely/impossible, including the overal size of the set of all possible phenotypes, the resolution of variations between them, and so forth. Put another way: A very common and very general method of solving problems (mathematical, computational, and otherwise), is to translate the problem into a more convenient language. We saw that our agents could reason about neighbours more easily when the neighbour poses where translated out of global space and into the coordinate space of the agent itself. Similarly, the turtle graphics language made it very easy to create simple line drawings, and with just a handful of special tokens quite complex structures, but there are still many shapes this language is unable or very unlikely to express. Simply, some languages work better than others for certain problems. (This may related to the reason why so many species share huge sequences of the same DNA.)
+
+A good genetic representation should consider both syntax and semantics. We don't want to make our intermediate language to too restrictive, else it will not be powerful and extensible enough to encompass a wide enough range of expected and unexpected solutions. For example, we saw how creating an intermediate language of predefined words ensured we have readable (if nonsense) sentences, whereas translating into random numbers and arithmetic symbols opened the possibility of invalid expressions, but also was able to discover unexpected methods (such as using comment symbols for neutral drift). However, we also don't want our intermediate language so powerful and extensible that it becomes inefficient or intractable to actually apply, or upon which evolution has barely a chance to have impact. Our math & turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. 
+
+### Programmatic variation
+
+For a more ambitious, but more interesting challenge, we can try to build up a population of evolving agents whose phenotypic behaviour is a unique *program*. That is, the "update" routine for each agent is different because it has different code, not just different parametric values. The biomorphs were a good example of this. Arguably this permits a vaster range of possible behaviours, because less of an organism's architecture is fixed for all time.
+
+One model to achieve this is to think of the agent as comprising a collection of sensors, a collection of internal nodes of computing, and a number of output nodes (as actuator potentials) that cause actions in the world:
+
+![agent diagram](img/agent_diagram.png) 
+
+**Possible outputs include:**
+
+- Locomotion. Ideally modeled as signals sent to simulated locomotory systems, rather than simple changes of velocity/orientation. 
+- Consumption. Extraction of materials from the environment, e.g. food. 
+    - Vice versa, expulsion of materials back into the environment, e.g. building, defecation. 
+- Changing internal mental states, such as memory stores, or dispositions.
+- Communication. Pheromone deposits, noises, visual signals, etc.
+- Growth. Although this is not usually something under an organisms' control for larger organisms, it may be at the cellular level.
+- Reproduction. Clearly this is only an internal choice for organisms that reproduce asexually.
+
+> If it is helpful, you may imagine the buttons you can press to control a videogame character. Each button is an output.
+
+It may also be worth asking whether actions can occur concurrently, or whether activating one will suppress others. E.g. can you reproduce while in motion? Can you change direction when not in motion? The simplest technique here is to limit output to one action per frame.
+
+**Possible inputs include:**
+
+- Internal physiological states: At least, the current store of energy (the hungry/satiated axis), but possibly also other internal parametric states if they exist, such as temperature, digestive toxicity, ...
+- Smell/taste/pressure/humidity/electroreception/magnetoception: Detection of concentrations/intensities in local fields, at the center location of the agent.
+    - Alternatively, sensors on appendages: same as above, but at points removed from the center of the agent according to the bodily position of the sensor. E.g. eyestalks.
+- Touch: Detection of collision with objects in the environment. Could be a simple boolean true/false, could include a direction to the collided object, could include a magnitude according to the amount of overlap (i.e. a vector). 
+- Proximity/sight/hearing/echolocation: Detection of the number of agents/objects in close range. Could be converted to a loneliness/claustrophobia axis.
+    - Or perhaps the center-of-mass of objects/agents in close range (the *cohesion* and *separation* senses of the boids), or some other average property of nearby objects/agents (such as the *alignment* sense of the boids, or perhaps average color of nearby agents). 
+    - Could be refined to multiple senses, for different kinds of objects.
+- Proprioception/vestibular senses: The sense of motion from within, including balance, poise, etc. The simplest could be an accelerometer, reporting changes of velocity back to the agent. There could also be senses identifying the position or rate of movement of limbs.
+- Temporal senses (Chronoception): The simplest being a function of the agent's age since birth.
+- Pain (nociception), and perhaps other stimulations, triggered by other activity upon the agent, which dissipates over time.
+- Internal mental states, such as memory or dispositions: Could simply be a bank of memory "slots", that are written as one of the action outputs.
+
+It is likely necessary to conform inputs to ranges of sensitivity, such that external quantities are always mapped into internal ranges clamped in a unipolar 0..1 range, or perhaps a bipolar -1..1 range. Outputs may also need to map their intrinsic ranges (unipolar or bipolar) into useful ranges in the world. For example, a unipolar consumption range could be used as a proportion of available food that is actually ingested. Alternatively, it could be mapped to a range determined by the maximum eating rate an organism can sustain (a constant).
+
+For both inputs and outputs, we may need to distinguish between occasional "events" (think of buttons and impacts) and more continuously varying "signals" (think of knobs and rotations), though it is simpler if we do not need to. 
+
+> Event-like inputs can be treated as signals whose value is zero when no event is occurring. Event-like outputs can be treated as signals that pass a given threshold, or change by a significant margin. Thresholding is a general way to convert a signal to an event, possibly with some accumulation & relaxation time, and sampling is a way to convert an event into a signal, possibly with some averaging/smoothing.
+
+**Possible internal operations:**
+
+The middle layers between inputs & outputs may utilize a palette of mathematical mappings and simple signal-processing operators. For example, the set of "neural nodes" available in Karl Sims' [evolving virtual creatures](http://www.karlsims.com/papers/siggraph94.pdf) simulation included:
+
+> sum, product, divide, greater-than, sign-of, min, max, abs, if, interpolate, sin, cos, atan, log, expt, sigmoid, 
+
+Furthermore, a number of more complex "stateful" operators (i.e. operators which include their own history/memory) were included:
+
+> sum-threshold, integrate, differentiate, smooth, oscillate-wave, and oscillate-saw.
+
+Sum-threshold refers to a unit that operates much like a real neuron, accumulating inputs until a threshold is reached, then outputting a pulse and relaxing to zero. That is, neural networks are often modeled using only the sum-threshold (or even simpler, sigmoid) operators. Integrate is a simple counter, but it may be wise to make it "leaky", such that the accumulated value naturally decays over time. Smooth is a simple moving average, or low-pass filter, such as averaging the current and previous input. The oscillators are a combination of a counter with a trigonometric or modulo operation.
+
+Other kinds of internal operations could be structural, such as creating a sequence of actions (and possibly including policies to abort a sequence if an action cannot be completed) or a sequence of options (taking the first one that can be executed). 
+
+---
+
+
+## An ecosystemic, evolving agent-environment world
+
+For example, take a look at the agent model here:
+
+[Starter agent model for continuous evolution](http://codepen.io/grrrwaaa/pen/obQrZJ?editors=001)
+
+The agent has a locomotion model based on a two-wheel engine. For movement, the agent has only two output signals -- the rates of turning of each wheel (stored in the property `wheel_rate`, which is a vec2). The `agent_locomotion()` method turns these wheel_rate signals into actual movement. 
+
+The agent also has two external sensors to detect local fields, whose values are computed in the `agent_sensing()` method.
+
+**Energy preservation** is essential to the ecosystemic viability model of selection here. Every action an agent takes must cost energy, and insufficient energy must result in death.
+
+- The locomotion model incorporates this in terms of the force actually applied (i.e. the acceleration -- as difference between the current and new velocities -- multiplied by the mass).
+- There is also a fixed mass-dependent metabolism cost, applied on each frame regardless whether the agent is moving.
+- There is also a digestion cost, modeled simply as a certain portion of consumed food's energy being lost.
+
+Inevitably this means that over time, energy is being lost from the world. We can calculate how much energy is active in the system by adding up the total in each field cell (by `field.sum()`) as well as the energy stored in each agent. When this total energy level drops below our chosen carrying capacity for the world, we can then introduce energy back in, to ensure that the whole system doesn't wind down to zero. Exactly how this energy is re-introduced can have quite drastic effect on the adaptive conditions -- since effectively organisms are trying to evolve strategies to be more viable, the distribution of energy in the world is the primary factor. The simplest option is to reintroduce the energy immediately, spread uniformly over the space, e.g. `field.add(energy_deficit/(field.width*field.height))`. More interesting behaviours can emerge when energy is redistributed more gradually and non-uniformly in space.
+
+The population can shrink and grow (safely, because the main update loop iterates backwards). Still, **population control** is also essential at both ends. Clearly if the population ever drops to zero, we will never see any organisms again. Methods to overcome this include preventing death, or introducing new randomly seeded organisms (perhaps out of view) at low population sizes, as well as adaptively varying the reproduction cost/threshold. At the other end, a population that grows excessively large can slow down the simulation, perhaps even crash it. In theory the conservation of energy can prevent this, but in practice a hard limit may also be necessary. 
+
+As organisms evolve better strategies, they can better utilize the finite energy resources of the world, and thus support greater populations. An adaptive *difficulty*, perhaps applied to the metabolism cost, or applied generally to the available energy in the world, may help keep selection pressure effective at maintaining population size. For example, we can gradually decrease the total energy in the ecosystem while populations are large, and increase it again while populations are small.
+
+
+Here's a work-in-progress template: http://codepen.io/grrrwaaa/pen/obQrZJ?editors=001
+
+
+----
+
+![agent graph](img/agent_graph.png)
+
+## Genetic Programming
+
+Our math & turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. We'll explore that in more detail via *genetic programming*. 
+
+Genetic Programming was invented by Nigel Cramer in 1985, but greatly expanded through the work of John Koza. GP evolves programs; it is an example of **metaprogramming**. GP has been used to generate programs to solve hard problems, and to evolve control systems for artificial agents and robots. Karl Sims used GP for his genetic images as well as for his evolving virtual creatures. 
+
+In GP that the generating a phenotype is a process of generating *programs*, however programs are usually expressed as syntax *trees* rather than as lines of code. The leaves of the tree are *terminals*, while the non-terminal branches are *functions*. Terminals have no inputs; typical terminals are constant numbers and external/global variable names, but this set can also include zero-argument functions such as "random()" or context-sensing such as "get_orientation()". Non-terminal functions are specified according to their operator (such as mathematical addition, multiplication, cosine, etc.); they have one or more inputs (the number of inputs is the *arity*), which may be filled by terminals or other functions. The set of all possible terminals and non-terminal functions constitutes the *primitive set* of a GP system (a union of the *terminal set* and the *function set*). 
+
+This structure is natural to LISP programs:
+
+```lisp
+(* (sin (+ x 2)) (cos x))
+```
+
+In this case, the terminal set appears to include integers and "x", the function set includes "sin", "cos", and binary operators such as "+", and "*". 
+
+Javascript does not have this representational succinctness, but can get close to it by nested arrays:
+
+```javascript
+["*", ["sin", ["+", "x", 2]], ["cos", "x"]]
+```
+
+Or more graphically:
+
+```javascript
+[
+    "*", 
+    [
+        "sin", 
+        [
+            "+", 
+            "x", 
+            2]
+    ], 
+    [
+        "cos", 
+        "x"
+    ]
+]
+```
+
+Note that our representation is more brittle than a simple string of symbols: any array beginning with "sin" must have one more element following it as the argument; any array beginning with "+" must have two elements (array length 3) following it as arguments. Moreover, those arguments must either be *terminal* nodes such as "x" or numbers, or they must be arrays -- that is, operator symbols like "sin" and "+" can only occupy the first position. Since we know that our operators require *at most* two arguments, we could simply give all functions two arguments, and ignore the un-used ones as neutral junk genetic data, e.g.:
+
+```javascript
+[
+    "*", 
+    [
+        "sin", 
+        [
+            "+", 
+            "x", 
+            2], 
+        5        // junk
+    ], 
+    [
+        "cos", 
+        "x", 
+        "x"        // junk
+    ]
+]
+```
+
+### Interpretation (development)
+
+To turn this *data* into something we can actually run as *code*, we could spell it out as an expression:
+
+```javascript
+return (Math.sin(x + 2) * Math.cos(x));
+```
+
+Here's a recursive solution:
+
+```javascript
+function develop(node) {
+    // terminals:
+    if (typeof node == "string" || typeof node == "number") {
+        return node;
+    }
+    // non-terminals:
+    let op = node[0];
+    let a = node[1];
+    let b = node[2];
+    if (op == "sin" || op == "cos") {
+        // unary Math function call:
+        return "Math." + op + "(" + develop(a) + ")";
+    } else if (op == "+" || op == "*" || op == "-" || op == "/" || op == "%") {
+        // binary operator:
+        return "(" + develop(a) + op + develop(b) + ")";
+    }
 }
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">make_random_terminal</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-built_in">random</span>(<span class="hljs-number">2</span>) ? <span class="hljs-string">&quot;time&quot;</span> : <span class="hljs-built_in">Math</span>.random()*<span class="hljs-number">1000</span>;
+```
+
+### Choice of primitive set
+
+A couple of things to watch out for here: 
+
+- It is assumed that all functions return one value
+- It is assumed that returned values are of a type that can be used in other functions. This gets trickier when introducing conditional functions (e.g. `(if x y)`), since numeric values need to be converted to booleans. More complex systems may introduce type metadata into the tree.
+- Functions should not throw errors or cause invalid behaviour, so often "protected" versions of operations are used. For example, divide (or modulo) by zero may be detected and avoided, reducing the number of run-time exceptions to trap.
+- There should be enough scope in the primitive set to generate satisfactory solutions to the problem
+
+### Seed generation
+
+To generate a random seed genotype, we can also use a recursive procedure. **One thing to watch out for: we need to make sure we don't spawn infinitely large genotypes!** To do that, we'll need to pass some information through the recursion to bail out at a certain depth, or when the genome has a certain size. For example, we could limit the recursive depth as follows:
+
+```javascript
+let ops = ["sin", "cos", "+", "-", "*", "/", "%"];
+
+function pick_random_operator() {
+    return ops[random(ops.length)];
+}
+function make_random_terminal() {
+    return random(2) ? "time" : Math.random()*1000;
 }
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generate</span>(<span class="hljs-params">depth</span>) </span>{
-    <span class="hljs-comment">// forces use of terminal when depth == 1, randomized otherwise:</span>
-    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">random</span>(depth) == <span class="hljs-number">0</span>) {
-        <span class="hljs-keyword">return</span> make_random_terminal();
-    } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> [
+function generate(depth) {
+    // forces use of terminal when depth == 1, randomized otherwise:
+    if (random(depth) == 0) {
+        return make_random_terminal();
+    } else {
+        return [
             pick_random_operator(), 
-            generate(depth<span class="hljs-number">-1</span>), 
-            generate(depth<span class="hljs-number">-1</span>)
+            generate(depth-1), 
+            generate(depth-1)
         ];
     }
 }
 
-<span class="hljs-comment">// generate with maximum depth 6:</span>
-<span class="hljs-keyword">var</span> data = generate(<span class="hljs-number">6</span>);
+// generate with maximum depth 6:
+var data = generate(6);
 
-<span class="hljs-comment">// print out nicely:</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">JSON</span>.stringify(data, <span class="hljs-literal">null</span>, <span class="hljs-string">&quot; &quot;</span>));</code></pre>
-<p>Koza also recommends creating a seed population with a variety of depths, which we can easily do by randomizing the initial argument to <code>generate()</code>. </p>
-<h3 id="mutations-and-recombinations">Mutations and recombinations</h3>
-<p>GP departs significantly from other evolutionary algorithms in the implementation of mutation and recombination. It is not just individual terminal symbols that can be mutated, but also entire branches. 
-Extra care has to be taken here to prune genomes that are getting too large (or to avoid then getting too small!). Some possible mutations include:</p>
-<ul>
-<li>Replace a terminal with another random terminal. A good variation of this is to offset a constant terminal by a small amount.</li>
-<li>Replace the operator name of a function</li>
-<li>Replace a random function with a terminal</li>
-<li>Swap the argument order of a function</li>
-<li>Replace a function with a copy of another function within the same genome (including all subtrees)</li>
-<li>Replace entire genome with one of its subtrees. (This will make it smaller).</li>
-<li>Replace a function with a randomly-generated function (including subtrees). We may introduce a condition to make sure the replacement has a similar size as the item replaced.</li>
-<li>In sexual reproduction, the most common variant is <em>sub-tree crossover</em>: Parent A is cloned, but a random subtree is chosen to be replaced with another randomly-chosen subtree from Parent B. Typically sexual cross-over is utilized more when populations number in the hundreds, thousands or more, whereas mutation is more widely utilized in smaller populations.</li>
-</ul>
-<p>A tricky point -- most of these mutations depend on choosing a random non-terminal. How can we pick one randomly? And how can we ensure that the genomes stay of a reasonable size? The solutions to these problems are not trivial enough to work through in our labs.</p>
-<h3 id="alternative-representations">Alternative representations</h3>
-<p>Many GP systems today assume that all non-terminal functions have the same arity (the same no. of arguments). By doing so, it turns out that the brackets become redundant, and trees can efficiently be represented as simple linear sequences. The above example can be simply listed as:</p>
-<pre><code class="language-js">* sin + x <span class="hljs-number">2</span> <span class="hljs-number">5</span> cos x x</code></pre>
-<p>Clearly this makes some mutations easier -- we can pick random items in the list and replace them with equivalents, e.g. replacing terminals with terminals, operators with operators. We can easily see the genome size, and use that as a selection factor. But it is still not so trivial to make replacements and ensure the whole genome still generates a complete program. </p>
-<hr>
-<p>Another variant, called &quot;linear genetic programming&quot;, also uses a flat list of nodes, but in a format closer to a register language (in fact, closer to the underlying architecture of modern PCs). Each node in this list has an operator, to determine what kind of instruction it is (e.g. &quot;+&quot;, &quot;sin&quot;, &quot;var&quot;, etc.), followed by some values to specify which existing &quot;registers&quot;, that is, previously-computed values, are to be used as arguments to the operation. Each operation will then produce a new register in turn. So, the code generated will look something like this:</p>
-<pre><code class="language-javascript"><span class="hljs-keyword">var</span> r1 = x;
-<span class="hljs-keyword">var</span> r2 = <span class="hljs-number">2</span>;
-<span class="hljs-keyword">var</span> r3 = r1 + r2;
-<span class="hljs-keyword">var</span> r4 = <span class="hljs-built_in">Math</span>.sin(r3);
-<span class="hljs-keyword">var</span> r5 = x;
-<span class="hljs-keyword">var</span> r6 = <span class="hljs-built_in">Math</span>.cos(r5);
-<span class="hljs-keyword">var</span> r7 = r4 * r6;
-<span class="hljs-keyword">return</span> r7;</code></pre>
-<p>A genetic representation might be something like this:</p>
-<pre><code class="language-js">[
-    [ <span class="hljs-string">&quot;var&quot;</span>, <span class="hljs-string">&quot;x&quot;</span> ],
-    [ <span class="hljs-string">&quot;num&quot;</span>, <span class="hljs-number">2</span> ],
-    [ <span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ],
-    [ <span class="hljs-string">&quot;sin&quot;</span>, <span class="hljs-number">0</span> ],
-    [ <span class="hljs-string">&quot;var&quot;</span>, <span class="hljs-string">&quot;x&quot;</span> ],
-    [ <span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-number">0</span> ],
-    [ <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span> ],
-]</code></pre>
-<p>Notice how registers are stored as offsets back from the currently-assigning register. So, an argument of <code>0</code> means the last-computed-register, <code>1</code> means the one computed before that, etc. This kind of relative indexing makes the representation far more robust -- less likely to be malformed after mutation. Even greater safety can be ensured by wrapping register indices within the available range. For a linearized genotype representation, the genetic mutations and crossover operators are similar to other sequence-based evolutionary systems. </p>
-<p><a href="http://codepen.io/grrrwaaa/pen/YwmerM?editors=001">An example using a kind of linear-GP, somewhat akin Karl Sims&#39; evolving images, is in the lab editor here</a></p>
-<p><a href="http://codepen.io/grrrwaaa/pen/pyzJLe?editors=001">An example using this scheme to generate random video feedback systems, in the lab editor</a></p>
-<p><a href="../code/fb_gen.zip">An example of this using jit.gen in Max/MSP/Jitter</a></p>
-<hr>
-<p>Yet another very different but related approach is <strong>gramatical evolution</strong>. In GE, genomes are simply lists of integers, for example in the range 0-99. The possible shape of programs is determined by a grammar. The generator follows each rule of the grammar in turn, and when multiple options are possible, the next genome integer is used to determine the choice (modulo the number of choices). This not only guarantees that all generated programs are formally correct (no matter how complex the grammar involved), it also seems to lend some advantages with respect to mutations. Grammatical evolution has been very successful and is widely used.</p>
-<h2 id="further-reading">Further reading</h2>
-<ul>
-<li><a href="http://dces.essex.ac.uk/staff/rpoli/gp-field-guide/A_Field_Guide_to_Genetic_Programming.pdf">A field guide to GP</a></li>
-<li><a href="http://www.cs.montana.edu/~bwall/cs580/introduction_to_gp.pdf">An overview paper</a></li>
-<li><a href="http://www.geneticalgorithms.com/Tutorial/index.html">Very short tutorial</a></li>
-</ul>
-<hr>
-<h3 id="subtleties-and-misconceptions">Subtleties and misconceptions</h3>
-<p>Darwin&#39;s theory is sometimes misconceived as &quot;survival of the fittest&quot; or even the competitive &quot;law of the jungle&quot;, but evolution turns out to be quite a bit more subtle than this.</p>
-<ul>
-<li><p>First, <em>the notion of &quot;fittest&quot; is misleading</em>. It implies a static and absolute measure against which all individuals and species in the biological record can be compared. In natural evolution <strong>there can be no pre-defined fitness measure</strong>. This is because the environmental conditions are highly dynamic, and thus selective criteria are quite contextual. The conditions in which we live evolve along with us, and the other species in our habitat, as we mutually influence each other. Evolution is an open-ended process. </p>
-<ul>
-<li>This also means that there&#39;s <strong>no single best solution</strong>. The complication of living in an ever-changing environment means that <strong>no one strategy can be universally superior</strong>. This is sometimes referred to as the &quot;no free lunch&quot; theorem, which is more accurately stated that &quot;if an algorithm performs well on a certain class of problems then it necessarily pays for that with degraded performance on the set of all remaining problems.&quot; (Wolpert, D.H., Macready, W.G. (1997), &quot;No Free Lunch Theorems for Optimization&quot;, IEEE Transactions on Evolutionary Computation 1, 67.)</li>
-<li>Since there is no absolute goal or progress, the most we can measure in natural evolution is the changing frequencies over time of individual species, or of individual characteristics of a population. More importantly, <strong>natural evolution cannot be said to have a singular direction</strong>. That is to say, it is goal-less (<em>non-teleological</em>), and thus <em>natural evolution does not imply progress</em>. </li>
-</ul>
-</li>
-<li><p>Evolution does not imply a continuous process of change. The fossil records appear to show long periods of relative stability divided by relatively brief periods of biological invention. There are several competing theories as to why this is, but interestingly this &quot;<em>punctuated equilibrium</em>&quot; has appeared also in many artificial evolutionary systems.</p>
-</li>
-<li><p>An individual organism does not need to be optimally fit to the environment in order to contribute to the gene pool -- it simply needs to be <em>fit enough</em> to reproduce, i.e. to be <em>viable</em>. A natural species depends only on the <strong>viability</strong> of enough individuals to reproduce within an unpredictable environment. </p>
-<ul>
-<li>Thus, natural selection does not act on every facet of an organism, but only those that directly influence viability in the current environment. If a variation has neither positive or negative impact on the reproductive capability, this variation is called <strong>neutral</strong>. It is quite possible that variations due to <strong>selective forces</strong> are weaker than <strong>neutral variations</strong>. </li>
-<li>Since small variations are always occurring, neutral variations can tend to accumulate and diversify over time. This may broaden the gene pool or even move it quite far from its origin, without causing any major changes in selective viability; this is called <strong>neutral drift</strong>. This may be an important mechanism to escape evolutionary dead-ends (local minima in the fitness landscape). This is certainly true for many artificial evolutionary systems. It has also been hypothesized as an explanation for the long chunks of apparently unused DNA in our own genome, and for punctuated equilibrium.</li>
-</ul>
-</li>
-<li><p>Competition turns out not to be the prime mode of interaction between species; most species seem to have evolved to be relatively independent of each other, and the ones that do closely interact are <strong>more likely to be collaborative than competitive</strong>, through symbiosis or other means, as that is more likely to lead to viability. Evolution does not imply that individuals display selfish behavior. </p>
-<ul>
-<li>Nevertheless, there is a sense in which competition applies, as with <a href="http://en.wikipedia.org/wiki/Red_Queen_hypothesis">red queen</a> hypothesis: that organisms must constantly adapt, evolve, and proliferate not merely to gain advantage in reproductive viability, but also simply to survive while pitted against an ever-evolving context. It is not yet clear whether a simple &quot;arms race&quot; is a sufficient perspective, or whether more complex and even abiotic factors may be more significant.</li>
-</ul>
-</li>
-<li><p>To support diversity, an environment must be complex enough to provide multiple methods of making a living (<strong>evolutionary &quot;niches&quot;</strong>). There is a cybernetic theory that, for life to take advantage of the variety of niches present in an environment, and the variety of problems to overcome, life must have a corresponding <strong>requisite variety</strong> with which to adapt; that is, sufficient potential diversity.  </p>
-<ul>
-<li><strong>Evolution alone is not creative</strong>, and its importance may have been over-stated. The theory of natural selection does not account for how novel diversity and new characteristics arise; it merely requires that such a mechanism exists, which usually is assumed to operate primarily during reproduction.  </li>
-</ul>
-</li>
-</ul>
+// print out nicely:
+console.log(JSON.stringify(data, null, " "));
+```
 
+Koza also recommends creating a seed population with a variety of depths, which we can easily do by randomizing the initial argument to `generate()`. 
+
+
+### Mutations and recombinations
+
+GP departs significantly from other evolutionary algorithms in the implementation of mutation and recombination. It is not just individual terminal symbols that can be mutated, but also entire branches. 
+Extra care has to be taken here to prune genomes that are getting too large (or to avoid then getting too small!). Some possible mutations include:
+
+- Replace a terminal with another random terminal. A good variation of this is to offset a constant terminal by a small amount.
+- Replace the operator name of a function
+- Replace a random function with a terminal
+- Swap the argument order of a function
+- Replace a function with a copy of another function within the same genome (including all subtrees)
+- Replace entire genome with one of its subtrees. (This will make it smaller).
+- Replace a function with a randomly-generated function (including subtrees). We may introduce a condition to make sure the replacement has a similar size as the item replaced.
+- In sexual reproduction, the most common variant is *sub-tree crossover*: Parent A is cloned, but a random subtree is chosen to be replaced with another randomly-chosen subtree from Parent B. Typically sexual cross-over is utilized more when populations number in the hundreds, thousands or more, whereas mutation is more widely utilized in smaller populations.
+
+A tricky point -- most of these mutations depend on choosing a random non-terminal. How can we pick one randomly? And how can we ensure that the genomes stay of a reasonable size? The solutions to these problems are not trivial enough to work through in our labs.
+
+
+### Alternative representations
+
+Many GP systems today assume that all non-terminal functions have the same arity (the same no. of arguments). By doing so, it turns out that the brackets become redundant, and trees can efficiently be represented as simple linear sequences. The above example can be simply listed as:
+
+```js
+* sin + x 2 5 cos x x
+```
+
+Clearly this makes some mutations easier -- we can pick random items in the list and replace them with equivalents, e.g. replacing terminals with terminals, operators with operators. We can easily see the genome size, and use that as a selection factor. But it is still not so trivial to make replacements and ensure the whole genome still generates a complete program. 
+
+---
+
+Another variant, called "linear genetic programming", also uses a flat list of nodes, but in a format closer to a register language (in fact, closer to the underlying architecture of modern PCs). Each node in this list has an operator, to determine what kind of instruction it is (e.g. "+", "sin", "var", etc.), followed by some values to specify which existing "registers", that is, previously-computed values, are to be used as arguments to the operation. Each operation will then produce a new register in turn. So, the code generated will look something like this:
+
+```javascript
+var r1 = x;
+var r2 = 2;
+var r3 = r1 + r2;
+var r4 = Math.sin(r3);
+var r5 = x;
+var r6 = Math.cos(r5);
+var r7 = r4 * r6;
+return r7;
+```
+
+A genetic representation might be something like this:
+
+```js
+[
+    [ "var", "x" ],
+    [ "num", 2 ],
+    [ "+", 1, 0 ],
+    [ "sin", 0 ],
+    [ "var", "x" ],
+    [ "cos", 0 ],
+    [ "*", 2, 0 ],
+]
+```
+
+Notice how registers are stored as offsets back from the currently-assigning register. So, an argument of `0` means the last-computed-register, `1` means the one computed before that, etc. This kind of relative indexing makes the representation far more robust -- less likely to be malformed after mutation. Even greater safety can be ensured by wrapping register indices within the available range. For a linearized genotype representation, the genetic mutations and crossover operators are similar to other sequence-based evolutionary systems. 
+
+[An example using a kind of linear-GP, somewhat akin Karl Sims' evolving images, is in the lab editor here](http://codepen.io/grrrwaaa/pen/YwmerM?editors=001)
+
+[An example using this scheme to generate random video feedback systems, in the lab editor](http://codepen.io/grrrwaaa/pen/pyzJLe?editors=001)
+
+[An example of this using jit.gen in Max/MSP/Jitter](../code/fb_gen.zip)
+
+---
+
+Yet another very different but related approach is **gramatical evolution**. In GE, genomes are simply lists of integers, for example in the range 0-99. The possible shape of programs is determined by a grammar. The generator follows each rule of the grammar in turn, and when multiple options are possible, the next genome integer is used to determine the choice (modulo the number of choices). This not only guarantees that all generated programs are formally correct (no matter how complex the grammar involved), it also seems to lend some advantages with respect to mutations. Grammatical evolution has been very successful and is widely used.
+
+## Further reading
+
+- [A field guide to GP](http://dces.essex.ac.uk/staff/rpoli/gp-field-guide/A_Field_Guide_to_Genetic_Programming.pdf)
+- [An overview paper](http://www.cs.montana.edu/~bwall/cs580/introduction_to_gp.pdf)
+- [Very short tutorial](http://www.geneticalgorithms.com/Tutorial/index.html)
+
+
+---
+
+
+### Subtleties and misconceptions
+
+Darwin's theory is sometimes misconceived as "survival of the fittest" or even the competitive "law of the jungle", but evolution turns out to be quite a bit more subtle than this.
+
+- First, *the notion of "fittest" is misleading*. It implies a static and absolute measure against which all individuals and species in the biological record can be compared. In natural evolution **there can be no pre-defined fitness measure**. This is because the environmental conditions are highly dynamic, and thus selective criteria are quite contextual. The conditions in which we live evolve along with us, and the other species in our habitat, as we mutually influence each other. Evolution is an open-ended process. 
+  - This also means that there's **no single best solution**. The complication of living in an ever-changing environment means that **no one strategy can be universally superior**. This is sometimes referred to as the "no free lunch" theorem, which is more accurately stated that "if an algorithm performs well on a certain class of problems then it necessarily pays for that with degraded performance on the set of all remaining problems." (Wolpert, D.H., Macready, W.G. (1997), "No Free Lunch Theorems for Optimization", IEEE Transactions on Evolutionary Computation 1, 67.)
+  - Since there is no absolute goal or progress, the most we can measure in natural evolution is the changing frequencies over time of individual species, or of individual characteristics of a population. More importantly, **natural evolution cannot be said to have a singular direction**. That is to say, it is goal-less (*non-teleological*), and thus *natural evolution does not imply progress*. 
+
+- Evolution does not imply a continuous process of change. The fossil records appear to show long periods of relative stability divided by relatively brief periods of biological invention. There are several competing theories as to why this is, but interestingly this "*punctuated equilibrium*" has appeared also in many artificial evolutionary systems.
+
+- An individual organism does not need to be optimally fit to the environment in order to contribute to the gene pool -- it simply needs to be *fit enough* to reproduce, i.e. to be *viable*. A natural species depends only on the **viability** of enough individuals to reproduce within an unpredictable environment. 
+  - Thus, natural selection does not act on every facet of an organism, but only those that directly influence viability in the current environment. If a variation has neither positive or negative impact on the reproductive capability, this variation is called **neutral**. It is quite possible that variations due to **selective forces** are weaker than **neutral variations**. 
+  - Since small variations are always occurring, neutral variations can tend to accumulate and diversify over time. This may broaden the gene pool or even move it quite far from its origin, without causing any major changes in selective viability; this is called **neutral drift**. This may be an important mechanism to escape evolutionary dead-ends (local minima in the fitness landscape). This is certainly true for many artificial evolutionary systems. It has also been hypothesized as an explanation for the long chunks of apparently unused DNA in our own genome, and for punctuated equilibrium.
+
+- Competition turns out not to be the prime mode of interaction between species; most species seem to have evolved to be relatively independent of each other, and the ones that do closely interact are **more likely to be collaborative than competitive**, through symbiosis or other means, as that is more likely to lead to viability. Evolution does not imply that individuals display selfish behavior. 
+  - Nevertheless, there is a sense in which competition applies, as with [red queen](http://en.wikipedia.org/wiki/Red_Queen_hypothesis) hypothesis: that organisms must constantly adapt, evolve, and proliferate not merely to gain advantage in reproductive viability, but also simply to survive while pitted against an ever-evolving context. It is not yet clear whether a simple "arms race" is a sufficient perspective, or whether more complex and even abiotic factors may be more significant.
+
+- To support diversity, an environment must be complex enough to provide multiple methods of making a living (**evolutionary "niches"**). There is a cybernetic theory that, for life to take advantage of the variety of niches present in an environment, and the variety of problems to overcome, life must have a corresponding **requisite variety** with which to adapt; that is, sufficient potential diversity.  
+   - **Evolution alone is not creative**, and its importance may have been over-stated. The theory of natural selection does not account for how novel diversity and new characteristics arise; it merely requires that such a mechanism exists, which usually is assumed to operate primarily during reproduction.  
+
+-->
 <footer>2020</footer>
 
 </body>
