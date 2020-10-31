@@ -65,15 +65,18 @@ The course has a strongly practical emphasis, exploring frameworks through appli
        - [Submit via the Form here](https://forms.gle/oWKbnwBefjhmZQkp9)
 8. [**Evolution II**](evo.html) *Nov 2* 
    - Action items:
-9.  [**Neural Networks I**](nn.html)
+9. [**Neural Networks I**](nn.html)
    - Action items:
+     - **Due Nov 20: [Assignment 3](assignments.html) (Evolution)**
 11. [**Neural Networks II**](nn.html)
    - Action items:
 11. **Special Topic**
    - Action items:
 12. **Special Topic**
    - Action items:
+   - **Due Dec 7: [Final project presentation](#evaluation)**
 13. **Final Presentations** *Dec 7* 
+   - **Due Dec 14: [Final project code & documentation](#evaluation)**
 
 ---
 

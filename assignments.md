@@ -64,3 +64,13 @@ The assignment is to construct a new multi-agent system. You can develop an idea
 Look through the [agent-based systems](agent.html) page for ideas. 
 
 Follow all the guidelines above on taking notes, formatting your code, and recording comments. 
+
+## Assignment 3
+
+**Evolutionary System**
+
+The assignment is to construct a new evolutionary system. You can develop an idea blending or mutating one of the systems or aspects we have looked at in the classes. You can extend one of your previous assignments with evolution. Or you can design and create a new one to explore a different idea you have. Use the starter-kit from the [labs](labs.html). 
+
+Look through the [evolution](evo.html) page for ideas. 
+
+Follow all the guidelines above on taking notes, formatting your code, and recording comments. 

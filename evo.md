@@ -520,7 +520,6 @@ Some of these are implemented here, along with a few extensions:
 
 An interesting challenge could be to extend this into more complex *rewriting systems*, such as L-systems, by embedding *production rules*, to create evolutionary-developmental systems! I.e., the genome isn't necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting. This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. In fact one of the most important operations DNA performs is to regulate itself: some parts of our genetic code enable or disable other parts our genetic code, in a complex [**regulatory network**](https://en.wikipedia.org/wiki/Gene_regulatory_network). 
 
-
 <!--
 
 ### Genetic representations
