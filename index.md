@@ -64,8 +64,11 @@ The course has a strongly practical emphasis, exploring frameworks through appli
      - **Due Oct 30: [Assignment 2](assignments.html) (Agents)**
        - [Submit via the Form here](https://forms.gle/oWKbnwBefjhmZQkp9)
 8. [**Evolution II**](evo.html) *Nov 2* 
-   - Action items:
-9. [**Neural Networks I**](nn.html)
+   - Today's scripts: 
+     - [Math solver with graphs](https://codepen.io/grrrwaaa/pen/GRqdeOx?editors=0010)
+     - [Breeding biomorphs](https://codepen.io/grrrwaaa/pen/bGeMZYQ?editors=0010)
+   - Notification: [EvoMusArt conference extended deadline Nov 19](http://www.evostar.org/2021/evomusart/)
+9.  [**Neural Networks I**](nn.html)
    - Action items:
      - **Due Nov 20: [Assignment 3](assignments.html) (Evolution)**
 11. [**Neural Networks II**](nn.html)
