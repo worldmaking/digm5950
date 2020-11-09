@@ -69,6 +69,9 @@ The course has a strongly practical emphasis, exploring frameworks through appli
      - [Breeding biomorphs](https://codepen.io/grrrwaaa/pen/bGeMZYQ?editors=0010)
 9.  [**Neuro-Evolution I**](nn.html)
    - Notification: [EvoMusArt conference extended deadline Nov 19](http://www.evostar.org/2021/evomusart/)
+   - Today's scripts:
+     - [First neural network -- and re-usable library](https://codepen.io/grrrwaaa/pen/wvWYmvM?editors=0011)
+     - [Tag game](https://codepen.io/grrrwaaa/pen/VwjEBwR?editors=0011)
    - Action items:
      - **Due Nov 20: [Assignment 3](assignments.html) (Evolution)**
 11. [**Neuro-Evolution II**](nn.html)
