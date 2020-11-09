@@ -76,7 +76,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Review & discussion of assignments
    - Action items:
      - **Due Nov 20: [Assignment 3](assignments.html) (Evolution)**
-12. **Special Topic**
+11. **Special Topic**
    - Action items:
 12. **Special Topic**
    - Action items:
