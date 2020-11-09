@@ -67,16 +67,16 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Today's scripts: 
      - [Math solver with graphs](https://codepen.io/grrrwaaa/pen/GRqdeOx?editors=0010)
      - [Breeding biomorphs](https://codepen.io/grrrwaaa/pen/bGeMZYQ?editors=0010)
-9.  [**Neuro-Evolution I**](nn.html)
+9.  [**Neuro-Evolution I**](evo.html)
    - Notification: [EvoMusArt conference extended deadline Nov 19](http://www.evostar.org/2021/evomusart/)
    - Today's scripts:
      - [First neural network -- and re-usable library](https://codepen.io/grrrwaaa/pen/wvWYmvM?editors=0011)
      - [Tag game](https://codepen.io/grrrwaaa/pen/VwjEBwR?editors=0011)
+10. [**Neuro-Evolution continued**](evo.html)
+   - Review & discussion of assignments
    - Action items:
      - **Due Nov 20: [Assignment 3](assignments.html) (Evolution)**
-11. [**Neuro-Evolution II**](nn.html)
-   - Action items:
-11. **Special Topic**
+12. **Special Topic**
    - Action items:
 12. **Special Topic**
    - Action items:
