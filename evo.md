@@ -630,168 +630,11 @@ Try changing the neural network structure
   - Perhaps a 'memory' node, that writes an output which becomes an input on the next frame? Perhaps gradually interpolated?
   - Perhaps a 'random' input node?
 
-Rather than running in generations, could we try a continuous mode, where as soon as one player is removed from the game, a new player is created at a random position (using evolutionary selection & mutation etc. from the current population); does that change things?
-
-
-<!-- 
-
-
-
-XOR:
-
-out high if either in but not both are high
-
-at least one must be high, but zero out if both high:  
-(a+b) -2a*b
-
-h1 
-
-
-Agar:
-
-inputs: size
-	3 players, each [angle, distance, size] = 9
-	3 foods, each [angle, dist] = 6
-TOTAL 16 inputs.
-outputs: 2 (angle, speed)
-
-Simplify- remove food, only 2 nearest players
-	make perceived 'size' relative to our size (< 0.5 means smaller)
-	-> 6 inputs (4 if we remove `distance`)
-
-Simpler -- and stickyfeet inspired:
-- agent has head (mouth) and tail (heart). if a mouth touches a heart, it eats that organism.
-- fixed speed for simplicity? (can add variance later)
-- sense nearest other head (dir, dist) and nearest other heart (dir, dist)
-- actions for fwd, L, R, tumble? 
-
-
-
-
-
-Target:
-inputs: vel dx,dy, target dx,dy, angle & distance to target = 6
-outputs: desired direction = 1
-
-
-Tron:
-
-two players. move in a grid, leaving trail behind. First to enter a wall or trail loses
-	- fitness a function of how long you last vs. opponent?
- 
-inputs must include: front, L, R states
-inputs might include: direction & distance to opponent; additional neighbour states... 
-
-output is forwrd, L, R (use highest)
-
-
-Snake:
-
-gain points for eating fruits (and snake gets longer)
-die when hitting a wall or own tail (like tron)
-
-inputs: neighbouring cells to snake head, angle to fruit (past action?)
-actions: turn left, right, or forward
-scoring: negative for death, rising positive for being near fruit
-
-
-tic-tac-toe? 9-in, 9-out (highest valid is selected)
-
-
-some kind of walker/swimmer type of thing?
-a side-scroller variant (avoid collisions)
-
-
-
-
-
-
-
-----
-
-```js 
-// derivative of sigmoid (as used for backpropagation):
-function dsigmoid(x) { 
-	const s = sigmoid(x); 	
-	return s * (1-s);
-}
-```
-
--->
+So far we have replaced entire generations at a time, but of course in the real world creatures' life spans interleave in all kinds of ways, with population booms and busts. Moreover we have rather artificially tested candidates against a pre-defined function, or against the whims of an interacting user or participant. But this isn't how nature works most of the time. As noted already, **viability-based selection** depends only on fundamental internal processes and exchanges with an environment (including other creatures of various species) to determine whether a creature can survive, and reproduce. So, rather than running in generations, could we try a continuous mode, where as soon as one player is removed from the game, a new player is created at a random position (with mutation from a parent taken from the current population). At this point the fitness measure of scoring points can be removed altogether: players simply need to stay in the game to have a chance of their genes being inherited.
 
 <!-- 
 
-TODO: 
 
-Emphasize:
-- importance of enviornment; **niches** (non-triviality)
-- requisite variety of envo + bio (non-triviality)
-- e.g. nontrivial problem space, non-trivial mappings (development etc.)
-
-
-
-
-
-- importance of enviornment again: create a system with some kind of physics (like the skeleton mesh stuff, breeding a walker? breeding a car?)
-- novelty search
-- using D3 or somthign to visualize results
-- some way to store results between refreshes
-- NEAT here or in another module?
-- There's now overlap between this page and the "Code" page, esp. in the turtle graphics part.
-
--->
-
-<!--
-
-### Genetic representations
-
-Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits. Some systems use more elaborate structures (trees, networks), but these are usually reducible to and encoded as  linear sequences. After all, our genes wind up in complex structures with different reactive regions, but at the lowest level are just a long singular chain of A, G, C or T molecules.
-
-Initializing the genotypes implies generating randomized candidates that stay within its bounds but hopefully give a sufficiently diverse range of the possibilities of the genotype. For a simple sequence of bits, symbols, or numbers, this is fairly easy to do.
-
----
-
-
-## Development & meta-evolution
-
-
-### Evo Devo
-
-In some systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
-
-Looking back at our code-based genetics in the Biomorphs, an interesting challenge could be to extend this into more complex *rewriting systems*, such as L-systems, by embedding *production rules*, to create evolutionary-developmental systems! I.e., the genome isn't necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting. This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. In fact one of the most important operations DNA performs is to regulate itself: some parts of our genetic code enable or disable other parts our genetic code, in a complex [**regulatory network**](https://en.wikipedia.org/wiki/Gene_regulatory_network). 
-
-But the developmental approach can be taken much further. Sims' evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape, but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neuro-physiological program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. 
-
-Another interesting result is that the developmental program could also be gradual, meaning we can model the increase in complexity of an organism from embryo to adult through the rewriting of its behavioural programs.
-
-> Taken to the most general form, it allows us to explore models in which the mechanisms of evolution are also subject to evolutionary pressures; see [Spector, Lee. "Autoconstructive evolution: Push, pushGP, and pushpop." Proceedings of the Genetic and Evolutionary Computation Conference (GECCO-2001). Vol. 137. 2001.](http://faculty.hampshire.edu/lspector/pubs/ace.pdf). This is **meta-evolution**: that the mechanisms of evolution (including development, variation, etc.) are also subject to variation and selection. After all, sexual reproduction had to be *discovered*. It turns out that some parts of our genes have evolved to be far less volatile than others, for good reason. Jurgen Schmidhuber also proposed using genetic programming (GP) to evolve GP (meta-GP), since things like chromosomes, crossover etc. are themselves phenomena that have evolved. 
-
----
-
-## Agent-based evolution
-
-### Viability-based selection and ecosystemic evolution
-
-So far we have replaced entire generations at a time, but of course in the real world creatures' life spans interleave in all kinds of ways, with population booms and busts. Moreover we have rather artificially tested candidates against a pre-defined function, or against the whims of an interacting user or participant. But this isn't how nature works most of the time. As noted already, *viability-based selection* depends only on fundamental internal processes and exchanges with an environment (including other creatures of various species) to determine whether a creature can survive, and reproduce. Often this approach involves populations of [agents](agent.html). 
-
-When a new agent is created from nothing, as happens at the start of the simulation, a randomized genome must be added to the agent. When an agent spawns a child, the child also needs a genome, created by mutation of the parent's. This could be extended by adding sexual reproduction, only occurring when agents meet, and implemented with crossover as well as mutation.
-
-But most importantly, parts of the genome must determine behavioural properties of the agent -- how it behaves and interacts with the world -- else there's no selection at all. 
-
-### Parametric variation
-
-A good starting point may be to have the genome modify *parameters* of the agent; for example, the amount of random walk, ranges of sensing, the reproduction threshold, thresholds of probability for selecting different actions, etc. Be careful with features like speed -- you might want to model an energetic cost to go with it for realism (and to avoid breeding supersonic agents!). 
-
-Also be careful not to oversimplify. Making a parameter of "energy efficiency" is clearly going to evolve toward maximum efficiency; there's nothing interesting about this. Things get more interesting when there are multiple constraints in play; if increasing one parameter weakens another, for example. 
-
-Similarly, a direct mapping of each gene in the genome to each parameter is likely less interesting than a more complex mapping, in which multiple processes are applied to the genome data to determine the parameters. This is exactly why the evolution of math functions was interesting: the outcome of the math function is a very complex mapping of the genes that go in. Complex enough to have surprises.
-
-Another way of achieving this complexity in the mapping is to have the parameters drive features that have non-obvious effects or that depend on other parameters. For example, one could model a swimming organism by the speed it flaps its tail, the range it flaps over, and the average direction. Only together do these three parameters produce an arc of motion. Multiple such tails can lead to very complex motions. Similarly, taking Braitenberg's vehicles model, one could imagine placing a wire between every sensor and every motor, where the evolved parameters are the amplification weights on the wires.
-
-![sticky feet](http://www.cc.gatech.edu/home/turk/stickyfeet/zoo_scaled.png)
-
-For example, see [Sticky Feet: Evolution in a Multi-Creature Physical Simulation](http://www.cc.gatech.edu/home/turk/stickyfeet/index.html) -- including the [video](http://www.cc.gatech.edu/home/turk/stickyfeet/sticky_feet.mp4). In this example, the genome determines the structure of an organism as a set of point masses connected by springs. The springs are muscle-like in that their rest lengths oscillate, and the point masses also oscillate in their 'stickiness' (environmental friction) in order to support locomotion. Each organism has a heart and a mouth -- if the mouth of one agent touches the heart of another, it can eat it, and is rewarded by reproduction. Organisms may also have antennae attached to a spring segment, which detect either mouths or hearts, and modulate the spring length or stickiness. (A simple 3-segment creature with two sensors can very easily result in similar behaviour to the Braitenberg vehicles.)
 
 ### Energy conservation and global adaptive constraints
 
@@ -803,21 +646,11 @@ As organisms evolve better strategies, they can better utilize the finite energy
 
 Note that exactly how new energy is introduced can have quite drastic effect on the adaptive conditions -- since effectively organisms are trying to evolve strategies to be more viable, the distribution of energy in the world is the primary factor. The simplest option is to reintroduce the energy immediately, spread uniformly over the space, e.g. `field.add(energy_deficit/(field.width*field.height))`. More interesting behaviours can emerge when energy is redistributed more gradually and non-uniformly in space.
 
-### The Genetic Representation
 
-At this point, should be clear that the effectiveness of evolution depends very much on both the genetic representation as well as its behaviour in producing phenotypes. If we consider the genetic representation as a *language*, then the evolutionary effectiveness depends both on the *syntax* and the *semantics*. 
 
-The syntax determines how a phenotype is encoded, what kinds of mutations are likely/unlikely/impossible, and what transformations these result in, how much space it takes up, the potential of redundancy and neutral data, and so on. 
+### Agent designs
 
-The semantics define the basic primitive concepts from which phenotypes are produced, and thus what kinds of phenotypes are likely/unlikely/impossible, including the overal size of the set of all possible phenotypes, the resolution of variations between them, and so forth. Put another way: A very common and very general method of solving problems (mathematical, computational, and otherwise), is to translate the problem into a more convenient language. We saw that our agents could reason about neighbours more easily when the neighbour poses where translated out of global space and into the coordinate space of the agent itself. Similarly, the turtle graphics language made it very easy to create simple line drawings, and with just a handful of special tokens quite complex structures, but there are still many shapes this language is unable or very unlikely to express. Simply, some languages work better than others for certain problems. (This may related to the reason why so many species share huge sequences of the same DNA.)
-
-A good genetic representation should consider both syntax and semantics. We don't want to make our intermediate language to too restrictive, else it will not be powerful and extensible enough to encompass a wide enough range of expected and unexpected solutions. For example, we saw how creating an intermediate language of predefined words ensured we have readable (if nonsense) sentences, whereas translating into random numbers and arithmetic symbols opened the possibility of invalid expressions, but also was able to discover unexpected methods (such as using comment symbols for neutral drift). However, we also don't want our intermediate language so powerful and extensible that it becomes inefficient or intractable to actually apply, or upon which evolution has barely a chance to have impact. Our math & turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. 
-
-### Programmatic variation
-
-For a more ambitious, but more interesting challenge, we can try to build up a population of evolving agents whose phenotypic behaviour is a unique *program*. That is, the "update" routine for each agent is different because it has different code, not just different parametric values. The biomorphs were a good example of this. Arguably this permits a vaster range of possible behaviours, because less of an organism's architecture is fixed for all time.
-
-One model to achieve this is to think of the agent as comprising a collection of sensors, a collection of internal nodes of computing, and a number of output nodes (as actuator potentials) that cause actions in the world:
+We now have a model of an agent as comprising a collection of sensors, a collection of internal nodes of computing, and a number of output nodes (as actuator potentials) that cause actions in the world:
 
 ![agent diagram](img/agent_diagram.png) 
 
@@ -868,6 +701,119 @@ Furthermore, a number of more complex "stateful" operators (i.e. operators which
 Sum-threshold refers to a unit that operates much like a real neuron, accumulating inputs until a threshold is reached, then outputting a pulse and relaxing to zero. That is, neural networks are often modeled using only the sum-threshold (or even simpler, sigmoid) operators. Integrate is a simple counter, but it may be wise to make it "leaky", such that the accumulated value naturally decays over time. Smooth is a simple moving average, or low-pass filter, such as averaging the current and previous input. The oscillators are a combination of a counter with a trigonometric or modulo operation.
 
 Other kinds of internal operations could be structural, such as creating a sequence of actions (and possibly including policies to abort a sequence if an action cannot be completed) or a sequence of options (taking the first one that can be executed). 
+
+
+
+Agar:
+
+inputs: size
+	3 players, each [angle, distance, size] = 9
+	3 foods, each [angle, dist] = 6
+TOTAL 16 inputs.
+outputs: 2 (angle, speed)
+
+Simplify- remove food, only 2 nearest players
+	make perceived 'size' relative to our size (< 0.5 means smaller)
+	-> 6 inputs (4 if we remove `distance`)
+
+
+
+
+Target:
+inputs: vel dx,dy, target dx,dy, angle & distance to target = 6
+outputs: desired direction = 1
+
+
+Tron:
+
+two players. move in a grid, leaving trail behind. First to enter a wall or trail loses
+	- fitness a function of how long you last vs. opponent?
+ 
+inputs must include: front, L, R states
+inputs might include: direction & distance to opponent; additional neighbour states... 
+
+output is forwrd, L, R (use highest)
+
+
+Snake:
+
+gain points for eating fruits (and snake gets longer)
+die when hitting a wall or own tail (like tron)
+
+inputs: neighbouring cells to snake head, angle to fruit (past action?)
+actions: turn left, right, or forward
+scoring: negative for death, rising positive for being near fruit
+
+
+tic-tac-toe? 9-in, 9-out (highest valid is selected)
+
+
+some kind of walker/swimmer type of thing?
+a side-scroller variant (avoid collisions)
+
+
+----
+
+```js 
+// derivative of sigmoid (as used for backpropagation):
+function dsigmoid(x) { 
+	const s = sigmoid(x); 	
+	return s * (1-s);
+}
+```
+
+TODO: 
+
+Emphasize:
+- importance of enviornment; **niches** (non-triviality)
+- requisite variety of envo + bio (non-triviality)
+- e.g. nontrivial problem space, non-trivial mappings (development etc.)
+
+
+
+- importance of enviornment again: create a system with some kind of physics (like the skeleton mesh stuff, breeding a walker? breeding a car?)
+- novelty search
+- using D3 or somthign to visualize results
+- some way to store results between refreshes
+- NEAT here or in another module?
+- There's now overlap between this page and the "Code" page, esp. in the turtle graphics part.
+
+-->
+
+<!--
+
+---
+
+
+
+Meta-evolution...   [Spector, Lee. "Autoconstructive evolution: Push, pushGP, and pushpop." Proceedings of the Genetic and Evolutionary Computation Conference (GECCO-2001). Vol. 137. 2001.](http://faculty.hampshire.edu/lspector/pubs/ace.pdf). This is **meta-evolution**: that the mechanisms of evolution (including development, variation, etc.) are also subject to variation and selection. After all, sexual reproduction had to be *discovered*. It turns out that some parts of our genes have evolved to be far less volatile than others, for good reason. Jurgen Schmidhuber also proposed using genetic programming (GP) to evolve GP (meta-GP), since things like chromosomes, crossover etc. are themselves phenomena that have evolved. 
+
+---
+
+
+### The importance of non-triviality
+
+A good starting point may be to have the genome modify *parameters* of the agent; for example, the amount of random walk, ranges of sensing, the reproduction threshold, thresholds of probability for selecting different actions, etc. Be careful with features like speed -- you might want to model an energetic cost to go with it for realism (and to avoid breeding supersonic agents!). 
+
+Also be careful not to oversimplify. Making a parameter of "energy efficiency" is clearly going to evolve toward maximum efficiency; there's nothing interesting about this. Things get more interesting when there are multiple constraints in play; if increasing one parameter weakens another, for example. 
+
+Similarly, a direct mapping of each gene in the genome to each parameter is likely less interesting than a more complex mapping, in which multiple processes are applied to the genome data to determine the parameters. This is exactly why the evolution of math functions was interesting: the outcome of the math function is a very complex mapping of the genes that go in. Complex enough to have surprises.
+
+Another way of achieving this complexity in the mapping is to have the parameters drive features that have non-obvious effects or that depend on other parameters. For example, one could model a swimming organism by the speed it flaps its tail, the range it flaps over, and the average direction. Only together do these three parameters produce an arc of motion. Multiple such tails can lead to very complex motions. Similarly, taking Braitenberg's vehicles model, one could imagine placing a wire between every sensor and every motor, where the evolved parameters are the amplification weights on the wires.
+
+![sticky feet](http://www.cc.gatech.edu/home/turk/stickyfeet/zoo_scaled.png)
+
+For example, see [Sticky Feet: Evolution in a Multi-Creature Physical Simulation](http://www.cc.gatech.edu/home/turk/stickyfeet/index.html) -- including the [video](http://www.cc.gatech.edu/home/turk/stickyfeet/sticky_feet.mp4). In this example, the genome determines the structure of an organism as a set of point masses connected by springs. The springs are muscle-like in that their rest lengths oscillate, and the point masses also oscillate in their 'stickiness' (environmental friction) in order to support locomotion. Each organism has a heart and a mouth -- if the mouth of one agent touches the heart of another, it can eat it, and is rewarded by reproduction. Organisms may also have antennae attached to a spring segment, which detect either mouths or hearts, and modulate the spring length or stickiness. (A simple 3-segment creature with two sensors can very easily result in similar behaviour to the Braitenberg vehicles.)
+
+#### The Genetic Representation
+
+At this point, should be clear that the effectiveness of evolution depends very much on both the genetic representation as well as its behaviour in producing phenotypes. If we consider the genetic representation as a *language*, then the evolutionary effectiveness depends both on the *syntax* and the *semantics*. 
+
+The syntax determines how a phenotype is encoded, what kinds of mutations are likely/unlikely/impossible, and what transformations these result in, how much space it takes up, the potential of redundancy and neutral data, and so on. 
+
+The semantics define the basic primitive concepts from which phenotypes are produced, and thus what kinds of phenotypes are likely/unlikely/impossible, including the overal size of the set of all possible phenotypes, the resolution of variations between them, and so forth. Put another way: A very common and very general method of solving problems (mathematical, computational, and otherwise), is to translate the problem into a more convenient language. We saw that our agents could reason about neighbours more easily when the neighbour poses where translated out of global space and into the coordinate space of the agent itself. Similarly, the turtle graphics language made it very easy to create simple line drawings, and with just a handful of special tokens quite complex structures, but there are still many shapes this language is unable or very unlikely to express. Simply, some languages work better than others for certain problems. (This may related to the reason why so many species share huge sequences of the same DNA.)
+
+A good genetic representation should consider both syntax and semantics. We don't want to make our intermediate language to too restrictive, else it will not be powerful and extensible enough to encompass a wide enough range of expected and unexpected solutions. For example, we saw how creating an intermediate language of predefined words ensured we have readable (if nonsense) sentences, whereas translating into random numbers and arithmetic symbols opened the possibility of invalid expressions, but also was able to discover unexpected methods (such as using comment symbols for neutral drift). However, we also don't want our intermediate language so powerful and extensible that it becomes inefficient or intractable to actually apply, or upon which evolution has barely a chance to have impact. Our math & turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. 
 
 ---
 
