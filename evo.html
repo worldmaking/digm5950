@@ -48,34 +48,22 @@ footer {
 <li><a href="#biomorph-genetics">Biomorph genetics</a></li>
 </ul>
 </li>
+<li><a href="#variation">Variation</a><ul>
+<li><a href="#variation-rates">Variation Rates</a></li>
+</ul>
+</li>
+<li><a href="#neuro-evolution">Neuro-Evolution</a><ul>
+<li><a href="#quick-primer-on-neural-networks">Quick primer on neural networks</a></li>
+<li><a href="#neuro-evolution-1">Neuro-Evolution</a><ul>
+<li><a href="#a-neuro-evolution-game">A neuro-evolution game</a></li>
+<li><a href="#observations-1">Observations</a></li>
 </ul>
 </li>
 </ul>
-
-<!-- 
-
-TODO: 
-
-Rewrite this section. Skip the string generation, go straight to math.
-
-Emphasize:
-- importance of enviornment; **niches** (non-triviality)
-- requisite variety of envo + bio (non-triviality)
-- e.g. nontrivial problem space, non-trivial mappings (development etc.)
-
-
-
-
-
-- importance of enviornment again: create a system with some kind of physics (like the skeleton mesh stuff, breeding a walker? breeding a car?)
-- novelty search
-- using D3 or somthign to visualize results
-- some way to store results between refreshes
-- NEAT here or in another module?
-- There's now overlap between this page and the "Code" page, esp. in the turtle graphics part.
-
--->
-
+</li>
+</ul>
+</li>
+</ul>
 
 <hr>
 <h1 id="evolutionary-systems">Evolutionary Systems</h1>
@@ -479,65 +467,280 @@ turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span cla
 
     <span class="hljs-comment">// now create a new generation with `pop[index]`...</span>
 }</code></pre>
-<p>For the new generation we want to apply mutations to the chosen genotype and thus produce variants. One of the advantages of using lists (of symbols or numbers) as genotypes is the flexibility to perform different kinds of mutations. The following are all effective mutations that are comparable to those that happen with DNA:</p>
-<ul>
-<li>Replace an element with another randomly chosen from the lexicon</li>
-<li>At a random location, remove a element</li>
-<li>At a random location, insert a element randomly chosen from the alphabet</li>
-<li>Split the list into two parts, and join them the other way around</li>
-<li>Repeat a subsection of the list</li>
-<li>Reverse, or shuffle, a subsection of the list</li>
-<li>Combine a section of one list with a section of another</li>
-</ul>
-<blockquote>
-<p>Some of these mutations can change the length of the string. It may be advisable to add limits on the minimum or maximum length of the string mutations can produce.</p>
-</blockquote>
-<p>Some of these are implemented here, along with a few extensions:</p>
+<p>For the new generation we want to apply mutations to the chosen genotype and thus produce variants. </p>
+<p>The example below implements a few extensions:</p>
 <ul>
 <li>Making the fixed amounts (segment angles, lengths) variable over time, for animated biomorphs</li>
 <li>Extending the alphabet with more drawing components</li>
-<li>Showing the creatures growth by interpreting less than the whole string during a childhood period<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="dGwWOz" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/dGwWOz">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+<li>Showing the creatures growth by interpreting less than the whole string during a childhood period</li>
+<li>A variety of methods of genetic variation</li>
+</ul>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="dGwWOz" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/dGwWOz">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
+<blockquote>
+<p>Remember: although we have used this method to direct a Turtle-renderer, there&#39;s no reason why the same method can be used by a very different kind of interpreter to produce a completely different paradigm of phenotypes! It could be producing forms by diffusion-limited aggregation, or voxel painting, or by directing the forces of a vehicle. It could be specifying the layout of an audio synthesizer patch or instructions for a 3D printer, etc.</p>
+</blockquote>
+<h2 id="variation">Variation</h2>
+<p>The mechanisms of variation possible partly depend on the representation chosen. But one of the advantages of using lists (of symbols or numbers or genetic codes) as genotypes is the flexibility to perform many different kinds of mutations. The most common methods of variation in artificial evolution are also naturally inspired.</p>
+<ul>
+<li><p>Random <strong>mutation</strong>; akin to errors copying DNA. For example, a parent &quot;dog&quot; could produce children such as &quot;fog&quot;, &quot;dig&quot;, and so on. Obviously some mutations will not create viable individuals.</p>
+<ul>
+<li>If the genome is represented as a symbol string, then random locations in the string may be replaced by new random characters. </li>
+<li>If the genome is represented as a string of finite and bounded integers, then elements could be &#39;nudged&#39; (+1 or -1), randomized, or inverted</li>
+<li>If the genome is represented as a string of unbounded numbers, then randomly signed deviations on a power spectrum of magnitudes might be considered.</li>
+</ul>
+</li>
+<li><p>Fragment <strong>recombination</strong> through a variety of operators (most of which are also seen in DNA):</p>
+<ul>
+<li>repeat a character or substring (repetition: &quot;dooog&quot;), </li>
+<li>insert a random character (random: &quot;doge&quot;), </li>
+<li>delete a randomly chosen substring (&quot;do&quot;), </li>
+<li>split the string in two sections and join them the other way around</li>
+<li>more general forms of cut/copy &amp; paste/insert of substrings (&quot;dodo&quot;, &quot;ogod&quot;), -- see <code>Array.splice</code></li>
+<li>reverse of a substring (&quot;god&quot;), -- see <code>Array.reverse</code></li>
+<li>shuffle a substring</li>
+<li>etc. </li>
+</ul>
 </li>
 </ul>
-<p>An interesting challenge could be to extend this into more complex <em>rewriting systems</em>, such as L-systems, by embedding <em>production rules</em>, to create evolutionary-developmental systems! I.e., the genome isn&#39;t necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting. This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. In fact one of the most important operations DNA performs is to regulate itself: some parts of our genetic code enable or disable other parts our genetic code, in a complex <a href="https://en.wikipedia.org/wiki/Gene_regulatory_network"><strong>regulatory network</strong></a>. </p>
+<p>Clearly many of these mutations can change the length of the string. It may be desired to add limits on the minimum or maximum length of the string mutations can produce; or it may be desired to penalize the fitness of long strings. It is worth noting that within a biological species, DNA lengths tend to be the same, but between species there is a lot of variance in length (and not particularly correlated with the size, complexity, or evolutionary age of a species). </p>
+<ul>
+<li>Sexual <strong>cross-over</strong>: akin to sexual reproduction in biology. As a binary string, the child takes the first fraction from one parent, and the remainder from the other. For example, breeding the strings &quot;dog&quot; and &quot;cat&quot; could generate children such as &quot;dot&quot;, &quot;dat&quot;, and &quot;cog&quot;. </li>
+</ul>
+<blockquote>
+<p>Why use reproduction for evolution? The main reason seems to be that crossover helps maintain diversity in the population. In the face of an unpredictable environment, we cannot know which strategy will be best; we can try small variations, and hedge our bets by making very many of them (population diversity). Unpredictibility of the world implies that what was true today may not be tomorrow, so the flexibility to avoid timeless commitment is also a good strategy; but the inheritance of choices is a useful option when the environment retains some stability. Asexual reproduction (cloning) can adapt to a habitat more explosively but also leads to more homogenous populations subject to catastrophic collapses as the enviornmental conditions change. Moreover, crossover may introduce more interesting variants than point-wise mutation alone.</p>
+</blockquote>
+<h3 id="variation-rates">Variation Rates</h3>
+<p>As with temperature-like parameters we saw in CA, a crucial factor in evolution is the rate or probability of variation. Too much, and the population may never significantly diverge from a randomly initialized one; too little, and it may find itself stuck on the first solution it finds, with a largely homogenous population. It may be wise to have different mutation rates for mutation and recombination, for different members of a population, by fitness rank etc. Perhaps these rates can also be evolved (&quot;meta-evolution&quot;). Perhaps mutation rates should reduce over time unless the population appears to be stagnating. (See also <em>simulated annealing</em>.)</p>
+<blockquote>
+<p>Variation may also vary per gene. Looking again at biology, we see that DNA contains certain sections that seem to be more prone to mutation than others; a gene&#39;s mutation rate itself may be an evolved/inherited characteristic. Similarly there are so-called &#39;jumping genes&#39;, genetic substrings that are far more likely to move location within the DNA than others. Perhaps they are functional in many locations, and can serve many purposes. In both cases, it is suggestive to consider having some kinds of markers for substrings that indicate how likely a form of mutation is at this point. How would you attempt to do this?</p>
+</blockquote>
+<hr>
+<hr>
+<h2 id="neuro-evolution">Neuro-Evolution</h2>
+<p>Neuro-evolution means using evolutionary algorithms to evolve neural networks.</p>
+<h3 id="quick-primer-on-neural-networks">Quick primer on neural networks</h3>
+<p>A simple neural network consists of three kinds of neurons connected together:</p>
+<ul>
+<li><strong>Input neurons</strong>: whose activation level is determined by external data, such as sensors in an environment, pixels in an image, characters of a string, etc. These neurons have only output connections.</li>
+<li><strong>Output neurons</strong>: whose activation levels <em>cause</em> effects, whether this is decision making or discrinating between categories (e.g. picking the output with the highest activation), or whether it is controls for an agent (such as choices of movement patterns of an NPC in a videogame). These neurons have only input connections.</li>
+<li><strong>Hidden neurons</strong>: these neurons sit between input and output neurons, with no direct connection to the external world. They may be arranged in layers or be more flexibly arranged. These neurons will have input connections and output connections. A &quot;deep&quot; neural network is one with many layers of hidden neurons.</li>
+</ul>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Colored_neural_network.svg/560px-Colored_neural_network.svg.png" alt="nn"></p>
+<p>Neurons with input connections (hidden and output neurons) compute their activation level by summing a vector of <strong>weights</strong> cross multiplied with the inputs, plus a <strong>bias</strong> term, and then feeding this through an <strong>activation function</strong> (such as a sigmoid curve). For example, if a neuron has 3 inputs, this means:</p>
+<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sigmoid</span>(<span class="hljs-params">x</span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> / (<span class="hljs-number">1</span> + <span class="hljs-built_in">Math</span>.exp(-x)); }
+
+output = sigmoid(in1*w1 + in2*w2 + in3*w3 + bias);</code></pre>
+<p>The weights (<code>w1, w2, w3</code>) indicate the relative importance of the inputs they are connected to. They could be zero (meaning no importance), positive (indicating a correlative relationship), or negative (meaning an inverse relationship). The <code>bias</code> term can act as a threshold (where weighted inputs need to overcome a negative bias to produce a positive output) or an inherent tendency (even without inputs, a positively biased neuron will &#39;fire&#39;). </p>
+<p>The <code>sigmoid</code> function ensures that output is always bounded between 0.0 and 1.0, regardless the input. It is a smooth mapping from continous space to a bounded space, that approximates binary logic at the extremes. </p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/640px-Logistic-curve.svg.png" alt="sigmoid"></p>
+<p>So, for a specific problem, we need to know </p>
+<ol>
+<li>what the input parameters will be (i.e. the input neurons) -- and these should be normalized to a range of 0..1,</li>
+<li>what the output parameters will be (i.e. the output neurons) -- and how to interpret them,</li>
+<li>we need to decide how many hidden neurons to have,</li>
+<li>how to connect them all,</li>
+<li>and how to set the weights and biases for all the hidden &amp; output neurons.</li>
+</ol>
+<p>The first two steps are usually somewhat evident from the problem at hand. E.g. if the task is to play a videogame, then the inputs would be environmental features nearby the player, and the outputs would be actions to press buttons etc. on the controller. For step 3, in many cases a fixed number of hidden layers/neurons is decided in advance (this is a &quot;hyperparameter&quot; of the system), and a common strategy is taken for step 4, such as connecting all nodes in one layer to all nodes in the previous layer, or to connect to a fixed number of neurons in the previous layer (both of which makes it convenient to represent weights and biases as a matrix). There isn&#39;t a general easy way to know what is the right layout and connectivity in advance, it&#39;s a bit of heuristics and trial and error.</p>
+<p>Before getting to step 5, let&#39;s build a working neural network, and visualize the results to get an idea of what is happening. In the following example we use a simple list of numbers for the bias and weights of each neuron in turn:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="ExyeWxj" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/ExyeWxj">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>The primary focus of machine learning with neural networks is deriving the weights and biases of a network that perform well in a specific problem domain. This usually involves running many generations or simulations of the network in its environment, and adjusting the weights and biases gradually to improve their performance. In <strong>supervised learning</strong>, we measure the success of a network&#39;s prediction against a training set of data of known inputs and outputs. One method to do this is called <strong>back-propagation</strong>, which involves taking the error in the output and propagating that error back through the network, using the derivative of the activation function and the weights etc., to adjust the weights of the network in a way that would reduce the error. Sometimes however a training set of data isn&#39;t available, but rather an overall <strong>cost</strong> can be measured of a neural network&#39;s performance in an environment; this kind of <strong>unsupervised</strong> learning can be effective for estimation problems. But some problems are even more complex: it may be that the error or cost of a neural network can&#39;t be taken at an individual step. For example, developing a winning strategy for a video game is only known after many steps have been taken. In these situations we can use <strong>reinforcement learning</strong>, which aims to minimize long-term &quot;cost&quot;, balancing exploration for new knowledge and exploitation of existing knowledge. </p>
+<h3 id="neuro-evolution-1">Neuro-Evolution</h3>
+<p>Neuro-evolution uses evolutionary algorithms to develop neural network, in which: </p>
+<ul>
+<li>the genotype needs to encode the configuration of the neural network: at minimum, the weights and biases of each neuron,</li>
+<li>the phenotype is the executable neural network itself, whose fitness function thus depends on how well the neural network performs in the problem domain, </li>
+<li>the performance of a neural network among a population determines its fitness for selection of a new generation.</li>
+</ul>
+<p>Genetic encoding could be a direct encoding of numbers for the specific weights and biases, or could be an indirect encoding that <em>generates</em> the weights and biases programmatically (just as our biomorphs were generated from sequences of steps), which could also specify the network layout and connections.</p>
+<h4 id="a-neuro-evolution-game">A neuro-evolution game</h4>
+<p>For a problem domain, let&#39;s create a simple multi-agent game:</p>
+<ul>
+<li>Players have a head and a tail. </li>
+<li>If an agent&#39;s head touches another&#39;s tail, it puts the other agent out of the game, and gains a point.</li>
+<li>Play continues until only one player is left; then a new round begins. </li>
+</ul>
+<p>Clearly players need a few properties: a head position, a size, a tail position, a velocity, a score, and a flag to mark if they are out of the game. To begin, we can have them do a random walk, by randomly setting velocity on each frame. Updating motion for the head is the same as our simple agent systems as before. But, we have to carefully compute where the tail ends up. We can do this by getting the current head-&gt;tail vector, re-scale it to be the desired length, then addding it to the head position. This creates some interesting dynamics when an agent changes direction and reverses. We can draw the head &amp; tail using push/pop contexts as before.</p>
+<p>Next we add collision tests, using nested loops in a similar way as with the flocking systems, being careful not to consider ourselves. We can compute the distance between our tail &amp; the neighbours head to see if a collision occurs. If so, the neighbour gains points, and we remove ourself from play. </p>
+<p>So far the game works, but the agents are blind. We can give them a simple sense of vision, e.g. perhaps identifying the nearest head or tail in the world. Again we loop over neighbours (excluding ourselves), now computing the relative vector from our head to their head and tail, being careful to <code>relativewrap()</code> so that neighbours over the world edges are taken into account, and narrowing down to whichever has the least distance to us. To make the senses <strong>egocentric</strong> rather than <strong>allocentric</strong>, we can rotate the relative vector into our coordinate frame (so we could also use field of view limit here too, as with the flockers). It is useful to also plot this relative vector in space to understand what is happening, so we might need to store it in the agent. </p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="MWeqBXP" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/MWeqBXP">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>Thus our new sense can identify <em>relative orientation</em>, <em>relative distance</em>, and whether the closest item is a head or a tail. To make these senses more suitable for a neural network we should normalize to 0..1 ranges:</p>
+<ul>
+<li>For distance, we can use <code>1/(1+distance_squared)</code>, so that the sense becomes more intense as items become very close</li>
+<li>For angle, we could perhaps take the cosine (so that intensity is highest with a target in front, and lowest behind), scaling the result from -1..1 to 0..1. Or perhaps try the sine, so that intensities are at the left and right, but not centre. </li>
+<li>The third item (whether the nearest item is a head or a tail) can simply be <code>0</code> or <code>1</code></li>
+</ul>
+<p>Similarly, we must drive the motion from 0..1 parameters as the outputs of the neural network, post-scaling these as needed to drive angular change and speed.  To test this, we can first feed <code>random()</code> into the movement. Here are a few options:</p>
+<ul>
+<li>Scale 0..1 by some maximum speed to set the velocity length</li>
+<li>Scale 0..1 by a <code>random()</code> to set the amount of &quot;tumble&quot; vs. straight</li>
+<li>Or, use two outputs as &quot;left&quot; and &quot;right&quot;, subtracting one from the other to derive a specific turn angle. </li>
+<li>Find out which output neuron is highest, and select an action (&quot;move forward&quot;, &quot;turn left&quot;, &quot;turn right&quot;) accordingly. </li>
+</ul>
+<p>Again, it is worth storing these <code>inputs</code> and <code>output</code> in the agent so we can visualize them if desired.</p>
+<p>Try hard wiring the senses to the outputs in some variants to see what kinds of movements the mappings can generate:</p>
+<ul>
+<li>try crossing the sensors over to opposite outputs</li>
+<li>try inverting some of them (i.e. 1-n)</li>
+</ul>
+<p>Once we are happy that we have a good set of inputs and outputs, we can start adding neural networks. Each agent will have a unique set of weights and biases. The sensor data becomes the first activation layer of the network, and the final activation layer becomes the output that drives action and motion. When this works, we can run the game for a number of frames, then apply a fitness criterion for evolution based on the agent scores, sorting the population accordingly, and using it to generate a new population. Mutation would likely focus on fine or coarse adjustments of weights and biases. </p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="NWrLEBX" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/NWrLEBX">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<h4 id="observations-1">Observations</h4>
+<blockquote>
+<p>Note that we might not see significant fitness improvements after the first few generations. Why? Since their environment is entirely defined by the population, than any successful strategy will quickly spread to the whole population, minimizing the relative difference. This is a self-tuning environment: they are competing against themselves, more or less. Again the &quot;Red Queen&quot; factor comes in to play: &quot;running as fast as you can to stay in the same place&quot;...</p>
+</blockquote>
+<p>We might see a few different strategies emerge. Some hunt, some evade, some forage widely, others stay in one spot waiting for food to come to them. Try changing the rules of points scoring, e.g.:</p>
+<ul>
+<li>gain half the points of the tail you tag</li>
+<li>lose your points if you are tagged</li>
+</ul>
+<p>Try changing the neural network structure</p>
+<ul>
+<li>Adding/removing layers<ul>
+<li>At what point does adding hidden layers seem to have no tangible benefit?</li>
+</ul>
+</li>
+<li>Adding/removing nodes etc. <ul>
+<li>New sensors and actuators; perhaps sense both nearest head and nearest tail?</li>
+<li>Perhaps a &#39;memory&#39; node, that writes an output which becomes an input on the next frame? Perhaps gradually interpolated?</li>
+<li>Perhaps a &#39;random&#39; input node?</li>
+</ul>
+</li>
+</ul>
+<p>Rather than running in generations, could we try a continuous mode, where as soon as one player is removed from the game, a new player is created at a random position (using evolutionary selection &amp; mutation etc. from the current population); does that change things?</p>
+<!-- 
+
+
+
+XOR:
+
+out high if either in but not both are high
+
+at least one must be high, but zero out if both high:  
+(a+b) -2a*b
+
+h1 
+
+
+Agar:
+
+inputs: size
+    3 players, each [angle, distance, size] = 9
+    3 foods, each [angle, dist] = 6
+TOTAL 16 inputs.
+outputs: 2 (angle, speed)
+
+Simplify- remove food, only 2 nearest players
+    make perceived 'size' relative to our size (< 0.5 means smaller)
+    -> 6 inputs (4 if we remove `distance`)
+
+Simpler -- and stickyfeet inspired:
+- agent has head (mouth) and tail (heart). if a mouth touches a heart, it eats that organism.
+- fixed speed for simplicity? (can add variance later)
+- sense nearest other head (dir, dist) and nearest other heart (dir, dist)
+- actions for fwd, L, R, tumble? 
+
+
+
+
+
+Target:
+inputs: vel dx,dy, target dx,dy, angle & distance to target = 6
+outputs: desired direction = 1
+
+
+Tron:
+
+two players. move in a grid, leaving trail behind. First to enter a wall or trail loses
+    - fitness a function of how long you last vs. opponent?
+
+inputs must include: front, L, R states
+inputs might include: direction & distance to opponent; additional neighbour states... 
+
+output is forwrd, L, R (use highest)
+
+
+Snake:
+
+gain points for eating fruits (and snake gets longer)
+die when hitting a wall or own tail (like tron)
+
+inputs: neighbouring cells to snake head, angle to fruit (past action?)
+actions: turn left, right, or forward
+scoring: negative for death, rising positive for being near fruit
+
+
+tic-tac-toe? 9-in, 9-out (highest valid is selected)
+
+
+some kind of walker/swimmer type of thing?
+a side-scroller variant (avoid collisions)
+
+
+
+
+
+
+
+----
+
+```js 
+// derivative of sigmoid (as used for backpropagation):
+function dsigmoid(x) { 
+    const s = sigmoid(x);     
+    return s * (1-s);
+}
+```
+
+-->
+
+<!-- 
+
+TODO: 
+
+Emphasize:
+- importance of enviornment; **niches** (non-triviality)
+- requisite variety of envo + bio (non-triviality)
+- e.g. nontrivial problem space, non-trivial mappings (development etc.)
+
+
+
+
+
+- importance of enviornment again: create a system with some kind of physics (like the skeleton mesh stuff, breeding a walker? breeding a car?)
+- novelty search
+- using D3 or somthign to visualize results
+- some way to store results between refreshes
+- NEAT here or in another module?
+- There's now overlap between this page and the "Code" page, esp. in the turtle graphics part.
+
+-->
+
 <!--
 
 ### Genetic representations
 
 Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits. Some systems use more elaborate structures (trees, networks), but these are usually reducible to and encoded as  linear sequences. After all, our genes wind up in complex structures with different reactive regions, but at the lowest level are just a long singular chain of A, G, C or T molecules.
 
-The simplest systems have a fixed length, but nature shows quite a lot of variance (not particularly correlated with the size, complexity, or evolutionary age of a species). 
-
 Initializing the genotypes implies generating randomized candidates that stay within its bounds but hopefully give a sufficiently diverse range of the possibilities of the genotype. For a simple sequence of bits, symbols, or numbers, this is fairly easy to do.
-
-#### Development
-
-In some systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
-
-### Variation
-
-The mechanisms of variation possible partly depend on the representation chosen. The two most common principles of variation in artificial evolution are naturally inspired:
-
-- Random **mutation**; akin to errors copying DNA. If the genome is represented as a binary string, then random locations in the string may be replaced by new random characters. For example, a parent "dog" could produce children such as "fog", "dqg", and so on. Obviously some mutations will not create viable individuals.
-- Sexual **cross-over**: akin to sexual reproduction in biology. As a binary string, the child takes the first fraction from one parent, and the remainder from the other. For example, breeding the strings "dog" and "cat" could generate children such as "dot", "dat", "cag" and "cog". 
-- Other forms of fragment **recombination**, such as insertion, deletion, reversal. So a more flexible system might also permit "doat", "caog", "dt", "tac", etc. 
-
-> Why use reproduction for evolution? In the face of an unpredictable environment, we cannot know which strategy will be best; we can try small variations, and hedge our bets by making very many of them (population diversity). An individual loss is not catastrophic, but a few successes can be learned from. Furthermore, the face of unpredictibility implies that what was true today may not be tomorrow, so the flexibility to avoid timeless commitment is also a good strategy; but the inheritance of choices is a useful option when the environment retains some stability. If the world were fully predictable, a rational, teleological, monothematic strategy would be preferable. But the world isn't totally random either (if it was, there would be no valid strategy worth pursuing.) 
-
-As with temperature-like parameters we saw in CA, a crucial factor in evolution is the rate or probability of variation. Too much, and the population may never significantly diverge from a randomly initialized one; too little, and it may find itself stuck on the first solution it finds, with a largely homogenous population. It may be wise to have different mutation rates for different genes, or for different members of a population, or by fitness rank etc. It is likely desirable to gradually reduce mutation rates over time, unless the population appears to be stagnating. (See also simulated annealing.)
 
 ---
 
 
 ## Development & meta-evolution
 
-In some systems the developmental process is little more than a trivial mapping, but this potentially misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
 
+### Evo Devo
 
-In some cases, there may be several stages of code development. The biomorphs example hints at this, and already grants built-in symmetries and modular structures as are frequently found in nature -- this is partly why we respond to them. But the developmental approach can be taken much further. Sims' evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape, but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neural program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. 
+In some systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. 
 
-Think back to the turtle example. Imagine that instead of drawing lines, it is generating richer code. [Here's a variation of the biomorphs example that does just that: it generates code once rather than interpreting the genome on each frame](http://codepen.io/grrrwaaa/pen/yadVLP?editors=001) -- and this could be used as a template on which to add more behaviour than simply drawing, for example. 
+Looking back at our code-based genetics in the Biomorphs, an interesting challenge could be to extend this into more complex *rewriting systems*, such as L-systems, by embedding *production rules*, to create evolutionary-developmental systems! I.e., the genome isn't necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting. This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. In fact one of the most important operations DNA performs is to regulate itself: some parts of our genetic code enable or disable other parts our genetic code, in a complex [**regulatory network**](https://en.wikipedia.org/wiki/Gene_regulatory_network). 
+
+But the developmental approach can be taken much further. Sims' evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape, but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neuro-physiological program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. 
 
 Another interesting result is that the developmental program could also be gradual, meaning we can model the increase in complexity of an organism from embryo to adult through the rewriting of its behavioural programs.
 
@@ -551,9 +754,9 @@ Another interesting result is that the developmental program could also be gradu
 
 So far we have replaced entire generations at a time, but of course in the real world creatures' life spans interleave in all kinds of ways, with population booms and busts. Moreover we have rather artificially tested candidates against a pre-defined function, or against the whims of an interacting user or participant. But this isn't how nature works most of the time. As noted already, *viability-based selection* depends only on fundamental internal processes and exchanges with an environment (including other creatures of various species) to determine whether a creature can survive, and reproduce. Often this approach involves populations of [agents](agent.html). 
 
-When a new agent is created from nothing, as happens at the start of the simulation, and also as a fail-safe if the population ever dwindles away, a randomized genome must be added to the agent. When an agent spawns a child, the child also needs a genome, created by mutation of the parent's. This could be extended by adding sexual reproduction, only occurring when agents meet, and implemented with crossover as well as mutation.
+When a new agent is created from nothing, as happens at the start of the simulation, a randomized genome must be added to the agent. When an agent spawns a child, the child also needs a genome, created by mutation of the parent's. This could be extended by adding sexual reproduction, only occurring when agents meet, and implemented with crossover as well as mutation.
 
-But most importantly, parts of the genome must determine behavioural properties of the agent -- how it behaves and interacts with the world -- else there's no selection at all. (It can be useful to also modify how the agent appears graphically, but this has no effect on evolution.) 
+But most importantly, parts of the genome must determine behavioural properties of the agent -- how it behaves and interacts with the world -- else there's no selection at all. 
 
 ### Parametric variation
 
@@ -561,7 +764,7 @@ A good starting point may be to have the genome modify *parameters* of the agent
 
 Also be careful not to oversimplify. Making a parameter of "energy efficiency" is clearly going to evolve toward maximum efficiency; there's nothing interesting about this. Things get more interesting when there are multiple constraints in play; if increasing one parameter weakens another, for example. 
 
-Similarly, a direct mapping of each gene in the genome to each parameter is likely less interesting than a more complex mapping, in which multiple processes are applied to the genome data to determine the parameters. This is exactly why the evolution of math functions was more interesting than the evolution of text: the outcome of the math function is a very complex mapping of the genes that go in. Complex enough to have surprises.
+Similarly, a direct mapping of each gene in the genome to each parameter is likely less interesting than a more complex mapping, in which multiple processes are applied to the genome data to determine the parameters. This is exactly why the evolution of math functions was interesting: the outcome of the math function is a very complex mapping of the genes that go in. Complex enough to have surprises.
 
 Another way of achieving this complexity in the mapping is to have the parameters drive features that have non-obvious effects or that depend on other parameters. For example, one could model a swimming organism by the speed it flaps its tail, the range it flaps over, and the average direction. Only together do these three parameters produce an arc of motion. Multiple such tails can lead to very complex motions. Similarly, taking Braitenberg's vehicles model, one could imagine placing a wire between every sensor and every motor, where the evolved parameters are the amplification weights on the wires.
 
