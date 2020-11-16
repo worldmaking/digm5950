@@ -78,9 +78,10 @@ The course has a strongly practical emphasis, exploring frameworks through appli
      - **Due Nov 20: [Assignment 3](assignments.html) (Evolution)**
 11. **Special Topic**
    - Action items:
+     - **Due Nov 30: [Assignment Videos](#evaluation)**
 12. **Special Topic**
    - Action items:
-   - **Due Dec 7: [Final project presentation](#evaluation)**
+     - **Due Dec 7: [Final project presentation](#evaluation)**
 13. **Final Presentations** *Dec 7* 
    - **Due Dec 14: [Final project code & documentation](#evaluation)**
 
@@ -104,17 +105,28 @@ All Zoom sesions will be recorded and posted online using MS Teams.
 
 - [Assignments: 40%](assignments.html). Exercises will assigned throughout the course. Exercises develop essential practice-informed critique and experiential learning. For each assessed exercise you will be asked to submit your code. Be sure to read & follow the instructions below regarding formatting.
 
-  - Assignment videos -- for one assignment only (you can choose which): 20% (undergraduate students only). In addition please self-record a video that shows your desktop screen and captures your voice explaining your work. (In previous years we had students present their work to the group, but with the class size being so large we can't really afford the time to do this; hence videos.) These videos can be around 3 minutes each. The video should show the work and the code, and while recording your screen, please record your voice talking through the work. 
+- **Assignment video**: 20% (undergraduate students only). For one assignment only (you can choose which), please self-record a video that shows your desktop screen and captures your voice explaining your work. (In previous years we had students present their work to the group, but with the class size being so large we can't really afford the time to do this; hence videos.) These videos can be around 3 minutes each. The video should show the work and the code, and while recording your screen, please record your voice talking through the work. 
+  - Talk about your initial ideas and inspiration. Was there a core question you wanted to address? Did you have an idea that you wanted to evaluate? 
+  - Explain in depth your implementation. 
+    - Be sure to focus on the most complex, innovative, or otherwise interesting parts of the code, beyond what we cover in class.
+  - Evaluate the result. Are there significant variable changes that can produce different behaviour (if so, show them!) Did you try several variations of your system (if so, show them!)  If you had an idea that you explored, but it didn't work as expected, show that too -- and offer your ideas about why you think it didn't. This is valid research! Talk about what you might do next.
+  - You can record a video using Zoom, Quicktime, OBS, or several other options. Recording with a cellphone is not acceptable.  If you are having difficulties with screen recording, we can schedule a session in-class to do this live instead.
+  - Submit via the **Assignments** tab in [Teams](https://teams.microsoft.com/l/channel/19%3aef5cfda6bcf0493e8ecae3b0e05d163f%40thread.tacv2/General?groupId=2286cd4d-8394-4a66-9c74-0d27ffd875b1&tenantId=34531318-7011-4fd4-87f0-a43816c49bd0)
+     
+- **Final Project**: 30%. Realized individually or in groups, demonstrate the effective application of understanding through the course in novel expressions of adaptive media and art. Projects will be presented to the class at the end of the term and will be in the form of a critical discussion that reflects on the results of the experience gained over duration of the course.
+  - Projects typically involve two or more of the major themes of the course. Consider the Learning outcomes / objectives as outlined [above](#format) as a guideline. 
+  - Final projects can build upon work in prior assignments, but should be a significant advancement on them.
+  - Expect to spend twice as much time on the final project as you did on an assignment.
+  - Evaluation will follow the same principles as for [assignments](assignments.html).
+  - For groups: I will require a submission from each member. The submission must include an account of what each member was responsible for. Talk about what you learned or developed most significantly through the project.
+  - For presentation:
     - Talk about your initial ideas and inspiration. Was there a core question you wanted to address? Did you have an idea that you wanted to evaluate? 
+    - Show the work
     - Explain in depth your implementation. 
       - Be sure to focus on the most complex, innovative, or otherwise interesting parts of the code, beyond what we cover in class.
     - Evaluate the result. Are there significant variable changes that can produce different behaviour (if so, show them!) Did you try several variations of your system (if so, show them!)  If you had an idea that you explored, but it didn't work as expected, show that too -- and offer your ideas about why you think it didn't. This is valid research! Talk about what you might do next.
-    - You can record a video using Zoom, Quicktime, OBS, or several other options. Recording with a cellphone is not acceptable.  If you are having difficulties with screen recording, we can schedule a session in-class to do this live instead.
-    - Submit via the **Assignments** tab in [Teams](https://teams.microsoft.com/l/channel/19%3aef5cfda6bcf0493e8ecae3b0e05d163f%40thread.tacv2/General?groupId=2286cd4d-8394-4a66-9c74-0d27ffd875b1&tenantId=34531318-7011-4fd4-87f0-a43816c49bd0)
-     
-- Final Project: 30%. Realized individually or in groups, demonstrate the effective application of understanding through the course in novel expressions of adaptive media and art. Projects will be presented to the class at the end of the term and will be in the form of a critical discussion that reflects on the results of the experience gained over duration of the course.
   
-- Final project report: 20% (graduate students only). 
+- **Final project report**: 20% (graduate students only). 
   - Please prepare a written report (2-4 pages) on your project, including significant references (citations and/or related works), with appropriate scholarly quality to be considered as a submission to an academic conference such as [EvoMusArt](http://evostar.dei.uc.pt/2012/), ISEA, GA, ECAL, IEEE ALIFE, IEEE CEC, GECCO, ALEA, EA. etc.
 
 - Readings and participation: 10%. Readings are short selections from books or landmark papers, chosen to directly support the assignments and tutorial discussion. Participation incorporates contributions to tutorial discussions, awareness of issues in readings, and the ability to relate tutorial issues to the broader concerns of the course.
