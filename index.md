@@ -73,6 +73,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
      - [First neural network -- and re-usable library](https://codepen.io/grrrwaaa/pen/wvWYmvM?editors=0011)
      - [Tag game](https://codepen.io/grrrwaaa/pen/VwjEBwR?editors=0011)
 10. [**Neuro-Evolution continued**](evo.html)
+   - [Today's script: neuro-evolution!](https://codepen.io/grrrwaaa/pen/VwjEBwR?editors=0010)
    - Review & discussion of assignments
    - Action items:
      - **Due Nov 20: [Assignment 3](assignments.html) (Evolution)**
