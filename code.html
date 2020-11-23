@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Rewriting systems, bytecode soups, and algorithmic chemistries</title>
+<title>Development</title>
 <meta name="description" content="">
 <meta name="author" content="Graham Wakefield">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,21 +28,22 @@ footer {
 <body class="centremaxwidth960">
 <header><a href="index.html">Home</a></header>
 <ul>
-<li><a href="#evo-devo">Evo Devo</a><ul>
-<li><a href="#rewriting-systems-bytecode-soups-and-algorithmic-chemistries">Rewriting systems, bytecode soups, and algorithmic chemistries</a></li>
+<li><a href="#development">Development</a><ul>
+<li><a href="#differential-growth">Differential Growth</a><ul>
+<li><a href="#implementation">Implementation</a></li>
 </ul>
 </li>
-<li><a href="#development-and-l-systems">Development and L-systems</a></li>
-<li><a href="#rewriting-systems">Rewriting systems</a><ul>
-<li><a href="#turtle-graphics">Turtle graphics</a></li>
-<li><a href="#bracketed-systems">Bracketed systems</a></li>
-<li><a href="#context-sensitive-formal-languages">Context-sensitive formal languages</a></li>
+<li><a href="#l-systems">L-systems</a><ul>
+<li><a href="#rewriting-systems">Rewriting systems</a></li>
 <li><a href="#parametric-systems">Parametric systems</a></li>
 <li><a href="#stochastic-systems">Stochastic systems</a></li>
+<li><a href="#context-sensitive-formal-languages">Context-sensitive formal languages</a></li>
 </ul>
 </li>
-<li><a href="#evo-devo-1">Evo-Devo</a></li>
-<li><a href="#bytecode-ecosystems">Bytecode ecosystems</a></li>
+<li><a href="#evo-devo">Evo-Devo</a></li>
+</ul>
+</li>
+<li><a href="#primordial-soups-of-code">Primordial soups of code</a><ul>
 <li><a href="#thomas-rays-tierra">Thomas Ray&#39;s Tierra</a><ul>
 <li><a href="#darwinian-os-components">Darwinian OS components</a></li>
 <li><a href="#more-information">More information:</a></li>
@@ -56,6 +57,8 @@ footer {
 <li><a href="#further-afield">Further afield</a></li>
 <li><a href="#general-properties-of-artificial-chemistries">General properties of artificial chemistries</a></li>
 </ul>
+</li>
+</ul>
 
 <!--
 
@@ -65,28 +68,90 @@ footer {
 
 -->
 
-
-<h2 id="evo-devo">Evo Devo</h2>
-<p>In some systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. </p>
-<p>Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits, just as our DNA is a single string. But this string winds upon itself multiple times, in complex ways, to create more subtle physical macrostructures; and also applies functionally to itself as one gene can turn another gene on or off in a complex <a href="https://en.wikipedia.org/wiki/Gene_regulatory_network"><strong>regulatory network</strong></a>. That is, although it is a string at the lowest level, at higher structural and functional levels it operates like a tree or graph. (By analogy, although the <em>text</em> of a computer program is a linear string of characters, the grammar produces a tree of re-usable functions and so on, and the data/control flow it describes are more complex graphs.) Accordingly some artificial evolutionary systems also use more complex structures for genetic representations, including trees and graphs.  </p>
-<p><strong>Looking back at our code-based genetics in the Biomorphs, an interesting challenge could be to extend this into more complex <em>rewriting systems</em>, such as L-systems, by embedding <em>production rules</em>, to create evolutionary-developmental systems! I.e., the genome isn&#39;t necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting.</strong> </p>
-<p><img src="https://www.karlsims.com/creatures-3swimmers-200.jpg" alt="sims"></p>
-<p>This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. Such a developmental approach can be taken quite far. Karl Sims&#39; evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape (the skeletal system), but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neuro-physiological program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. </p>
-<p>Taking this further, the developmental program could also be gradual, meaning we can model the increase in complexity of an organism from embryo to adult through the gradual rewriting of its various genetic, physiological, and neural systems.</p>
 <hr>
-<h1 id="rewriting-systems-bytecode-soups-and-algorithmic-chemistries">Rewriting systems, bytecode soups, and algorithmic chemistries</h1>
-<h2 id="development-and-l-systems">Development and L-systems</h2>
-<iframe src="https://player.vimeo.com/video/93056665" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<h1 id="development">Development</h1>
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/315487551?loop=1" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="fullscreen" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
 <p>The structure of a multi-cellular organisms develops in a gradual process from a single fertilized cell (the <em>zygote</em>) through progressive steps of cell duplication and specialization in a process called <em>development</em>; an active area of scientific research today. We know that each cell responds to chemical signals from its neighbors and other environmental conditions in order to know how to <em>differentiate</em> (to become a specific kind of cell in the body), according to the processes of the genome. The zygote does not contain a blueprint for the final organism, simply genotypic instructions for responding to environmental stimuli, which happen (in most cases) to produce the fully developed phenotype. </p>
 <p>A compact developmental representation can result in a more complex developed organism by relying on the self-organizing tendencies of the chemical substrate (such as the chemical pattern formation we saw with reaction-diffusion systems), the creative re-use of instructions (leading to the <em>modularity</em> and <em>symmetry</em> widely found in biology), and careful control over the ordering, when and for how long particular instructions operate (<em>heterochrony</em>). Development is clearly <em>parallel</em>, <em>decentralized</em>, granting some <em>robustness</em>, and yet it is also <em>context dependent</em>. It is also <em>self-limiting</em>, such that most developmental processes halt after the embryonic phase (though some may continue through the organism&#39;s lifetime, such as the <em>regeneration</em> of lost limbs).</p>
+<p>The role of development in the generation of variation is important for artificial evolution, however it has been less thoroughly explored. In some artificial systems the developmental process is little more than a trivial mapping, but this misses an entire and fascinating source of diversity. Incorporating more complex developmental models can lead to geometric variations that are not stored as simple parameters, to repeated segments and recursive structures, to symmetries, and to the re-application of common toolboxes toward a widely differing set of purposes -- all things that are evident in biological evolution. Taking this further, the developmental program could also be gradual, meaning we can model the increase in complexity of an organism from embryo to adult through the gradual rewriting of its various genetic, physiological, and neural systems. Lessons from the biologists:</p>
+<ul>
+<li>Development is not just a compact representation of a phenotype, but can be crucial to the generation of complex systems.</li>
+<li>The recent discovery that widely different species re-use the same developmental genes and mechanisms. This perhaps suggests that finding a good set of re-usable mechanisms for long-term evolvability (continuous generation of selectable novelty) is not an easy task. </li>
+<li>Development is not a one-way process, under command of the genome: factors in the environment can activate or inhibit parts of the genome (and parts of a genome can activate and inhibit other parts) in a complex <em>regulatory network</em>, and the state of the environment can affect the results of actions of the genome. In some cases the genome itself may not even be fixed. In part this environment is also inherited from an organisms&#39; parents. </li>
+<li>Development is ultimately working within the limits of a physical, chemical system, with entropic tendencies, self-organizing potential, noisy behavior, etc.</li>
+</ul>
+<h2 id="differential-growth">Differential Growth</h2>
+<p>For a simple starting point, let&#39;s look at growing a line (or a loop):</p>
+<p><img src="https://inconvergent.net/img/generative/differential-line3-uniform.gif" alt="Hoff loop"></p>
+<ul>
+<li><a href="https://inconvergent.net/generative/differential-line/">Anders Hoff&#39;s series on differential lines, meshes, lattices</a><ul>
+<li><a href="https://inconvergent.net/2016/shepherding-random-growth/#container-uniform">More discussion here</a></li>
+<li><a href="https://entagma.com/differential-line-growth/">Example in Houdini</a></li>
+</ul>
+</li>
+</ul>
+<p><a href="http://www.dgp.toronto.edu/~karan/artexhibit/mazes.pdf">An interesting research paper linking this to maze and labyrinth creation</a></p>
+<p>Examples:</p>
+<p><img src="https://n-e-r-v-o-u-s.com/projects/i.php?/000/890/floraFormDetail,medium_large.2x.1434652439.gif" alt="nervous system"></p>
+<blockquote>
+<p>Nervous System, <a href="https://n-e-r-v-o-u-s.com/projects/sets/floraform/">Floraform</a></p>
+</blockquote>
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/105417695?loop=1" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="fullscreen" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+
+<blockquote>
+<p>Andy Lomas, <a href="https://andylomas.com/cellularFormImages.html">Cellular Forms</a></p>
+</blockquote>
+<p>To keep things simple initially, let&#39;s focus on 2D lines first. At the heart there is a line made up of connected points, or &quot;nodes&quot;, which we can think of in similar terms as we did agents:</p>
+<ul>
+<li>Each node is permanently linked to two other nodes, such that the whole population makes up a circle.</li>
+<li>Nodes can move, with at least position &amp; velocity</li>
+<li>Each node has at least two complementary forces:<ul>
+<li>Repel: maintain a minimum distance from all nodes</li>
+<li>Attract: only toward the two nodes it is linked to</li>
+<li><em>(Possibly)</em> Align: try to move to the centrepoint between the two nodes it is linked to</li>
+</ul>
+</li>
+</ul>
+<p>The crucial step for growth is that nodes in this line can be inserted (and possibly also removed) -- the addition of new nodes is what makes the whole grow. There are a few ways this can happen:</p>
+<ul>
+<li>If two linked nodes are pulled too far apart, insert a new node between them</li>
+<li>If two linked nodes are pushed to close, remove one of them</li>
+<li>Randomly insert new nodes between linked pairs <ul>
+<li><em>(Possibly)</em> focus this on nodes that discover new parts of space, as if finding food sources</li>
+</ul>
+</li>
+<li><em>(Possibly)</em> if the line between three linked nodes becomes to sharply curved, insert a new node between them</li>
+</ul>
+<p>When nodes are added or removed, we must ensure that the line is &#39;patched up&#39; correctly. </p>
+<h3 id="implementation">Implementation</h3>
+<p>Each node is an object with at least <code>position</code> and <code>velocity</code> as <code>vec2</code>s. </p>
+<p>The underlying structure of the population is a <strong>doubly-linked list</strong>, which we could implement as objects with <code>.next</code> and <code>.prev</code> &quot;pointers&quot; to each other. Or, we could simply use the fact that Javascript arrays are implicit linked lists and work with them via <code>Array.splice</code>. Either way we have to be careful not to corrupt the list -- especially, not to modify it while iterating it. (This is similar to our challenge when adding and removing agents to a population for birth &amp; death.)</p>
+<ul>
+<li>We might want to prevent two linked neighbours from both being removed in a single step.</li>
+</ul>
+<p>The force system could be built in the same way as was done for flocking (with which it has many parallels), or more simply approximated. </p>
+<ul>
+<li>All neighbours within a certain distance should impart a force in the direction away from them; probably this force should be scaled according to inverse distance (or inverse distance squared). Or, more simply, there could be a single repulsion from the centre-of-mass of all neighbours within a certain radius. </li>
+<li>Linked neighbours should impart an attraction force in the direction toward them. Or, there could be an attraction force to their average position. <ul>
+<li>If we are using an array for our list, we can find the linked neighbours of agent <code>line[i]</code> at positions <code>line[wrap(i-1, line.length)]</code> and <code>line[wrap(i+1, line.length)]</code></li>
+</ul>
+</li>
+<li>Tweak factors for the force strengths and distances will need to be tuned to prevent the system self-intersecting, exploding, or vibrating too intensely. </li>
+<li>A better system might compute forces and then diffuse the forces through the links before applying them.</li>
+</ul>
+<p>Addition &amp; removal of nodes should probably be in a separate pass over the population from the force computations. Perhaps, for each node, we can store the distance to the next (<code>i+1</code>) node. If this distance is greater than a certain threshold, insert a new node at <code>i</code> (and recompute the lengths it and its linked neighbours). If it is less than a certain threshold, remove at <code>i</code> (and recompute the lengths in the same way). Adding a new node at a random location can operate similarly.</p>
+<p>If we want to drive growth by food sources, we can re-use techniques from our agent-environment interaction work. </p>
+<p>It is tempting to further suggest some kinds of node-node communication, as if sending chemical messages or pheromones between cells in an organism. Perhaps this is a way that a growing structure can trigger development events, or differentiate into different kinds of cells as it grows.</p>
+<h2 id="l-systems">L-systems</h2>
+<p><strong>Looking back at our code-based genetics in the Biomorphs, an interesting challenge could be to extend this into more complex <em>rewriting systems</em>, such as L-systems, by embedding <em>production rules</em>, to create evolutionary-developmental systems! I.e., the genome isn&#39;t necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting.</strong> This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. Such a developmental approach can be taken quite far. </p>
 <p>In 1968 biologist Astrid Lindenmeyer proposed to model several aspects of developmental systems (cell division, cell differentiation and cell death) using rewriting systems on symbolic strings. The analogy is that each symbol represents a cell in a particular state, and the rules of transformation represent the processes of differentiating from one state to another, dividing into two cells, or of programmed cell death.</p>
 <p>(Cellular automata can also be used to model developmental processes, and arguably langton&#39;s reproducing loop does so, but rewriting systems offer a very simple and abstract model that can support growth. Sims&#39; evolving creatures used a substitution method closely equivalent rewriting to generate their body structures, for example.)</p>
 <p><img src="https://blog.adafruit.com/wp-content/uploads/2013/10/NervousSystemHyphaeLampClose-2.jpg" alt="nervous system lamp"></p>
 <blockquote>
 <p>Above is an example of a 3D-printed lampshade whose form is the product of a developmental simulation, by the <a href="http://n-e-r-v-o-u-s.com">Nervous System design studio.</a></p>
 </blockquote>
-<h2 id="rewriting-systems">Rewriting systems</h2>
+<h3 id="rewriting-systems">Rewriting systems</h3>
 <p>A rewriting system defines rules for the transformation of structures, typically strings of symbols. It is closely related to the formal notion of grammar. A system comprises:</p>
 <ul>
 <li>A set of possible symbols (A), called the <em>alphabet</em></li>
@@ -114,9 +179,7 @@ FF[-F[-B]+B]+F[-B]+B
 FFFF[-FF[-F[-B]+B]+F[-B]+B]+FF[-F[-B]+B]+F[-B]+B        
 <span class="hljs-comment">// etc.</span></code></pre>
 <p>Notice that any symbol that is not a predecessor of a production rule is passed through unchanged (it is not removed). </p>
-<h3 id="turtle-graphics">Turtle graphics</h3>
-<p>One of the simplest ways to use rewriting sytems for art and design is to interpret the produced strings as instructions for another program. The classic example is using them as instructions for a &quot;turtle graphics&quot; interpreter. </p>
-<p>For example, using the following system:</p>
+<p>One of the simplest ways to use rewriting sytems for art and design is to interpret the produced strings as instructions for another program. The classic example is using them as instructions for a &quot;turtle graphics&quot; interpreter. For example, using the following system:</p>
 <pre><code class="language-javascript">    <span class="hljs-comment">// just one rule: replace &quot;F&quot; with &quot;F+F--F+F&quot;</span>
     rules[<span class="hljs-string">&quot;F&quot;</span>] = <span class="hljs-string">&quot;F+F--F+F&quot;</span>
     <span class="hljs-comment">// start with:</span>
@@ -124,10 +187,19 @@ FFFF[-FF[-F[-B]+B]+F[-B]+B]+FF[-F[-B]+B]+F[-B]+B
 <p>If we interpret the &quot;F&quot; symbol to mean &quot;move forward&quot;, and the &quot;+&quot; and &quot;-&quot; symbols to mean turn left and right by 60 degrees, then each successive application of this rule generates a successive iteration of the Koch curve fractal:</p>
 <p><img src="img/koch.jpg" alt="Iterations of the Koch curve fractal"></p>
 <p><a href="http://codepen.io/grrrwaaa/pen/xVVpea?editors=001">See the Koch curve example in the lab editor</a>.</p>
-<h3 id="bracketed-systems">Bracketed systems</h3>
 <p>By adding push <code>&quot;[&quot;</code> and pop <code>&quot;]&quot;</code> symbols to save/restore graphics state (position, orientation etc.), the graphics interpreter can render branched structures such as trees and ferns. The result is further improved by reducing the length of each line according to the bracketed recursion depth, and embellishing with more context-sensitivity:</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Dragon_trees.jpg" alt="trees"></p>
-<p><a href="../code/lsystem_max.zip">See the example Max/MSP/Jitter patch here</a></p>
+<h3 id="parametric-systems">Parametric systems</h3>
+<p>A <strong>parametric</strong> L-system embeds parameters (such as line length and rotation angle) into the symbols, and sucessors may modify these parameter values. For example, the rule <code>F(x) -&gt; F(x*2)</code> transforms a forward step into a forward step of twice the length.</p>
+<p>A <strong>conditional parametric</strong> L-system extends this to incorporate conditions, such that the subsitution only occurs if the condition is true. For example, <code>F(x : x &lt; 10) -&gt; F(x*2)</code> transforms a forward step into a forward step of twice the length, only if the initial length was less than 10. </p>
+<p>In both cases, our pattern matching system now needs to be able to handle classes of symbols (or at least, ignore anything between parentheses). </p>
+<h3 id="stochastic-systems">Stochastic systems</h3>
+<p>So far our systems are deterministic, and will always reproduce the same results after a fixed number of steps. To create a more natural-looking result, we can introduce non-determinism:</p>
+<ul>
+<li>Into the interpreter (by adding small deviations to the turtle, for example). This will remove the stark repetition, but still preserves topological symmetry.</li>
+<li>Into the production rules. This can generate new topologies. </li>
+</ul>
+<p>A <strong>stochastic</strong> L-system does the latter: for a given non-terminal predecessor, there may be several successor strings which are selected at random (possibly according to weights). Or, if the rules are listed by priority, each rule can have a probablity of being ignored.</p>
 <h3 id="context-sensitive-formal-languages">Context-sensitive formal languages</h3>
 <p>An alphabet and production rules specify a formal language. In 1959 Noam Chomsky identified a hierarchy of four types of formal languages. They rest on the concept of <em>terminal</em> and <em>non-terminal</em> symbols, where a symbol is terminal if it cannot be further rewritten. Nonterminal symbols, which can be further rewritten, are normally indicated using upper case letters (A, B, C) and terminal symbols by lowercase letters (a, b, c). </p>
 <p>Each set in the hierarchy contains those above it:</p>
@@ -140,27 +212,8 @@ FFFF[-FF[-F[-B]+B]+F[-B]+B]+FF[-F[-B]+B]+F[-B]+B
 <p>So far we have considered only regular and context-free formal languages, since we have been restricted to single nonterminal symbols on the left-hand side (predecessors). Clearly, as a biological model (where the string is the phenotype and the production rules are genotype), our system should be context sensitive. Context would imply environmental conditions as well as neighbor cell signaling. </p>
 <p>In order to support context-sensitive languages, we will need more powerful pattern-matching capabilities, and need extra care to handle ambiguous situations. E.g. we must be careful to consider longer patterns before shorter ones, to ensure that e.g. <code>aba</code> matches a rule <code>aba -&gt; abba</code> rather than the rule <code>a -&gt; b</code>. That is, our set of rules must now form a list (rather than a set), which is ordered by <em>priority</em>. And to match classes of structures, we may turn to using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">regular expressions</a> or more powerful <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">parsing expression grammars</a> as the pattern and pattern-matching features.</p>
 <p>The lab toolkit includes the <a href="http://pegjs.org">peg.js</a> library, available in the variable name &quot;pegjs&quot;, which can be used to build parsers. This library also has an excellent <a href="http://pegjs.org/online">online editor</a> in which you can design grammars and test them. I have a <a href="https://worldmaking.github.io/workshop_iclc_2016/tutorial.html">parsing expression grammar tutorial designed for peg.js here</a>.</p>
-<h3 id="parametric-systems">Parametric systems</h3>
-<p>A <strong>parametric</strong> L-system embeds parameters (such as line length and rotation angle) into the symbols, and sucessors may modify these parameter values. For example, the rule <code>F(x) -&gt; F(x*2)</code> transforms a forward step into a forward step of twice the length.</p>
-<p>A <strong>conditional parametric</strong> L-system extends this to incorporate conditions, such that the subsitution only occurs if the condition is true. For example, <code>F(x : x &lt; 10) -&gt; F(x*2)</code> transforms a forward step into a forward step of twice the length, only if the initial length was less than 10. </p>
-<p>In both cases, our pattern matching system now needs to be able to handle classes of symbols (or at least, ignore anything between parentheses). </p>
-<h3 id="stochastic-systems">Stochastic systems</h3>
-<p>So far our systems are deterministic, and will always reproduce the same results after a fixed number of steps. To create a more natural-looking result, we can introduce non-determinism:</p>
-<ul>
-<li>Into the interpreter (by adding small deviations to the turtle, for example). This will remove the stark repetition, but still preserves topological symmetry.</li>
-<li>Into the production rules. This can generate new topologies. </li>
-</ul>
-<p>A <strong>stochastic</strong> L-system does the latter: for a given non-terminal predecessor, there may be several successor strings which are selected at random (possibly according to weights). Or, if the rules are listed by priority, each rule can have a probablity of being ignored.</p>
-<hr>
-<h2 id="evo-devo-1">Evo-Devo</h2>
-<p>L-Systems are difficult to predict and control: it is difficult to infer from an L-system definition and interpreter what the results will be, since (like cellular systems) the interactions are local but the consequences are global. Note that nature faces the same challenge: it cannot predict what changes to a genotype will result is viable or better phenotypes, and must proceed by trial and error (within the scope offered by development). Biologists exploring the mechanisms of development and generation of variation within it, and the relationship with evolutionary selection, work within the relatively new discipline of <em>evolutionary development</em> or &quot;evo-devo&quot;. </p>
-<p>The role of development in the generation of variation is equally important for artificial evolution, however it has been less thoroughly explored. Two lessons from the biologists:</p>
-<ul>
-<li>Development is not just a compact representation of a phenotype, but can be crucial to the generation of complex systems.</li>
-<li>The recent discovery that widely different species re-use the same developmental genes and mechanisms. This perhaps suggests that finding a good set of re-usable mechanisms for long-term evolvability (continuous generation of selectable novelty) is not an easy task. </li>
-<li>Development is not a one-way process, under command of the genome: factors in the environment can activate or inhibit parts of the genome (and parts of a genome can activate and inhibit other parts) in a complex <em>regulatory network</em>, and the state of the environment can affect the results of actions of the genome. In some cases the genome itself may not even be fixed. In part this environment is also inherited from an organisms&#39; parents. </li>
-<li>Development is ultimately working within the limits of a physical, chemical system, with entropic tendencies, self-organizing potential, noisy behavior, etc.</li>
-</ul>
+<h2 id="evo-devo">Evo-Devo</h2>
+<p>L-Systems are difficult to predict and control: it is difficult to infer from an L-system definition and interpreter what the results will be, since (like cellular systems) the interactions are local but the consequences are global. Note that nature faces the same challenge: it cannot predict what changes to a genotype will result is viable or better phenotypes, and must proceed by trial and error (within the scope offered by development). Biologists exploring the mechanisms of development and generation of variation within it, and the relationship with evolutionary selection, work within the relatively new discipline of <strong>evolutionary development</strong> or &quot;evo-devo&quot;. </p>
 <p>Artificial Evo-Devo systems could be categorized as follows:</p>
 <ul>
 <li>The developmental process is hand-written, and evolution only works on parameters for this system. This is amounts to a simple genotype-phenotype map. </li>
@@ -169,8 +222,11 @@ FFFF[-FF[-F[-B]+B]+F[-B]+B]+FF[-F[-B]+B]+F[-B]+B
 <li>Both the basic mechanisms and the sequence of applications are encoded in the genotype and are therefore subject to evolution. Obviously the space of exploration is much larger and less predictable, but the challenge of finding suitable primitives and representations is difficult.</li>
 </ul>
 <p>Whether it is parameters, sequence, mechanisms (or several) that are to be evolved, they must all be represented in the genome in forms that can be inherited, with additional mechanisms for generating variation (e.g. mutations). That is, each one of these elements must be represented symbolically as data (e.g. as strings, trees or matrices of symbols, which may be as low-level as binary form or as high-level as readable text). </p>
+<p>Many systems represent genetic information as a sequence of data, such as a string of characters or binary digits, just as our DNA is a single string. But this string winds upon itself multiple times, in complex ways, to create more subtle physical macrostructures; and also applies functionally to itself as one gene can turn another gene on or off in a complex <a href="https://en.wikipedia.org/wiki/Gene_regulatory_network"><strong>regulatory network</strong></a>. That is, although it is a string at the lowest level, at higher structural and functional levels it operates like a tree or graph. (By analogy, although the <em>text</em> of a computer program is a linear string of characters, the grammar produces a tree of re-usable functions and so on, and the data/control flow it describes are more complex graphs.) Accordingly some artificial evolutionary systems also use more complex structures for genetic representations, including trees and graphs.  </p>
+<p><img src="https://www.karlsims.com/creatures-3swimmers-200.jpg" alt="sims"></p>
+<p>Karl Sims&#39; evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape (the skeletal system), but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neuro-physiological program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. </p>
 <hr>
-<h2 id="bytecode-ecosystems">Bytecode ecosystems</h2>
+<h1 id="primordial-soups-of-code">Primordial soups of code</h1>
 <p>Perhaps the most abstract and deeply computational artificial life models are those in which the organisms <em>are</em> the code, serving as environments for each other. This approach plays most directly upon the fundamental insight that <strong>code is data</strong>. </p>
 <p>We generally assume that DNA also functions as both data and behaviour, but it has sometimes been overlooked that this is a <em>material process</em>. In bytecode soups, the code is not only data, it is the material on which code acts: fragments of code can react with each other, consume and produce each other, match or subvert each other, compete with each other for CPU time or memory resources, and thus evolve. These are the most digital of the artificial life organisms.</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/Core_War_PMars_Screenshot.png" alt="Core war"></p>

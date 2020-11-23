@@ -78,9 +78,11 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - Action items:
      - **Due Nov 20: [Assignment 3](assignments.html) (Evolution)**
 11. Final project discussions
+   - [**Evolution discussion**](evo.html)
+   - [**Development**](code.html)
    - Action items:
      - **Due Nov 30: [Assignment Videos](#evaluation)**
-12. **Special Topic**
+12. [**Development & primordial soups**](code.html)
    - Action items:
      - **Due Dec 7: [Final project presentation](#evaluation)**
 13. **Final Presentations** *Dec 7* 
