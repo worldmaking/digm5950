@@ -1373,11 +1373,8 @@ draw2D = {
     ctx.stroke();
 	},
   
-  // line(p0, p1, thickness)
-  // line(p0, p1)
-  // line(p0, thickness)
-  // line(p0)
-  // line()
+  // line(list-of-points, thickness)
+  // line(list-of-points)
   lines(list, thickness=1) {
 		ctx.lineWidth = thickness/ctxtransform[0];
 		if (list.length < 2) return;
@@ -1387,6 +1384,18 @@ draw2D = {
     		ctx.lineTo(list[i+1][0], list[i+1][1]);
 		}
     ctx.stroke();
+  },
+
+  // shape(list-of-points)
+  shape(list, thickness=1) {
+	ctx.lineWidth = thickness/ctxtransform[0];
+	if (list.length < 2) return;
+	ctx.beginPath();
+	for (let i=0; i<list.length; i+=2) {
+		ctx.moveTo(list[i][0], list[i][1]);
+		ctx.lineTo(list[i+1][0], list[i+1][1]);
+	}
+    ctx.fill();
   },
 
   text(message, pt=[0,0], size=0.02) {

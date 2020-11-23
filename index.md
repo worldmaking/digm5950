@@ -82,7 +82,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
    - [**Development**](code.html)
    - Action items:
      - **Due Nov 30: [Assignment Videos](#evaluation)**
-12. [**Development & primordial soups**](code.html)
+12. [**Development / primordial soups**](code.html)
    - Action items:
      - **Due Dec 7: [Final project presentation](#evaluation)**
 13. **Final Presentations** *Dec 7* 
