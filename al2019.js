@@ -1388,14 +1388,13 @@ draw2D = {
 
   // shape(list-of-points)
   shape(list, thickness=1) {
-	ctx.lineWidth = thickness/ctxtransform[0];
-	if (list.length < 2) return;
+	if (list.length < 3) return;
 	ctx.beginPath();
-	for (let i=0; i<list.length; i+=2) {
-		ctx.moveTo(list[i][0], list[i][1]);
+	ctx.moveTo(list[0][0], list[0][1]);
+	for (let i=1; i<list.length; i++) {
 		ctx.lineTo(list[i+1][0], list[i+1][1]);
 	}
-    ctx.fill();
+	ctx.fill();
   },
 
   text(message, pt=[0,0], size=0.02) {
