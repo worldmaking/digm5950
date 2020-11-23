@@ -1387,12 +1387,12 @@ draw2D = {
   },
 
   // shape(list-of-points)
-  shape(list, thickness=1) {
+  shape(list) {
 	if (list.length < 3) return;
 	ctx.beginPath();
 	ctx.moveTo(list[0][0], list[0][1]);
 	for (let i=1; i<list.length; i++) {
-		ctx.lineTo(list[i+1][0], list[i+1][1]);
+		ctx.lineTo(list[i][0], list[i][1]);
 	}
 	ctx.fill();
   },
