@@ -156,7 +156,7 @@ draw2D.triangle()
 draw2D.line([x1,y1], [x2,y2], thickness)
 draw2D.line([x1,y1], [x2,y2]) // thickness=1
 draw2D.line([x1,y1]) // draws to [0,0], thickness=1
-draw2D.line() // line between [0,0] and [1,1], thickness=1
+draw2D.line() // line between [0,0] and [xx`1,1], thickness=1
 // more efficiently:
 draw2D.lines([list of at least 2 [x,y] points], thickness=1)
 
