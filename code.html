@@ -56,6 +56,15 @@ footer {
 </li>
 <li><a href="#further-afield">Further afield</a></li>
 <li><a href="#general-properties-of-artificial-chemistries">General properties of artificial chemistries</a></li>
+<li><a href="#genetic-programming">Genetic Programming</a><ul>
+<li><a href="#interpretation-development">Interpretation (development)</a></li>
+<li><a href="#choice-of-primitive-set">Choice of primitive set</a></li>
+<li><a href="#seed-generation">Seed generation</a></li>
+<li><a href="#mutations-and-recombinations">Mutations and recombinations</a></li>
+<li><a href="#alternative-representations">Alternative representations</a></li>
+</ul>
+</li>
+<li><a href="#further-reading">Further reading</a></li>
 </ul>
 </li>
 </ul>
@@ -143,6 +152,8 @@ footer {
 <p>Addition &amp; removal of nodes should probably be in a separate pass over the population from the force computations. Perhaps, for each node, we can store the distance to the next (<code>i+1</code>) node. If this distance is greater than a certain threshold, insert a new node at <code>i</code> (and recompute the lengths it and its linked neighbours). If it is less than a certain threshold, remove at <code>i</code> (and recompute the lengths in the same way). Adding a new node at a random location can operate similarly.</p>
 <p>If we want to drive growth by food sources, we can re-use techniques from our agent-environment interaction work. </p>
 <p>It is tempting to further suggest some kinds of node-node communication, as if sending chemical messages or pheromones between cells in an organism. Perhaps this is a way that a growing structure can trigger development events, or differentiate into different kinds of cells as it grows.</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="zYKYNVe" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/zYKYNVe">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
 <h2 id="l-systems">L-systems</h2>
 <p><strong>Looking back at our code-based genetics in the Biomorphs, an interesting challenge could be to extend this into more complex <em>rewriting systems</em>, such as L-systems, by embedding <em>production rules</em>, to create evolutionary-developmental systems! I.e., the genome isn&#39;t necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting.</strong> This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. Such a developmental approach can be taken quite far. </p>
 <p>In 1968 biologist Astrid Lindenmeyer proposed to model several aspects of developmental systems (cell division, cell differentiation and cell death) using rewriting systems on symbolic strings. The analogy is that each symbol represents a cell in a particular state, and the rules of transformation represent the processes of differentiating from one state to another, dividing into two cells, or of programmed cell death.</p>
@@ -186,7 +197,8 @@ FFFF[-FF[-F[-B]+B]+F[-B]+B]+FF[-F[-B]+B]+F[-B]+B
     S = <span class="hljs-string">&quot;F&quot;</span></code></pre>
 <p>If we interpret the &quot;F&quot; symbol to mean &quot;move forward&quot;, and the &quot;+&quot; and &quot;-&quot; symbols to mean turn left and right by 60 degrees, then each successive application of this rule generates a successive iteration of the Koch curve fractal:</p>
 <p><img src="img/koch.jpg" alt="Iterations of the Koch curve fractal"></p>
-<p><a href="http://codepen.io/grrrwaaa/pen/xVVpea?editors=001">See the Koch curve example in the lab editor</a>.</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="xVVpea" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/xVVpea">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
 <p>By adding push <code>&quot;[&quot;</code> and pop <code>&quot;]&quot;</code> symbols to save/restore graphics state (position, orientation etc.), the graphics interpreter can render branched structures such as trees and ferns. The result is further improved by reducing the length of each line according to the bracketed recursion depth, and embellishing with more context-sensitivity:</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Dragon_trees.jpg" alt="trees"></p>
 <h3 id="parametric-systems">Parametric systems</h3>
@@ -471,7 +483,9 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
 <p>&quot;=&quot; (3 arguments): if first two arguments are identical strings, evaluate &amp; return the third.</p>
 <p>&quot;/&quot; (3 arguments): if the length of the first argument is odd, return the second, else the third argument.</p>
 <hr>
-<p><a href="http://codepen.io/grrrwaaa/pen/YpGGXa?editors=001">Progress toward alchemy</a></p>
+<p>Progress toward alchemy (unfinished): </p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="YpGGXa" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/YpGGXa">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
 <h2 id="further-afield">Further afield</h2>
 <p>Here is a <a href="http://chorasimilarity.github.io/chemlambda-gui/dynamic/demos.html">remarkable collection of browser-based demos</a> of the ChemLambda system, which has strong influences from Fontana&#39;s work.</p>
 <iframe width="480" height="360" src="https://www.youtube.com/embed/6LZvIkM6JqY?rel=0" frameborder="0" allowfullscreen></iframe>
@@ -489,221 +503,160 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
 <blockquote>
 <p>There are clearly similarities with rewriting systems (where the active population is the item being rewritten, made of molecule <em>terms</em> and reaction <em>productions</em>). There can also be similarities found with evolutionary, cellular and dynamical systems. Alternatively, AC&#39;s can be viewed as a special case of agent systems, in which each agent belongs to a molecule-class, and reactions are a result of agent interacitons (in which interactions usually lead to the creation and destruction of agents). </p>
 </blockquote>
-<!--
-
-## Genetic Programming
-
-Our math & turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. We'll explore that in more detail via *genetic programming*. 
-
-Genetic Programming was invented by Nigel Cramer in 1985, but greatly expanded through the work of John Koza. GP evolves programs; it is an example of **metaprogramming**. GP has been used to generate programs to solve hard problems, and to evolve control systems for artificial agents and robots. Karl Sims used GP for his genetic images as well as for his evolving virtual creatures. 
-
-In GP that the generating a phenotype is a process of generating *programs*, however programs are usually expressed as syntax *trees* rather than as lines of code. The leaves of the tree are *terminals*, while the non-terminal branches are *functions*. Terminals have no inputs; typical terminals are constant numbers and external/global variable names, but this set can also include zero-argument functions such as "random()" or context-sensing such as "get_orientation()". Non-terminal functions are specified according to their operator (such as mathematical addition, multiplication, cosine, etc.); they have one or more inputs (the number of inputs is the *arity*), which may be filled by terminals or other functions. The set of all possible terminals and non-terminal functions constitutes the *primitive set* of a GP system (a union of the *terminal set* and the *function set*). 
-
-This structure is natural to LISP programs:
-
-```lisp
-(* (sin (+ x 2)) (cos x))
-```
-
-In this case, the terminal set appears to include integers and "x", the function set includes "sin", "cos", and binary operators such as "+", and "*". 
-
-Javascript does not have this representational succinctness, but can get close to it by nested arrays:
-
-```javascript
-["*", ["sin", ["+", "x", 2]], ["cos", "x"]]
-```
-
-Or more graphically:
-
-```javascript
-[
-    "*", 
+<h2 id="genetic-programming">Genetic Programming</h2>
+<p>Our math &amp; turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. We&#39;ll explore that in more detail via <em>genetic programming</em>. </p>
+<p>Genetic Programming was invented by Nigel Cramer in 1985, but greatly expanded through the work of John Koza. GP evolves programs; it is an example of <strong>metaprogramming</strong>. GP has been used to generate programs to solve hard problems, and to evolve control systems for artificial agents and robots. Karl Sims used GP for his genetic images as well as for his evolving virtual creatures. </p>
+<p>In GP that the generating a phenotype is a process of generating <em>programs</em>, however programs are usually expressed as syntax <em>trees</em> rather than as lines of code. The leaves of the tree are <em>terminals</em>, while the non-terminal branches are <em>functions</em>. Terminals have no inputs; typical terminals are constant numbers and external/global variable names, but this set can also include zero-argument functions such as &quot;random()&quot; or context-sensing such as &quot;get_orientation()&quot;. Non-terminal functions are specified according to their operator (such as mathematical addition, multiplication, cosine, etc.); they have one or more inputs (the number of inputs is the <em>arity</em>), which may be filled by terminals or other functions. The set of all possible terminals and non-terminal functions constitutes the <em>primitive set</em> of a GP system (a union of the <em>terminal set</em> and the <em>function set</em>). </p>
+<p>This structure is natural to LISP programs:</p>
+<pre><code class="language-lisp">(<span class="hljs-name">*</span> (<span class="hljs-name">sin</span> (<span class="hljs-name">+</span> x <span class="hljs-number">2</span>)) (<span class="hljs-name">cos</span> x))</code></pre>
+<p>In this case, the terminal set appears to include integers and &quot;x&quot;, the function set includes &quot;sin&quot;, &quot;cos&quot;, and binary operators such as &quot;+&quot;, and &quot;*&quot;. </p>
+<p>Javascript does not have this representational succinctness, but can get close to it by nested arrays:</p>
+<pre><code class="language-javascript">[<span class="hljs-string">&quot;*&quot;</span>, [<span class="hljs-string">&quot;sin&quot;</span>, [<span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;x&quot;</span>, <span class="hljs-number">2</span>]], [<span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-string">&quot;x&quot;</span>]]</code></pre>
+<p>Or more graphically:</p>
+<pre><code class="language-javascript">[
+    <span class="hljs-string">&quot;*&quot;</span>, 
     [
-        "sin", 
+        <span class="hljs-string">&quot;sin&quot;</span>, 
         [
-            "+", 
-            "x", 
-            2]
+            <span class="hljs-string">&quot;+&quot;</span>, 
+            <span class="hljs-string">&quot;x&quot;</span>, 
+            <span class="hljs-number">2</span>]
     ], 
     [
-        "cos", 
-        "x"
+        <span class="hljs-string">&quot;cos&quot;</span>, 
+        <span class="hljs-string">&quot;x&quot;</span>
     ]
-]
-```
-
-Note that our representation is more brittle than a simple string of symbols: any array beginning with "sin" must have one more element following it as the argument; any array beginning with "+" must have two elements (array length 3) following it as arguments. Moreover, those arguments must either be *terminal* nodes such as "x" or numbers, or they must be arrays -- that is, operator symbols like "sin" and "+" can only occupy the first position. Since we know that our operators require *at most* two arguments, we could simply give all functions two arguments, and ignore the un-used ones as neutral junk genetic data, e.g.:
-
-```javascript
-[
-    "*", 
+]</code></pre>
+<p>Note that our representation is more brittle than a simple string of symbols: any array beginning with &quot;sin&quot; must have one more element following it as the argument; any array beginning with &quot;+&quot; must have two elements (array length 3) following it as arguments. Moreover, those arguments must either be <em>terminal</em> nodes such as &quot;x&quot; or numbers, or they must be arrays -- that is, operator symbols like &quot;sin&quot; and &quot;+&quot; can only occupy the first position. Since we know that our operators require <em>at most</em> two arguments, we could simply give all functions two arguments, and ignore the un-used ones as neutral junk genetic data, e.g.:</p>
+<pre><code class="language-javascript">[
+    <span class="hljs-string">&quot;*&quot;</span>, 
     [
-        "sin", 
+        <span class="hljs-string">&quot;sin&quot;</span>, 
         [
-            "+", 
-            "x", 
-            2], 
-        5        // junk
+            <span class="hljs-string">&quot;+&quot;</span>, 
+            <span class="hljs-string">&quot;x&quot;</span>, 
+            <span class="hljs-number">2</span>], 
+        <span class="hljs-number">5</span>        <span class="hljs-comment">// junk</span>
     ], 
     [
-        "cos", 
-        "x", 
-        "x"        // junk
+        <span class="hljs-string">&quot;cos&quot;</span>, 
+        <span class="hljs-string">&quot;x&quot;</span>, 
+        <span class="hljs-string">&quot;x&quot;</span>        <span class="hljs-comment">// junk</span>
     ]
-]
-```
-
-### Interpretation (development)
-
-To turn this *data* into something we can actually run as *code*, we could spell it out as an expression:
-
-```javascript
-return (Math.sin(x + 2) * Math.cos(x));
-```
-
-Here's a recursive solution:
-
-```javascript
-function develop(node) {
-    // terminals:
-    if (typeof node == "string" || typeof node == "number") {
-        return node;
+]</code></pre>
+<h3 id="interpretation-development">Interpretation (development)</h3>
+<p>To turn this <em>data</em> into something we can actually run as <em>code</em>, we could spell it out as an expression:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">return</span> (<span class="hljs-built_in">Math</span>.sin(x + <span class="hljs-number">2</span>) * <span class="hljs-built_in">Math</span>.cos(x));</code></pre>
+<p>Here&#39;s a recursive solution:</p>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">develop</span>(<span class="hljs-params">node</span>) </span>{
+    <span class="hljs-comment">// terminals:</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> node == <span class="hljs-string">&quot;string&quot;</span> || <span class="hljs-keyword">typeof</span> node == <span class="hljs-string">&quot;number&quot;</span>) {
+        <span class="hljs-keyword">return</span> node;
     }
-    // non-terminals:
-    let op = node[0];
-    let a = node[1];
-    let b = node[2];
-    if (op == "sin" || op == "cos") {
-        // unary Math function call:
-        return "Math." + op + "(" + develop(a) + ")";
-    } else if (op == "+" || op == "*" || op == "-" || op == "/" || op == "%") {
-        // binary operator:
-        return "(" + develop(a) + op + develop(b) + ")";
+    <span class="hljs-comment">// non-terminals:</span>
+    <span class="hljs-keyword">let</span> op = node[<span class="hljs-number">0</span>];
+    <span class="hljs-keyword">let</span> a = node[<span class="hljs-number">1</span>];
+    <span class="hljs-keyword">let</span> b = node[<span class="hljs-number">2</span>];
+    <span class="hljs-keyword">if</span> (op == <span class="hljs-string">&quot;sin&quot;</span> || op == <span class="hljs-string">&quot;cos&quot;</span>) {
+        <span class="hljs-comment">// unary Math function call:</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Math.&quot;</span> + op + <span class="hljs-string">&quot;(&quot;</span> + develop(a) + <span class="hljs-string">&quot;)&quot;</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (op == <span class="hljs-string">&quot;+&quot;</span> || op == <span class="hljs-string">&quot;*&quot;</span> || op == <span class="hljs-string">&quot;-&quot;</span> || op == <span class="hljs-string">&quot;/&quot;</span> || op == <span class="hljs-string">&quot;%&quot;</span>) {
+        <span class="hljs-comment">// binary operator:</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;(&quot;</span> + develop(a) + op + develop(b) + <span class="hljs-string">&quot;)&quot;</span>;
     }
+}</code></pre>
+<h3 id="choice-of-primitive-set">Choice of primitive set</h3>
+<p>A couple of things to watch out for here: </p>
+<ul>
+<li>It is assumed that all functions return one value</li>
+<li>It is assumed that returned values are of a type that can be used in other functions. This gets trickier when introducing conditional functions (e.g. <code>(if x y)</code>), since numeric values need to be converted to booleans. More complex systems may introduce type metadata into the tree.</li>
+<li>Functions should not throw errors or cause invalid behaviour, so often &quot;protected&quot; versions of operations are used. For example, divide (or modulo) by zero may be detected and avoided, reducing the number of run-time exceptions to trap.</li>
+<li>There should be enough scope in the primitive set to generate satisfactory solutions to the problem</li>
+</ul>
+<h3 id="seed-generation">Seed generation</h3>
+<p>To generate a random seed genotype, we can also use a recursive procedure. <strong>One thing to watch out for: we need to make sure we don&#39;t spawn infinitely large genotypes!</strong> To do that, we&#39;ll need to pass some information through the recursion to bail out at a certain depth, or when the genome has a certain size. For example, we could limit the recursive depth as follows:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> ops = [<span class="hljs-string">&quot;sin&quot;</span>, <span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;-&quot;</span>, <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-string">&quot;/&quot;</span>, <span class="hljs-string">&quot;%&quot;</span>];
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pick_random_operator</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> ops[<span class="hljs-built_in">random</span>(ops.length)];
 }
-```
-
-### Choice of primitive set
-
-A couple of things to watch out for here: 
-
-- It is assumed that all functions return one value
-- It is assumed that returned values are of a type that can be used in other functions. This gets trickier when introducing conditional functions (e.g. `(if x y)`), since numeric values need to be converted to booleans. More complex systems may introduce type metadata into the tree.
-- Functions should not throw errors or cause invalid behaviour, so often "protected" versions of operations are used. For example, divide (or modulo) by zero may be detected and avoided, reducing the number of run-time exceptions to trap.
-- There should be enough scope in the primitive set to generate satisfactory solutions to the problem
-
-### Seed generation
-
-To generate a random seed genotype, we can also use a recursive procedure. **One thing to watch out for: we need to make sure we don't spawn infinitely large genotypes!** To do that, we'll need to pass some information through the recursion to bail out at a certain depth, or when the genome has a certain size. For example, we could limit the recursive depth as follows:
-
-```javascript
-let ops = ["sin", "cos", "+", "-", "*", "/", "%"];
-
-function pick_random_operator() {
-    return ops[random(ops.length)];
-}
-function make_random_terminal() {
-    return random(2) ? "time" : Math.random()*1000;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">make_random_terminal</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">random</span>(<span class="hljs-number">2</span>) ? <span class="hljs-string">&quot;time&quot;</span> : <span class="hljs-built_in">Math</span>.random()*<span class="hljs-number">1000</span>;
 }
 
-function generate(depth) {
-    // forces use of terminal when depth == 1, randomized otherwise:
-    if (random(depth) == 0) {
-        return make_random_terminal();
-    } else {
-        return [
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generate</span>(<span class="hljs-params">depth</span>) </span>{
+    <span class="hljs-comment">// forces use of terminal when depth == 1, randomized otherwise:</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">random</span>(depth) == <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">return</span> make_random_terminal();
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> [
             pick_random_operator(), 
-            generate(depth-1), 
-            generate(depth-1)
+            generate(depth<span class="hljs-number">-1</span>), 
+            generate(depth<span class="hljs-number">-1</span>)
         ];
     }
 }
 
-// generate with maximum depth 6:
-var data = generate(6);
+<span class="hljs-comment">// generate with maximum depth 6:</span>
+<span class="hljs-keyword">var</span> data = generate(<span class="hljs-number">6</span>);
 
-// print out nicely:
-console.log(JSON.stringify(data, null, " "));
-```
+<span class="hljs-comment">// print out nicely:</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">JSON</span>.stringify(data, <span class="hljs-literal">null</span>, <span class="hljs-string">&quot; &quot;</span>));</code></pre>
+<p>Koza also recommends creating a seed population with a variety of depths, which we can easily do by randomizing the initial argument to <code>generate()</code>. </p>
+<h3 id="mutations-and-recombinations">Mutations and recombinations</h3>
+<p>GP departs significantly from other evolutionary algorithms in the implementation of mutation and recombination. It is not just individual terminal symbols that can be mutated, but also entire branches. 
+Extra care has to be taken here to prune genomes that are getting too large (or to avoid then getting too small!). Some possible mutations include:</p>
+<ul>
+<li>Replace a terminal with another random terminal. A good variation of this is to offset a constant terminal by a small amount.</li>
+<li>Replace the operator name of a function</li>
+<li>Replace a random function with a terminal</li>
+<li>Swap the argument order of a function</li>
+<li>Replace a function with a copy of another function within the same genome (including all subtrees)</li>
+<li>Replace entire genome with one of its subtrees. (This will make it smaller).</li>
+<li>Replace a function with a randomly-generated function (including subtrees). We may introduce a condition to make sure the replacement has a similar size as the item replaced.</li>
+<li>In sexual reproduction, the most common variant is <em>sub-tree crossover</em>: Parent A is cloned, but a random subtree is chosen to be replaced with another randomly-chosen subtree from Parent B. Typically sexual cross-over is utilized more when populations number in the hundreds, thousands or more, whereas mutation is more widely utilized in smaller populations.</li>
+</ul>
+<p>A tricky point -- most of these mutations depend on choosing a random non-terminal. How can we pick one randomly? And how can we ensure that the genomes stay of a reasonable size? The solutions to these problems are not trivial enough to work through in our labs.</p>
+<h3 id="alternative-representations">Alternative representations</h3>
+<p>Many GP systems today assume that all non-terminal functions have the same arity (the same no. of arguments). By doing so, it turns out that the brackets become redundant, and trees can efficiently be represented as simple linear sequences. The above example can be simply listed as:</p>
+<pre><code class="language-js">* sin + x <span class="hljs-number">2</span> <span class="hljs-number">5</span> cos x x</code></pre>
+<p>Clearly this makes some mutations easier -- we can pick random items in the list and replace them with equivalents, e.g. replacing terminals with terminals, operators with operators. We can easily see the genome size, and use that as a selection factor. But it is still not so trivial to make replacements and ensure the whole genome still generates a complete program. </p>
+<hr>
+<p>Another variant, called &quot;linear genetic programming&quot;, also uses a flat list of nodes, but in a format closer to a register language (in fact, closer to the underlying architecture of modern PCs). Each node in this list has an operator, to determine what kind of instruction it is (e.g. &quot;+&quot;, &quot;sin&quot;, &quot;var&quot;, etc.), followed by some values to specify which existing &quot;registers&quot;, that is, previously-computed values, are to be used as arguments to the operation. Each operation will then produce a new register in turn. So, the code generated will look something like this:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">var</span> r1 = x;
+<span class="hljs-keyword">var</span> r2 = <span class="hljs-number">2</span>;
+<span class="hljs-keyword">var</span> r3 = r1 + r2;
+<span class="hljs-keyword">var</span> r4 = <span class="hljs-built_in">Math</span>.sin(r3);
+<span class="hljs-keyword">var</span> r5 = x;
+<span class="hljs-keyword">var</span> r6 = <span class="hljs-built_in">Math</span>.cos(r5);
+<span class="hljs-keyword">var</span> r7 = r4 * r6;
+<span class="hljs-keyword">return</span> r7;</code></pre>
+<p>A genetic representation might be something like this:</p>
+<pre><code class="language-js">[
+    [ <span class="hljs-string">&quot;var&quot;</span>, <span class="hljs-string">&quot;x&quot;</span> ],
+    [ <span class="hljs-string">&quot;num&quot;</span>, <span class="hljs-number">2</span> ],
+    [ <span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ],
+    [ <span class="hljs-string">&quot;sin&quot;</span>, <span class="hljs-number">0</span> ],
+    [ <span class="hljs-string">&quot;var&quot;</span>, <span class="hljs-string">&quot;x&quot;</span> ],
+    [ <span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-number">0</span> ],
+    [ <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span> ],
+]</code></pre>
+<p>Notice how registers are stored as offsets back from the currently-assigning register. So, an argument of <code>0</code> means the last-computed-register, <code>1</code> means the one computed before that, etc. This kind of relative indexing makes the representation far more robust -- less likely to be malformed after mutation. Even greater safety can be ensured by wrapping register indices within the available range. For a linearized genotype representation, the genetic mutations and crossover operators are similar to other sequence-based evolutionary systems. </p>
+<p>An example using a kind of linear-GP, somewhat akin Karl Sims&#39; evolving images, is in the lab editor here:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="YwmerM" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/YwmerM">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-Koza also recommends creating a seed population with a variety of depths, which we can easily do by randomizing the initial argument to `generate()`. 
+<p>An example using this scheme to generate random video feedback systems, in the lab editor:</p>
+<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="pyzJLe" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/pyzJLe">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 
-### Mutations and recombinations
+<p>Yet another very different but related approach is <strong>gramatical evolution</strong>. In GE, genomes are simply lists of integers, for example in the range 0-99. The possible shape of programs is determined by a grammar. The generator follows each rule of the grammar in turn, and when multiple options are possible, the next genome integer is used to determine the choice (modulo the number of choices). This not only guarantees that all generated programs are formally correct (no matter how complex the grammar involved), it also seems to lend some advantages with respect to mutations. Grammatical evolution has been very successful and is widely used.</p>
+<h2 id="further-reading">Further reading</h2>
+<ul>
+<li><a href="http://dces.essex.ac.uk/staff/rpoli/gp-field-guide/A_Field_Guide_to_Genetic_Programming.pdf">A field guide to GP</a></li>
+<li><a href="http://www.cs.montana.edu/~bwall/cs580/introduction_to_gp.pdf">An overview paper</a></li>
+<li><a href="http://www.geneticalgorithms.com/Tutorial/index.html">Very short tutorial</a></li>
+</ul>
 
-GP departs significantly from other evolutionary algorithms in the implementation of mutation and recombination. It is not just individual terminal symbols that can be mutated, but also entire branches. 
-Extra care has to be taken here to prune genomes that are getting too large (or to avoid then getting too small!). Some possible mutations include:
-
-- Replace a terminal with another random terminal. A good variation of this is to offset a constant terminal by a small amount.
-- Replace the operator name of a function
-- Replace a random function with a terminal
-- Swap the argument order of a function
-- Replace a function with a copy of another function within the same genome (including all subtrees)
-- Replace entire genome with one of its subtrees. (This will make it smaller).
-- Replace a function with a randomly-generated function (including subtrees). We may introduce a condition to make sure the replacement has a similar size as the item replaced.
-- In sexual reproduction, the most common variant is *sub-tree crossover*: Parent A is cloned, but a random subtree is chosen to be replaced with another randomly-chosen subtree from Parent B. Typically sexual cross-over is utilized more when populations number in the hundreds, thousands or more, whereas mutation is more widely utilized in smaller populations.
-
-A tricky point -- most of these mutations depend on choosing a random non-terminal. How can we pick one randomly? And how can we ensure that the genomes stay of a reasonable size? The solutions to these problems are not trivial enough to work through in our labs.
-
-
-### Alternative representations
-
-Many GP systems today assume that all non-terminal functions have the same arity (the same no. of arguments). By doing so, it turns out that the brackets become redundant, and trees can efficiently be represented as simple linear sequences. The above example can be simply listed as:
-
-```js
-* sin + x 2 5 cos x x
-```
-
-Clearly this makes some mutations easier -- we can pick random items in the list and replace them with equivalents, e.g. replacing terminals with terminals, operators with operators. We can easily see the genome size, and use that as a selection factor. But it is still not so trivial to make replacements and ensure the whole genome still generates a complete program. 
-
----
-
-Another variant, called "linear genetic programming", also uses a flat list of nodes, but in a format closer to a register language (in fact, closer to the underlying architecture of modern PCs). Each node in this list has an operator, to determine what kind of instruction it is (e.g. "+", "sin", "var", etc.), followed by some values to specify which existing "registers", that is, previously-computed values, are to be used as arguments to the operation. Each operation will then produce a new register in turn. So, the code generated will look something like this:
-
-```javascript
-var r1 = x;
-var r2 = 2;
-var r3 = r1 + r2;
-var r4 = Math.sin(r3);
-var r5 = x;
-var r6 = Math.cos(r5);
-var r7 = r4 * r6;
-return r7;
-```
-
-A genetic representation might be something like this:
-
-```js
-[
-    [ "var", "x" ],
-    [ "num", 2 ],
-    [ "+", 1, 0 ],
-    [ "sin", 0 ],
-    [ "var", "x" ],
-    [ "cos", 0 ],
-    [ "*", 2, 0 ],
-]
-```
-
-Notice how registers are stored as offsets back from the currently-assigning register. So, an argument of `0` means the last-computed-register, `1` means the one computed before that, etc. This kind of relative indexing makes the representation far more robust -- less likely to be malformed after mutation. Even greater safety can be ensured by wrapping register indices within the available range. For a linearized genotype representation, the genetic mutations and crossover operators are similar to other sequence-based evolutionary systems. 
-
-[An example using a kind of linear-GP, somewhat akin Karl Sims' evolving images, is in the lab editor here](http://codepen.io/grrrwaaa/pen/YwmerM?editors=001)
-
-[An example using this scheme to generate random video feedback systems, in the lab editor](http://codepen.io/grrrwaaa/pen/pyzJLe?editors=001)
-
-[An example of this using jit.gen in Max/MSP/Jitter](../code/fb_gen.zip)
-
----
-
-Yet another very different but related approach is **gramatical evolution**. In GE, genomes are simply lists of integers, for example in the range 0-99. The possible shape of programs is determined by a grammar. The generator follows each rule of the grammar in turn, and when multiple options are possible, the next genome integer is used to determine the choice (modulo the number of choices). This not only guarantees that all generated programs are formally correct (no matter how complex the grammar involved), it also seems to lend some advantages with respect to mutations. Grammatical evolution has been very successful and is widely used.
-
-## Further reading
-
-- [A field guide to GP](http://dces.essex.ac.uk/staff/rpoli/gp-field-guide/A_Field_Guide_to_Genetic_Programming.pdf)
-- [An overview paper](http://www.cs.montana.edu/~bwall/cs580/introduction_to_gp.pdf)
-- [Very short tutorial](http://www.geneticalgorithms.com/Tutorial/index.html)
-
--->
 <footer>2020</footer>
 
 </body>

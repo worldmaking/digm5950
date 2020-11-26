@@ -83,8 +83,7 @@ If we want to drive growth by food sources, we can re-use techniques from our ag
 
 It is tempting to further suggest some kinds of node-node communication, as if sending chemical messages or pheromones between cells in an organism. Perhaps this is a way that a growing structure can trigger development events, or differentiate into different kinds of cells as it grows.
 
-
-
+---codepen:https://codepen.io/grrrwaaa/pen/zYKYNVe
 
 ## L-systems
 
@@ -142,7 +141,7 @@ If we interpret the "F" symbol to mean "move forward", and the "+" and "-" symbo
 
 ![Iterations of the Koch curve fractal](img/koch.jpg)
 
-[See the Koch curve example in the lab editor](http://codepen.io/grrrwaaa/pen/xVVpea?editors=001).
+---codepen:https://codepen.io/grrrwaaa/pen/xVVpea
 
 By adding push ```"["``` and pop ```"]"``` symbols to save/restore graphics state (position, orientation etc.), the graphics interpreter can render branched structures such as trees and ferns. The result is further improved by reducing the length of each line according to the bracketed recursion depth, and embellishing with more context-sensitivity:
 
@@ -470,7 +469,9 @@ The "a" atom represents the input argument.
 
 ---
 
-[Progress toward alchemy](http://codepen.io/grrrwaaa/pen/YpGGXa?editors=001)
+Progress toward alchemy (unfinished): 
+
+---codepen:https://codepen.io/grrrwaaa/pen/YpGGXa
 
 ## Further afield
 
@@ -493,7 +494,6 @@ The algorithm may also include a source and sink: the source is a continuous inp
 
 > There are clearly similarities with rewriting systems (where the active population is the item being rewritten, made of molecule *terms* and reaction *productions*). There can also be similarities found with evolutionary, cellular and dynamical systems. Alternatively, AC's can be viewed as a special case of agent systems, in which each agent belongs to a molecule-class, and reactions are a result of agent interacitons (in which interactions usually lead to the creation and destruction of agents). 
 
-<!--
 
 ## Genetic Programming
 
@@ -691,13 +691,14 @@ A genetic representation might be something like this:
 
 Notice how registers are stored as offsets back from the currently-assigning register. So, an argument of `0` means the last-computed-register, `1` means the one computed before that, etc. This kind of relative indexing makes the representation far more robust -- less likely to be malformed after mutation. Even greater safety can be ensured by wrapping register indices within the available range. For a linearized genotype representation, the genetic mutations and crossover operators are similar to other sequence-based evolutionary systems. 
 
-[An example using a kind of linear-GP, somewhat akin Karl Sims' evolving images, is in the lab editor here](http://codepen.io/grrrwaaa/pen/YwmerM?editors=001)
+An example using a kind of linear-GP, somewhat akin Karl Sims' evolving images, is in the lab editor here:
 
-[An example using this scheme to generate random video feedback systems, in the lab editor](http://codepen.io/grrrwaaa/pen/pyzJLe?editors=001)
+---codepen:https://codepen.io/grrrwaaa/pen/YwmerM
 
-[An example of this using jit.gen in Max/MSP/Jitter](../code/fb_gen.zip)
+An example using this scheme to generate random video feedback systems, in the lab editor:
 
----
+---codepen:https://codepen.io/grrrwaaa/pen/pyzJLe
+
 
 Yet another very different but related approach is **gramatical evolution**. In GE, genomes are simply lists of integers, for example in the range 0-99. The possible shape of programs is determined by a grammar. The generator follows each rule of the grammar in turn, and when multiple options are possible, the next genome integer is used to determine the choice (modulo the number of choices). This not only guarantees that all generated programs are formally correct (no matter how complex the grammar involved), it also seems to lend some advantages with respect to mutations. Grammatical evolution has been very successful and is widely used.
   
@@ -707,4 +708,3 @@ Yet another very different but related approach is **gramatical evolution**. In 
 - [An overview paper](http://www.cs.montana.edu/~bwall/cs580/introduction_to_gp.pdf)
 - [Very short tutorial](http://www.geneticalgorithms.com/Tutorial/index.html)
 
--->
