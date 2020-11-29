@@ -85,6 +85,13 @@ The course has a strongly practical emphasis, exploring frameworks through appli
 12. [**Development / primordial soups**](code.html)
    - Action items:
      - **Due Dec 7: [Final project presentation](#evaluation)**
+       - Please add your presentation slides [to this Google Slides document here](https://docs.google.com/presentation/d/1MzpEu8quXmvnBU-byGHPEoAEbUFdhOQjEQYe4IDYnN0/edit?usp=sharing)
+       - Do not delete or change any existing slides!
+       - 2-5 slides total per project
+       - Be sure to include your name(s) and project title
+       - Be sure to embed or link to your working project (or link to a video of it)
+       - Please include any references (academic, inspirational, etc.) along with full name and citation or link accordingly
+
 13. **Final Presentations** *Dec 7* 
    - **Due Dec 14: [Final project code & documentation](#evaluation)**
 
