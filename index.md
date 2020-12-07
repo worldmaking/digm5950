@@ -94,6 +94,7 @@ The course has a strongly practical emphasis, exploring frameworks through appli
        - Please include any references (academic, inspirational, etc.) along with full name and citation or link accordingly
 13.  **Final Presentations** *Dec 7* 
    - **Due Dec 14: [Final project code & documentation](#evaluation)**
+   - Please submit using the Final Projects form in Teams.
 
 ---
 
