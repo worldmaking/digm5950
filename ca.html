@@ -142,6 +142,7 @@ footer {
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/E8kUJL04ELA?start=76" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <p>This CA is so popular that people have written <a href="http://www.youtube.com/watch?v=My8AsV7bA94">Turing machines</a> and, recursively, the <a href="http://www.youtube.com/watch?v=xP5-iIeKXE8">Game of Life</a> in it. </p>
+<p><a href="https://www.nytimes.com/2020/12/28/science/math-conway-game-of-life.html">An homage in the NY Times</a></p>
 <h3 id="implementation">Implementation</h3>
 <p>If the cells are densely packed into a regular lattice structure, such as a 2D grid, they can efficiently be represented as <em>array</em> memory blocks. The state of a cell can be represented by a number, so an array of integers works well. A way to index this array memory to read or write a cell coordinate will be useful.</p>
 <p>In theory the transition rule can be represented as a <em>look-up table</em>, however above a certain number of states and neighbors the size of this table would become astronomical (k states raised to the power of k neighbor states raised to the power of n neighbors; for a 3-state, 3-neighbor system this requires 7 billon rules!), so a procedural implementation is preferable. CAs may use bit-wise operators to implement the transition rules in a hardware-optimized way, but we will use regular <code>if</code> statements for clarity. </p>

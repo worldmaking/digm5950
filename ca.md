@@ -86,6 +86,8 @@ The Game of Life produces easily recognizable higher-level formations including 
 
 This CA is so popular that people have written [Turing machines](http://www.youtube.com/watch?v=My8AsV7bA94) and, recursively, the [Game of Life](http://www.youtube.com/watch?v=xP5-iIeKXE8) in it. 
 
+[An homage in the NY Times](https://www.nytimes.com/2020/12/28/science/math-conway-game-of-life.html)
+
 ### Implementation
 
 If the cells are densely packed into a regular lattice structure, such as a 2D grid, they can efficiently be represented as *array* memory blocks. The state of a cell can be represented by a number, so an array of integers works well. A way to index this array memory to read or write a cell coordinate will be useful.
