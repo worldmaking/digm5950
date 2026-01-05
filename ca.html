@@ -27,53 +27,13 @@ footer {
 
 <body class="centremaxwidth960">
 <header><a href="index.html">Home</a></header>
-<ul>
-<li><a href="#cellular-automata-and-related-lattice-models">Cellular automata (and related lattice models)</a><ul>
-<li><a href="#conways-game-of-life">Conway&#39;s Game of Life</a><ul>
-<li><a href="#implementation">Implementation</a></li>
-<li><a href="#variations">Variations</a></li>
-</ul>
-</li>
-<li><a href="#probabilisticstochastic-ca">Probabilistic/Stochastic CA</a></li>
-<li><a href="#non-homogenous-ca">Non-homogenous CA</a></li>
-<li><a href="#asynchronous-ca">Asynchronous CA</a><ul>
-<li><a href="#mobile-ca">Mobile CA</a><ul>
-<li><a href="#langtons-ant">Langton&#39;s Ant</a></li>
-</ul>
-</li>
-<li><a href="#termites">Termites</a></li>
-</ul>
-</li>
-<li><a href="#particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</a><ul>
-<li><a href="#block-rule-ca">Block rule CA</a></li>
-<li><a href="#some-observations">Some observations</a></li>
-</ul>
-</li>
-<li><a href="#probabilistic-asynchronous-ca">Probabilistic Asynchronous CA</a><ul>
-<li><a href="#largeunboundedcomplex-states">Large/unbounded/complex states</a></li>
-</ul>
-</li>
-<li><a href="#continuous-automata">Continuous automata</a><ul>
-<li><a href="#smoothlife">Smoothlife</a></li>
-<li><a href="#lenia">Lenia</a></li>
-<li><a href="#reaction-diffusion">Reaction Diffusion</a></li>
-</ul>
-</li>
-<li><a href="#spatial-transformation-systems">Spatial transformation systems</a><ul>
-<li><a href="#ima-traveller">Ima Traveller</a></li>
-<li><a href="#multi-scale-systems">Multi-scale systems</a></li>
-</ul>
-</li>
-<li><a href="#multi-way-ca--parallel-histories">Multi-way CA &amp; parallel histories</a></li>
-</ul>
-</li>
-</ul>
-
+undefined
 <!--{
     title: "Cellular Automata"
 }-->
 
 <hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h1 id="cellular-automata-and-related-lattice-models">Cellular automata (and related lattice models)</h1>
 <p><img src="img/finiteStateMachine.png" alt=""></p>
 <p>The mathematical notion of <em>automaton</em> indicates a discrete-time system with finite set of possible states, a finite number of inputs, a finite number of outputs, and a transition rule which gives the state at the next step in terms of the state and inputs at the previous step. </p>
@@ -120,6 +80,8 @@ footer {
 </ul>
 <p><a href="https://en.wikibooks.org/wiki/Cellular_Automata">The wikibooks on CA</a>.</p>
 <hr>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="conways-game-of-life">Conway&#39;s Game of Life</h2>
 <p>The most famous CA is probably the <strong>Game of Life</strong>. It is a 2D, class 4 automata, which uses the Moore neighbourhood (8 neighbours), and synchronous update. The transition rule can be stated as follows:</p>
 <ul>
@@ -130,14 +92,16 @@ footer {
 </ul>
 </li>
 <li>If the current state is 0 (&quot;dead&quot;):<ul>
-<li>If the neigbor total is exactly 3: New state is 1 (&quot;reproduction&quot;)</li>
-<li>Else: State remains the same (&quot;dead&quot;)</li>
-</ul>
+<li><p>If the neigbor total is exactly 3: New state is 1 (&quot;reproduction&quot;)</p>
 </li>
-</ul>
+<li><p>Else: State remains the same (&quot;dead&quot;)</p>
 <blockquote>
 <p>It is thus an example of a <em>outer totalistic</em> CA: The spatial directions of cells do not matter, only the total value of all neighbors is used, along with the current value of the cell itself. Note also that these rules mean that the Game of Life is not reversible: from a given state it is not possible to determine the previous state.</p>
 </blockquote>
+</li>
+</ul>
+</li>
+</ul>
 <p>The Game of Life produces easily recognizable higher-level formations including stable objects, oscillatory objects, mobile objects and objects that produce or consume others, for example, which have been called &#39;ponds&#39;, &#39;gliders&#39;, &#39;eaters&#39;, &#39;glider guns&#39; and so on. </p>
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/E8kUJL04ELA?start=76" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -160,6 +124,8 @@ footer {
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 <p>More variations are possible by modulating the basic definition of a CA, some of which have been explored more than others. </p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="probabilisticstochastic-ca">Probabilistic/Stochastic CA</h2>
 <p>In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.</p>
 <ul>
@@ -172,6 +138,8 @@ footer {
 <li>A <em>backround noise</em> can be added, such that from time to time a randomly chosen cell changes state. Try adding background noise to the Game of Life to avoid it reaching a stable or cyclic attractor. But too high a probability and it descends into noise. Try adding a <em>temperature</em> control to control the statistical frequency of such changes. Could something <em>intrinsic</em> to the system determine temperature? Could this vary over space?</li>
 <li>Probabilistic/statistical choices can be combined with other variations below, such as spatially non-homogenous probabilities, statistical rules and neighbourhoods, etc.</li>
 </ul>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="non-homogenous-ca">Non-homogenous CA</h2>
 <p>The rule is not the same for all cells / for all time steps. Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissipate, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).</p>
 <ul>
@@ -187,6 +155,8 @@ footer {
 <li>Other combinations of the above (and below)</li>
 </ul>
 <p>One has to be careful though: it could be that introducing these variations is not really different to a slightly more complex, but homogenous, CA.</p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="asynchronous-ca">Asynchronous CA</h2>
 <p>Rather than updating all cells at once, some other policy of visiting cells to update is applied.</p>
 <ul>
@@ -206,18 +176,17 @@ footer {
 <ul>
 <li><a href="http://en.wikipedia.org/wiki/Langton%27s_ant">Langton&#39;s Ant</a> is a mobile CA in a 2D, two-state space, with very simple rules:<ul>
 <li>At a white square, turn 90° right, flip the color of the square, move forward one unit</li>
-<li>At a black square, turn 90° left, flip the color of the square, move forward one unit</li>
+<li>At a black square, turn 90° left, flip the color of the square, move forward one unitSee our JavaScript version:</li>
 </ul>
 </li>
 </ul>
-<p>See our JavaScript version:</p>
 <p data-height="300" data-theme-id="18447" data-slug-hash="RWrdoq" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Langton's Ant: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/RWrdoq/">Langton's Ant: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 <p>A variation with multiple ants:</p>
 <p data-height="300" data-theme-id="18447" data-slug-hash="LMJwVP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Multiple Langton Ants: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/LMJwVP/">Multiple Langton Ants: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
+        
 <iframe width="640" height="360" src="https://www.youtube.com/embed/hy3LG6isnQA?rel=0" frameborder="0" allowfullscreen></iframe>
 
 <p>The <a href="http://www.youtube.com/watch?v=w6XQQhCgq5c">original video by Christopher Langton</a>, including examples of multiple ants (and music by the Vasulkas):</p>
@@ -232,12 +201,16 @@ footer {
 <li>Look at the space just in front of me</li>
 <li>If it is empty, move forward and randomly change direction (random walk)</li>
 <li>Else if it is occupied by a woodchip:<ul>
-<li>If I am carrying a wood chip, drop mine where I am and turn around</li>
-<li>Else move forward and pick up the woodchip</li>
+<li><p>If I am carrying a wood chip, drop mine where I am and turn around</p>
+</li>
+<li><p>Else move forward and pick up the woodchip</p>
+<p>Over time, the termites begin to collect the woodchips into small piles, which gradually coalesce into a single large pile of chips.</p>
+</li>
 </ul>
 </li>
 </ul>
-<p>Over time, the termites begin to collect the woodchips into small piles, which gradually coalesce into a single large pile of chips.</p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</h2>
 <p>If the transition rule (or, the set of transition rules as a whole) is careful to preserve a total cell values before and after, it can give the impression of a mass-conserving system, such as modeling the motion of particles and fluids. The elementary 1D traffic CA <a href="http://atlas.wolfram.com/01/01/184/">(rule 184)</a> is a simple particle CA. </p>
 <h3 id="block-rule-ca">Block rule CA</h3>
@@ -265,6 +238,8 @@ footer {
 <p>In 1969, German computer pioneer (and painter) Konrad Zuse published his book <a href="ftp://ftp.idsia.ch/pub/juergen/zuserechnenderraum.pdf">Calculating Space</a>, proposing that the physical laws of the universe are discrete by nature, and that the entire universe is the output of a deterministic computation on a single cellular automaton. This became the foundation of the field of study called <em>digital physics</em>. Zuse&#39;s first model is a 3D particle CA.</p>
 </blockquote>
 <p>A CA-inspired digital physics hypothesis is currently being promoted by Stephen Wolfram, as described in his magnum opus <a href="http://www.wolframscience.com/nksonline/toc.html">A New Kind Of Science</a>.</p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="probabilistic-asynchronous-ca">Probabilistic Asynchronous CA</h2>
 <p>Chooses the next active cell according to a random selection.</p>
 <p>The <em>Ising model</em> of ferromagnetism in statistical mechanics can be simulated in a <em>Monte Carlo</em> fashion: Each site (cell) has either positive or negative spin (we can encode that as 0 or 1 value). At each time step, consider a site at random, and evaluate the probability of changing state. If changing state moves the site closer to energetic equilibrium with its neighbors (determined according to the <a href="https://en.wikipedia.org/wiki/Hamiltonian_(quantum_mechanics)">Hamiltonian</a> of the site), then the change is made. Otherwise, the change is made only with a small probability that is dependent on the energetic difference and overall temperature. Thus at high temperatures, the system remains noisy, while at low temperatures it gradually self-organizes into all sites with equal spin.</p>
@@ -283,6 +258,8 @@ footer {
 </blockquote>
 <p>Stan Marée used this model to simulate the whole life cycle of <a href="https://www.researchgate.net/publication/46594643_Phototaxis_during_the_slug_stage_of_Dictyostelium_discoideum_A_model_study">Dictyostelium discoideum</a>!</p>
 <p>States need not be discrete integers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. </p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="continuous-automata">Continuous automata</h2>
 <p>The CAs we have looked at so far are mostly discrete, and this is often evident in the results. But there are several ways in which we can try to approximate fully continuous automata -- and investigate to what extent similar properties or behaviours arise, and whether new properties can arise unique to continuous spaces. At the least, continuous automata are more able to show liquid and diffusive effects. But to proceed, we must consider each of the discrete aspects in turn:</p>
 <p><strong>Continuous states:</strong> In this case, the states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0..1). We have seen some examples of this already (e.g. HodgePodge). The transition rule can no longer be a simple lookup table, but instead must map continuous ranges and/or functions. Comparators can be used to segment continuous space into ranges, and drive control flow, but the use of control flow implies that the output of the transition rule is still principally discontinuous. </p>
@@ -322,6 +299,8 @@ footer {
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 <p>Some of these systems share resemblance with analog video feedback (<a href="http://www.youtube.com/watch?v=hDYEVv9t32U">example</a>, <a href="http://www.youtube.com/watch?v=Uw5onuS2_mw">example</a>), which has been exploited by earlier media artists (notably the Steiner and Woody Vasulka). </p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="spatial-transformation-systems">Spatial transformation systems</h2>
 <p>Apart from smooth sampling, we can also introduce interesting behaviours by transforming the space itself as it is sampled. Different indexing rules (such as affine transformations of coordinate space) can be used to impart non-local symmetries and behavior. Different rules (or different neighborhood specifications) can be run in parallel on the same shared data. </p>
 <p>Such transformations can effectively create non-standard neighbourhood rules.</p>
@@ -352,6 +331,8 @@ footer {
 <p>Additionally, his system does not measure all cells within a radius; instead it selects cells at the radius distance and certain angular directions, creating cyclical symmetries in the result. For example, 3-fold symmetry may be used at a smaller scale, and 9-fold symmetry at a larger scale.</p>
 <iframe width="640" height="360" src="https://www.youtube.com/embed/4Sz-iEdNFDc?rel=0" frameborder="0" allowfullscreen></iframe>
 
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="multi-way-ca--parallel-histories">Multi-way CA &amp; parallel histories</h2>
 <p>In certain CA variants, more than one substitution could be valid to undertake. We have seen how some CA simply choose randomly between options, while Monte Carlo systems consider two or more options and take the one with the highest entropy. In a sense, for a brief moment, these systems follow two parallel histories, and then choose which one to discard. But there is no reason why we can&#39;t follow two (or more) histories for a little longer than a single step, nor to limit our decision-making to an energetic/entropic basis. We may return to this idea when exploring evolutionary systems, which present a similar parallelism. </p>
 <blockquote>

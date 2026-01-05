@@ -27,48 +27,7 @@ footer {
 
 <body class="centremaxwidth960">
 <header><a href="index.html">Home</a></header>
-<ul>
-<li><a href="#development">Development</a><ul>
-<li><a href="#differential-growth">Differential Growth</a><ul>
-<li><a href="#implementation">Implementation</a></li>
-</ul>
-</li>
-<li><a href="#l-systems">L-systems</a><ul>
-<li><a href="#rewriting-systems">Rewriting systems</a></li>
-<li><a href="#parametric-systems">Parametric systems</a></li>
-<li><a href="#stochastic-systems">Stochastic systems</a></li>
-<li><a href="#context-sensitive-formal-languages">Context-sensitive formal languages</a></li>
-</ul>
-</li>
-<li><a href="#evo-devo">Evo-Devo</a></li>
-</ul>
-</li>
-<li><a href="#primordial-soups-of-code">Primordial soups of code</a><ul>
-<li><a href="#thomas-rays-tierra">Thomas Ray&#39;s Tierra</a><ul>
-<li><a href="#darwinian-os-components">Darwinian OS components</a></li>
-<li><a href="#more-information">More information:</a></li>
-</ul>
-</li>
-<li><a href="#artificial-chemistries">Artificial chemistries</a></li>
-<li><a href="#walter-fontanas-algorithmic-chemistry">Walter Fontana&#39;s Algorithmic Chemistry</a><ul>
-<li><a href="#primitives">Primitives</a></li>
-</ul>
-</li>
-<li><a href="#further-afield">Further afield</a></li>
-<li><a href="#general-properties-of-artificial-chemistries">General properties of artificial chemistries</a></li>
-<li><a href="#genetic-programming">Genetic Programming</a><ul>
-<li><a href="#interpretation-development">Interpretation (development)</a></li>
-<li><a href="#choice-of-primitive-set">Choice of primitive set</a></li>
-<li><a href="#seed-generation">Seed generation</a></li>
-<li><a href="#mutations-and-recombinations">Mutations and recombinations</a></li>
-<li><a href="#alternative-representations">Alternative representations</a></li>
-</ul>
-</li>
-<li><a href="#further-reading">Further reading</a></li>
-</ul>
-</li>
-</ul>
-
+undefined
 <!--
 
 - branching system from Hry's work in 5010
@@ -78,6 +37,7 @@ footer {
 -->
 
 <hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h1 id="development">Development</h1>
 <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/315487551?loop=1" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="fullscreen" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
@@ -90,6 +50,8 @@ footer {
 <li>Development is not a one-way process, under command of the genome: factors in the environment can activate or inhibit parts of the genome (and parts of a genome can activate and inhibit other parts) in a complex <em>regulatory network</em>, and the state of the environment can affect the results of actions of the genome. In some cases the genome itself may not even be fixed. In part this environment is also inherited from an organisms&#39; parents. </li>
 <li>Development is ultimately working within the limits of a physical, chemical system, with entropic tendencies, self-organizing potential, noisy behavior, etc.</li>
 </ul>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="differential-growth">Differential Growth</h2>
 <p>For a simple starting point, let&#39;s look at growing a line (or a loop):</p>
 <p><img src="https://inconvergent.net/img/generative/differential-line3-uniform.gif" alt="Hoff loop"></p>
@@ -154,6 +116,8 @@ footer {
 <p>It is tempting to further suggest some kinds of node-node communication, as if sending chemical messages or pheromones between cells in an organism. Perhaps this is a way that a growing structure can trigger development events, or differentiate into different kinds of cells as it grows.</p>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="zYKYNVe" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/zYKYNVe">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="l-systems">L-systems</h2>
 <p><strong>Looking back at our code-based genetics in the Biomorphs, an interesting challenge could be to extend this into more complex <em>rewriting systems</em>, such as L-systems, by embedding <em>production rules</em>, to create evolutionary-developmental systems! I.e., the genome isn&#39;t necessarily interpreted immediately into graphics, but instead/also into the production of more code for interpreting.</strong> This point is important to consider. Rather than forcing symmetry with turtle-spawning operators in the interpreter, one could embed codes that duplicate and transform subsets of other substrings of the same code. The interpreter becomes simpler, but the code becomes more expressive. Such a developmental approach can be taken quite far. </p>
 <p>In 1968 biologist Astrid Lindenmeyer proposed to model several aspects of developmental systems (cell division, cell differentiation and cell death) using rewriting systems on symbolic strings. The analogy is that each symbol represents a cell in a particular state, and the rules of transformation represent the processes of differentiating from one state to another, dividing into two cells, or of programmed cell death.</p>
@@ -188,13 +152,15 @@ F[-B]+B
 FF[-F[-B]+B]+F[-B]+B        
 <span class="hljs-comment">// apply rule 1 three times, rule 1 four times:</span>
 FFFF[-FF[-F[-B]+B]+F[-B]+B]+FF[-F[-B]+B]+F[-B]+B        
-<span class="hljs-comment">// etc.</span></code></pre>
+<span class="hljs-comment">// etc.</span>
+</code></pre>
 <p>Notice that any symbol that is not a predecessor of a production rule is passed through unchanged (it is not removed). </p>
 <p>One of the simplest ways to use rewriting sytems for art and design is to interpret the produced strings as instructions for another program. The classic example is using them as instructions for a &quot;turtle graphics&quot; interpreter. For example, using the following system:</p>
 <pre><code class="language-javascript">    <span class="hljs-comment">// just one rule: replace &quot;F&quot; with &quot;F+F--F+F&quot;</span>
     rules[<span class="hljs-string">&quot;F&quot;</span>] = <span class="hljs-string">&quot;F+F--F+F&quot;</span>
     <span class="hljs-comment">// start with:</span>
-    S = <span class="hljs-string">&quot;F&quot;</span></code></pre>
+    S = <span class="hljs-string">&quot;F&quot;</span>
+</code></pre>
 <p>If we interpret the &quot;F&quot; symbol to mean &quot;move forward&quot;, and the &quot;+&quot; and &quot;-&quot; symbols to mean turn left and right by 60 degrees, then each successive application of this rule generates a successive iteration of the Koch curve fractal:</p>
 <p><img src="img/koch.jpg" alt="Iterations of the Koch curve fractal"></p>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="xVVpea" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/xVVpea">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
@@ -224,6 +190,8 @@ FFFF[-FF[-F[-B]+B]+F[-B]+B]+FF[-F[-B]+B]+F[-B]+B
 <p>So far we have considered only regular and context-free formal languages, since we have been restricted to single nonterminal symbols on the left-hand side (predecessors). Clearly, as a biological model (where the string is the phenotype and the production rules are genotype), our system should be context sensitive. Context would imply environmental conditions as well as neighbor cell signaling. </p>
 <p>In order to support context-sensitive languages, we will need more powerful pattern-matching capabilities, and need extra care to handle ambiguous situations. E.g. we must be careful to consider longer patterns before shorter ones, to ensure that e.g. <code>aba</code> matches a rule <code>aba -&gt; abba</code> rather than the rule <code>a -&gt; b</code>. That is, our set of rules must now form a list (rather than a set), which is ordered by <em>priority</em>. And to match classes of structures, we may turn to using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions">regular expressions</a> or more powerful <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">parsing expression grammars</a> as the pattern and pattern-matching features.</p>
 <p>The lab toolkit includes the <a href="http://pegjs.org">peg.js</a> library, available in the variable name &quot;pegjs&quot;, which can be used to build parsers. This library also has an excellent <a href="http://pegjs.org/online">online editor</a> in which you can design grammars and test them. I have a <a href="https://worldmaking.github.io/workshop_iclc_2016/tutorial.html">parsing expression grammar tutorial designed for peg.js here</a>.</p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="evo-devo">Evo-Devo</h2>
 <p>L-Systems are difficult to predict and control: it is difficult to infer from an L-system definition and interpreter what the results will be, since (like cellular systems) the interactions are local but the consequences are global. Note that nature faces the same challenge: it cannot predict what changes to a genotype will result is viable or better phenotypes, and must proceed by trial and error (within the scope offered by development). Biologists exploring the mechanisms of development and generation of variation within it, and the relationship with evolutionary selection, work within the relatively new discipline of <strong>evolutionary development</strong> or &quot;evo-devo&quot;. </p>
 <p>Artificial Evo-Devo systems could be categorized as follows:</p>
@@ -238,12 +206,15 @@ FFFF[-FF[-F[-B]+B]+F[-B]+B]+FF[-F[-B]+B]+F[-B]+B
 <p><img src="https://www.karlsims.com/creatures-3swimmers-200.jpg" alt="sims"></p>
 <p>Karl Sims&#39; evolved virtual creatures had a genotype that encoded a LISP function (the developmental system), which when run would produce a body shape (the skeletal system), but also produced an executable function for behaviour (the neural system). That is, the genetic code produces a developmental program that produces a neuro-physiological program. More generally, since we are evolving code, we may want to the genome to produce re-usable subroutines that can be used multiple times within the main phenotype program. </p>
 <hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h1 id="primordial-soups-of-code">Primordial soups of code</h1>
 <p>Perhaps the most abstract and deeply computational artificial life models are those in which the organisms <em>are</em> the code, serving as environments for each other. This approach plays most directly upon the fundamental insight that <strong>code is data</strong>. </p>
 <p>We generally assume that DNA also functions as both data and behaviour, but it has sometimes been overlooked that this is a <em>material process</em>. In bytecode soups, the code is not only data, it is the material on which code acts: fragments of code can react with each other, consume and produce each other, match or subvert each other, compete with each other for CPU time or memory resources, and thus evolve. These are the most digital of the artificial life organisms.</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/Core_War_PMars_Screenshot.png" alt="Core war"></p>
 <p>Since at least the early 1960&#39;s people have enjoyed creating virtual machines to explore the possibility of programs competing for control of the virtual machine processors and memory. The earliest example is the game Darwin, developed in 1961, in which programs competed to stop each other from executing. Later in <em>Core War</em>, another programming game in which programs (written in an abstract assembly language called &quot;redcode&quot;) battle for control of a virtual computer, players discovered that rapid self-replication was a powerful strategy. (Virus and anti-virus systems have been modeled in these terms, although they also draw upon theories of immune systems and operate outside of protected environments.)</p>
 <p>Steen Rasmussen took this idea and added genetic algorithms to evolve digital organisms in his <em>Coreworld</em> project; however complex evolution did not ensue, apparently because the assembly language was too brittle: mutations to code were far too likely to completely destroy a program. This problem of brittleness was overcome by the Tierra project.</p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="thomas-rays-tierra">Thomas Ray&#39;s Tierra</h2>
 <p>&quot;We can think of evolution as an artist...&quot; - Tom Ray, The Tierra Video</p>
 <ul>
@@ -409,7 +380,8 @@ popC    ; 110 12  71 pop cx off stack (size)
 popB    ; 110 11  72 pop bx off stack (start address of mother)
 popA    ; 110 10  73 pop ax off stack (start address of daughter)
 ret     ; 110 17  74 return from copy procedure
-nop1    ; 100 01  75 end template</code></pre>
+nop1    ; 100 01  75 end template
+</code></pre>
 <p>Visualization (ALMond):</p>
 <blockquote>
 <p>In addition, the operating system provides a very elaborate observational system that keeps a record of births and deaths, sequences the code of every creature, and maintains a genebank of successful genomes. The operating system also provides facilities for automating the ecological analysis, that is, for recording the kinds of interactions taking place between creatures. <a href="http://life.ou.edu/tierra/whatis.html">Adapted from &quot;What Tierra Is&quot;</a></p>
@@ -421,16 +393,19 @@ nop1    ; 100 01  75 end template</code></pre>
 <li>A direct descendent of Tierra, and one which has continued to have impact in artificial life research, is <a href="https://en.wikipedia.org/wiki/Avida">Avida</a>. </li>
 </ul>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/1/14/Avida_2.6_screenshot.png" alt="Avida"></p>
-<!--
-http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
+<!--<p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="JXXowe?editors=001" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/JXXowe?editors=001">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 -->
 
 <hr>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="artificial-chemistries">Artificial chemistries</h2>
 <p>One of the most enduring questions facing biology (and artificial life) regards how life itself emerged from non-life, and how that boundary continues to be bridged (&quot;protobiology&quot;). The emergence of life has not yet been observed in physical materials, however there are many hypotheses offered. In general the problem is how life-like behavior and organization emerges from simpler physical chemical systems; or at the very least, how new orders of structure emerge from simpler chemical models. Artificial chemistries (AC) are systems with similarities to models of physics and chemistry which can be used to explore these speculative models with more rigor.</p>
 <p>AC&#39;s were proposed by John McCaskill, but probably the best known example (&quot;AlChemy&quot;, described below) was created by Walter Fontana and Leo Buss, presented at the second Artificial Life conference. Hideaki Suzuki and Takashi Ikegami pursued the concept in Japan (with &quot;systems of machines and tapes&quot;, referencing both Turing&#39;s and von Neumann&#39;s early work). <a href="http://www.cs.mun.ca/~banzhaf/papers/alchemistry_review_MIT.pdf">Banzhaf, Dittrich and Ziegler present an excellent review here</a>. See also <a href="http://www.mitpressjournals.org/doi/abs/10.1162/artl.2009.15.1.15100?journalCode=artl">Artificial Chemistry. Hideaki Suzuki, Peter Dittrich. Artificial Life 2009, Vol. 15, No. 1.</a></p>
 <p>Like artificial life, in artificial chemistries the assumption holds that organization (information) is the most essential component. One of the central insights stems from a clear analogy between life and computation: organisms are created by organisms, just as programs can create programs. The ease of mapping of code and data mirrors a relationship between physical structure and behavior (form and function). </p>
 <p>Artificial chemistries are also one possible attractive option to overcome the &#39;over-specified&#39; nature of most artificial evolutionary and / or developmental systems: a mechanism by which new features come into being, new behaviors, new sensors, new evolutionary pathways, even new modes of evolution. They have also been applied to optimization problems, and to the modeling of social systems. </p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="walter-fontanas-algorithmic-chemistry">Walter Fontana&#39;s Algorithmic Chemistry</h2>
 <p>Fontana&#39;s basic conjecture was that adaptive systems are characterized by self-referential processes, in which combinatorial objects encode functions that act back on those same objects. He addressed this by taking two inspirations from chemistry:</p>
 <ul>
@@ -467,7 +442,8 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
 (aaa(%a))
 (a(+(+a))(&gt;a)(&lt;a))
 (a(%a)a(&#x27;a))
-(a(&gt;(=(&gt;a)(-a)(*aa)))(&#x27;(=(*(&lt;a)a)aa))(&lt;(&gt;(!aa))))</code></pre>
+(a(&gt;(=(&gt;a)(-a)(*aa)))(&#x27;(=(*(&lt;a)a)aa))(&lt;(&gt;(!aa))))
+</code></pre>
 <p>The pre-defined operators consume fixed numbers of arguments and return a value result. Other lists produce &quot;functions&quot;, that are applied to the atom immediately to their right (the argument). That is, all the &quot;a&quot; symbols in the function are replaced by the argument, then the function is evaluated to produce its result. The value of a list is defined recursively in terms of the values of its elements. This continues until all elements of the list have been evaluated, typically leaving as a result another list.</p>
 <p>Because functions are evaluated and then applied to subsequent arguments there is a high risk of infinite recursions of limitless depth. In AlChemy, expressions are only allowed to recurse to a maximum depth of 10 to prevent this possibility. A time limit was also applied to each interaction.</p>
 <h3 id="primitives">Primitives</h3>
@@ -486,10 +462,14 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
 <p>Progress toward alchemy (unfinished): </p>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="YpGGXa" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/YpGGXa">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="further-afield">Further afield</h2>
 <p>Here is a <a href="http://chorasimilarity.github.io/chemlambda-gui/dynamic/demos.html">remarkable collection of browser-based demos</a> of the ChemLambda system, which has strong influences from Fontana&#39;s work.</p>
 <iframe width="480" height="360" src="https://www.youtube.com/embed/6LZvIkM6JqY?rel=0" frameborder="0" allowfullscreen></iframe>
 
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="general-properties-of-artificial-chemistries">General properties of artificial chemistries</h2>
 <p>A typical artificial chemistry includes:</p>
 <ul>
@@ -503,15 +483,19 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
 <blockquote>
 <p>There are clearly similarities with rewriting systems (where the active population is the item being rewritten, made of molecule <em>terms</em> and reaction <em>productions</em>). There can also be similarities found with evolutionary, cellular and dynamical systems. Alternatively, AC&#39;s can be viewed as a special case of agent systems, in which each agent belongs to a molecule-class, and reactions are a result of agent interacitons (in which interactions usually lead to the creation and destruction of agents). </p>
 </blockquote>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="genetic-programming">Genetic Programming</h2>
 <p>Our math &amp; turtle graphics examples demonstrated how using a programming language as intermediate representation can achieve great power/diversity with succinct syntax. We&#39;ll explore that in more detail via <em>genetic programming</em>. </p>
 <p>Genetic Programming was invented by Nigel Cramer in 1985, but greatly expanded through the work of John Koza. GP evolves programs; it is an example of <strong>metaprogramming</strong>. GP has been used to generate programs to solve hard problems, and to evolve control systems for artificial agents and robots. Karl Sims used GP for his genetic images as well as for his evolving virtual creatures. </p>
 <p>In GP that the generating a phenotype is a process of generating <em>programs</em>, however programs are usually expressed as syntax <em>trees</em> rather than as lines of code. The leaves of the tree are <em>terminals</em>, while the non-terminal branches are <em>functions</em>. Terminals have no inputs; typical terminals are constant numbers and external/global variable names, but this set can also include zero-argument functions such as &quot;random()&quot; or context-sensing such as &quot;get_orientation()&quot;. Non-terminal functions are specified according to their operator (such as mathematical addition, multiplication, cosine, etc.); they have one or more inputs (the number of inputs is the <em>arity</em>), which may be filled by terminals or other functions. The set of all possible terminals and non-terminal functions constitutes the <em>primitive set</em> of a GP system (a union of the <em>terminal set</em> and the <em>function set</em>). </p>
 <p>This structure is natural to LISP programs:</p>
-<pre><code class="language-lisp">(<span class="hljs-name">*</span> (<span class="hljs-name">sin</span> (<span class="hljs-name">+</span> x <span class="hljs-number">2</span>)) (<span class="hljs-name">cos</span> x))</code></pre>
+<pre><code class="language-lisp">(<span class="hljs-name">*</span> (<span class="hljs-name">sin</span> (<span class="hljs-name">+</span> x <span class="hljs-number">2</span>)) (<span class="hljs-name">cos</span> x))
+</code></pre>
 <p>In this case, the terminal set appears to include integers and &quot;x&quot;, the function set includes &quot;sin&quot;, &quot;cos&quot;, and binary operators such as &quot;+&quot;, and &quot;*&quot;. </p>
 <p>Javascript does not have this representational succinctness, but can get close to it by nested arrays:</p>
-<pre><code class="language-javascript">[<span class="hljs-string">&quot;*&quot;</span>, [<span class="hljs-string">&quot;sin&quot;</span>, [<span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;x&quot;</span>, <span class="hljs-number">2</span>]], [<span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-string">&quot;x&quot;</span>]]</code></pre>
+<pre><code class="language-javascript">[<span class="hljs-string">&quot;*&quot;</span>, [<span class="hljs-string">&quot;sin&quot;</span>, [<span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;x&quot;</span>, <span class="hljs-number">2</span>]], [<span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-string">&quot;x&quot;</span>]]
+</code></pre>
 <p>Or more graphically:</p>
 <pre><code class="language-javascript">[
     <span class="hljs-string">&quot;*&quot;</span>, 
@@ -526,7 +510,8 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
         <span class="hljs-string">&quot;cos&quot;</span>, 
         <span class="hljs-string">&quot;x&quot;</span>
     ]
-]</code></pre>
+]
+</code></pre>
 <p>Note that our representation is more brittle than a simple string of symbols: any array beginning with &quot;sin&quot; must have one more element following it as the argument; any array beginning with &quot;+&quot; must have two elements (array length 3) following it as arguments. Moreover, those arguments must either be <em>terminal</em> nodes such as &quot;x&quot; or numbers, or they must be arrays -- that is, operator symbols like &quot;sin&quot; and &quot;+&quot; can only occupy the first position. Since we know that our operators require <em>at most</em> two arguments, we could simply give all functions two arguments, and ignore the un-used ones as neutral junk genetic data, e.g.:</p>
 <pre><code class="language-javascript">[
     <span class="hljs-string">&quot;*&quot;</span>, 
@@ -543,10 +528,12 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
         <span class="hljs-string">&quot;x&quot;</span>, 
         <span class="hljs-string">&quot;x&quot;</span>        <span class="hljs-comment">// junk</span>
     ]
-]</code></pre>
+]
+</code></pre>
 <h3 id="interpretation-development">Interpretation (development)</h3>
 <p>To turn this <em>data</em> into something we can actually run as <em>code</em>, we could spell it out as an expression:</p>
-<pre><code class="language-javascript"><span class="hljs-keyword">return</span> (<span class="hljs-built_in">Math</span>.sin(x + <span class="hljs-number">2</span>) * <span class="hljs-built_in">Math</span>.cos(x));</code></pre>
+<pre><code class="language-javascript"><span class="hljs-keyword">return</span> (<span class="hljs-built_in">Math</span>.sin(x + <span class="hljs-number">2</span>) * <span class="hljs-built_in">Math</span>.cos(x));
+</code></pre>
 <p>Here&#39;s a recursive solution:</p>
 <pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">develop</span>(<span class="hljs-params">node</span>) </span>{
     <span class="hljs-comment">// terminals:</span>
@@ -564,7 +551,8 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
         <span class="hljs-comment">// binary operator:</span>
         <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;(&quot;</span> + develop(a) + op + develop(b) + <span class="hljs-string">&quot;)&quot;</span>;
     }
-}</code></pre>
+}
+</code></pre>
 <h3 id="choice-of-primitive-set">Choice of primitive set</h3>
 <p>A couple of things to watch out for here: </p>
 <ul>
@@ -578,21 +566,21 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
 <pre><code class="language-javascript"><span class="hljs-keyword">let</span> ops = [<span class="hljs-string">&quot;sin&quot;</span>, <span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;-&quot;</span>, <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-string">&quot;/&quot;</span>, <span class="hljs-string">&quot;%&quot;</span>];
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pick_random_operator</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">return</span> ops[<span class="hljs-built_in">random</span>(ops.length)];
+    <span class="hljs-keyword">return</span> ops[random(ops.length)];
 }
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">make_random_terminal</span>(<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-built_in">random</span>(<span class="hljs-number">2</span>) ? <span class="hljs-string">&quot;time&quot;</span> : <span class="hljs-built_in">Math</span>.random()*<span class="hljs-number">1000</span>;
+    <span class="hljs-keyword">return</span> random(<span class="hljs-number">2</span>) ? <span class="hljs-string">&quot;time&quot;</span> : <span class="hljs-built_in">Math</span>.random()*<span class="hljs-number">1000</span>;
 }
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generate</span>(<span class="hljs-params">depth</span>) </span>{
     <span class="hljs-comment">// forces use of terminal when depth == 1, randomized otherwise:</span>
-    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">random</span>(depth) == <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">if</span> (random(depth) == <span class="hljs-number">0</span>) {
         <span class="hljs-keyword">return</span> make_random_terminal();
     } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">return</span> [
             pick_random_operator(), 
-            generate(depth<span class="hljs-number">-1</span>), 
-            generate(depth<span class="hljs-number">-1</span>)
+            generate(depth-<span class="hljs-number">1</span>), 
+            generate(depth-<span class="hljs-number">1</span>)
         ];
     }
 }
@@ -601,7 +589,8 @@ http://codepen.io/grrrwaaa/pen/JXXowe?editors=001
 <span class="hljs-keyword">var</span> data = generate(<span class="hljs-number">6</span>);
 
 <span class="hljs-comment">// print out nicely:</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">JSON</span>.stringify(data, <span class="hljs-literal">null</span>, <span class="hljs-string">&quot; &quot;</span>));</code></pre>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">JSON</span>.stringify(data, <span class="hljs-literal">null</span>, <span class="hljs-string">&quot; &quot;</span>));
+</code></pre>
 <p>Koza also recommends creating a seed population with a variety of depths, which we can easily do by randomizing the initial argument to <code>generate()</code>. </p>
 <h3 id="mutations-and-recombinations">Mutations and recombinations</h3>
 <p>GP departs significantly from other evolutionary algorithms in the implementation of mutation and recombination. It is not just individual terminal symbols that can be mutated, but also entire branches. 
@@ -619,7 +608,8 @@ Extra care has to be taken here to prune genomes that are getting too large (or 
 <p>A tricky point -- most of these mutations depend on choosing a random non-terminal. How can we pick one randomly? And how can we ensure that the genomes stay of a reasonable size? The solutions to these problems are not trivial enough to work through in our labs.</p>
 <h3 id="alternative-representations">Alternative representations</h3>
 <p>Many GP systems today assume that all non-terminal functions have the same arity (the same no. of arguments). By doing so, it turns out that the brackets become redundant, and trees can efficiently be represented as simple linear sequences. The above example can be simply listed as:</p>
-<pre><code class="language-js">* sin + x <span class="hljs-number">2</span> <span class="hljs-number">5</span> cos x x</code></pre>
+<pre><code class="language-js">* sin + x <span class="hljs-number">2</span> <span class="hljs-number">5</span> cos x x
+</code></pre>
 <p>Clearly this makes some mutations easier -- we can pick random items in the list and replace them with equivalents, e.g. replacing terminals with terminals, operators with operators. We can easily see the genome size, and use that as a selection factor. But it is still not so trivial to make replacements and ensure the whole genome still generates a complete program. </p>
 <hr>
 <p>Another variant, called &quot;linear genetic programming&quot;, also uses a flat list of nodes, but in a format closer to a register language (in fact, closer to the underlying architecture of modern PCs). Each node in this list has an operator, to determine what kind of instruction it is (e.g. &quot;+&quot;, &quot;sin&quot;, &quot;var&quot;, etc.), followed by some values to specify which existing &quot;registers&quot;, that is, previously-computed values, are to be used as arguments to the operation. Each operation will then produce a new register in turn. So, the code generated will look something like this:</p>
@@ -630,7 +620,8 @@ Extra care has to be taken here to prune genomes that are getting too large (or 
 <span class="hljs-keyword">var</span> r5 = x;
 <span class="hljs-keyword">var</span> r6 = <span class="hljs-built_in">Math</span>.cos(r5);
 <span class="hljs-keyword">var</span> r7 = r4 * r6;
-<span class="hljs-keyword">return</span> r7;</code></pre>
+<span class="hljs-keyword">return</span> r7;
+</code></pre>
 <p>A genetic representation might be something like this:</p>
 <pre><code class="language-js">[
     [ <span class="hljs-string">&quot;var&quot;</span>, <span class="hljs-string">&quot;x&quot;</span> ],
@@ -640,7 +631,8 @@ Extra care has to be taken here to prune genomes that are getting too large (or 
     [ <span class="hljs-string">&quot;var&quot;</span>, <span class="hljs-string">&quot;x&quot;</span> ],
     [ <span class="hljs-string">&quot;cos&quot;</span>, <span class="hljs-number">0</span> ],
     [ <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span> ],
-]</code></pre>
+]
+</code></pre>
 <p>Notice how registers are stored as offsets back from the currently-assigning register. So, an argument of <code>0</code> means the last-computed-register, <code>1</code> means the one computed before that, etc. This kind of relative indexing makes the representation far more robust -- less likely to be malformed after mutation. Even greater safety can be ensured by wrapping register indices within the available range. For a linearized genotype representation, the genetic mutations and crossover operators are similar to other sequence-based evolutionary systems. </p>
 <p>An example using a kind of linear-GP, somewhat akin Karl Sims&#39; evolving images, is in the lab editor here:</p>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="YwmerM" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/YwmerM">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
@@ -650,6 +642,8 @@ Extra care has to be taken here to prune genomes that are getting too large (or 
 
 
 <p>Yet another very different but related approach is <strong>gramatical evolution</strong>. In GE, genomes are simply lists of integers, for example in the range 0-99. The possible shape of programs is determined by a grammar. The generator follows each rule of the grammar in turn, and when multiple options are possible, the next genome integer is used to determine the choice (modulo the number of choices). This not only guarantees that all generated programs are formally correct (no matter how complex the grammar involved), it also seems to lend some advantages with respect to mutations. Grammatical evolution has been very successful and is widely used.</p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><a href="http://dces.essex.ac.uk/staff/rpoli/gp-field-guide/A_Field_Guide_to_Genetic_Programming.pdf">A field guide to GP</a></li>

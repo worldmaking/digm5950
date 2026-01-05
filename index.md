@@ -6,13 +6,7 @@
 
 **Synopsis:** This course addresses computation as a creative medium from a biologically-inspired standpoint to develop artworks, adaptive media and simulations approaching the fascinating complexity of nature.
 
-**Instructor:** [Graham Wakefield](https://ampd.yorku.ca/profile/graham-wakefield/)
-
-**Zoom ID**: 947 9296 5671 (requires passcode that you received via Teams/email)
-
-[**Class Microsoft Team**](https://teams.microsoft.com/l/team/19%3aef5cfda6bcf0493e8ecae3b0e05d163f%40thread.tacv2/conversations?groupId=2286cd4d-8394-4a66-9c74-0d27ffd875b1&tenantId=34531318-7011-4fd4-87f0-a43816c49bd0)
-
-**Lecture Recordings:** [In the MS Teams folder Files/Class Materials](https://teams.microsoft.com/_#/school/files/General?threadId=19:ef5cfda6bcf0493e8ecae3b0e05d163f@thread.tacv2&ctx=channel)
+**Course details**: See [eClass course](https://eclass.yorku.ca/course/view.php?id=149174)
 
 Artists, composers, designers and architects have always drawn inspiration from nature. In this course we do so by translating *mechanisms inspired by biology* (or theories of biology) into digital/computational media. That is, using bio-inspired computational techniques to leverage or approach the creative capacities of nature. 
 

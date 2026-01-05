@@ -27,56 +27,14 @@ footer {
 
 <body class="centremaxwidth960">
 <header><a href="index.html">Home</a></header>
-<ul>
-<li><a href="#evolutionary-systems">Evolutionary Systems</a><ul>
-<li><a href="#natural-evolution">Natural evolution</a><ul>
-<li><a href="#genetics-and-the-modern-synthesis">Genetics and the modern synthesis</a></li>
-</ul>
-</li>
-<li><a href="#artificial-evolution">Artificial evolution</a><ul>
-<li><a href="#some-inspiration">Some inspiration</a></li>
-</ul>
-</li>
-<li><a href="#a-simple-arithmetic-genetic-algorithm">A simple arithmetic genetic algorithm</a><ul>
-<li><a href="#visualizing-the-evolution">Visualizing the evolution</a></li>
-<li><a href="#observations">Observations</a></li>
-</ul>
-</li>
-<li><a href="#selection">Selection</a></li>
-<li><a href="#aesthetic-selection-of-biomorphs">Aesthetic selection of Biomorphs</a><ul>
-<li><a href="#aside-turtle-graphics">Aside: Turtle graphics</a></li>
-<li><a href="#biomorph-genetics">Biomorph genetics</a></li>
-</ul>
-</li>
-<li><a href="#variation">Variation</a><ul>
-<li><a href="#variation-rates">Variation Rates</a></li>
-</ul>
-</li>
-<li><a href="#neuro-evolution">Neuro-Evolution</a><ul>
-<li><a href="#quick-primer-on-neural-networks">Quick primer on neural networks</a></li>
-<li><a href="#neuro-evolution-1">Neuro-Evolution</a><ul>
-<li><a href="#a-neuro-evolution-game">A neuro-evolution game</a></li>
-<li><a href="#observations-1">Observations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#discussion-for-new-projects">Discussion for new projects</a><ul>
-<li><a href="#the-importance-of-non-triviality">The importance of non-triviality</a></li>
-<li><a href="#the-genetic-representation">The Genetic Representation</a></li>
-<li><a href="#global-adaptive-constraints-eg-energy-conservation">Global adaptive constraints: E.g. Energy Conservation</a></li>
-<li><a href="#evolutionary-agent-designs">Evolutionary Agent designs</a></li>
-<li><a href="#evolutionary-subtleties-and-misconceptions">Evolutionary subtleties and misconceptions</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
+undefined
 <hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h1 id="evolutionary-systems">Evolutionary Systems</h1>
 <p>There have been more than four decades of computational systems inspired by natural evolution. It has become a major field of machine learning and optimization. Beyond AI, it has been used in hardware and circuit design, robotics, and more recently in industrial design and architecture. It has of course also been deeply explored in art and music.</p>
 <p><img src="http://www.karlsims.com/papers/ksf11.gif" alt="Karl Sims"></p>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="natural-evolution">Natural evolution</h2>
 <p>The theory of <strong>natural evolution</strong> combines <strong>population, diversity, heredity and selection</strong>:</p>
 <ul>
@@ -105,6 +63,8 @@ footer {
 <blockquote>
 <p>Briefly: a biological cell contains a vast array of different proteins, whose concentrations determine structures and behaviors of the cell. The proteins are specifed by information in the DNA genetic material (grouped physically into <strong>chromosomes</strong>). When a cell reproduces by <strong>mitosis</strong>, a copy of the DNA is made in the new cell. The sections of a DNA chromosome that code for behavior are called <strong>genes</strong>. These regions are constantly being <strong>transcribed</strong>, producing a specific RNA strand for each coding gene region which is in turn used to produce a specific protein; the protein string immediately folds up (in a way we cannot yet simulate) into a particular reactive shape which specifies the protein&#39;s behavioral role in the cell. This is a one-directional flow of information: Coding DNA -&gt; RNA -&gt; folding -&gt; active protein. In addition to coding regions genes may also have  <strong>regulatory region</strong> which can react with specific proteins to activate or inhibit the coding-protein system, forming a complex <strong>regulatory network</strong> of interactions by which one gene can activate or inhibit another, and also specify changes of behavior of a cell according to environmental conditions such as chemical signals. These networks can be fantastically complex even in very simple organisms, according to the scientific results of <strong>functional genomics</strong>. Between the coding and regulatory regions of DNA, there are huge sections of <strong>nongenic</strong> DNA, whose role (or lack thereof) is not yet understood.</p>
 </blockquote>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="artificial-evolution">Artificial evolution</h2>
 <p>Artificial evolution is a form of computational simulation whose process emulates the abstract structure of natural evolution. Broadly it comprises:</p>
 <ul>
@@ -137,20 +97,25 @@ footer {
 <p><a href="http://www.talkorigins.org/faqs/genalg/genalg.html#examples">A fantastic list of practical applications of genetic algorithm &amp; evolutionary programming</a> </p>
 <p>An excellent discussion of <a href="http://www.youtube.com/watch?v=50-d_J0hKz0">the genetic algorithm in art and its relation to Deleuze, by Manuel Delanda</a></p>
 <hr>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="a-simple-arithmetic-genetic-algorithm">A simple arithmetic genetic algorithm</h2>
 <p>As a simple starting point, let&#39;s consider the space of <em>simple arithmetic</em> as our environment. Arithmietic is a good, non-trivial space because a) there are many ways to arrive at a solution, and b) there are many cases where the solution isn&#39;t obvious at the outset. It is also good, because arithmetic statements can be constructed from a very simple alphabet of terms: </p>
-<pre><code class="language-javascript"><span class="hljs-keyword">let</span> dictionary = [<span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;-&quot;</span>, <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-string">&quot;/&quot;</span>, <span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-string">&quot;2&quot;</span>, <span class="hljs-string">&quot;3&quot;</span>, <span class="hljs-string">&quot;4&quot;</span>, <span class="hljs-string">&quot;5&quot;</span>, <span class="hljs-string">&quot;6&quot;</span>, <span class="hljs-string">&quot;7&quot;</span>, <span class="hljs-string">&quot;8&quot;</span>, <span class="hljs-string">&quot;9&quot;</span>, <span class="hljs-string">&quot;0&quot;</span>];</code></pre>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> dictionary = [<span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;-&quot;</span>, <span class="hljs-string">&quot;*&quot;</span>, <span class="hljs-string">&quot;/&quot;</span>, <span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-string">&quot;2&quot;</span>, <span class="hljs-string">&quot;3&quot;</span>, <span class="hljs-string">&quot;4&quot;</span>, <span class="hljs-string">&quot;5&quot;</span>, <span class="hljs-string">&quot;6&quot;</span>, <span class="hljs-string">&quot;7&quot;</span>, <span class="hljs-string">&quot;8&quot;</span>, <span class="hljs-string">&quot;9&quot;</span>, <span class="hljs-string">&quot;0&quot;</span>];
+</code></pre>
 <p>The selection criterion can be how effectively an arithmetic expression computes a desired target number. To make things interesting, let&#39;s make the target an <em>irrational</em> number, such as the value of PI:</p>
-<pre><code class="language-js"><span class="hljs-keyword">let</span> target = <span class="hljs-built_in">Math</span>.PI;</code></pre>
+<pre><code class="language-js"><span class="hljs-keyword">let</span> target = <span class="hljs-built_in">Math</span>.PI;
+</code></pre>
 <p>Our genotype will be a list of integers (whole numbers) that can map to the dictionary:</p>
 <pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">genotype</span>(<span class="hljs-params">size</span>) </span>{
   <span class="hljs-comment">// initialize:</span>
   <span class="hljs-keyword">let</span> geno = [];
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i=<span class="hljs-number">0</span>; i &lt; size; i++) {
-    geno[i] = <span class="hljs-built_in">random</span>(dictionary.length);
+    geno[i] = random(dictionary.length);
   }
   <span class="hljs-keyword">return</span> geno;
-}</code></pre>
+}
+</code></pre>
 <p>The development process, producing a phenotype from a genotype, will convert these symbols into Javascript code:</p>
 <pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">develop</span>(<span class="hljs-params">genotype</span>) </span>{
   <span class="hljs-comment">// convert gene values to a list of symbols:</span>
@@ -158,7 +123,8 @@ footer {
   <span class="hljs-comment">// convert the array of symbols to a string of code:</span>
   <span class="hljs-keyword">let</span> code = <span class="hljs-string">&quot;return &quot;</span> + list.join(<span class="hljs-string">&quot;&quot;</span>);
   <span class="hljs-keyword">return</span> code;
-}</code></pre>
+}
+</code></pre>
 <p>The chances are, the generated code is garbage, and might well throw an error. We can wrap it in a <code>try</code>/<code>catch</code> block to handle that case. It also might return a meaningless result such as <code>Infinity</code> or <code>NaN</code>, which we can detect using <code>isFinite()</code>. In both cases, the fitness should be zero.</p>
 <p>Otherwise, we can measure a fitness according to how close the result is to our target. To get a value between 0 (least fit) to 1 (most fit), we can apply a <code>1 / (1+n)</code> operation, where n is the absolute difference to the target:</p>
 <pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">evaluate</span>(<span class="hljs-params">code</span>) </span>{
@@ -179,7 +145,8 @@ footer {
            <span class="hljs-comment">// fitness is zero if it threw an error:</span>
            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
    }
-}</code></pre>
+}
+</code></pre>
 <p>This gives us all the basic components we need to generate a random population as genotypes. We already know how to develop and evaluate such a genotype, and storing several in a population:</p>
 <pre><code class="language-js">  pop = [];
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; pop_size; i++) {
@@ -195,11 +162,13 @@ footer {
     a.pheno = develop(a.geno)
     <span class="hljs-comment">// evaluate fitness</span>
     a.fitness = evaluate(a.pheno)
-  }</code></pre>
+  }
+</code></pre>
 <p>It is generally useful to sort a population by fitness, which can be done like so:</p>
 <pre><code class="language-javascript"><span class="hljs-comment">// sort the population by comparing pairs</span>
 <span class="hljs-comment">// as a result, the fittest candidate will be in population[0]</span>
-pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{ <span class="hljs-keyword">return</span> b.fitness - a.fitness; });</code></pre>
+pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{ <span class="hljs-keyword">return</span> b.fitness - a.fitness; });
+</code></pre>
 <blockquote>
 <p>After sorting it is convenient to print out the candidates, their fitness, etc, so we can see how the evolution proceeds.</p>
 </blockquote>
@@ -211,13 +180,14 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <pre><code class="language-javascript"> <span class="hljs-comment">// copy or mutate genes:</span>
  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> j = <span class="hljs-number">0</span>; j &lt; parent.length; j++) {
    <span class="hljs-comment">// mutate?</span>
-   <span class="hljs-keyword">if</span> (<span class="hljs-built_in">random</span>() &lt; mutability) {
-     child[j] = <span class="hljs-built_in">random</span>(dictionary.length); 
+   <span class="hljs-keyword">if</span> (random() &lt; mutability) {
+     child[j] = random(dictionary.length); 
    } <span class="hljs-keyword">else</span> {
      <span class="hljs-comment">// copy:</span>
      child[j] = parent[j];
    }
- }</code></pre>
+ }
+</code></pre>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="RwRMQdZ" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/RwRMQdZ">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 <h3 id="visualizing-the-evolution">Visualizing the evolution</h3>
@@ -240,7 +210,8 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <pre><code class="language-js"><span class="hljs-comment">// compute mean fitness:</span>
 <span class="hljs-keyword">let</span> mean = pop.reduce(<span class="hljs-function">(<span class="hljs-params">s, a</span>) =&gt;</span> s + a.fitness/pop.length, <span class="hljs-number">0</span>);
 <span class="hljs-comment">// compute standard deviation:</span>
-<span class="hljs-keyword">let</span> stddev = <span class="hljs-built_in">Math</span>.sqrt(pop.reduce(<span class="hljs-function">(<span class="hljs-params">s, a</span>) =&gt;</span> s + <span class="hljs-built_in">Math</span>.pow(a.fitness - mean, <span class="hljs-number">2</span>)/pop.length, <span class="hljs-number">0</span>))</code></pre>
+<span class="hljs-keyword">let</span> stddev = <span class="hljs-built_in">Math</span>.sqrt(pop.reduce(<span class="hljs-function">(<span class="hljs-params">s, a</span>) =&gt;</span> s + <span class="hljs-built_in">Math</span>.pow(a.fitness - mean, <span class="hljs-number">2</span>)/pop.length, <span class="hljs-number">0</span>))
+</code></pre>
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="dyXMEaq" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/dyXMEaq">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 <h3 id="observations">Observations</h3>
@@ -266,6 +237,8 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <p>Obviously, computing Pi is a &#39;toy problem&#39;, and not especially useful other than in revealing certain characteristics of artificial evolution, but the genetic algorithm can be applied to much more interesting and useful problems. What other problems could you imagine using it for? More generally, what kinds of problems might this method suited for? What kinds of problems might it not?</p>
 <p>The genetic algorithm as presented here is one of the simplest kinds of artificial evolution; we can look at different approaches to each of its aspects, such as genetic representation, variation, selection, etc. </p>
 <hr>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="selection">Selection</h2>
 <p><strong>For problem solving in data mining, engineering, design, architecture, etc.</strong>: If the fitness criterion is static and designed around a particular problem we wish to find a solution for, evolution can help evaluate &amp; test candidate solutions and selectively breed them to produce better solutions, ideally converging on an optimal one, without having to understand or derive by proof. It is a form of optimization. However this process may take a long time or a lot of processing power to find a satisfactory result, or may not reach a result at all. Not all problems are suitable for evolutionary search.</p>
 <blockquote>
@@ -292,6 +265,8 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <li>A viability-oriented form of artificial evolution may be used for more theoretical and aesthetic branches of artificial life research. The viability measure arises as an emergent property of underlying complexity of the world, such as the requirement to maintain energetic/metabolic balance or to maintain structural integrity, as well as the collective effects of multiple species and non-living dynamics within the environment. For this reason it is sometimes referred to as <strong>ecosystemic selection</strong>. <a href="http://link.springer.com/chapter/10.1007%2F978-3-540-78761-7_42">See discussion here</a>. This may still incorporate indirect interaction from human agents if desired.</li>
 </ul>
 <hr>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="aesthetic-selection-of-biomorphs">Aesthetic selection of Biomorphs</h2>
 <p>Biomorphs are virtual entities that were devised by Richard Dawkins in his book <a href="https://en.wikipedia.org/wiki/The_Blind_Watchmaker">The Blind Watchmaker</a> as a way to visualize the power of evolutionary processes. Dawkins used a simple symbolic rendering of lines at limited angles, grown in a kind of tree structure, as his phenotypes. Of a given generation, he selected the biomorph he found most aesthetically pleasing, making this the parent of the next generation.</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/f/fc/BiomorphBounce.png" alt="biomorph"></p>
@@ -303,16 +278,17 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <h3 id="aside-turtle-graphics">Aside: Turtle graphics</h3>
 <p>We&#39;d like to generate biomorphs in a similar way. The biomorphs are all made out of simple line drawings. For efficiency, we can use the <code>draw2D.lines()</code> method to draw a list of lines at once. Here&#39;s how it works:</p>
 <pre><code class="language-javascript"><span class="hljs-comment">// draws a plus (two pairs of points for each line)</span>
-<span class="hljs-built_in">draw2D</span>.lines([
+draw2D.lines([
     [<span class="hljs-number">0.2</span>, <span class="hljs-number">0</span>], [<span class="hljs-number">0.8</span>, <span class="hljs-number">0</span>], <span class="hljs-comment">// the horizontal line</span>
     [<span class="hljs-number">0</span>, <span class="hljs-number">0.2</span>], [<span class="hljs-number">0</span>, <span class="hljs-number">0.8</span>], <span class="hljs-comment">// the vertical line</span>
-]);</code></pre>
+]);
+</code></pre>
 <p>To draw in the Turtle style, we need to represent a turtle&#39;s properties, which are a position and a direction. Then, we can manipulate these properties to capture the turtle&#39;s movement, collecting points of a line as it moves. We can start by building a function that creates a turtle, and uses it to collect points to draw a specific shape, such as a square.</p>
 <pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">square</span>(<span class="hljs-params"></span>) </span>{
     <span class="hljs-comment">// turtle start state:</span>
     <span class="hljs-keyword">let</span> t = {
-        <span class="hljs-attr">pos</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>),
-        <span class="hljs-attr">dir</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0.1</span>),
+        <span class="hljs-attr">pos</span>: <span class="hljs-keyword">new</span> vec2(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>),
+        <span class="hljs-attr">dir</span>: <span class="hljs-keyword">new</span> vec2(<span class="hljs-number">0</span>, <span class="hljs-number">0.1</span>),
     }
     <span class="hljs-keyword">let</span> lines = [];
 
@@ -349,7 +325,8 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 }
 
 <span class="hljs-keyword">let</span> lines = square();
-<span class="hljs-built_in">draw2D</span>.lines(lines);</code></pre>
+draw2D.lines(lines);
+</code></pre>
 <blockquote>
 <p>Note: We have to be careful to insert copies of the turtle location (via <code>.clone()</code>) into the list of line points. If we didn&#39;t clone a copy of the point, we would end up with many references to the same <code>vec2</code> object in the list.</p>
 </blockquote>
@@ -362,8 +339,8 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 <pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">turtle_draw</span>(<span class="hljs-params">commands, lines</span>) </span>{
     <span class="hljs-comment">// turtle start state:</span>
     <span class="hljs-keyword">let</span> t = {
-        <span class="hljs-attr">pos</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>),
-        <span class="hljs-attr">dir</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">vec2</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0.1</span>),
+        <span class="hljs-attr">pos</span>: <span class="hljs-keyword">new</span> vec2(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>),
+        <span class="hljs-attr">dir</span>: <span class="hljs-keyword">new</span> vec2(<span class="hljs-number">0</span>, <span class="hljs-number">0.1</span>),
     }
     <span class="hljs-comment">// interpret commands:</span>
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> cmd <span class="hljs-keyword">of</span> commands) {
@@ -384,7 +361,8 @@ pop.sort(<span class="hljs-function"><span class="hljs-keyword">function</span>(
 
 <span class="hljs-keyword">let</span> lines = []
 turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span class="hljs-string">&quot;&quot;</span>), lines)
-<span class="hljs-built_in">draw2D</span>.lines(lines);</code></pre>
+draw2D.lines(lines);
+</code></pre>
 <p>Now our code is not only shorter, it is far more powerful: it allows us to generate different shapes in a data-driven way, simply by passing in a different list of <strong>commands</strong>. It may already be tempting to think of what other commands we could add to this interpreter&#39;s capabilities.</p>
 <p>With this in place, we could now expand our vocabulary of actions in our mini-language. Here are some ideas:</p>
 <ul>
@@ -410,7 +388,7 @@ turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span cla
 <pre><code class="language-js"><span class="hljs-comment">// this is what we want to do:</span>
 <span class="hljs-keyword">let</span> square = compile(<span class="hljs-string">&quot;F+F+F+F&quot;</span>);
 <span class="hljs-keyword">let</span> lines = square(); 
-<span class="hljs-built_in">draw2D</span>.lines(lines);
+draw2D.lines(lines);
 
 <span class="hljs-comment">// this is how to do it:</span>
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">compile</span>(<span class="hljs-params">encoded</span>) </span>{
@@ -452,7 +430,8 @@ turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span cla
     <span class="hljs-comment">// convert this into a Javascript Function:</span>
     <span class="hljs-keyword">let</span> fun = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Function</span>(finalcode);
     <span class="hljs-keyword">return</span> fun;
-}</code></pre>
+}
+</code></pre>
 <h3 id="biomorph-genetics">Biomorph genetics</h3>
 <p>Since turtle graphics are generated from strings, they can be generated from string genomes! That is, we can create genotype strings as instructions for a &quot;turtle graphics&quot; interpreter to draw biomorph shapes. Which is therefore a function that maps genome strings into phenotypes, or into functions that create genotypes -- that is, the interpreter/compiler is the <strong>development</strong> component of artifiical evolution. </p>
 <p>But first we need a population, and a method to generate random candidates of this population. </p>
@@ -465,7 +444,8 @@ turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span cla
 <span class="hljs-keyword">let</span> col = i % cols;
 
 <span class="hljs-comment">// get population index from row, col</span>
-<span class="hljs-keyword">let</span> index = row*cols + col;</code></pre>
+<span class="hljs-keyword">let</span> index = row*cols + col;
+</code></pre>
 <p>With the above methods we can lay out the candidates in space; and, we can use the mouse to select a new individual as the parent of a new generation:</p>
 <pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mouse</span>(<span class="hljs-params">kind, pt</span>) </span>{
     <span class="hljs-comment">// scale point up to grid size:</span>
@@ -474,7 +454,8 @@ turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span cla
     <span class="hljs-keyword">let</span> index = row*cols + col;
 
     <span class="hljs-comment">// now create a new generation with `pop[index]`...</span>
-}</code></pre>
+}
+</code></pre>
 <p>For the new generation we want to apply mutations to the chosen genotype and thus produce variants. </p>
 <p>The example below implements a few extensions:</p>
 <ul>
@@ -488,6 +469,8 @@ turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span cla
 <blockquote>
 <p>Remember: although we have used this method to direct a Turtle-renderer, there&#39;s no reason why the same method can be used by a very different kind of interpreter to produce a completely different paradigm of phenotypes! It could be producing forms by diffusion-limited aggregation, or voxel painting, or by directing the forces of a vehicle. It could be specifying the layout of an audio synthesizer patch or instructions for a 3D printer, etc.</p>
 </blockquote>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="variation">Variation</h2>
 <p>The mechanisms of variation possible partly depend on the representation chosen. But one of the advantages of using lists (of symbols or numbers or genetic codes) as genotypes is the flexibility to perform many different kinds of mutations. The most common methods of variation in artificial evolution are also naturally inspired.</p>
 <ul>
@@ -525,6 +508,8 @@ turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span cla
 </blockquote>
 <hr>
 <hr>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="neuro-evolution">Neuro-Evolution</h2>
 <p>Neuro-evolution means using evolutionary algorithms to evolve neural networks.</p>
 <h3 id="quick-primer-on-neural-networks">Quick primer on neural networks</h3>
@@ -538,7 +523,8 @@ turtle_draw(<span class="hljs-string">&quot;F+F+F+F&quot;</span>.split(<span cla
 <p>Neurons with input connections (hidden and output neurons) compute their activation level by summing a vector of <strong>weights</strong> cross multiplied with the inputs, plus a <strong>bias</strong> term, and then feeding this through an <strong>activation function</strong> (such as a sigmoid curve). For example, if a neuron has 3 inputs, this means:</p>
 <pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sigmoid</span>(<span class="hljs-params">x</span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-number">1</span> / (<span class="hljs-number">1</span> + <span class="hljs-built_in">Math</span>.exp(-x)); }
 
-output = sigmoid(in1*w1 + in2*w2 + in3*w3 + bias);</code></pre>
+output = sigmoid(in1*w1 + in2*w2 + in3*w3 + bias);
+</code></pre>
 <p>The weights (<code>w1, w2, w3</code>) indicate the relative importance of the inputs they are connected to. They could be zero (meaning no importance), positive (indicating a correlative relationship), or negative (meaning an inverse relationship). The <code>bias</code> term can act as a threshold (where weighted inputs need to overcome a negative bias to produce a positive output) or an inherent tendency (even without inputs, a positively biased neuron will &#39;fire&#39;). </p>
 <p>The <code>sigmoid</code> function ensures that output is always bounded between 0.0 and 1.0, regardless the input. It is a smooth mapping from continous space to a bounded space, that approximates binary logic at the extremes. </p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/640px-Logistic-curve.svg.png" alt="sigmoid"></p>
@@ -558,11 +544,14 @@ output = sigmoid(in1*w1 + in2*w2 + in3*w3 + bias);</code></pre>
 <h3 id="neuro-evolution-1">Neuro-Evolution</h3>
 <p>Neuro-evolution uses evolutionary algorithms to develop neural network, in which: </p>
 <ul>
-<li>the genotype needs to encode the configuration of the neural network: at minimum, the weights and biases of each neuron,</li>
-<li>the phenotype is the executable neural network itself, whose fitness function thus depends on how well the neural network performs in the problem domain, </li>
-<li>the performance of a neural network among a population determines its fitness for selection of a new generation.</li>
-</ul>
+<li><p>the genotype needs to encode the configuration of the neural network: at minimum, the weights and biases of each neuron,</p>
+</li>
+<li><p>the phenotype is the executable neural network itself, whose fitness function thus depends on how well the neural network performs in the problem domain, </p>
+</li>
+<li><p>the performance of a neural network among a population determines its fitness for selection of a new generation.</p>
 <p>Genetic encoding could be a direct encoding of numbers for the specific weights and biases, or could be an indirect encoding that <em>generates</em> the weights and biases programmatically (just as our biomorphs were generated from sequences of steps), which could also specify the network layout and connections.</p>
+</li>
+</ul>
 <h4 id="a-neuro-evolution-game">A neuro-evolution game</h4>
 <p>For a problem domain, let&#39;s create a simple multi-agent game:</p>
 <ul>
@@ -621,6 +610,8 @@ output = sigmoid(in1*w1 + in2*w2 + in3*w3 + bias);</code></pre>
 </ul>
 <p>So far we have replaced entire generations at a time, but of course in the real world creatures&#39; life spans interleave in all kinds of ways, with population booms and busts. Moreover we have rather artificially tested candidates against a pre-defined function, or against the whims of an interacting user or participant. But this isn&#39;t how nature works most of the time. As noted already, <strong>viability-based selection</strong> depends only on fundamental internal processes and exchanges with an environment (including other creatures of various species) to determine whether a creature can survive, and reproduce. So, rather than running in generations, could we try a continuous mode, where as soon as one player is removed from the game, a new player is created at a random position (with mutation from a parent taken from the current population). At this point the fitness measure of scoring points can be removed altogether: players simply need to stay in the game to have a chance of their genes being inherited.</p>
 <hr>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="discussion-for-new-projects">Discussion for new projects</h2>
 <h3 id="the-importance-of-non-triviality">The importance of non-triviality</h3>
 <p>A good starting point may be to have the genome modify <em>parameters</em> of the agent; for example, the amount of random walk, ranges of sensing, the reproduction threshold, thresholds of probability for selecting different actions, etc. Be careful with features like speed -- you might want to model an energetic cost to go with it for realism (and to avoid breeding supersonic agents!). </p>
@@ -738,6 +729,8 @@ Meta-evolution...   [Spector, Lee. "Autoconstructive evolution: Push, pushGP, an
 
 
 
+---
+<a href="#top"><img src="img/up.png"></a>
 ## An ecosystemic, evolving agent-environment world
 
 For example, take a look at the agent model here:
