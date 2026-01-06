@@ -92,12 +92,13 @@ function generate(file) {
 	}
 	
 	let toc = []
+	const MAX_TOC_LEVEL = 4
 	let renderer = new marked.Renderer();
 	let heading = renderer.heading.bind(renderer);
 	renderer.heading = function(text, level, ...args) {
 		const html = heading(text, level, ...args)
 		const match = /id="(.+)"/gm.exec(html)
-		if (match && match.length > 1 && level < 3) {
+		if (match && match.length > 1 && level < MAX_TOC_LEVEL) {
 			const id = match[1]
 			console.log(text, level, id)
 			toc.push({
@@ -116,6 +117,7 @@ function generate(file) {
 	});
 
 	meta.body = marked(meta.src);
+	meta.toc = toc.length > 1 ? marked(toc.map(item => `${"  ".repeat(item.level-1)}- [${item.text}](#${item.id})`).join("\n")) : "";
 	//meta.toc = toc.length > 1 ? marked(toc.map(item => `${"  ".repeat(item.level-1)}- [${item.text}](#${item.id})`).join("\n")) : "";
 	// console.log(meta.toc)
 

@@ -88,19 +88,61 @@ This CA is so popular that people have written [Turing machines](http://www.yout
 
 [An homage in the NY Times](https://www.nytimes.com/2020/12/28/science/math-conway-game-of-life.html)
 
+
+
 ### Implementation
 
-If the cells are densely packed into a regular lattice structure, such as a 2D grid, they can efficiently be represented as *array* memory blocks. The state of a cell can be represented by a number, so an array of integers works well. A way to index this array memory to read or write a cell coordinate will be useful.
+If the cells are densely packed into a regular lattice structure, such as a 2D grid, they can efficiently be represented as *array* memory blocks. The state of a cell can be represented by a number. 
 
-In theory the transition rule can be represented as a *look-up table*, however above a certain number of states and neighbors the size of this table would become astronomical (k states raised to the power of k neighbor states raised to the power of n neighbors; for a 3-state, 3-neighbor system this requires 7 billon rules!), so a procedural implementation is preferable. CAs may use bit-wise operators to implement the transition rules in a hardware-optimized way, but we will use regular ```if``` statements for clarity. 
+> This is similar to the representation of an image as data -- a grid of pixel values, which are just numbers in a lattice.
 
-One complication is that the states of the whole lattice must update synchronously. That means: when one cell changes, all cells should change. This is not easy to achieve in most computing systems today, which mostly follow instructions one at a time (with only limited parallelism). A naive implementation will thus update cells one at a time, and the neighborhood of a particular cell will contain both 'past' and 'future' states. One way to work around this is to maintain two copies of the lattice; one for the 'past' states, and one for the 'future' states. The transition rule always reads from the 'past' lattice, and always writes to the 'future' lattice. After all cells are updated, either the 'future' is copied to the 'past', or the 'future' and 'past' lattices are swapped, since the future of yesterday is the past of tomorrow. 
+The rules themselves can be translated pretty efficiently to procedural code, using if/else conditions. 
+
+One complication is that the states of the whole lattice must update synchronously. A naive implementation will thus update cells one at a time, and the neighborhood of a particular cell will contain both 'past' and 'future' states. One way to work around this is to maintain two copies of the lattice; one for the 'past' states, and one for the 'future' states. The transition rule always reads from the 'past' lattice, and always writes to the 'future' lattice. After all cells are updated, either the 'future' is copied to the 'past', or the 'future' and 'past' lattices are swapped, since the future of yesterday is the past of tomorrow.  
 
 > This technique is called *double-buffering*, and is widely used in software systems where a parallel process interacts with a serial machine. It is used to render graphics to the screen, for example.
+
+## Why use the GPU?
+
+In past years we have implemented our CAs using operations on buffers in the CPU, like this:
 
 <p data-height="300" data-theme-id="18447" data-slug-hash="JwprVG" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="2019 DATT4950 Jan 3" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/JwprVG/">2019 DATT4950 Jan 3</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
+However the nature of CAs makes them incredibly suitable for implementation using GPUs:
+- they are inherently massively parallel processes, working over grids of cells (like grids of pixels or texels)
+- the same program runs on every single cell -- which is exactly how fragment shaders work
+
+It turns out that by using GPU shaders, our cellular automata can run tends or even hundreds of times faster than on the CPU.  Or put another way, we can make them at much higher resolutions, or make them much more complex, and still get good update frame rates. 
+
+So this year, we're going to implement our CAs using fragment shaders in GLSL.  GLSL is a way to write programs that will run directly on your GPU. GLSL can be used in the web like on ShaderToy, or in Three.js, or basically any web page in a modern browser -- even when opened on your phone or a VR headset like the Quest 3. GLSL is also used in desktop OpenGL envionments, including TouchDesigner, Max/MSP/Jitter, Ossia, Hydra, and so on.  It can also be used in Unity or Unreal, though they prefer you to use a more abstract language (HLSL) which then translates to GLSL. It is an incredibly useful skill for media arts today. 
+
+A really convenient way to explore this is using [Shadertoy.com](https://www.shadertoy.com/), a browser-based editor and viewer for fragment shaders.  It's free to create an account so that you can save your shaders, and so long as you save them as "public", you can share them via the URL. Also, it's relatively easy to move shaders written in ShaderToy to other environments, such as Max/Jitter, TouchDesigner, Three.js, OpenFrameworks, Cinder, etc., and with a little more work, Unity, Unreal, Godot, etc. 
+
+[A quick tutorial on GLSL in Shadertoy](glsl.html)
+
+## Game of Life in GLSL
+
+**Planning**
+- How to initialize the field -- random on/off cells?
+- The next frame is a function of the previous frame; so we need a Buffer for the feedback loop
+- We will need an initialization event (frame zero? keyboard input?)
+- We need to read neighbor pixels via coordinate operations
+- Boundary conditions: we can use the **wrap** settings of the iChannel input, or define our own
+- Texture values are floating points (0.0 to 1.0), but we need integer values (0 or 1), so we can count them. We can cast a comparison to integer (e.g. `int(N.x > 0.)`)
+- Can we draw input with the mouse via `iMouse`?
+- Can we rewrite it using `mat3` kernels?
+- We actually have 4 values per pixel (R, G, B, A), but we are only using 1 right now.  Can we use the others to visualize something useful?
+
+---
+
+### Variations
+
+Starting from this basis, what do you think would be interesting to change?  Look at the basic definition of CAs we saw above, and think: what could be varied from how the Game of Life works, but still be within the definition of a CA?  What do you think we could change to make it more interesting?  
+
+Your Assignment 1 will a novel Cellular Automata of your own design & invention, implemented using Shadertoy. 
+
+<!--
 ---
 
 ### Variations
@@ -365,3 +407,5 @@ Additionally, his system does not measure all cells within a radius; instead it 
 In certain CA variants, more than one substitution could be valid to undertake. We have seen how some CA simply choose randomly between options, while Monte Carlo systems consider two or more options and take the one with the highest entropy. In a sense, for a brief moment, these systems follow two parallel histories, and then choose which one to discard. But there is no reason why we can't follow two (or more) histories for a little longer than a single step, nor to limit our decision-making to an energetic/entropic basis. We may return to this idea when exploring evolutionary systems, which present a similar parallelism. 
 
 > Wolfram also explored ['multi-way'](http://www.wolframscience.com/nksonline/page-204#previous) CA executions, in which all possible histories for a given state are explored, considering their long-term evolutions, and in particular exploring which rules lead to exponentially more universes, which tend to stabilize, and which ultimately lead to the same results.
+
+-->
