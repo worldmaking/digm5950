@@ -128,7 +128,7 @@ footer {
 <p>We can also turn this into a distance-from-circle, simply by subtracting the circle&#39;s radius from the distance.  </p>
 <pre><code class="language-glsl">    <span class="hljs-type">vec2</span> centre = <span class="hljs-type">vec2</span>(<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>);
     <span class="hljs-type">float</span> radius = <span class="hljs-number">0.2</span>;
-    <span class="hljs-type">float</span> dist = <span class="hljs-built_in">distance</span>(suv, centre) - radius;
+    <span class="hljs-type">float</span> dist = <span class="hljs-built_in">distance</span>(uv, centre) - radius;
     fragColor = <span class="hljs-type">vec4</span>(dist); 
     
     <span class="hljs-comment">// or to draw a smooth edge:</span>

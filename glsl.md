@@ -95,7 +95,7 @@ We can also turn this into a distance-from-circle, simply by subtracting the cir
 ```glsl
     vec2 centre = vec2(0.5, 0.5);
     float radius = 0.2;
-    float dist = distance(suv, centre) - radius;
+    float dist = distance(uv, centre) - radius;
     fragColor = vec4(dist); 
     
 	// or to draw a smooth edge:
