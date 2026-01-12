@@ -133,27 +133,36 @@ A really convenient way to explore this is using [Shadertoy.com](https://www.sha
 - Can we draw input with the mouse via `iMouse`?
 - Can we rewrite it using `mat3` kernels?
 - We actually have 4 values per pixel (R, G, B, A), but we are only using 1 right now.  Can we use the others to visualize something useful?
+  
+**Questions**
+- Will it run forever?
 
 ---
 
 ### Variations
 
-Starting from this basis, what do you think would be interesting to change?  Look at the basic definition of CAs we saw above, and think: what could be varied from how the Game of Life works, but still be within the definition of a CA?  What do you think we could change to make it more interesting?  
-
-Your Assignment 1 will a novel Cellular Automata of your own design & invention, implemented using Shadertoy. 
-
-<!--
----
-
-### Variations
-
-There are many ways we can modulate this into more complex CA. For example, by allowing more than two states. For example, here is "Brian's Brain":
-
-<p data-height="300" data-theme-id="18447" data-slug-hash="JwaQqV" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Brian's Brain: 2019 DATT4950" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/JwaQqV/">Brian's Brain: 2019 DATT4950</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+Starting from this basis, what do you think would be interesting to change?  
 
 More variations are possible by modulating the basic definition of a CA, some of which have been explored more than others. 
 
+Look at the basic definition of CAs we saw above, and think: what could be varied from how the Game of Life works, but still be within the definition of a CA?  What do you think we could change to make it more interesting?  
+
+Your Assignment 1 will a novel Cellular Automata of your own design & invention, implemented using Shadertoy. 
+
+---
+
+### Adding more states
+
+There are many ways we can modulate this into more complex CA. For example, by allowing more than two states. 
+
+For example, here is "Brian's Brain". In this CA there are 3 states, which we typically encode as `1.0`, `0.5`, and `0.0`.
+
+<iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/t3tcDN?gui=true&t=10&paused=true&muted=false" allowfullscreen></iframe>
+
+https://www.shadertoy.com/view/t3tcDN
+
+
+<!--
 ## Probabilistic/Stochastic CA
 
 In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.

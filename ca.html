@@ -35,6 +35,7 @@ footer {
 <li><a href="#why-use-the-gpu">Why use the GPU?</a></li>
 <li><a href="#game-of-life-in-glsl">Game of Life in GLSL</a><ul>
 <li><a href="#variations">Variations</a></li>
+<li><a href="#adding-more-states">Adding more states</a></li>
 </ul>
 </li>
 </ul>
@@ -161,22 +162,24 @@ footer {
 <li>Can we rewrite it using <code>mat3</code> kernels?</li>
 <li>We actually have 4 values per pixel (R, G, B, A), but we are only using 1 right now.  Can we use the others to visualize something useful?</li>
 </ul>
+<p><strong>Questions</strong></p>
+<ul>
+<li>Will it run forever?</li>
+</ul>
 <hr>
 <h3 id="variations">Variations</h3>
-<p>Starting from this basis, what do you think would be interesting to change?  Look at the basic definition of CAs we saw above, and think: what could be varied from how the Game of Life works, but still be within the definition of a CA?  What do you think we could change to make it more interesting?  </p>
+<p>Starting from this basis, what do you think would be interesting to change?  </p>
+<p>More variations are possible by modulating the basic definition of a CA, some of which have been explored more than others. </p>
+<p>Look at the basic definition of CAs we saw above, and think: what could be varied from how the Game of Life works, but still be within the definition of a CA?  What do you think we could change to make it more interesting?  </p>
 <p>Your Assignment 1 will a novel Cellular Automata of your own design &amp; invention, implemented using Shadertoy. </p>
+<hr>
+<h3 id="adding-more-states">Adding more states</h3>
+<p>There are many ways we can modulate this into more complex CA. For example, by allowing more than two states. </p>
+<p>For example, here is &quot;Brian&#39;s Brain&quot;. In this CA there are 3 states, which we typically encode as <code>1.0</code>, <code>0.5</code>, and <code>0.0</code>.</p>
+<iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/t3tcDN?gui=true&t=10&paused=true&muted=false" allowfullscreen></iframe>
+
+<p><a href="https://www.shadertoy.com/view/t3tcDN">https://www.shadertoy.com/view/t3tcDN</a></p>
 <!--
----
-
-### Variations
-
-There are many ways we can modulate this into more complex CA. For example, by allowing more than two states. For example, here is "Brian's Brain":
-
-<p data-height="300" data-theme-id="18447" data-slug-hash="JwaQqV" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Brian's Brain: 2019 DATT4950" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/JwaQqV/">Brian's Brain: 2019 DATT4950</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
-More variations are possible by modulating the basic definition of a CA, some of which have been explored more than others. 
-
 ---
 <a href="#top"><img src="img/up.png"></a>
 ## Probabilistic/Stochastic CA
