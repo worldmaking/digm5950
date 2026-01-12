@@ -134,6 +134,8 @@ A really convenient way to explore this is using [Shadertoy.com](https://www.sha
 - Can we rewrite it using `mat3` kernels?
 - We actually have 4 values per pixel (R, G, B, A), but we are only using 1 right now.  Can we use the others to visualize something useful?
   
+https://www.shadertoy.com/view/w3dyDN
+
 **Questions**
 
 - Can you try different thresholds of neighbors for death and rebirth? Do you get complex behaviour, or one of Wolfram's other classes?  Can you figure out what the rules need to be complex?

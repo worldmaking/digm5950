@@ -153,15 +153,25 @@ footer {
 <h2 id="game-of-life-in-glsl">Game of Life in GLSL</h2>
 <p><strong>Planning</strong></p>
 <ul>
-<li>How to initialize the field -- random on/off cells?</li>
-<li>The next frame is a function of the previous frame; so we need a Buffer for the feedback loop</li>
-<li>We will need an initialization event (frame zero? keyboard input?)</li>
-<li>We need to read neighbor pixels via coordinate operations</li>
-<li>Boundary conditions: we can use the <strong>wrap</strong> settings of the iChannel input, or define our own</li>
-<li>Texture values are floating points (0.0 to 1.0), but we need integer values (0 or 1), so we can count them. We can cast a comparison to integer (e.g. <code>int(N.x &gt; 0.)</code>)</li>
-<li>Can we draw input with the mouse via <code>iMouse</code>?</li>
-<li>Can we rewrite it using <code>mat3</code> kernels?</li>
-<li>We actually have 4 values per pixel (R, G, B, A), but we are only using 1 right now.  Can we use the others to visualize something useful?</li>
+<li><p>How to initialize the field -- random on/off cells?</p>
+</li>
+<li><p>The next frame is a function of the previous frame; so we need a Buffer for the feedback loop</p>
+</li>
+<li><p>We will need an initialization event (frame zero? keyboard input?)</p>
+</li>
+<li><p>We need to read neighbor pixels via coordinate operations</p>
+</li>
+<li><p>Boundary conditions: we can use the <strong>wrap</strong> settings of the iChannel input, or define our own</p>
+</li>
+<li><p>Texture values are floating points (0.0 to 1.0), but we need integer values (0 or 1), so we can count them. We can cast a comparison to integer (e.g. <code>int(N.x &gt; 0.)</code>)</p>
+</li>
+<li><p>Can we draw input with the mouse via <code>iMouse</code>?</p>
+</li>
+<li><p>Can we rewrite it using <code>mat3</code> kernels?</p>
+</li>
+<li><p>We actually have 4 values per pixel (R, G, B, A), but we are only using 1 right now.  Can we use the others to visualize something useful?</p>
+<p><a href="https://www.shadertoy.com/view/w3dyDN">https://www.shadertoy.com/view/w3dyDN</a></p>
+</li>
 </ul>
 <p><strong>Questions</strong></p>
 <ul>
