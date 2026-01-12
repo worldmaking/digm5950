@@ -38,6 +38,7 @@ footer {
 <li><a href="#adding-more-states">Adding more states</a></li>
 </ul>
 </li>
+<li><a href="#probabilisticstochastic-ca">Probabilistic/Stochastic CA</a></li>
 </ul>
 </li>
 </ul>
@@ -164,8 +165,12 @@ footer {
 </ul>
 <p><strong>Questions</strong></p>
 <ul>
-<li>Will it run forever?</li>
+<li><p>Can you try different thresholds of neighbors for death and rebirth? Do you get complex behaviour, or one of Wolfram&#39;s other classes?  Can you figure out what the rules need to be complex?</p>
+</li>
+<li><p>Will it run forever?</p>
+</li>
 </ul>
+<p>A <em>backround noise</em> can be added, such that from time to time a randomly chosen cell changes state. Try adding background noise to the Game of Life to avoid it reaching a stable or cyclic attractor. But too high a probability and it descends into noise. Try adding a <em>temperature</em> control to control the statistical frequency of such changes. Could something <em>intrinsic</em> to the system determine temperature? Could this vary over space?</p>
 <hr>
 <h3 id="variations">Variations</h3>
 <p>Starting from this basis, what do you think would be interesting to change?  </p>
@@ -174,26 +179,29 @@ footer {
 <p>Your Assignment 1 will a novel Cellular Automata of your own design &amp; invention, implemented using Shadertoy. </p>
 <hr>
 <h3 id="adding-more-states">Adding more states</h3>
-<p>There are many ways we can modulate this into more complex CA. For example, by allowing more than two states. </p>
-<p>For example, here is &quot;Brian&#39;s Brain&quot;. In this CA there are 3 states, which we typically encode as <code>1.0</code>, <code>0.5</code>, and <code>0.0</code>.</p>
+<p>Game of Life has only two states, 0 and 1, but we could have more states. For example, here is &quot;Brian&#39;s Brain&quot;. In this CA there are 3 states, which we typically encode as <code>1.0</code>, <code>0.5</code>, and <code>0.0</code>.</p>
 <iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/t3tcDN?gui=true&t=10&paused=true&muted=false" allowfullscreen></iframe>
 
 <p><a href="https://www.shadertoy.com/view/t3tcDN">https://www.shadertoy.com/view/t3tcDN</a></p>
-<!--
----
-<a href="#top"><img src="img/up.png"></a>
-## Probabilistic/Stochastic CA
-
-In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.
-
-- A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:
-
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
+<h2 id="probabilisticstochastic-ca">Probabilistic/Stochastic CA</h2>
+<p>In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.</p>
+<ul>
+<li>A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:</li>
+</ul>
 <p data-height="300" data-theme-id="18447" data-slug-hash="OroeKW" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Forest Fire: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/OroeKW/">Forest Fire: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-- A *backround noise* can be added, such that from time to time a randomly chosen cell changes state. Try adding background noise to the Game of Life to avoid it reaching a stable or cyclic attractor. But too high a probability and it descends into noise. Try adding a *temperature* control to control the statistical frequency of such changes. Could something *intrinsic* to the system determine temperature? Could this vary over space?
-- Probabilistic/statistical choices can be combined with other variations below, such as spatially non-homogenous probabilities, statistical rules and neighbourhoods, etc.
-
+<p>Unfortunately, this one poses a few challenges in GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator. We can work around this partly by applying our probability tests against two values at the same time, e.g. </p>
+<pre><code class="language-glsl"><span class="hljs-keyword">if</span> (noise.x &lt; growth_probability &amp;&amp; noise.y &lt; growth_probability) {}
+</code></pre>
+<p><a href="https://www.shadertoy.com/view/tXdcDN">https://www.shadertoy.com/view/tXdcDN</a></p>
+<p>Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here. </p>
+<ul>
+<li>Probabilistic/statistical choices can be combined with other variations below, such as spatially non-homogenous probabilities, statistical rules and neighbourhoods, etc.</li>
+</ul>
+<!--
 ---
 <a href="#top"><img src="img/up.png"></a>
 ## Non-homogenous CA

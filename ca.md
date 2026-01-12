@@ -135,7 +135,12 @@ A really convenient way to explore this is using [Shadertoy.com](https://www.sha
 - We actually have 4 values per pixel (R, G, B, A), but we are only using 1 right now.  Can we use the others to visualize something useful?
   
 **Questions**
+
+- Can you try different thresholds of neighbors for death and rebirth? Do you get complex behaviour, or one of Wolfram's other classes?  Can you figure out what the rules need to be complex?
+
 - Will it run forever?
+
+A *backround noise* can be added, such that from time to time a randomly chosen cell changes state. Try adding background noise to the Game of Life to avoid it reaching a stable or cyclic attractor. But too high a probability and it descends into noise. Try adding a *temperature* control to control the statistical frequency of such changes. Could something *intrinsic* to the system determine temperature? Could this vary over space?
 
 ---
 
@@ -153,16 +158,13 @@ Your Assignment 1 will a novel Cellular Automata of your own design & invention,
 
 ### Adding more states
 
-There are many ways we can modulate this into more complex CA. For example, by allowing more than two states. 
-
-For example, here is "Brian's Brain". In this CA there are 3 states, which we typically encode as `1.0`, `0.5`, and `0.0`.
+Game of Life has only two states, 0 and 1, but we could have more states. For example, here is "Brian's Brain". In this CA there are 3 states, which we typically encode as `1.0`, `0.5`, and `0.0`.
 
 <iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/t3tcDN?gui=true&t=10&paused=true&muted=false" allowfullscreen></iframe>
 
 https://www.shadertoy.com/view/t3tcDN
 
 
-<!--
 ## Probabilistic/Stochastic CA
 
 In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.
@@ -172,9 +174,19 @@ In this case the transition rule is not deterministic, but includes some (pseudo
 <p data-height="300" data-theme-id="18447" data-slug-hash="OroeKW" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Forest Fire: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/OroeKW/">Forest Fire: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-- A *backround noise* can be added, such that from time to time a randomly chosen cell changes state. Try adding background noise to the Game of Life to avoid it reaching a stable or cyclic attractor. But too high a probability and it descends into noise. Try adding a *temperature* control to control the statistical frequency of such changes. Could something *intrinsic* to the system determine temperature? Could this vary over space?
+Unfortunately, this one poses a few challenges in GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator. We can work around this partly by applying our probability tests against two values at the same time, e.g. 
+
+```glsl
+if (noise.x < growth_probability && noise.y < growth_probability) {}
+```
+
+https://www.shadertoy.com/view/tXdcDN
+
+Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here. 
+
 - Probabilistic/statistical choices can be combined with other variations below, such as spatially non-homogenous probabilities, statistical rules and neighbourhoods, etc.
 
+<!--
 ## Non-homogenous CA
 
 The rule is not the same for all cells / for all time steps. Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissipate, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).
