@@ -102,7 +102,7 @@ One complication is that the states of the whole lattice must update synchronous
 
 > This technique is called *double-buffering*, and is widely used in software systems where a parallel process interacts with a serial machine. It is used to render graphics to the screen, for example.
 
-## Why use the GPU?
+### Why use the GPU?
 
 In past years we have implemented our CAs using operations on buffers in the CPU, like this:
 
@@ -121,7 +121,7 @@ A really convenient way to explore this is using [Shadertoy.com](https://www.sha
 
 [A quick tutorial on GLSL in Shadertoy](glsl.html)
 
-## Game of Life in GLSL
+### Game of Life in GLSL
 
 **Planning**
 - How to initialize the field -- random on/off cells?
@@ -146,7 +146,7 @@ A *backround noise* can be added, such that from time to time a randomly chosen 
 
 ---
 
-### Variations
+## Variations
 
 Starting from this basis, what do you think would be interesting to change?  
 
@@ -158,7 +158,7 @@ Your Assignment 1 will a novel Cellular Automata of your own design & invention,
 
 ---
 
-### Adding more states: Brian's Brain
+### Example - Brian's Brain (adding more states)
 
 Game of Life has only two states, 0 and 1, but we could have more states. For example, here is "Brian's Brain". In this CA there are 3 states, which we typically encode as `1.0`, `0.5`, and `0.0`.
 
@@ -168,6 +168,8 @@ https://www.shadertoy.com/view/t3tcDN
 ## Probabilistic/Stochastic CA
 
 In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.
+
+### Forest Fire
 
 - A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:
 
@@ -185,7 +187,6 @@ https://www.shadertoy.com/view/tXdcDN
 Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here. 
 
 - Probabilistic/statistical choices can be combined with other variations below, such as spatially non-homogenous probabilities, statistical rules and neighbourhoods, etc.
-
 
 ## Spatially Non-homogenous CA
 
@@ -220,7 +221,7 @@ Rather than updating all cells at once, some other policy of visiting cells to u
 
 -->
 
-### Mobile CA
+## Mobile CA
 
 A *mobile CA* has a notion of active cells. The transition rule is only applied to active cells, and must also specify a related cell (such as one of the neighbors) of the current active cell as the next active cell. (This could also be partly probabilistic.) 
 
