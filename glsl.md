@@ -677,3 +677,16 @@ A common trick is a "mouse down to zoom in", which is really easy to do just by 
         uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));
     }
 ```
+
+## Links for learning more
+
+- https://thebookofshaders.com/
+
+### Exploring math:
+
+- https://www.desmos.com/calculator
+- https://graphtoy.com/
+- https://www.3blue1brown.com/
+
+If you want to go much deeper into this, you may eventually start to want to explore compute shaders (GPGPU). There's a site similar to Shadertoy for this: https://compute.toys/
+
