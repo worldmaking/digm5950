@@ -35,13 +35,14 @@ footer {
 <li><a href="#why-use-the-gpu">Why use the GPU?</a></li>
 <li><a href="#game-of-life-in-glsl">Game of Life in GLSL</a><ul>
 <li><a href="#variations">Variations</a></li>
-<li><a href="#adding-more-states">Adding more states</a></li>
+<li><a href="#adding-more-states-brians-brain">Adding more states: Brian&#39;s Brain</a></li>
 </ul>
 </li>
 <li><a href="#probabilisticstochastic-ca">Probabilistic/Stochastic CA</a></li>
 <li><a href="#spatially-non-homogenous-ca">Spatially Non-homogenous CA</a></li>
 <li><a href="#temporally-non-homogenous-ca">Temporally Non-homogenous CA</a><ul>
 <li><a href="#mobile-ca">Mobile CA</a></li>
+<li><a href="#langtons-ant">Langton&#39;s Ant</a></li>
 <li><a href="#termites">Termites</a></li>
 </ul>
 </li>
@@ -198,7 +199,7 @@ footer {
 <p>Look at the basic definition of CAs we saw above, and think: what could be varied from how the Game of Life works, but still be within the definition of a CA?  What do you think we could change to make it more interesting?  </p>
 <p>Your Assignment 1 will a novel Cellular Automata of your own design &amp; invention, implemented using Shadertoy. </p>
 <hr>
-<h3 id="adding-more-states">Adding more states</h3>
+<h3 id="adding-more-states-brians-brain">Adding more states: Brian&#39;s Brain</h3>
 <p>Game of Life has only two states, 0 and 1, but we could have more states. For example, here is &quot;Brian&#39;s Brain&quot;. In this CA there are 3 states, which we typically encode as <code>1.0</code>, <code>0.5</code>, and <code>0.0</code>.</p>
 <p><a href="https://www.shadertoy.com/view/t3tcDN">https://www.shadertoy.com/view/t3tcDN</a></p>
 <hr>
@@ -258,7 +259,7 @@ Rather than updating all cells at once, some other policy of visiting cells to u
 <h3 id="mobile-ca">Mobile CA</h3>
 <p>A <em>mobile CA</em> has a notion of active cells. The transition rule is only applied to active cells, and must also specify a related cell (such as one of the neighbors) of the current active cell as the next active cell. (This could also be partly probabilistic.) </p>
 <p>There could be more than one &#39;active cell&#39; -- there could even be a list of currently active cells. Non-active cells are then described as &quot;quiescent&quot;. But what happens if two active cells occupy the same site?</p>
-<h4 id="langtons-ant">Langton&#39;s Ant</h4>
+<h3 id="langtons-ant">Langton&#39;s Ant</h3>
 <ul>
 <li><a href="http://en.wikipedia.org/wiki/Langton%27s_ant">Langton&#39;s Ant</a> is a mobile CA in a 2D, two-state space, with very simple rules:<ul>
 <li>At a white square, turn 90° right, flip the color of the square, move forward one unit</li>

@@ -158,7 +158,7 @@ Your Assignment 1 will a novel Cellular Automata of your own design & invention,
 
 ---
 
-### Adding more states
+### Adding more states: Brian's Brain
 
 Game of Life has only two states, 0 and 1, but we could have more states. For example, here is "Brian's Brain". In this CA there are 3 states, which we typically encode as `1.0`, `0.5`, and `0.0`.
 
@@ -226,7 +226,7 @@ A *mobile CA* has a notion of active cells. The transition rule is only applied 
 
 There could be more than one 'active cell' -- there could even be a list of currently active cells. Non-active cells are then described as "quiescent". But what happens if two active cells occupy the same site?
 
-#### Langton's Ant
+### Langton's Ant
 
 - [Langton's Ant](http://en.wikipedia.org/wiki/Langton%27s_ant) is a mobile CA in a 2D, two-state space, with very simple rules:
 	- At a white square, turn 90° right, flip the color of the square, move forward one unit
