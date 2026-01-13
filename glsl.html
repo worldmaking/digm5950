@@ -49,6 +49,7 @@ footer {
 <li><a href="#video-feedback">Video feedback</a></li>
 <li><a href="#game-of-life">Game of Life</a></li>
 <li><a href="#keyboard-input">Keyboard input</a></li>
+<li><a href="#mouse-input">Mouse input</a></li>
 </ul>
 </li>
 </ul>
@@ -596,6 +597,25 @@ footer {
     <span class="hljs-keyword">const</span> <span class="hljs-type">int</span> KEY_UP    = <span class="hljs-number">38</span>;
     <span class="hljs-keyword">const</span> <span class="hljs-type">int</span> KEY_RIGHT = <span class="hljs-number">39</span>;
     <span class="hljs-keyword">const</span> <span class="hljs-type">int</span> KEY_DOWN  = <span class="hljs-number">40</span>;
+</code></pre>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
+<h2 id="mouse-input">Mouse input</h2>
+<p>Painting noise into the output:</p>
+<pre><code class="language-glsl">    <span class="hljs-comment">// add some noise near the mouse:</span>
+    <span class="hljs-keyword">if</span> (iMouse.z &gt; <span class="hljs-number">0.0</span>) {
+        <span class="hljs-comment">// if the mouse is held, randomize some pixels near the mouse</span>
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">distance</span>(fragCoord, iMouse.xy) &lt; <span class="hljs-number">10.0</span>) {
+            fragColor = <span class="hljs-type">vec4</span>(<span class="hljs-built_in">step</span>(<span class="hljs-number">0.8</span>, noise.x));
+        }
+    } 
+</code></pre>
+<p>A common trick is a &quot;mouse down to zoom in&quot;, which is really easy to do just by manipulating <code>uv</code> coordinates:</p>
+<pre><code class="language-glsl">    <span class="hljs-keyword">if</span>(iMouse.z &gt; <span class="hljs-number">0.0</span>) {
+        <span class="hljs-type">float</span> magnification = <span class="hljs-number">10.</span>;
+        uv /= magnification;
+        uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - <span class="hljs-number">1.0</span>))));
+    }
 </code></pre>
 
 <footer>2025</footer>

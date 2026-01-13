@@ -162,8 +162,6 @@ Your Assignment 1 will a novel Cellular Automata of your own design & invention,
 
 Game of Life has only two states, 0 and 1, but we could have more states. For example, here is "Brian's Brain". In this CA there are 3 states, which we typically encode as `1.0`, `0.5`, and `0.0`.
 
-<iframe width="640" height="360" frameborder="0" src="https://www.shadertoy.com/embed/t3tcDN?gui=true&t=10&paused=true&muted=false" allowfullscreen></iframe>
-
 https://www.shadertoy.com/view/t3tcDN
 
 
@@ -188,14 +186,16 @@ Play with different values to see what you find.  There can be temporal and spir
 
 - Probabilistic/statistical choices can be combined with other variations below, such as spatially non-homogenous probabilities, statistical rules and neighbourhoods, etc.
 
-<!--
-## Non-homogenous CA
 
-The rule is not the same for all cells / for all time steps. Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissipate, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).
+## Spatially Non-homogenous CA
+
+The rule is not the same for all cells. Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissipate, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).
 
 - Creating unusual neighbourhoods (or simply, non-totalistic ones) can introduce interesting spatial biases to behaviour.
 - Special *boundary* cells in the field may follow different rules from others.
 - Some rules may depend on the cell position; perhaps the same CA has different regions using different rules. These can be implemented by changing the function used in the transition rule, or by extending the state set to accommodate the differences. Changing the function is usually easier to implement and understand.
+
+## Temporally Non-homogenous CA
 
 Temporal non-homogeneity can be used to perform a sequence of different filters, or otherwise help to build long- as well as short-term arcs of behaviour.
 
@@ -206,6 +206,8 @@ Temporal non-homogeneity can be used to perform a sequence of different filters,
 
 One has to be careful though: it could be that introducing these variations is not really different to a slightly more complex, but homogenous, CA.
 
+<!--
+
 ## Asynchronous CA
 
 Rather than updating all cells at once, some other policy of visiting cells to update is applied.
@@ -215,6 +217,8 @@ Rather than updating all cells at once, some other policy of visiting cells to u
 - A multi-rate CA (self-clocked) updates each cell according to a clock period that varies from cell to cell. This implies that each cell must have more than one value (one to store the state, one to store the period, one to store the phase) -- or equivalently, that there is more than one cellular grid. The clock period or phase could be affected by that of neighbours'. This may lead to *entrainment* effects. 
 - Mobile CA (see below)
 - Probabilistic asynchrony (see below)
+
+-->
 
 ### Mobile CA
 
@@ -244,7 +248,16 @@ The [original video by Christopher Langton](http://www.youtube.com/watch?v=w6XQQ
 
 <iframe width="480" height="360" src="https://www.youtube.com/embed/w6XQQhCgq5c?rel=0" frameborder="0" allowfullscreen></iframe>
 
-> Note that Langton's Ant, and other related Turmites, are closely related to the turtle graphics often used for L-systems, which we will return to later in the course.
+How would you implement this in GLSL?  
+Every cell has the following values:
+- cell value (0 or 1)
+- ant present (0 or 1) 
+- ant direction (0, 0.25, 0.5, 0.75 for E, N, W, S?)
+
+On every step, check the 4 neighbours; if there's an ant, and it is heading our way, move it into our cell, rotate its direction, and flip our cell value 
+
+https://www.shadertoy.com/view/W33yRS
+
 
 ### Termites
 
@@ -258,9 +271,22 @@ Mitchel Resnick's termite model is a random walker in a space that can contain w
 	
 Over time, the termites begin to collect the woodchips into small piles, which gradually coalesce into a single large pile of chips.
 
+This is a trickier model to implement in GLSL -- it takes careful attention to movement of cells to make sure the number of termites does not accidentally increase!  But it's the same basic idea as Langton's Ant.  Remember: the fragment shader program is always from the perspective of the cell (not the ant/termite): a cell needs to know if a termite is entering it from a neighbor, or if a termite currently in the cell will remain there. If neither of those cases are true, then the cell will end the frame with no termite present. 
+
+https://www.shadertoy.com/view/33cyRS
+
+
 ## Particle CA and Lattice-Gas Automata
 
+This concept of a cell's perspective on occupancy can be extended to modeling particles in a cellular fashion! 
+
 If the transition rule (or, the set of transition rules as a whole) is careful to preserve a total cell values before and after, it can give the impression of a mass-conserving system, such as modeling the motion of particles and fluids. The elementary 1D traffic CA [(rule 184)](http://atlas.wolfram.com/01/01/184/) is a simple particle CA. 
+
+Sometimes this is considered "mass preserving".  That is, the total amount of "stuff" in the world never changes, it just moves around. 
+
+> Note that our Ant and Termite models are not strictly mass-preserving: can you explain why? 
+
+<!--
 
 ### Block rule CA
 
@@ -277,16 +303,14 @@ Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell
 <p data-height="300" data-theme-id="18447" data-slug-hash="NGxJpP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Block Rules: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/NGxJpP/">Block Rules: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
+- The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
+-->
+
 ### Some observations
 
-- The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
-
-- Clearly, mass-preserving CAs are guaranteed *not* to dissolve into homogenous final states of all-black/all-white/etc. -- which can alleviate any need for an external limiter to keep the balance -- but this does not mean they won't find a stable or cyclic end. (On the other hand, CAs whose rules do not appear to preserve mass can still avoid dissolution into homogeneity.)
+- Mass-preserving CAs can be guaranteed *not* to dissolve into homogenous final states of all-black/all-white/etc. -- which can alleviate any need for an external limiter to keep the balance -- but this does not mean they won't find a stable or cyclic end. (On the other hand, CAs whose rules do not appear to preserve mass can still avoid dissolution into homogeneity.)
 
 - Note that mass-preservation does not imply that the system is reversible. Reversibility is quite a different property, which states that each output neighbourhood can only be caused by a single predecessor neighbourhood. Some, but certainly not all, particle CAs are reversible.
-
-- Particle CA can also use probabilistic rules to simulate brownian motions and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a *dissipative system*).
-
 
 ![Zuse's vision of nature](img/zuse.jpg)
 
@@ -294,6 +318,9 @@ Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell
 
 A CA-inspired digital physics hypothesis is currently being promoted by Stephen Wolfram, as described in his magnum opus [A New Kind Of Science](http://www.wolframscience.com/nksonline/toc.html).
 
+Those models are determinsitic, but particle CA can also use probabilistic rules to simulate brownian motions (like our termite explorers) and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a *dissipative system*).
+
+<!--
 ## Probabilistic Asynchronous CA
 
 Chooses the next active cell according to a random selection.

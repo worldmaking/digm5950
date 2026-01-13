@@ -653,3 +653,27 @@ For other commonly useful keys:
     const int KEY_RIGHT = 39;
     const int KEY_DOWN  = 40;
 ```
+
+## Mouse input
+
+Painting noise into the output:
+
+```glsl
+	// add some noise near the mouse:
+    if (iMouse.z > 0.0) {
+        // if the mouse is held, randomize some pixels near the mouse
+        if (distance(fragCoord, iMouse.xy) < 10.0) {
+            fragColor = vec4(step(0.8, noise.x));
+        }
+    } 
+```
+
+A common trick is a "mouse down to zoom in", which is really easy to do just by manipulating `uv` coordinates:
+
+```glsl
+    if(iMouse.z > 0.0) {
+		float magnification = 10.;
+        uv /= magnification;
+        uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));
+    }
+```
