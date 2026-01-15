@@ -59,6 +59,13 @@ footer {
 <li><a href="#largeunboundedcomplex-states">Large/unbounded/complex states</a></li>
 </ul>
 </li>
+<li><a href="#continuous-automata">Continuous automata</a><ul>
+<li><a href="#reaction-diffusion">Reaction Diffusion</a></li>
+<li><a href="#fully-continuous-automata">Fully continuous automata</a></li>
+<li><a href="#smoothlife">Smoothlife</a></li>
+<li><a href="#lenia">Lenia</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -210,12 +217,16 @@ footer {
 <p>Game of Life has only two states, 0 and 1, but we could have more states. For example, here is &quot;Brian&#39;s Brain&quot;. In this CA there are 3 states, which we typically encode as <code>1.0</code>, <code>0.5</code>, and <code>0.0</code>.</p>
 <p><a href="https://www.shadertoy.com/view/t3tcDN">https://www.shadertoy.com/view/t3tcDN</a></p>
 <h3 id="hodgepodge">HodgePodge</h3>
-<p>This example has three states -- but one of them has a continuous range of values.  It is initially described as an infection model, but really it is something quite a bit stranger. </p>
-<p>Cells have a value between 0.0 and 1.0, where</p>
+<p>This example has three named states -- but one of them includes a whole set of possible values.  </p>
+<p>It is initially described as an infection model, but really it is something quite a bit stranger. </p>
 <ul>
-<li>0.0 means healthy</li>
-<li>1.0 means sick</li>
-<li>any number between 0.0 and 1.0 means infected but not yet sick</li>
+<li><p>0.0 means healthy</p>
+</li>
+<li><p>1.0 means sick</p>
+</li>
+<li><p>Posisble values between 0.0 and 1.0 mean infected but not yet sick. </p>
+<p>In the reference implementation, there are 254 possible values of increasing infection, so this is actually a 256-state automaton.</p>
+</li>
 </ul>
 <p><a href="https://www.shadertoy.com/view/3XcyRs">https://www.shadertoy.com/view/3XcyRs</a></p>
 <p>This system typically goes through several stages:</p>
@@ -405,71 +416,56 @@ A simplified Ising model on codepen -- try changing the temperature:
 </blockquote>
 <p>Stan Marée used this model to simulate the whole life cycle of <a href="https://www.researchgate.net/publication/46594643_Phototaxis_during_the_slug_stage_of_Dictyostelium_discoideum_A_model_study">Dictyostelium discoideum</a>!</p>
 <p>States need not be discrete integers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. </p>
-<!--
-
----
-<a href="#top"><img src="img/up.png"></a>
-## Continuous automata
-
-The CAs we have looked at so far are mostly discrete, and this is often evident in the results. But there are several ways in which we can try to approximate fully continuous automata -- and investigate to what extent similar properties or behaviours arise, and whether new properties can arise unique to continuous spaces. At the least, continuous automata are more able to show liquid and diffusive effects. But to proceed, we must consider each of the discrete aspects in turn:
-
-**Continuous states:** In this case, the states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0..1). We have seen some examples of this already (e.g. HodgePodge). The transition rule can no longer be a simple lookup table, but instead must map continuous ranges and/or functions. Comparators can be used to segment continuous space into ranges, and drive control flow, but the use of control flow implies that the output of the transition rule is still principally discontinuous. 
-
-**Continuous transition functions:** One step further requires that the transition rule be expressible as a purely mathematical function, that is predominantly smooth. That is, all transition rules are combined into a single function, which handles both continuous input and produces continuous output. A [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function), for example, is a continuous input & output function that nevertheless approximates the states of discrete functions.
-
-![sigmoid](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/600px-Logistic-curve.svg.png)
-
-Another option here is to introduce probabilistic functions. Finding a continuous system whose behaviours persist with the addition of some random noise is tantamount to finding an interesting system that is *robust to perturbations* -- a useful feature for anything that must interact with the real world!
-
-**Continuous neighborhood:** Instead of simply considering whole neighbor cells, we may want to apply some kind of weighted average over the surrounding region -- a sampling "kernel".  Proper weighting of a kernel can eliminate much of the artifacts due to regular grid spacing. 
-
-The kernel could be simply expressed as an inner and outer radius, for example, or an ideal distance with sampling weighted according to a function of distance from this radius. 
-
-If radii are not expected to change, then kernel locations and weights can be pre-computed. Nevertheless, continuous neighborhood sampling can easily become processor-intensive. It may also be viable to explore a statistical sampling strategy, selecting each time only a random sub-set of the possible sampling locations to create a cheaper approximation of continuous sampling.
-
-Another option is to apply an intermediate process of diffusion -- i.e. blur -- across the entire space between each application of the transition rule. However it is important that the diffusion kernel is mass-preserving -- that is, that repeated applications of the blur will not make the sum of all cell values greater or lesser.
-
-**Continuous time:** Instead of simply outputting a new state, change may be spread over time as a *differential*. That is, what is output from the transition function is an offset to accumulate to the current state. 
-
-This offset may also be distributed over a weighted neighbourhood, rather than a single state. 
-
-Another possible strategy to explore is delayed application (i.e., spreading the double-buffering over continuous time): maintaining copies of past and future cell states and interpolating between them. This can be used to smoothen the visual output of the CA, and also to support sampling the field at arbitrary points of time between frames.
-
-### Smoothlife
-
-<iframe width="640" height="360" src="https://www.youtube.com/embed/ISQChKRH4NI?list=PL69EDA11384365494" frameborder="0" allowfullscreen></iframe> 
-
-[SmoothLife](http://www.youtube.com/playlist?list=PL69EDA11384365494) uses a discrete grid, but all of states, kernel, and transition functions are adjusted for smooth, continuous values. A disc around a cell's center is integrated and normalized (i.e. averaged) for the cell's state, and a ring surrounding this is integrated & normalized (averaged) for the neighbor state. Cell transition functions are expressed in terms of continuous sigmoid thresholds over the [0, 1] range, and re-expressed in terms of differential functions (velocities of change) to approximate continuous time. [Paper here](http://arxiv.org/pdf/1111.1567v2.pdf). By doing so, it removes the discrete bias and leads to fascinating results. [Another implementaton](http://www.youtube.com/watch?v=l7t8LtdBAV8). [Taken to 3D](http://www.youtube.com/watch?v=zA857JdUn9o&list=PL69EDA11384365494&index=46). In effect, by making all components continuous, it is essentially a simulation of differential equations. [Here is a great explanation of the SmoothLife implementation, with a jsfiddle demo](http://0fps.net/2012/11/19/conways-game-of-life-for-curved-surfaces-part-1/)
-
-### Lenia
-
-Lenia continues in the spirit of SmoothLife, and has been extensively explored & documented to identify over 400 different organisms, occuping distict environmental niches (different physical constants), with various locomotive patterns catalogued, etc.
-
-<iframe src="https://player.vimeo.com/video/277328815" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-- [Paper](https://arxiv.org/abs/1812.05433)
-- [Code](https://github.com/Chakazul/Lenia)
-- [Winner in Virtual Creatures Contest, GECCO 2018, Kyoto](https://virtualcreatures.github.io/)
-- [Honorable Mention in ALife Art Award, ALIFE 2018, Tokyo.](http://artaward2018.alifelab.org/)
-
-### Reaction Diffusion
-
-The reaction-diffusion model was proposed by Alan Turing to describe embryo development and pattern-generation ([Turing, A. The Chemical Basic for Morphogenesis.](http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf)); it is still used today in computer graphics ([Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf)). RD systems and other differential equation systems can be approximated using continuous automata.
-
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
+<h2 id="continuous-automata">Continuous automata</h2>
+<p>The CAs we have looked at so far are mostly discrete, and this is often evident in the results. There are several ways in which we can try to approximate fully continuous automata -- and investigate to what extent similar properties or behaviours arise, and whether new properties can arise unique to continuous spaces. </p>
+<p>What if our states were truly continuous -- any value (or at least, any value between 0.0 and 1.0)?</p>
+<h3 id="reaction-diffusion">Reaction Diffusion</h3>
+<p>The reaction-diffusion model was proposed by Alan Turing to describe embryo development and pattern-generation (<a href="http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf">Turing, A. The Chemical Basic for Morphogenesis.</a>); it is still used today in computer graphics (<a href="http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf">Greg Turk&#39;s famous paper</a>). RD systems and other differential equation systems can be approximated using continuous automata.</p>
 <iframe width="480" height="360" src="https://www.youtube.com/embed/8dTmUr5qKvI?rel=0" frameborder="0" allowfullscreen></iframe>
 
-One approach to simulating RD using CA is the *Gray-Scott* model, as described in [Pearson, J. E. Complex Patterns in a Simple System](http://arxiv.org/pdf/patt-sol/9304003.pdf). A browser-based example is [here](https://pmneila.github.io/jsexp/grayscott/).
-
-There is [a wonderful archive of this model at this webpage](http://mrob.com/pub/comp/xmorphia/), including many great video examples of the [u-skate world](http://www.youtube.com/watch?v=F5oKgVZ6bTk), and even [u-skate in 3D](http://www.youtube.com/watch?v=B03lcPEmSOQ). 
-
-![The Gray-Scott parameter map](img/xmorphia-parameter-map.jpg)
+<p>One approach to simulating RD using CA is the <em>Gray-Scott</em> model, as described in <a href="http://arxiv.org/pdf/patt-sol/9304003.pdf">Pearson, J. E. Complex Patterns in a Simple System</a>. A browser-based example is <a href="https://pmneila.github.io/jsexp/grayscott/">here</a>.</p>
+<p>There is <a href="http://mrob.com/pub/comp/xmorphia/">a wonderful archive of this model at this webpage</a>, including many great video examples of the <a href="http://www.youtube.com/watch?v=F5oKgVZ6bTk">u-skate world</a>, and even <a href="http://www.youtube.com/watch?v=B03lcPEmSOQ">u-skate in 3D</a>. </p>
+<p><img src="img/xmorphia-parameter-map.jpg" alt="The Gray-Scott parameter map"></p>
+<!--
 
 Here is this model at a lower resolution using our starter kit:
 
 <p data-height="300" data-theme-id="18447" data-slug-hash="roZXmR" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Reaction Diffusion: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/roZXmR/">Reaction Diffusion: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-Some of these systems share resemblance with analog video feedback ([example](http://www.youtube.com/watch?v=hDYEVv9t32U), [example](http://www.youtube.com/watch?v=Uw5onuS2_mw)), which has been exploited by earlier media artists (notably the Steiner and Woody Vasulka). 
+-->
+
+<p>Some of these systems share resemblance with analog video feedback (<a href="http://www.youtube.com/watch?v=hDYEVv9t32U">example</a>, <a href="http://www.youtube.com/watch?v=Uw5onuS2_mw">example</a>), which has been exploited by earlier media artists (notably the Steiner and Woody Vasulka). </p>
+<h3 id="fully-continuous-automata">Fully continuous automata</h3>
+<p>Is it possible to completely eliminate discreteness in all aspects, to create a truly continuous CA?  To do so, let&#39;s return to our original definition of a CA, and for each component in turn, change discrete into continuous:</p>
+<p><strong>States:</strong> In this case, the states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0.0 to 1.0). The <a href="#hodgepodge">Hodgepodge model</a> pointed down this path. With a continuous range of states, the transition rule can no longer be a simple lookup table, but instead must map continuous ranges. Comparators can be used to segment continuous space into ranges, and drive control flow, but the use of control flow implies that the output of the transition rule is still principally discontinuous. </p>
+<p><strong>Transition functions:</strong> One step further requires that the transition rule be expressible as a purely mathematical function, that is predominantly smooth. That is, all transition rules are combined into a single function, which handles both continuous input and produces continuous output. A <a href="https://en.wikipedia.org/wiki/Sigmoid_function">sigmoid function</a>, for example, is a continuous input &amp; output function that nevertheless approximates the states of discrete functions.</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/600px-Logistic-curve.svg.png" alt="sigmoid"></p>
+<p>Another option here is to use probabilistic functions. Finding a continuous system whose behaviours persist with the addition of some random noise is tantamount to finding an interesting system that is <em>robust to perturbations</em> -- a useful feature for anything that must interact with the real world!</p>
+<p><strong>Neighborhood:</strong> Instead of simply considering whole neighbor cells, we may want to apply some kind of weighted average over the surrounding region -- a sampling &quot;kernel&quot;.  Proper weighting of a kernel can eliminate much of the artifacts due to regular grid spacing.  This is similar to how we can apply certain kinds of blur to images, such as Gaussian blur.</p>
+<p>The kernel could be simply expressed as an inner and outer radius, for example, or an ideal distance with sampling weighted according to a function of distance from this radius.  This is like the subtraction of a smaller blur from a larger blur.</p>
+<p>If radii are not expected to change, then kernel locations and weights can be pre-computed. Nevertheless, continuous neighborhood sampling can easily become processor-intensive. It may also be viable to explore a statistical sampling strategy, selecting each time only a random sub-set of the possible sampling locations to create a cheaper approximation of continuous sampling.</p>
+<p>Another option is to apply an intermediate process of diffusion -- i.e. blur -- across the entire space between each application of the transition rule. However it is important that the diffusion kernel is mass-preserving -- that is, that repeated applications of the blur will not make the sum of all cell values greater or lesser. </p>
+<p><strong>Time:</strong> How can we turn discrete steps in time into a smooth flow? Instead of simply outputting a new state, change may be spread over time as a <em>differential</em>. That is, what is output from the transition function is an offset to accumulate to the current state. </p>
+<p>This offset may also be distributed over a weighted neighbourhood, rather than a single state. </p>
+<p>Another possible strategy to explore is delayed application (i.e., spreading the double-buffering over continuous time): maintaining copies of past and future cell states and interpolating between them. This can be used to smoothen the visual output of the CA, and also to support sampling the field at arbitrary points of time between frames.</p>
+<h3 id="smoothlife">Smoothlife</h3>
+<iframe width="640" height="360" src="https://www.youtube.com/embed/ISQChKRH4NI?list=PL69EDA11384365494" frameborder="0" allowfullscreen></iframe> 
+
+<p><a href="http://www.youtube.com/playlist?list=PL69EDA11384365494">SmoothLife</a> uses a discrete grid, but all of states, kernel, and transition functions are adjusted for smooth, continuous values. A disc around a cell&#39;s center is integrated and normalized (i.e. averaged) for the cell&#39;s state, and a ring surrounding this is integrated &amp; normalized (averaged) for the neighbor state. Cell transition functions are expressed in terms of continuous sigmoid thresholds over the [0, 1] range, and re-expressed in terms of differential functions (velocities of change) to approximate continuous time. <a href="http://arxiv.org/pdf/1111.1567v2.pdf">Paper here</a>. By doing so, it removes the discrete bias and leads to fascinating results. <a href="http://www.youtube.com/watch?v=l7t8LtdBAV8">Another implementaton</a>. <a href="http://www.youtube.com/watch?v=zA857JdUn9o&amp;list=PL69EDA11384365494&amp;index=46">Taken to 3D</a>. In effect, by making all components continuous, it is essentially a simulation of differential equations. <a href="http://0fps.net/2012/11/19/conways-game-of-life-for-curved-surfaces-part-1/">Here is a great explanation of the SmoothLife implementation, with a jsfiddle demo</a></p>
+<h3 id="lenia">Lenia</h3>
+<p>Lenia continues in the spirit of SmoothLife, and has been extensively explored &amp; documented to identify over 400 different organisms, occuping distict environmental niches (different physical constants), with various locomotive patterns catalogued, etc.</p>
+<iframe src="https://player.vimeo.com/video/277328815" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+<ul>
+<li><a href="https://arxiv.org/abs/1812.05433">Paper</a></li>
+<li><a href="https://github.com/Chakazul/Lenia">Code</a></li>
+<li><a href="https://virtualcreatures.github.io/">Winner in Virtual Creatures Contest, GECCO 2018, Kyoto</a></li>
+<li><a href="http://artaward2018.alifelab.org/">Honorable Mention in ALife Art Award, ALIFE 2018, Tokyo.</a></li>
+</ul>
+<!--
 
 ---
 <a href="#top"><img src="img/up.png"></a>

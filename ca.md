@@ -167,12 +167,14 @@ https://www.shadertoy.com/view/t3tcDN
 
 ### HodgePodge
 
-This example has three states -- but one of them has a continuous range of values.  It is initially described as an infection model, but really it is something quite a bit stranger. 
+This example has three named states -- but one of them includes a whole set of possible values.  
 
-Cells have a value between 0.0 and 1.0, where
+It is initially described as an infection model, but really it is something quite a bit stranger. 
 - 0.0 means healthy
 - 1.0 means sick
-- any number between 0.0 and 1.0 means infected but not yet sick
+- Posisble values between 0.0 and 1.0 mean infected but not yet sick. 
+ 
+In the reference implementation, there are 254 possible values of increasing infection, so this is actually a 256-state automaton.
 
 https://www.shadertoy.com/view/3XcyRs
 
@@ -389,29 +391,56 @@ Stan Marée used this model to simulate the whole life cycle of [Dictyostelium d
 
 States need not be discrete integers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. 
 
-<!--
-
 ## Continuous automata
 
-The CAs we have looked at so far are mostly discrete, and this is often evident in the results. But there are several ways in which we can try to approximate fully continuous automata -- and investigate to what extent similar properties or behaviours arise, and whether new properties can arise unique to continuous spaces. At the least, continuous automata are more able to show liquid and diffusive effects. But to proceed, we must consider each of the discrete aspects in turn:
+The CAs we have looked at so far are mostly discrete, and this is often evident in the results. There are several ways in which we can try to approximate fully continuous automata -- and investigate to what extent similar properties or behaviours arise, and whether new properties can arise unique to continuous spaces. 
 
-**Continuous states:** In this case, the states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0..1). We have seen some examples of this already (e.g. HodgePodge). The transition rule can no longer be a simple lookup table, but instead must map continuous ranges and/or functions. Comparators can be used to segment continuous space into ranges, and drive control flow, but the use of control flow implies that the output of the transition rule is still principally discontinuous. 
+What if our states were truly continuous -- any value (or at least, any value between 0.0 and 1.0)?
 
-**Continuous transition functions:** One step further requires that the transition rule be expressible as a purely mathematical function, that is predominantly smooth. That is, all transition rules are combined into a single function, which handles both continuous input and produces continuous output. A [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function), for example, is a continuous input & output function that nevertheless approximates the states of discrete functions.
+### Reaction Diffusion
+
+The reaction-diffusion model was proposed by Alan Turing to describe embryo development and pattern-generation ([Turing, A. The Chemical Basic for Morphogenesis.](http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf)); it is still used today in computer graphics ([Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf)). RD systems and other differential equation systems can be approximated using continuous automata.
+
+<iframe width="480" height="360" src="https://www.youtube.com/embed/8dTmUr5qKvI?rel=0" frameborder="0" allowfullscreen></iframe>
+
+One approach to simulating RD using CA is the *Gray-Scott* model, as described in [Pearson, J. E. Complex Patterns in a Simple System](http://arxiv.org/pdf/patt-sol/9304003.pdf). A browser-based example is [here](https://pmneila.github.io/jsexp/grayscott/).
+
+There is [a wonderful archive of this model at this webpage](http://mrob.com/pub/comp/xmorphia/), including many great video examples of the [u-skate world](http://www.youtube.com/watch?v=F5oKgVZ6bTk), and even [u-skate in 3D](http://www.youtube.com/watch?v=B03lcPEmSOQ). 
+
+![The Gray-Scott parameter map](img/xmorphia-parameter-map.jpg)
+
+<!--
+
+Here is this model at a lower resolution using our starter kit:
+
+<p data-height="300" data-theme-id="18447" data-slug-hash="roZXmR" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Reaction Diffusion: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/roZXmR/">Reaction Diffusion: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+-->
+
+Some of these systems share resemblance with analog video feedback ([example](http://www.youtube.com/watch?v=hDYEVv9t32U), [example](http://www.youtube.com/watch?v=Uw5onuS2_mw)), which has been exploited by earlier media artists (notably the Steiner and Woody Vasulka). 
+
+### Fully continuous automata
+
+Is it possible to completely eliminate discreteness in all aspects, to create a truly continuous CA?  To do so, let's return to our original definition of a CA, and for each component in turn, change discrete into continuous:
+
+**States:** In this case, the states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0.0 to 1.0). The [Hodgepodge model](#hodgepodge) pointed down this path. With a continuous range of states, the transition rule can no longer be a simple lookup table, but instead must map continuous ranges. Comparators can be used to segment continuous space into ranges, and drive control flow, but the use of control flow implies that the output of the transition rule is still principally discontinuous. 
+
+**Transition functions:** One step further requires that the transition rule be expressible as a purely mathematical function, that is predominantly smooth. That is, all transition rules are combined into a single function, which handles both continuous input and produces continuous output. A [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function), for example, is a continuous input & output function that nevertheless approximates the states of discrete functions.
 
 ![sigmoid](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/600px-Logistic-curve.svg.png)
 
-Another option here is to introduce probabilistic functions. Finding a continuous system whose behaviours persist with the addition of some random noise is tantamount to finding an interesting system that is *robust to perturbations* -- a useful feature for anything that must interact with the real world!
+Another option here is to use probabilistic functions. Finding a continuous system whose behaviours persist with the addition of some random noise is tantamount to finding an interesting system that is *robust to perturbations* -- a useful feature for anything that must interact with the real world!
 
-**Continuous neighborhood:** Instead of simply considering whole neighbor cells, we may want to apply some kind of weighted average over the surrounding region -- a sampling "kernel".  Proper weighting of a kernel can eliminate much of the artifacts due to regular grid spacing. 
+**Neighborhood:** Instead of simply considering whole neighbor cells, we may want to apply some kind of weighted average over the surrounding region -- a sampling "kernel".  Proper weighting of a kernel can eliminate much of the artifacts due to regular grid spacing.  This is similar to how we can apply certain kinds of blur to images, such as Gaussian blur.
 
-The kernel could be simply expressed as an inner and outer radius, for example, or an ideal distance with sampling weighted according to a function of distance from this radius. 
+The kernel could be simply expressed as an inner and outer radius, for example, or an ideal distance with sampling weighted according to a function of distance from this radius.  This is like the subtraction of a smaller blur from a larger blur.
 
 If radii are not expected to change, then kernel locations and weights can be pre-computed. Nevertheless, continuous neighborhood sampling can easily become processor-intensive. It may also be viable to explore a statistical sampling strategy, selecting each time only a random sub-set of the possible sampling locations to create a cheaper approximation of continuous sampling.
 
-Another option is to apply an intermediate process of diffusion -- i.e. blur -- across the entire space between each application of the transition rule. However it is important that the diffusion kernel is mass-preserving -- that is, that repeated applications of the blur will not make the sum of all cell values greater or lesser.
+Another option is to apply an intermediate process of diffusion -- i.e. blur -- across the entire space between each application of the transition rule. However it is important that the diffusion kernel is mass-preserving -- that is, that repeated applications of the blur will not make the sum of all cell values greater or lesser. 
 
-**Continuous time:** Instead of simply outputting a new state, change may be spread over time as a *differential*. That is, what is output from the transition function is an offset to accumulate to the current state. 
+**Time:** How can we turn discrete steps in time into a smooth flow? Instead of simply outputting a new state, change may be spread over time as a *differential*. That is, what is output from the transition function is an offset to accumulate to the current state. 
 
 This offset may also be distributed over a weighted neighbourhood, rather than a single state. 
 
@@ -434,24 +463,7 @@ Lenia continues in the spirit of SmoothLife, and has been extensively explored &
 - [Winner in Virtual Creatures Contest, GECCO 2018, Kyoto](https://virtualcreatures.github.io/)
 - [Honorable Mention in ALife Art Award, ALIFE 2018, Tokyo.](http://artaward2018.alifelab.org/)
 
-### Reaction Diffusion
-
-The reaction-diffusion model was proposed by Alan Turing to describe embryo development and pattern-generation ([Turing, A. The Chemical Basic for Morphogenesis.](http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf)); it is still used today in computer graphics ([Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf)). RD systems and other differential equation systems can be approximated using continuous automata.
-
-<iframe width="480" height="360" src="https://www.youtube.com/embed/8dTmUr5qKvI?rel=0" frameborder="0" allowfullscreen></iframe>
-
-One approach to simulating RD using CA is the *Gray-Scott* model, as described in [Pearson, J. E. Complex Patterns in a Simple System](http://arxiv.org/pdf/patt-sol/9304003.pdf). A browser-based example is [here](https://pmneila.github.io/jsexp/grayscott/).
-
-There is [a wonderful archive of this model at this webpage](http://mrob.com/pub/comp/xmorphia/), including many great video examples of the [u-skate world](http://www.youtube.com/watch?v=F5oKgVZ6bTk), and even [u-skate in 3D](http://www.youtube.com/watch?v=B03lcPEmSOQ). 
-
-![The Gray-Scott parameter map](img/xmorphia-parameter-map.jpg)
-
-Here is this model at a lower resolution using our starter kit:
-
-<p data-height="300" data-theme-id="18447" data-slug-hash="roZXmR" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Reaction Diffusion: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/roZXmR/">Reaction Diffusion: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
-Some of these systems share resemblance with analog video feedback ([example](http://www.youtube.com/watch?v=hDYEVv9t32U), [example](http://www.youtube.com/watch?v=Uw5onuS2_mw)), which has been exploited by earlier media artists (notably the Steiner and Woody Vasulka). 
+<!--
 
 ## Spatial transformation systems 
 
