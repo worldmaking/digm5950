@@ -158,11 +158,35 @@ Your Assignment 1 will a novel Cellular Automata of your own design & invention,
 
 ---
 
-### Example - Brian's Brain (adding more states)
+### Brian's Brain
 
 Game of Life has only two states, 0 and 1, but we could have more states. For example, here is "Brian's Brain". In this CA there are 3 states, which we typically encode as `1.0`, `0.5`, and `0.0`.
 
 https://www.shadertoy.com/view/t3tcDN
+
+
+### HodgePodge
+
+This example has three states -- but one of them has a continuous range of values.  It is initially described as an infection model, but really it is something quite a bit stranger. 
+
+Cells have a value between 0.0 and 1.0, where
+- 0.0 means healthy
+- 1.0 means sick
+- any number between 0.0 and 1.0 means infected but not yet sick
+
+https://www.shadertoy.com/view/3XcyRs
+
+This system typically goes through several stages:
+- first a mass pulsing, more or less synchronized with a textured brain-like pattern
+- then circular pulsing pockets begin to appear and grow, with waves pushing to larger regions at different phases
+- then spiral patterns begin to appear and overcome the still growing pulsations
+- then the spirals break down under their own advection into smaller spirals while the bigger waves consume the remaining space
+
+The crucial parameter to vary these behaviors is the sickness rate.
+
+The spiral patterns here are characteristic of Reaction Diffusion systems, which we will explore further later. 
+
+See http://www.sciencedirect.com/science/article/pii/016727898990081X#
 
 
 ## Probabilistic/Stochastic CA
@@ -319,32 +343,53 @@ A CA-inspired digital physics hypothesis is currently being promoted by Stephen 
 
 Those models are determinsitic, but particle CA can also use probabilistic rules to simulate brownian motions (like our termite explorers) and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a *dissipative system*).
 
+
+## Probabilistic CA
+
+We have already seen one example of a probabilistic CA above (the [Forest Fire](#forest-fire) model). 
+
+The key factor in a probabilistic model is how you calculate the probability of a change.  In the forest fire model, these were simply constants, but are only tested according the presence of particular types of neighbors (burning trees, empty land, etc.). 
+
+In many probabilistic models, the probability of a change depends on the local difference of a cell from its neighbors. This kind of model is sometimes called a [contact process](https://en.wikipedia.org/wiki/Contact_process_(mathematics)) model. It can be used to model the spread of infection, voter bias, or behaviours of fundamental physics. 
+
+A simple infection model, for example:
+	- infected sites become healthy at a constant rate
+	- healty sites become infected at a rate proportional to the number infected neighbours
+
+Could you implement this?  Could you extend it to incorporate effects of vaccination, social distancing, multiple diseases, etc.? 
+
+### Ising model
+
+The *Ising model* of ferromagnetism in statistical mechanics models the probability of a point in space flipping between positive or negative spin.  The probability of this change happening depends on the **local entropy**: the probability is higher if the change of state would move the site closer to energetic equilibrium with its local neigborhood. That is, nearby cells are more likely to become the same than to become different.
+
+However, there is also an increasing chance of a site changing state according to the local temperature. Thus at high temperatures, the system remains noisy, while at lower temperatures it gradually self-organizes into grouped zones with equal spin.  This idea of a **temperature control** generalizes to many kinds of systems. 
+
+**This creates two opposing forces, one diffusion like, which promotes order, and one destructive, which induces chaos.**
+
+https://www.shadertoy.com/view/tXtcz2
+
+
 <!--
-## Probabilistic Asynchronous CA
-
-Chooses the next active cell according to a random selection.
-
-The *Ising model* of ferromagnetism in statistical mechanics can be simulated in a *Monte Carlo* fashion: Each site (cell) has either positive or negative spin (we can encode that as 0 or 1 value). At each time step, consider a site at random, and evaluate the probability of changing state. If changing state moves the site closer to energetic equilibrium with its neighbors (determined according to the [Hamiltonian](https://en.wikipedia.org/wiki/Hamiltonian_(quantum_mechanics)) of the site), then the change is made. Otherwise, the change is made only with a small probability that is dependent on the energetic difference and overall temperature. Thus at high temperatures, the system remains noisy, while at low temperatures it gradually self-organizes into all sites with equal spin.
-
 A simplified Ising model on codepen -- try changing the temperature:
 
 <p data-height="300" data-theme-id="18447" data-slug-hash="wREVKe" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Simple Ising: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/wREVKe/">Simple Ising: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-The [contact process](https://en.wikipedia.org/wiki/Contact_process_(mathematics)) model has been used to simulate the spread of infection (and changes of opinion in voting): infected sites become healthy at a constant rate, while healthy sites become infected at a rate proportional to the number infected neighbours (see also the HodgePodge simulation below). This can be extented to multiple states for a multitype contact process.
-
 <p data-height="300" data-theme-id="18447" data-slug-hash="bOxXEo" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="HodgePodge: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/bOxXEo/">HodgePodge: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
+-->
 ### Large/unbounded/complex states
 
-The cellular *Potts model* (also known as the *Glazier-Graner* model) generalizes probabilistic asynchronous CA to allow more than two site states, and in some cases, an unbounded number of possible site states; however it still utilizes the notion of statistical movement toward neighbor equilibrium to drive change, though the definition of a local Hamiltonian. Variations have been used to model grain growth, foam, fluid flow, chemotaxis, biological cells, and even the developmental cycle of whole organisms. 
+The cellular *Potts model* (also known as the *Glazier-Graner* model) generalizes probabilistic CA beyond the two states of the Ising model to allow morestates, and in some cases, an unbounded number of possible site states; however it still utilizes the notion of statistical movement toward neighbor equilibrium to drive change, though the definition of a local Hamiltonian. Variations have been used to model grain growth, foam, fluid flow, chemotaxis, biological cells, and even the developmental cycle of whole organisms. 
 
 > Note that in this subfield of research, the term *cell* is used not to refer to a site on the lattice, but to a whole group of connected sites that share the same state. So in modeling foam, a *cell* represents a single bubble, and is made of one or more *sites*. Most changes therefore happen at the boundaries between these cells.
 
 Stan Marée used this model to simulate the whole life cycle of [Dictyostelium discoideum](https://www.researchgate.net/publication/46594643_Phototaxis_during_the_slug_stage_of_Dictyostelium_discoideum_A_model_study)!
 
 States need not be discrete integers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. 
+
+<!--
 
 ## Continuous automata
 
