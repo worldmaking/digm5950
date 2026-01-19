@@ -253,12 +253,14 @@ https://www.shadertoy.com/view/t33cWs
 
 Temporal non-homogeneity can be used to perform a sequence of different filters, or otherwise help to build long- as well as short-term arcs of behaviour.
 
-- The neighborhood selection rules could change over time (also see particle CA below).
-- The rules used could alternate between different rule definitions, over a period of N frames. Or certain parameters to rules could cycle over certain periods. Scott Draves' [Bomb](http://scottdraves.com/bomb.html) modulated parameters continuously, with different rule sets picking up the last as their new initial conditions.
+- The neighborhood selection rules could change over time.
+- The rules used could alternate between different rule definitions, over a period of N frames. 
+  - Can you modify the "Game of Brains" example above to do this? What values of N are more interesting? Why?
+- Or certain parameters to rules could cycle over certain periods. Scott Draves' [Bomb](http://scottdraves.com/bomb.html) modulated parameters continuously, with different rule sets picking up the last as their new initial conditions.
 - Variations of space/rule/neighborhood could depend on global conditions, such as the overall density of black and white cells, or due to user interactions.
 - Other combinations of the above (and below)
 
-One has to be careful though: it could be that introducing these variations is not really different to a slightly more complex, but homogenous, CA.
+Are these variations sometimes still equivalent to a slightly more complex, but temporally homogenous, CA?
 
 <!--
 
@@ -286,20 +288,24 @@ There could be more than one 'active cell' -- there could even be a list of curr
 	- At a white square, turn 90° right, flip the color of the square, move forward one unit
 	- At a black square, turn 90° left, flip the color of the square, move forward one unit
 		
-See our JavaScript version:
+See our old JavaScript version here:
 
 <p data-height="300" data-theme-id="18447" data-slug-hash="RWrdoq" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Langton's Ant: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/RWrdoq/">Langton's Ant: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-A variation with multiple ants:
+At this slow speed, it doesn't seem like anything interesting is going to happen. But if we speed it up (by running more than one simulation step per frame), something unexpected happens!
 
-<p data-height="300" data-theme-id="18447" data-slug-hash="LMJwVP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Multiple Langton Ants: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/LMJwVP/">Multiple Langton Ants: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-		
 The [original video by Christopher Langton](http://www.youtube.com/watch?v=w6XQQhCgq5c), including examples of multiple ants (and music by the Vasulkas):
 
 <iframe width="480" height="360" src="https://www.youtube.com/embed/w6XQQhCgq5c?rel=0" frameborder="0" allowfullscreen></iframe>
 
+---youtube:w6XQQhCgq5c
+
+Here's a variation with multiple ants:
+
+<p data-height="300" data-theme-id="18447" data-slug-hash="LMJwVP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Multiple Langton Ants: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/LMJwVP/">Multiple Langton Ants: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+		
 How would you implement this in GLSL?  
 Every cell has the following values:
 - cell value (0 or 1)

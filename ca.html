@@ -294,12 +294,16 @@ footer {
 <h2 id="temporally-non-homogenous-ca">Temporally Non-homogenous CA</h2>
 <p>Temporal non-homogeneity can be used to perform a sequence of different filters, or otherwise help to build long- as well as short-term arcs of behaviour.</p>
 <ul>
-<li>The neighborhood selection rules could change over time (also see particle CA below).</li>
-<li>The rules used could alternate between different rule definitions, over a period of N frames. Or certain parameters to rules could cycle over certain periods. Scott Draves&#39; <a href="http://scottdraves.com/bomb.html">Bomb</a> modulated parameters continuously, with different rule sets picking up the last as their new initial conditions.</li>
+<li>The neighborhood selection rules could change over time.</li>
+<li>The rules used could alternate between different rule definitions, over a period of N frames. <ul>
+<li>Can you modify the &quot;Game of Brains&quot; example above to do this? What values of N are more interesting? Why?</li>
+</ul>
+</li>
+<li>Or certain parameters to rules could cycle over certain periods. Scott Draves&#39; <a href="http://scottdraves.com/bomb.html">Bomb</a> modulated parameters continuously, with different rule sets picking up the last as their new initial conditions.</li>
 <li>Variations of space/rule/neighborhood could depend on global conditions, such as the overall density of black and white cells, or due to user interactions.</li>
 <li>Other combinations of the above (and below)</li>
 </ul>
-<p>One has to be careful though: it could be that introducing these variations is not really different to a slightly more complex, but homogenous, CA.</p>
+<p>Are these variations sometimes still equivalent to a slightly more complex, but temporally homogenous, CA?</p>
 <!--
 
 ---
@@ -325,27 +329,28 @@ Rather than updating all cells at once, some other policy of visiting cells to u
 <ul>
 <li><a href="http://en.wikipedia.org/wiki/Langton%27s_ant">Langton&#39;s Ant</a> is a mobile CA in a 2D, two-state space, with very simple rules:<ul>
 <li>At a white square, turn 90° right, flip the color of the square, move forward one unit</li>
-<li>At a black square, turn 90° left, flip the color of the square, move forward one unitSee our JavaScript version:</li>
+<li>At a black square, turn 90° left, flip the color of the square, move forward one unitSee our old JavaScript version here:</li>
 </ul>
 </li>
 </ul>
 <p data-height="300" data-theme-id="18447" data-slug-hash="RWrdoq" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Langton's Ant: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/RWrdoq/">Langton's Ant: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-<p>A variation with multiple ants:</p>
+<p>At this slow speed, it doesn&#39;t seem like anything interesting is going to happen. But if we speed it up (by running more than one simulation step per frame), something unexpected happens!</p>
+<p>The <a href="http://www.youtube.com/watch?v=w6XQQhCgq5c">original video by Christopher Langton</a>, including examples of multiple ants (and music by the Vasulkas):</p>
+<iframe width="480" height="360" src="https://www.youtube.com/embed/w6XQQhCgq5c?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="720" height="540" src="https://youtube.com/embed/w6XQQhCgq5c" frameborder="0" allowfullscreen></iframe>
+
+<p>Here&#39;s a variation with multiple ants:</p>
 <p data-height="300" data-theme-id="18447" data-slug-hash="LMJwVP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Multiple Langton Ants: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/LMJwVP/">Multiple Langton Ants: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
         
-The [original video by Christopher Langton](http://www.youtube.com/watch?v=w6XQQhCgq5c), including examples of multiple ants (and music by the Vasulkas):
+How would you implement this in GLSL?  
+Every cell has the following values:
+- cell value (0 or 1)
+- ant present (0 or 1) 
+- ant direction (0, 0.25, 0.5, 0.75 for E, N, W, S?)
 
-<iframe width="480" height="360" src="https://www.youtube.com/embed/w6XQQhCgq5c?rel=0" frameborder="0" allowfullscreen></iframe>
-
-<p>How would you implement this in GLSL?<br>Every cell has the following values:</p>
-<ul>
-<li>cell value (0 or 1)</li>
-<li>ant present (0 or 1) </li>
-<li>ant direction (0, 0.25, 0.5, 0.75 for E, N, W, S?)</li>
-</ul>
 <p>On every step, check the 4 neighbours; if there&#39;s an ant, and it is heading our way, move it into our cell, rotate its direction, and flip our cell value </p>
 <p><a href="https://www.shadertoy.com/view/W33yRS">https://www.shadertoy.com/view/W33yRS</a></p>
 <h3 id="termites">Termites</h3>
