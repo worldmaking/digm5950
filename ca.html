@@ -214,20 +214,40 @@ footer {
 <p>Your Assignment 1 will a novel Cellular Automata of your own design &amp; invention, implemented using Shadertoy. </p>
 <hr>
 <h3 id="brians-brain">Brian&#39;s Brain</h3>
-<p>Game of Life has only two states, 0 and 1, but we could have more states. For example, here is &quot;Brian&#39;s Brain&quot;. In this CA there are 3 states, which we typically encode as <code>1.0</code>, <code>0.5</code>, and <code>0.0</code>.</p>
+<p>Game of Life has only two states, 0 and 1, but we could have more states. For example, in the &quot;Brian&#39;s Brain&quot; CA, there are 3 states, which we typically encode as <code>1.0</code> (activated), <code>0.5</code> (decaying), and <code>0.0</code> (off).</p>
+<p>The rules are simple: </p>
+<ul>
+<li>If we are activated (1.0), we decay to 0.5 (decaying).  </li>
+<li>If we have decayed to 0.5, but exactly 2 of our 8 neighbors are activated, we also reactivate to 1.0. </li>
+<li>Otherwise, we turn off (0.0)</li>
+</ul>
+<p>It&#39;s pretty easy to build this if we start from the Game of Life. </p>
 <p><a href="https://www.shadertoy.com/view/t3tcDN">https://www.shadertoy.com/view/t3tcDN</a></p>
 <h3 id="hodgepodge">HodgePodge</h3>
-<p>This example has three named states -- but one of them includes a whole set of possible values.  </p>
-<p>It is initially described as an infection model, but really it is something quite a bit stranger. </p>
+<p>The HodgePodge CA also has three named states -- &quot;healthy&quot;, &quot;infected&quot;, and &quot;sick&quot;, -- but one of them (&quot;infected&quot;) includes a whole range of possible values: </p>
 <ul>
-<li><p>0.0 means healthy</p>
+<li>0.0 means healthy</li>
+<li>1.0 means sick</li>
+<li>Any other values between 0.0 and 1.0 mean infected but not yet sick. </li>
+</ul>
+<p>(In the reference implementation, there are 254 possible values of increasing infection, so this is actually a 256-state automaton.)</p>
+<p>The transition rule is a bit more complex:</p>
+<ul>
+<li>If we are sick (1.0)<ul>
+<li>We automatically heal to 0.0</li>
+</ul>
 </li>
-<li><p>1.0 means sick</p>
+<li>If we are infected<ul>
+<li>We continue to be infected, with some factors depending on the average level of infection and sickness in our neighborhood</li>
+</ul>
 </li>
-<li><p>Posisble values between 0.0 and 1.0 mean infected but not yet sick. </p>
-<p>In the reference implementation, there are 254 possible values of increasing infection, so this is actually a 256-state automaton.</p>
+<li>If we are healthy<ul>
+<li>We become infected with some different factors depending on the average level of infection and sickness in our neighborhood</li>
+</ul>
 </li>
 </ul>
+<p>Despite the terminology of infection &amp; sickness, this really isn&#39;t a good model of contagion; but what it does is quite strange and interesting. </p>
+<p>Can you predict from the algorithm what it might do? Let&#39;s look at the code a bit first, before we run it.  </p>
 <p><a href="https://www.shadertoy.com/view/3XcyRs">https://www.shadertoy.com/view/3XcyRs</a></p>
 <p>This system typically goes through several stages:</p>
 <ul>
@@ -244,29 +264,31 @@ footer {
 <h2 id="probabilisticstochastic-ca">Probabilistic/Stochastic CA</h2>
 <p>In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.</p>
 <h3 id="forest-fire">Forest Fire</h3>
-<ul>
-<li>A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:</li>
-</ul>
+<p>A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:</p>
 <p data-height="300" data-theme-id="18447" data-slug-hash="OroeKW" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Forest Fire: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/OroeKW/">Forest Fire: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-<p>Unfortunately, this one poses a few challenges in GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator. We can work around this partly by applying our probability tests against two values at the same time, e.g. </p>
-<pre><code class="language-glsl"><span class="hljs-keyword">if</span> (noise.x &lt; growth_probability &amp;&amp; noise.y &lt; growth_probability) {}
+<p>Unfortunately, this one poses a few challenges to translate to GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator we have availble in our GLSL code. </p>
+<p>We can work around this partly by applying our probability tests against two values at the same time, e.g. </p>
+<pre><code class="language-glsl"><span class="hljs-keyword">if</span> (noise.x &lt; growth_probability &amp;&amp; noise.y &lt; growth_probability) {
+
+}
 </code></pre>
 <p><a href="https://www.shadertoy.com/view/tXdcDN">https://www.shadertoy.com/view/tXdcDN</a></p>
 <p>Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here. </p>
-<ul>
-<li>Probabilistic/statistical choices can be combined with other variations below, such as spatially non-homogenous probabilities, statistical rules and neighbourhoods, etc.</li>
-</ul>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="spatially-non-homogenous-ca">Spatially Non-homogenous CA</h2>
-<p>The rule is not the same for all cells. Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissipate, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).</p>
+<p>Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissapear, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).</p>
+<p>CA can be further varied with other spatially non-homogenous properties, such as:</p>
 <ul>
 <li>Creating unusual neighbourhoods (or simply, non-totalistic ones) can introduce interesting spatial biases to behaviour.</li>
 <li>Special <em>boundary</em> cells in the field may follow different rules from others.</li>
-<li>Some rules may depend on the cell position; perhaps the same CA has different regions using different rules. These can be implemented by changing the function used in the transition rule, or by extending the state set to accommodate the differences. Changing the function is usually easier to implement and understand.</li>
+<li>Changing parameters, such as statistical probabilities, over space.</li>
+<li>Some rules may depend on the cell position; perhaps the same CA has different regions using different rules. These can be implemented by changing the function used in the transition rule, or parameterizing that rule based on the current region.</li>
 </ul>
+<p>What happens if the regions are moving?</p>
+<p><a href="https://www.shadertoy.com/view/t33cWs">https://www.shadertoy.com/view/t33cWs</a></p>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="temporally-non-homogenous-ca">Temporally Non-homogenous CA</h2>

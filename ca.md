@@ -160,21 +160,37 @@ Your Assignment 1 will a novel Cellular Automata of your own design & invention,
 
 ### Brian's Brain
 
-Game of Life has only two states, 0 and 1, but we could have more states. For example, here is "Brian's Brain". In this CA there are 3 states, which we typically encode as `1.0`, `0.5`, and `0.0`.
+Game of Life has only two states, 0 and 1, but we could have more states. For example, in the "Brian's Brain" CA, there are 3 states, which we typically encode as `1.0` (activated), `0.5` (decaying), and `0.0` (off).
+
+The rules are simple: 
+- If we are activated (1.0), we decay to 0.5 (decaying).  
+- If we have decayed to 0.5, but exactly 2 of our 8 neighbors are activated, we also reactivate to 1.0. 
+- Otherwise, we turn off (0.0)
+
+It's pretty easy to build this if we start from the Game of Life. 
 
 https://www.shadertoy.com/view/t3tcDN
 
-
 ### HodgePodge
 
-This example has three named states -- but one of them includes a whole set of possible values.  
-
-It is initially described as an infection model, but really it is something quite a bit stranger. 
+The HodgePodge CA also has three named states -- "healthy", "infected", and "sick", -- but one of them ("infected") includes a whole range of possible values: 
 - 0.0 means healthy
 - 1.0 means sick
-- Posisble values between 0.0 and 1.0 mean infected but not yet sick. 
- 
-In the reference implementation, there are 254 possible values of increasing infection, so this is actually a 256-state automaton.
+- Any other values between 0.0 and 1.0 mean infected but not yet sick. 
+
+(In the reference implementation, there are 254 possible values of increasing infection, so this is actually a 256-state automaton.)
+
+The transition rule is a bit more complex:
+- If we are sick (1.0)
+  - We automatically heal to 0.0
+- If we are infected
+  - We continue to be infected, with some factors depending on the average level of infection and sickness in our neighborhood
+- If we are healthy
+  - We become infected with some different factors depending on the average level of infection and sickness in our neighborhood
+
+Despite the terminology of infection & sickness, this really isn't a good model of contagion; but what it does is quite strange and interesting. 
+
+Can you predict from the algorithm what it might do? Let's look at the code a bit first, before we run it.  
 
 https://www.shadertoy.com/view/3XcyRs
 
@@ -195,32 +211,43 @@ See http://www.sciencedirect.com/science/article/pii/016727898990081X#
 
 In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.
 
+
 ### Forest Fire
 
-- A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:
+A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:
 
 <p data-height="300" data-theme-id="18447" data-slug-hash="OroeKW" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Forest Fire: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/OroeKW/">Forest Fire: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-Unfortunately, this one poses a few challenges in GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator. We can work around this partly by applying our probability tests against two values at the same time, e.g. 
+Unfortunately, this one poses a few challenges to translate to GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator we have availble in our GLSL code. 
+
+We can work around this partly by applying our probability tests against two values at the same time, e.g. 
 
 ```glsl
-if (noise.x < growth_probability && noise.y < growth_probability) {}
+if (noise.x < growth_probability && noise.y < growth_probability) {
+
+}
 ```
 
 https://www.shadertoy.com/view/tXdcDN
 
 Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here. 
 
-- Probabilistic/statistical choices can be combined with other variations below, such as spatially non-homogenous probabilities, statistical rules and neighbourhoods, etc.
 
 ## Spatially Non-homogenous CA
 
-The rule is not the same for all cells. Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissipate, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).
+Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissapear, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).
+
+CA can be further varied with other spatially non-homogenous properties, such as:
 
 - Creating unusual neighbourhoods (or simply, non-totalistic ones) can introduce interesting spatial biases to behaviour.
 - Special *boundary* cells in the field may follow different rules from others.
-- Some rules may depend on the cell position; perhaps the same CA has different regions using different rules. These can be implemented by changing the function used in the transition rule, or by extending the state set to accommodate the differences. Changing the function is usually easier to implement and understand.
+- Changing parameters, such as statistical probabilities, over space.
+- Some rules may depend on the cell position; perhaps the same CA has different regions using different rules. These can be implemented by changing the function used in the transition rule, or parameterizing that rule based on the current region.
+
+What happens if the regions are moving?
+
+https://www.shadertoy.com/view/t33cWs
 
 ## Temporally Non-homogenous CA
 
