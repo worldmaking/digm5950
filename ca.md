@@ -293,7 +293,9 @@ See our old JavaScript version here:
 <p data-height="300" data-theme-id="18447" data-slug-hash="RWrdoq" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Langton's Ant: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/RWrdoq/">Langton's Ant: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-At this slow speed, it doesn't seem like anything interesting is going to happen. But if we speed it up (by running more than one simulation step per frame), something unexpected happens!
+At this slow speed, it doesn't seem like anything interesting is going to happen. It looks like it will gradually turn everything into noise. 
+
+But if we speed it up (by running more than one simulation step per frame), something unexpected happens!
 
 The [original video by Christopher Langton](http://www.youtube.com/watch?v=w6XQQhCgq5c), including examples of multiple ants (and music by the Vasulkas):
 
@@ -301,21 +303,23 @@ The [original video by Christopher Langton](http://www.youtube.com/watch?v=w6XQQ
 
 ---youtube:w6XQQhCgq5c
 
-Here's a variation with multiple ants:
+It is interesting seeing what happens with more than one ant in the space:
 
 <p data-height="300" data-theme-id="18447" data-slug-hash="LMJwVP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Multiple Langton Ants: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/LMJwVP/">Multiple Langton Ants: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 		
-How would you implement this in GLSL?  
-Every cell has the following values:
-- cell value (0 or 1)
-- ant present (0 or 1) 
-- ant direction (0, 0.25, 0.5, 0.75 for E, N, W, S?)
+How would we implement this in GLSL? Let's start with what data is in each cell:
+- The cell value (0 or 1)
+- Is there an ant present? (0 or 1)
+- What direction is the ant traveling? (e.g. 0, 0.25, 0.5, 0.75 for E, N, W, S?)
 
-On every step, check the 4 neighbours; if there's an ant, and it is heading our way, move it into our cell, rotate its direction, and flip our cell value 
+The rules are more difficult to implement. They are described as being 'from the point of view of the ant', but in shader programming, we have to think of things 'from the point of view of the pixel'.  What activities can change our pixel's current values?
+- Ants are always moving. If the current pixel had an ant, that ant has now gone. 
+- We have to check our neighbors to see if they have an ant that is moving into us. For example, if the cell to the North has an ant that is moving South, then it moves into us, flips the color, and sets a new direction. 
 
 https://www.shadertoy.com/view/W33yRS
 
+We can't easily speed this up. Starting from one ant, it takes over a minute for the structure to appear. But what we can do is seed it with thousands of ants! 
 
 ### Termites
 

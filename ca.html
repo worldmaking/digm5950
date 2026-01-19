@@ -336,23 +336,28 @@ Rather than updating all cells at once, some other policy of visiting cells to u
 <p data-height="300" data-theme-id="18447" data-slug-hash="RWrdoq" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Langton's Ant: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/RWrdoq/">Langton's Ant: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-<p>At this slow speed, it doesn&#39;t seem like anything interesting is going to happen. But if we speed it up (by running more than one simulation step per frame), something unexpected happens!</p>
+<p>At this slow speed, it doesn&#39;t seem like anything interesting is going to happen. It looks like it will gradually turn everything into noise. </p>
+<p>But if we speed it up (by running more than one simulation step per frame), something unexpected happens!</p>
 <p>The <a href="http://www.youtube.com/watch?v=w6XQQhCgq5c">original video by Christopher Langton</a>, including examples of multiple ants (and music by the Vasulkas):</p>
 <iframe width="480" height="360" src="https://www.youtube.com/embed/w6XQQhCgq5c?rel=0" frameborder="0" allowfullscreen></iframe>
 <iframe width="720" height="540" src="https://youtube.com/embed/w6XQQhCgq5c" frameborder="0" allowfullscreen></iframe>
 
-<p>Here&#39;s a variation with multiple ants:</p>
+<p>It is interesting seeing what happens with more than one ant in the space:</p>
 <p data-height="300" data-theme-id="18447" data-slug-hash="LMJwVP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Multiple Langton Ants: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/LMJwVP/">Multiple Langton Ants: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
         
-How would you implement this in GLSL?  
-Every cell has the following values:
-- cell value (0 or 1)
-- ant present (0 or 1) 
-- ant direction (0, 0.25, 0.5, 0.75 for E, N, W, S?)
+How would we implement this in GLSL? Let's start with what data is in each cell:
+- The cell value (0 or 1)
+- Is there an ant present? (0 or 1)
+- What direction is the ant traveling? (e.g. 0, 0.25, 0.5, 0.75 for E, N, W, S?)
 
-<p>On every step, check the 4 neighbours; if there&#39;s an ant, and it is heading our way, move it into our cell, rotate its direction, and flip our cell value </p>
+<p>The rules are more difficult to implement. They are described as being &#39;from the point of view of the ant&#39;, but in shader programming, we have to think of things &#39;from the point of view of the pixel&#39;.  What activities can change our pixel&#39;s current values?</p>
+<ul>
+<li>Ants are always moving. If the current pixel had an ant, that ant has now gone. </li>
+<li>We have to check our neighbors to see if they have an ant that is moving into us. For example, if the cell to the North has an ant that is moving South, then it moves into us, flips the color, and sets a new direction. </li>
+</ul>
 <p><a href="https://www.shadertoy.com/view/W33yRS">https://www.shadertoy.com/view/W33yRS</a></p>
+<p>We can&#39;t easily speed this up. Starting from one ant, it takes over a minute for the structure to appear. But what we can do is seed it with thousands of ants! </p>
 <h3 id="termites">Termites</h3>
 <p>Mitchel Resnick&#39;s termite model is a random walker in a space that can contain woodchips, in which each termite can carry one woodchip at a time. The program for a termite looks something like this:</p>
 <ul>
