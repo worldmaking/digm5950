@@ -39,10 +39,6 @@ footer {
 <li><a href="#hodgepodge">HodgePodge</a></li>
 </ul>
 </li>
-<li><a href="#probabilisticstochastic-ca">Probabilistic/Stochastic CA</a><ul>
-<li><a href="#forest-fire">Forest Fire</a></li>
-</ul>
-</li>
 <li><a href="#spatially-non-homogenous-ca">Spatially Non-homogenous CA</a></li>
 <li><a href="#temporally-non-homogenous-ca">Temporally Non-homogenous CA</a></li>
 <li><a href="#mobile-ca">Mobile CA</a><ul>
@@ -51,15 +47,18 @@ footer {
 </ul>
 </li>
 <li><a href="#particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</a><ul>
-<li><a href="#some-observations">Some observations</a></li>
+<li><a href="#block-rule-ca">Block rule CA</a></li>
+<li><a href="#digital-physics">Digital Physics</a></li>
 </ul>
 </li>
-<li><a href="#probabilistic-ca">Probabilistic CA</a><ul>
+<li><a href="#probabilisticstochastic-ca">Probabilistic/Stochastic CA</a><ul>
+<li><a href="#forest-fire">Forest Fire</a></li>
+<li><a href="#contact-processes">Contact processes</a></li>
 <li><a href="#ising-model">Ising model</a></li>
 <li><a href="#largeunboundedcomplex-states">Large/unbounded/complex states</a></li>
 </ul>
 </li>
-<li><a href="#continuous-automata">Continuous automata</a><ul>
+<li><a href="#continuous-state--function-ca">Continuous state &amp; function CA</a><ul>
 <li><a href="#reaction-diffusion">Reaction Diffusion</a></li>
 <li><a href="#fully-continuous-automata">Fully continuous automata</a></li>
 <li><a href="#smoothlife">Smoothlife</a></li>
@@ -261,23 +260,6 @@ footer {
 <p>See <a href="http://www.sciencedirect.com/science/article/pii/016727898990081X#">http://www.sciencedirect.com/science/article/pii/016727898990081X#</a></p>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
-<h2 id="probabilisticstochastic-ca">Probabilistic/Stochastic CA</h2>
-<p>In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.</p>
-<h3 id="forest-fire">Forest Fire</h3>
-<p>A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:</p>
-<p data-height="300" data-theme-id="18447" data-slug-hash="OroeKW" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Forest Fire: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/OroeKW/">Forest Fire: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
-<p>Unfortunately, this one poses a few challenges to translate to GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator we have availble in our GLSL code. </p>
-<p>We can work around this partly by applying our probability tests against two values at the same time, e.g. </p>
-<pre><code class="language-glsl"><span class="hljs-keyword">if</span> (noise.x &lt; growth_probability &amp;&amp; noise.y &lt; growth_probability) {
-
-}
-</code></pre>
-<p><a href="https://www.shadertoy.com/view/tXdcDN">https://www.shadertoy.com/view/tXdcDN</a></p>
-<p>Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here. </p>
-<hr>
-<p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="spatially-non-homogenous-ca">Spatially Non-homogenous CA</h2>
 <p>Spatial inhomogeneity can be interesting to simulate different geographies (such as boundaries). The simplest option is to prime the system with inhomogeneous initial conditions, but these differences can quickly dissapear, whereas varying other components of a CA spatially can have more profound results (though, as with randomness, care may need to be taken that these differences do not overly dominate the process).</p>
 <p>CA can be further varied with other spatially non-homogenous properties, such as:</p>
@@ -383,33 +365,28 @@ How would we implement this in GLSL? Let's start with what data is in each cell:
 <blockquote>
 <p>Note that our Ant and Termite models are not strictly mass-preserving: can you explain why? </p>
 </blockquote>
-<!--
-
-### Block rule CA
-
-Since mass-preservation can be ensured by considering the neighbourhood before *and* after each transition, rules are often expressed in terms of a *block*. For a 2D CA, the simplest block is a 2x2 region (the *Margolus neighborhood*).
-
-![Margolus neigborhood](img/mnhood.gif)
-
-A 2x2 block of 2-state automata has 2^3 = 16 possible configurations. A bit like a sprite-sheet in fact. So, one way of encoding a rule is to map all the 16 transitions in a lookup table. But, how does this "move"?
-
-A clever technique to simulate block-based rules is to shift the block grid on each successive frame, such that the even-aligned and then odd-aligned blocks interleave  ([see wikipedia](http://en.wikipedia.org/wiki/Block_cellular_automaton)). Note that a block rule CA does not need to be double-buffered, since block updates do not overlap. (By extension, a 3x3 block rule would need 3 steps to cover the space.)
-
-Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell/rullex_marg.html) -- many of these are implemented below. Note how simply the rules can be encoded using a minimal notation. Could you write a program to read this notation & turn it into a simulation? Could you use such an idea for other systems?
-
-<p data-height="300" data-theme-id="18447" data-slug-hash="NGxJpP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Block Rules: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/NGxJpP/">Block Rules: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
-- The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
--->
-
-<h3 id="some-observations">Some observations</h3>
 <ul>
 <li><p>Mass-preserving CAs can be guaranteed <em>not</em> to dissolve into homogenous final states of all-black/all-white/etc. -- which can alleviate any need for an external limiter to keep the balance -- but this does not mean they won&#39;t find a stable or cyclic end. (On the other hand, CAs whose rules do not appear to preserve mass can still avoid dissolution into homogeneity.)</p>
 </li>
 <li><p>Note that mass-preservation does not imply that the system is reversible. Reversibility is quite a different property, which states that each output neighbourhood can only be caused by a single predecessor neighbourhood. Some, but certainly not all, particle CAs are reversible.</p>
+<!--
+
 </li>
 </ul>
+<h3 id="block-rule-ca">Block rule CA</h3>
+<p>Since mass-preservation can be ensured by considering the neighbourhood before <em>and</em> after each transition, rules are often expressed in terms of a <em>block</em>. For a 2D CA, the simplest block is a 2x2 region (the <em>Margolus neighborhood</em>).</p>
+<p><img src="img/mnhood.gif" alt="Margolus neigborhood"></p>
+<p>A 2x2 block of 2-state automata has 2^3 = 16 possible configurations. A bit like a sprite-sheet in fact. So, one way of encoding a rule is to map all the 16 transitions in a lookup table. But, how does this &quot;move&quot;?</p>
+<p>A clever technique to simulate block-based rules is to shift the block grid on each successive frame, such that the even-aligned and then odd-aligned blocks interleave  (<a href="http://en.wikipedia.org/wiki/Block_cellular_automaton">see wikipedia</a>). Note that a block rule CA does not need to be double-buffered, since block updates do not overlap. (By extension, a 3x3 block rule would need 3 steps to cover the space.)</p>
+<p>Examples of 2x2 block rule CA are listed <a href="http://psoup.math.wisc.edu/mcell/rullex_marg.html">here</a> -- many of these are implemented below. Note how simply the rules can be encoded using a minimal notation. Could you write a program to read this notation &amp; turn it into a simulation? Could you use such an idea for other systems?</p>
+<p data-height="300" data-theme-id="18447" data-slug-hash="NGxJpP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Block Rules: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/NGxJpP/">Block Rules: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<ul>
+<li>The block-rule CA especially hints at another interpretation of CA as a pattern-based <em>rewriting system</em> -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template&#39;s corresponding result (or action). Can you think of other ways to use pattern-matching &amp; rewriting for CA?</li>
+<li>-&gt;</li>
+</ul>
+<h3 id="digital-physics">Digital Physics</h3>
 <p><img src="img/zuse.jpg" alt="Zuse&#39;s vision of nature"></p>
 <blockquote>
 <p>In 1969, German computer pioneer (and painter) Konrad Zuse published his book <a href="ftp://ftp.idsia.ch/pub/juergen/zuserechnenderraum.pdf">Calculating Space</a>, proposing that the physical laws of the universe are discrete by nature, and that the entire universe is the output of a deterministic computation on a single cellular automaton. This became the foundation of the field of study called <em>digital physics</em>. Zuse&#39;s first model is a 3D particle CA.</p>
@@ -418,19 +395,51 @@ Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell
 <p>Those models are determinsitic, but particle CA can also use probabilistic rules to simulate brownian motions (like our termite explorers) and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a <em>dissipative system</em>).</p>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
-<h2 id="probabilistic-ca">Probabilistic CA</h2>
-<p>We have already seen one example of a probabilistic CA above (the <a href="#forest-fire">Forest Fire</a> model). </p>
+<h2 id="probabilisticstochastic-ca">Probabilistic/Stochastic CA</h2>
+<p>In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.</p>
+<h3 id="forest-fire">Forest Fire</h3>
+<p>A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:</p>
+<p data-height="300" data-theme-id="18447" data-slug-hash="OroeKW" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Forest Fire: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/OroeKW/">Forest Fire: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+<p>Unfortunately, this one poses a few challenges to translate to GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator we have availble in our GLSL code. </p>
+<p>We can work around this partly by applying our probability tests against two values at the same time, e.g. </p>
+<pre><code class="language-glsl"><span class="hljs-keyword">if</span> (noise.x &lt; growth_probability &amp;&amp; noise.y &lt; growth_probability) {
+
+}
+</code></pre>
+<p><a href="https://www.shadertoy.com/view/tXdcDN">https://www.shadertoy.com/view/tXdcDN</a></p>
+<p>Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here. </p>
+<h3 id="contact-processes">Contact processes</h3>
 <p>The key factor in a probabilistic model is how you calculate the probability of a change.  In the forest fire model, these were simply constants, but are only tested according the presence of particular types of neighbors (burning trees, empty land, etc.). </p>
 <p>In many probabilistic models, the probability of a change depends on the local difference of a cell from its neighbors. This kind of model is sometimes called a <a href="https://en.wikipedia.org/wiki/Contact_process_(mathematics)">contact process</a> model. It can be used to model the spread of infection, voter bias, or behaviours of fundamental physics. </p>
 <p>A simple infection model, for example:
-    - infected sites become healthy at a constant rate
-    - healty sites become infected at a rate proportional to the number infected neighbours</p>
+    - infected sites become healthy at a constant probability
+    - healty sites become infected at a probability proportional to the number infected neighbours</p>
 <p>Could you implement this?  Could you extend it to incorporate effects of vaccination, social distancing, multiple diseases, etc.? </p>
+<p>(This is not the same as the <a href="#hodgepodge">Hodgepodge</a> we saw above -- that one was completely determinsitc, not stochastic.)</p>
+<p>Let&#39;s start from something simpler:</p>
 <h3 id="ising-model">Ising model</h3>
 <p>The <em>Ising model</em> of ferromagnetism in statistical mechanics models the probability of a point in space flipping between positive or negative spin.  The probability of this change happening depends on the <strong>local entropy</strong>: the probability is higher if the change of state would move the site closer to energetic equilibrium with its local neigborhood. That is, nearby cells are more likely to become the same than to become different.</p>
 <p>However, there is also an increasing chance of a site changing state according to the local temperature. Thus at high temperatures, the system remains noisy, while at lower temperatures it gradually self-organizes into grouped zones with equal spin.  This idea of a <strong>temperature control</strong> generalizes to many kinds of systems. </p>
 <p><strong>This creates two opposing forces, one diffusion like, which promotes order, and one destructive, which induces chaos.</strong></p>
+<p>Implementation:</p>
+<ul>
+<li><p>state (&quot;spin&quot;) is either 0 or 1. This is actually our only cell value. However, we can use the other channels of our pixel to capture more information about the system, so that we can visualize it in the final image. </p>
+</li>
+<li><p>&quot;temperature&quot; is just a parameter, between 0.0 and 1.0.  It could vary over time, over space, or by mouse interaction.  </p>
+</li>
+<li><p>neighborhood is Moore: 8 neighbors, just like the Game of Life. </p>
+</li>
+<li><p>&quot;entropy&quot; is the proportion of neighbors that are in a <strong>different</strong> state (0.0 if all the same, 1.0 if all different)</p>
+</li>
+<li><p>&quot;probability&quot; of change, between 0.0 and 1.0.  Change should be more probable if entropy is high, and also if temperature is high. The physically correct way to calculate this uses Hamiltonians and some more involved math, but we can approximate it with simpler math.  I found that <code>pow(entropy, 1./temperature)</code> can give interesting results. </p>
+</li>
+<li><p>Then the transition rule is simple: if a noise value is less than the probability, flip the cell&#39;s state. </p>
+</li>
+</ul>
 <p><a href="https://www.shadertoy.com/view/tXtcz2">https://www.shadertoy.com/view/tXtcz2</a></p>
+<p>As is often the case, it can be interesting to visualize different parts of the system in the final shader. </p>
 <!--
 A simplified Ising model on codepen -- try changing the temperature:
 
@@ -439,25 +448,78 @@ A simplified Ising model on codepen -- try changing the temperature:
 
 <p data-height="300" data-theme-id="18447" data-slug-hash="bOxXEo" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="HodgePodge: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/bOxXEo/">HodgePodge: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
 -->
+
 <h3 id="largeunboundedcomplex-states">Large/unbounded/complex states</h3>
-<p>The cellular <em>Potts model</em> (also known as the <em>Glazier-Graner</em> model) generalizes probabilistic CA beyond the two states of the Ising model to allow morestates, and in some cases, an unbounded number of possible site states; however it still utilizes the notion of statistical movement toward neighbor equilibrium to drive change, though the definition of a local Hamiltonian. Variations have been used to model grain growth, foam, fluid flow, chemotaxis, biological cells, and even the developmental cycle of whole organisms. </p>
-<blockquote>
-<p>Note that in this subfield of research, the term <em>cell</em> is used not to refer to a site on the lattice, but to a whole group of connected sites that share the same state. So in modeling foam, a <em>cell</em> represents a single bubble, and is made of one or more <em>sites</em>. Most changes therefore happen at the boundaries between these cells.</p>
-</blockquote>
-<p>Stan Marée used this model to simulate the whole life cycle of <a href="https://www.researchgate.net/publication/46594643_Phototaxis_during_the_slug_stage_of_Dictyostelium_discoideum_A_model_study">Dictyostelium discoideum</a>!</p>
-<p>States need not be discrete integers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. </p>
+<p>The cellular <em>Potts model</em> (also known as the <em>Glazier-Graner</em> model) generalizes probabilistic CA beyond the two states of the Ising model to allow more states, and in some cases, an unbounded number of possible site states; however it still utilizes the notion of statistical movement toward neighbor equilibrium to drive change, though the definition of a local Hamiltonian. Variations have been used to model grain growth, foam, fluid flow, chemotaxis, biological cells, and even the developmental cycle of whole organisms. </p>
+<p>For example, there can be a probability of a cell copying the state of one of its neighbours.  For example, in modeling foam, all connected cells with the same state value are considered to be a single bubble. Most changes happen at the boundaries between these groups of cells. </p>
+<p>It&#39;s remarkable how few changes are needed to convert the Ising Model into a simple model of foam. All we need to do is to change the &quot;flip state&quot; action to a &quot;copy a random neighbor&quot; action!</p>
+<p><a href="https://www.shadertoy.com/view/W3dyWl">https://www.shadertoy.com/view/W3dyWl</a></p>
+<p>This would be a great starting point for more exploration!</p>
+<p>States need not be limited to single numbers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. Stan Marée used this model to simulate the whole life cycle of <a href="https://www.researchgate.net/publication/46594643_Phototaxis_during_the_slug_stage_of_Dictyostelium_discoideum_A_model_study">Dictyostelium discoideum</a>!</p>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
-<h2 id="continuous-automata">Continuous automata</h2>
-<p>The CAs we have looked at so far are mostly discrete, and this is often evident in the results. There are several ways in which we can try to approximate fully continuous automata -- and investigate to what extent similar properties or behaviours arise, and whether new properties can arise unique to continuous spaces. </p>
-<p>What if our states were truly continuous -- any value (or at least, any value between 0.0 and 1.0)?</p>
+<h2 id="continuous-state--function-ca">Continuous state &amp; function CA</h2>
+<p>Now we have seen a few examples of CA that use continuous-valued states (e.g. any number between 0.0 and 1.0), and some more mathematical transition rules (rather than if/else conditions).  Let&#39;s see some more. </p>
 <h3 id="reaction-diffusion">Reaction Diffusion</h3>
-<p>The reaction-diffusion model was proposed by Alan Turing to describe embryo development and pattern-generation (<a href="http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf">Turing, A. The Chemical Basic for Morphogenesis.</a>); it is still used today in computer graphics (<a href="http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf">Greg Turk&#39;s famous paper</a>). RD systems and other differential equation systems can be approximated using continuous automata.</p>
-<iframe width="480" height="360" src="https://www.youtube.com/embed/8dTmUr5qKvI?rel=0" frameborder="0" allowfullscreen></iframe>
-
-<p>One approach to simulating RD using CA is the <em>Gray-Scott</em> model, as described in <a href="http://arxiv.org/pdf/patt-sol/9304003.pdf">Pearson, J. E. Complex Patterns in a Simple System</a>. A browser-based example is <a href="https://pmneila.github.io/jsexp/grayscott/">here</a>.</p>
+<p>The reaction-diffusion model was proposed by Alan Turing (shortly before his passing) to describe embryo development and pattern-generation (<a href="http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf">Turing, A. The Chemical Basic for Morphogenesis.</a>); it is still used today in computer graphics (<a href="http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf">Greg Turk&#39;s famous paper</a>). RD systems and other differential equation systems can be approximated using continuous automata.</p>
+<p><a href="https://www.karlsims.com/rd.html">Here&#39;s a clear explanation on Karl Sims&#39; website</a></p>
+<p>The chemical interpretation:</p>
+<ul>
+<li>A&#39;s are constantly added.  A diffuses quickly through the space.  </li>
+<li>B&#39;s are constantly removed. B diffuses too, but more gradually than A. </li>
+<li>Two B&#39;s plus one A causes a chemical reaction that turns the A into a B (so you get 3 B&#39;s at the end)</li>
+</ul>
+<p>That&#39;s a discrete description, but we&#39;ll assume that a pixel could contain thousands or millions of A&#39;s and B&#39;s, so instead we&#39;ll model them in a continuous way as &quot;concentrations&quot;. So our cell state is two numbers, as concentrations of A and B. </p>
+<p>The update rule applies the reaction equations for both A and B. These are &quot;rate of change&quot; equations, so they add to (or remove from) the existing concentrations.  Here&#39;s are the two rates of change:</p>
+<ul>
+<li>Change of A = (Diffusion inflow of A) - (Reaction product removal of A) + (Feed rate of A)</li>
+<li>Change of B = (Diffusion inflow of B) + (Reaction product addition of B) + (Kill rate of B)</li>
+</ul>
+<p>The Reaction Product change is the same in both cases. Since it takes two B&#39;s to make an A, it is <code>A * B * B</code>. </p>
+<p>The Feed rate is proportional to existing A, using <code>feedrate * (1.0 - A)</code>, which ensures A is never &gt; 1.0.  Typically in the range of from 0.01 to 0.1. </p>
+<p>The kill rate uses <code>(killrate + feedrate)*B</code> to ensure the kill rate is never less than the feed rate.   Typically in the range of from .045 to 0.07. </p>
+<p>The most complex part is the diffusion. The basic idea is that, over time, any chemical becomes more evenly distributed in space. That&#39;s a bit like what a blur does (actually it is closer to the classic &quot;emboss&quot; photoshop filter). However, for diffusion it is <strong>essential</strong> that this is done in such a way that the total quantity over space does not increase or decrease, i.e. it is &quot;mass preserving&quot;.  (Otherwise, the system could easily just blow up in an unrealistic way!) </p>
+<p>We can implement this as a filter kernel, to find out for a given cell, how different its average neighborhood is. In Karl Sims&#39; webpage, he suggests using a 3x3 kernel like so:</p>
+<pre><code class="language-glsl">      <span class="hljs-number">0.05</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.05</span>,
+      <span class="hljs-number">0.2</span>,  <span class="hljs-number">-1</span>,  <span class="hljs-number">0.2</span>,
+      <span class="hljs-number">0.05</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.05</span>
+</code></pre>
+<p>Notice that if you add up all of these values, the sum total is zero.  That is what ensures that this kernel is mass preserving.  Here&#39;s how we could do this in GLSL:</p>
+<pre><code class="language-glsl">    <span class="hljs-comment">// assumes we have already got C, N, E, S, W, etc. like we did in many other shaders:</span>
+    <span class="hljs-type">vec4</span> diffusion = <span class="hljs-number">0.05</span>*(NE+NW+SE+SW) + <span class="hljs-number">0.2</span>*(N+E+S+W) - C;
+</code></pre>
+<p>Or if you want a more programmatic way:</p>
+<pre><code class="language-glsl">    <span class="hljs-type">mat3</span> kernel = <span class="hljs-type">mat3</span>(
+      <span class="hljs-number">0.05</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.05</span>,
+      <span class="hljs-number">0.2</span>,  <span class="hljs-number">-1</span>,  <span class="hljs-number">0.2</span>,
+      <span class="hljs-number">0.05</span>, <span class="hljs-number">0.2</span>, <span class="hljs-number">0.05</span>
+    );
+    <span class="hljs-comment">// loop over a 3x3 region, summing results:</span>
+    <span class="hljs-type">vec4</span> diffusion = <span class="hljs-type">vec4</span>(<span class="hljs-number">0.0</span>);
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">-1</span>; i &lt;= <span class="hljs-number">1</span>; i++) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> j = <span class="hljs-number">-1</span>; j &lt;= <span class="hljs-number">1</span>; j++) {
+            <span class="hljs-comment">// get the image at this texel:</span>
+            <span class="hljs-type">vec4</span> value = <span class="hljs-built_in">texture</span>(iChannel1, (fragCoord + <span class="hljs-type">vec2</span>(i,j)) / iResolution.xy);
+            <span class="hljs-comment">// Apply kernel weight and sum:</span>
+            diffusion += value * kernel[i+<span class="hljs-number">1</span>][j+<span class="hljs-number">1</span>]; 
+        }
+    }
+</code></pre>
+<p>The system can be quite sensitive to start conditions, and can easily blow up.  I find that starting with a field full of A&#39;s and a few blobs of B here &amp; there is a good starting point. </p>
+<p>Interpretation: There are two parts to this system: an &quot;activator&quot; and an &quot;inhibitor&quot;.  Both diffuse over space, but the activator diffuses more slowly, leading to local-scale positive feedback, but longer-range negative feedback.</p>
+<p>Karl Sims has suggestions for exploring variations:</p>
+<ul>
+<li>Orientation: diffusion can occur faster in one direction than another to give an orientation to the results.</li>
+<li>Style Map: the feed and kill rates can vary across the grid to give different patterns in different areas.</li>
+<li>Flow: the chemicals can flow across the grid to give various dynamic effects.</li>
+<li>Scale: the size of the pattern changes when the reaction rate is sped up or slowed down relative to the diffusion rate.</li>
+</ul>
+<blockquote>
+<p>The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you&#39;ll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  A faster solution is to apply the diffusion as two separate passes over the whole image (a separate &quot;Buffer&quot; in Shadertoy): one pass diffuses horizontally, the second pass diffuses vertically. </p>
+</blockquote>
+<hr>
+<p>Another approach to simulating RD using CA is the <em>Gray-Scott</em> model, as described in <a href="http://arxiv.org/pdf/patt-sol/9304003.pdf">Pearson, J. E. Complex Patterns in a Simple System</a>. A browser-based example is <a href="https://pmneila.github.io/jsexp/grayscott/">here</a>.</p>
 <p>There is <a href="http://mrob.com/pub/comp/xmorphia/">a wonderful archive of this model at this webpage</a>, including many great video examples of the <a href="http://www.youtube.com/watch?v=F5oKgVZ6bTk">u-skate world</a>, and even <a href="http://www.youtube.com/watch?v=B03lcPEmSOQ">u-skate in 3D</a>. </p>
 <p><img src="img/xmorphia-parameter-map.jpg" alt="The Gray-Scott parameter map"></p>
 <!--
