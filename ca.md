@@ -164,7 +164,7 @@ Game of Life has only two states, 0 and 1, but we could have more states. For ex
 
 The rules are simple: 
 - If we are activated (1.0), we decay to 0.5 (decaying).  
-- If we have decayed to 0.5, but exactly 2 of our 8 neighbors are activated, we also reactivate to 1.0. 
+- If we are off (0.0) but exactly 2 of our 8 neighbors are activated, we also reactivate to 1.0. 
 - Otherwise, we turn off (0.0)
 
 It's pretty easy to build this if we start from the Game of Life. 
@@ -263,7 +263,8 @@ There could be more than one 'active cell' -- there could even be a list of curr
 - [Langton's Ant](http://en.wikipedia.org/wiki/Langton%27s_ant) is a mobile CA in a 2D, two-state space, with very simple rules:
 	- At a white square, turn 90° right, flip the color of the square, move forward one unit
 	- At a black square, turn 90° left, flip the color of the square, move forward one unit
-		
+
+
 See our old JavaScript version here:
 
 <p data-height="300" data-theme-id="18447" data-slug-hash="RWrdoq" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Langton's Ant: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/RWrdoq/">Langton's Ant: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>

@@ -217,7 +217,7 @@ footer {
 <p>The rules are simple: </p>
 <ul>
 <li>If we are activated (1.0), we decay to 0.5 (decaying).  </li>
-<li>If we have decayed to 0.5, but exactly 2 of our 8 neighbors are activated, we also reactivate to 1.0. </li>
+<li>If we are off (0.0) but exactly 2 of our 8 neighbors are activated, we also reactivate to 1.0. </li>
 <li>Otherwise, we turn off (0.0)</li>
 </ul>
 <p>It&#39;s pretty easy to build this if we start from the Game of Life. </p>
@@ -271,6 +271,7 @@ footer {
 </ul>
 <p>What happens if the regions are moving?</p>
 <p><a href="https://www.shadertoy.com/view/t33cWs">https://www.shadertoy.com/view/t33cWs</a></p>
+<p><a href="https://www.shadertoy.com/view/wXGcRW">https://www.shadertoy.com/view/wXGcRW</a></p>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="temporally-non-homogenous-ca">Temporally Non-homogenous CA</h2>
@@ -311,10 +312,11 @@ Rather than updating all cells at once, some other policy of visiting cells to u
 <ul>
 <li><a href="http://en.wikipedia.org/wiki/Langton%27s_ant">Langton&#39;s Ant</a> is a mobile CA in a 2D, two-state space, with very simple rules:<ul>
 <li>At a white square, turn 90° right, flip the color of the square, move forward one unit</li>
-<li>At a black square, turn 90° left, flip the color of the square, move forward one unitSee our old JavaScript version here:</li>
+<li>At a black square, turn 90° left, flip the color of the square, move forward one unit</li>
 </ul>
 </li>
 </ul>
+<p>See our old JavaScript version here:</p>
 <p data-height="300" data-theme-id="18447" data-slug-hash="RWrdoq" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Langton's Ant: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/RWrdoq/">Langton's Ant: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
@@ -507,6 +509,16 @@ A simplified Ising model on codepen -- try changing the temperature:
     }
 </code></pre>
 <p>The system can be quite sensitive to start conditions, and can easily blow up.  I find that starting with a field full of A&#39;s and a few blobs of B here &amp; there is a good starting point. </p>
+<p>Some classic parameters:</p>
+<pre><code>Mitosis     : killrate = 0.062 ; feedrate = 0.028
+Solitons    : killrate = 0.060 ; feedrate = 0.030
+Flowers     : killrate = 0.062 ; feedrate = 0.055
+Finger      : killrate = 0.060 ; feedrate = 0.037
+U-Skate     : killrate = 0.061 ; feedrate = 0.062
+Mazes       : killrate = 0.057 ; feedrate = 0.029
+Spirals     : killrate = 0.047 ; feedrate = 0.014
+</code></pre>
+<p><a href="https://www.shadertoy.com/view/W3dyDl">https://www.shadertoy.com/view/W3dyDl</a></p>
 <p>Interpretation: There are two parts to this system: an &quot;activator&quot; and an &quot;inhibitor&quot;.  Both diffuse over space, but the activator diffuses more slowly, leading to local-scale positive feedback, but longer-range negative feedback.</p>
 <p>Karl Sims has suggestions for exploring variations:</p>
 <ul>
@@ -515,11 +527,11 @@ A simplified Ising model on codepen -- try changing the temperature:
 <li>Flow: the chemicals can flow across the grid to give various dynamic effects.</li>
 <li>Scale: the size of the pattern changes when the reaction rate is sped up or slowed down relative to the diffusion rate.</li>
 </ul>
+<p>It might be interesting to see what bringing external textures (or video streams) in as influences might do. </p>
 <blockquote>
-<p>The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you&#39;ll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  A faster solution is to apply the diffusion as two separate passes over the whole image (as separate &quot;Buffers&quot; in Shadertoy): one pass diffuses horizontally, the second pass diffuses the result vertically. </p>
+<p>The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you&#39;ll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  Another option is to run several passes per frame (we can do this in Shadertoy by using several Buffer passes in a loop A -&gt; B -&gt; C -&gt; D -&gt; A etc.; and writing the simulation code in a function in Common to re-use in each Buffer).  Another option for larger kernels is to apply the diffusion as two separate passes: one pass diffuses horizontally, the second pass diffuses the result vertically (again, in Shadertoy this would mean using two Buffer passes). This two pass (horizontal, vertical) structure is often how high quality blur shaders work. </p>
 </blockquote>
-<hr>
-<p>Another approach to simulating RD using CA is the <em>Gray-Scott</em> model, as described in <a href="http://arxiv.org/pdf/patt-sol/9304003.pdf">Pearson, J. E. Complex Patterns in a Simple System</a>. A browser-based example is <a href="https://pmneila.github.io/jsexp/grayscott/">here</a>.</p>
+<p>This system is also known as the <em>Gray-Scott</em> model, as described in <a href="http://arxiv.org/pdf/patt-sol/9304003.pdf">Pearson, J. E. Complex Patterns in a Simple System</a>. An optimized browser-based example is <a href="https://pmneila.github.io/jsexp/grayscott/">here</a>.  Another implementation in Shadertoy: <a href="https://www.shadertoy.com/view/ldXBz8">https://www.shadertoy.com/view/ldXBz8</a></p>
 <p>There is <a href="http://mrob.com/pub/comp/xmorphia/">a wonderful archive of this model at this webpage</a>, including many great video examples of the <a href="http://www.youtube.com/watch?v=F5oKgVZ6bTk">u-skate world</a>, and even <a href="http://www.youtube.com/watch?v=B03lcPEmSOQ">u-skate in 3D</a>. </p>
 <p><img src="img/xmorphia-parameter-map.jpg" alt="The Gray-Scott parameter map"></p>
 <!--
