@@ -516,7 +516,7 @@ A simplified Ising model on codepen -- try changing the temperature:
 <li>Scale: the size of the pattern changes when the reaction rate is sped up or slowed down relative to the diffusion rate.</li>
 </ul>
 <blockquote>
-<p>The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you&#39;ll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  A faster solution is to apply the diffusion as two separate passes over the whole image (a separate &quot;Buffer&quot; in Shadertoy): one pass diffuses horizontally, the second pass diffuses vertically. </p>
+<p>The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you&#39;ll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  A faster solution is to apply the diffusion as two separate passes over the whole image (as separate &quot;Buffers&quot; in Shadertoy): one pass diffuses horizontally, the second pass diffuses the result vertically. </p>
 </blockquote>
 <hr>
 <p>Another approach to simulating RD using CA is the <em>Gray-Scott</em> model, as described in <a href="http://arxiv.org/pdf/patt-sol/9304003.pdf">Pearson, J. E. Complex Patterns in a Simple System</a>. A browser-based example is <a href="https://pmneila.github.io/jsexp/grayscott/">here</a>.</p>

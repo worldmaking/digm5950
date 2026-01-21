@@ -223,6 +223,8 @@ What happens if the regions are moving?
 
 https://www.shadertoy.com/view/t33cWs
 
+https://www.shadertoy.com/view/wXGcRW
+
 ## Temporally Non-homogenous CA
 
 Temporal non-homogeneity can be used to perform a sequence of different filters, or otherwise help to build long- as well as short-term arcs of behaviour.
@@ -516,6 +518,20 @@ Or if you want a more programmatic way:
 
 The system can be quite sensitive to start conditions, and can easily blow up.  I find that starting with a field full of A's and a few blobs of B here & there is a good starting point. 
 
+Some classic parameters:
+
+```
+Mitosis     : killrate = 0.062 ; feedrate = 0.028
+Solitons    : killrate = 0.060 ; feedrate = 0.030
+Flowers     : killrate = 0.062 ; feedrate = 0.055
+Finger      : killrate = 0.060 ; feedrate = 0.037
+U-Skate     : killrate = 0.061 ; feedrate = 0.062
+Mazes       : killrate = 0.057 ; feedrate = 0.029
+Spirals     : killrate = 0.047 ; feedrate = 0.014
+```
+
+https://www.shadertoy.com/view/W3dyDl
+
 Interpretation: There are two parts to this system: an "activator" and an "inhibitor".  Both diffuse over space, but the activator diffuses more slowly, leading to local-scale positive feedback, but longer-range negative feedback.
 
 Karl Sims has suggestions for exploring variations:
@@ -525,12 +541,11 @@ Karl Sims has suggestions for exploring variations:
 - Flow: the chemicals can flow across the grid to give various dynamic effects.
 - Scale: the size of the pattern changes when the reaction rate is sped up or slowed down relative to the diffusion rate.
 
-> The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you'll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  A faster solution is to apply the diffusion as two separate passes over the whole image (a separate "Buffer" in Shadertoy): one pass diffuses horizontally, the second pass diffuses vertically. 
+It might be interesting to see what bringing external textures (or video streams) in as influences might do. 
 
----
- 
+> The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you'll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  Another option is to run several passes per frame (we can do this in Shadertoy by using several Buffer passes in a loop A -> B -> C -> D -> A etc.; and writing the simulation code in a function in Common to re-use in each Buffer).  Another option for larger kernels is to apply the diffusion as two separate passes: one pass diffuses horizontally, the second pass diffuses the result vertically (again, in Shadertoy this would mean using two Buffer passes). This two pass (horizontal, vertical) structure is often how high quality blur shaders work. 
 
-Another approach to simulating RD using CA is the *Gray-Scott* model, as described in [Pearson, J. E. Complex Patterns in a Simple System](http://arxiv.org/pdf/patt-sol/9304003.pdf). A browser-based example is [here](https://pmneila.github.io/jsexp/grayscott/).
+This system is also known as the *Gray-Scott* model, as described in [Pearson, J. E. Complex Patterns in a Simple System](http://arxiv.org/pdf/patt-sol/9304003.pdf). An optimized browser-based example is [here](https://pmneila.github.io/jsexp/grayscott/).  Another implementation in Shadertoy: https://www.shadertoy.com/view/ldXBz8
 
 There is [a wonderful archive of this model at this webpage](http://mrob.com/pub/comp/xmorphia/), including many great video examples of the [u-skate world](http://www.youtube.com/watch?v=F5oKgVZ6bTk), and even [u-skate in 3D](http://www.youtube.com/watch?v=B03lcPEmSOQ). 
 
