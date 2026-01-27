@@ -566,7 +566,9 @@ Spirals     : killrate = 0.047 ; feedrate = 0.014
 
 https://www.shadertoy.com/view/W3dyDl
 
-Interpretation: There are two parts to this system: an "activator" and an "inhibitor".  Both diffuse over space, but the activator diffuses more slowly, leading to local-scale positive feedback, but longer-range negative feedback.
+> Interpretation: There are two parts to this system: an "activator" and an "inhibitor".  Both diffuse over space, but the activator diffuses more slowly, leading to local-scale positive feedback, but longer-range negative feedback.
+
+> This isn't the first time we have had a system that has balanced two different tendencies. Can you see any parallels with, for example, the Game of Life, or the Ising Model?
 
 Karl Sims has suggestions for exploring variations:
 
@@ -693,44 +695,6 @@ In certain CA variants, more than one substitution could be valid to undertake. 
 -->
 
 
-<!--
-
-Some amazing ones: 
-
-https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different?
-
-slime moulds
-https://cargocollective.com/sagejenson/physarum 
-https://www.shadertoy.com/view/WtBcDG 
-https://www.shadertoy.com/view/tlKGDh
-
-
-
-https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos
-
-
-voronoi particles
-https://www.shadertoy.com/view/ts3XWf 
-https://www.shadertoy.com/view/3s3cWr
-
-https://www.shadertoy.com/view/WdSfzD -- is it really boids?
-https://www.shadertoy.com/view/tdXBRf - smooth particle hyrdodynamics
-
-
-
--- webgpu
-Particle Life
-https://www.ventrella.com/Clusters/
-https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
-
-Particle Lenia
-https://google-research.github.io/self-organising-systems/particle-lenia/
-
-
-
-
--->
-
 
 ## Particle CA and Lattice-Gas Automata
 
@@ -777,3 +741,42 @@ A CA-inspired digital physics hypothesis is currently being promoted by Stephen 
 
 Those models are determinsitic, but particle CA can also use probabilistic rules to simulate brownian motions (like our termite explorers) and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a *dissipative system*).
 
+
+
+<!--
+
+Some amazing ones: 
+
+LOTS OF PARTICLE CA HERE
+
+slime moulds -- these can be thought of as a particle CA?
+https://cargocollective.com/sagejenson/physarum 
+https://www.shadertoy.com/view/WtBcDG 
+https://www.shadertoy.com/view/tlKGDh
+
+https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos, also particle based
+
+https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different -- also particle based
+
+voronoi particles
+https://www.shadertoy.com/view/ts3XWf 
+https://www.shadertoy.com/view/tdXBRf - smooth particle hyrdodynamics
+
+
+https://www.shadertoy.com/view/3s3cWr
+https://www.shadertoy.com/view/WdSfzD -- is it really boids?
+
+
+
+-- webgpu
+Particle Life
+https://www.ventrella.com/Clusters/
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+
+Particle Lenia
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
+
+-->

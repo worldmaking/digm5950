@@ -50,6 +50,10 @@ footer {
 <li><a href="#game-of-life">Game of Life</a></li>
 <li><a href="#keyboard-input">Keyboard input</a></li>
 <li><a href="#mouse-input">Mouse input</a></li>
+<li><a href="#larger-convolutions">Larger convolutions</a><ul>
+<li><a href="#gaussian-blur">Gaussian blur</a></li>
+</ul>
+</li>
 <li><a href="#links-for-learning-more">Links for learning more</a><ul>
 <li><a href="#exploring-math">Exploring math:</a></li>
 </ul>
@@ -620,6 +624,38 @@ footer {
         uv /= magnification;
         uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - <span class="hljs-number">1.0</span>))));
     }
+</code></pre>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
+<h2 id="larger-convolutions">Larger convolutions</h2>
+<p>A large and symmetric kernel convolution is sometimes desired, e.g. for a large blur, but this can be terribly expensive. Instead, a faster solution to apply the kernel in two passes; one horizontally, the next vertically. </p>
+<h3 id="gaussian-blur">Gaussian blur</h3>
+<p>For example, a blur of up to 7 pixels in each direction calls for a 13x13 pixel kernel, which is <strong>169</strong> texture lookups per pixel of the image! </p>
+<p>Instead, a common technique is to turn this into a multi-pass effect, e.g. using two Buffers in Shadertoy. The first pass applies a 13x1 blur horizontally, and the second pass applies a 1x13 pass vertically.  This is a total of only <strong>26</strong> texture lookups -- much cheaper, and the result is essentially the same. </p>
+<p>To make it easier, you can define the blur operation as a function (stored in the &quot;Common&quot; section in Shadertoy), and re-use this function in each buffer, passing in the desired axis to use. </p>
+<pre><code class="language-glsl"><span class="hljs-comment">// Gaussian blur</span>
+<span class="hljs-comment">// img is e.g. iChannel0, iChannel1, etc.</span>
+<span class="hljs-comment">// resolution is the resolution of the img, e.g. iResolution.xy</span>
+<span class="hljs-comment">// texel is the coordinate within that resolution</span>
+<span class="hljs-comment">// axis is vec2(1, 0) for horizontal or vec2(0, 1) for vertical</span>
+<span class="hljs-comment">// radius is the number of pixels to blur in each direction (larger is more expensive)</span>
+<span class="hljs-comment">// e.g. for horizontal </span>
+<span class="hljs-comment">// blur(iChannel 0, fragCoord, iResolution.xy, vec2(1, 0), 2);</span>
+<span class="hljs-type">vec4</span> gaussianBlurOneAxis(<span class="hljs-type">sampler2D</span> img, <span class="hljs-type">vec2</span> resolution, <span class="hljs-type">vec2</span> texel, <span class="hljs-type">vec2</span> axis, <span class="hljs-type">int</span> radius) 
+{   
+    <span class="hljs-type">vec4</span> result = <span class="hljs-built_in">texture</span>(img, texel/resolution);
+    <span class="hljs-type">float</span> weightSum = <span class="hljs-number">1.</span>;    
+    <span class="hljs-type">float</span> sigma = <span class="hljs-type">float</span>(radius)*<span class="hljs-number">0.5</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= radius; i++) {
+        <span class="hljs-type">float</span> weight = <span class="hljs-built_in">exp</span>(<span class="hljs-number">-0.5</span> * <span class="hljs-type">float</span>(i * i) / (sigma * sigma));
+        <span class="hljs-type">vec2</span> <span class="hljs-keyword">offset</span> = <span class="hljs-type">float</span>(i) * axis;
+        result += <span class="hljs-built_in">texture</span>(img, (texel + <span class="hljs-keyword">offset</span>)/resolution) * weight;
+        result += <span class="hljs-built_in">texture</span>(img, (texel - <span class="hljs-keyword">offset</span>)/resolution) * weight;
+        weightSum += <span class="hljs-number">2.0</span> * weight;
+    }
+    <span class="hljs-comment">// normalize kernel to make it mass-preserving</span>
+    <span class="hljs-keyword">return</span> result / weightSum;
+}
 </code></pre>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
