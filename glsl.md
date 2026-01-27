@@ -632,6 +632,46 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 }
 ```
 
+
+## Larger convolutions
+
+A large and symmetric kernel convolution is sometimes desired, e.g. for a large blur, but this can be terribly expensive. Instead, a faster solution to apply the kernel in two passes; one horizontally, the next vertically. 
+
+### Gaussian blur
+
+For example, a blur of up to 7 pixels in each direction calls for a 13x13 pixel kernel, which is **169** texture lookups per pixel of the image! 
+
+Instead, a common technique is to turn this into a multi-pass effect, e.g. using two Buffers in Shadertoy. The first pass applies a 13x1 blur horizontally, and the second pass applies a 1x13 pass vertically.  This is a total of only **26** texture lookups -- much cheaper, and the result is essentially the same. 
+
+To make it easier, you can define the blur operation as a function (stored in the "Common" section in Shadertoy), and re-use this function in each buffer, passing in the desired axis to use. 
+
+```glsl
+// Gaussian blur
+// img is e.g. iChannel0, iChannel1, etc.
+// resolution is the resolution of the img, e.g. iResolution.xy
+// texel is the coordinate within that resolution
+// axis is vec2(1, 0) for horizontal or vec2(0, 1) for vertical
+// radius is the number of pixels to blur in each direction (larger is more expensive)
+// e.g. for horizontal 
+// blur(iChannel 0, fragCoord, iResolution.xy, vec2(1, 0), 2);
+vec4 gaussianBlurOneAxis(sampler2D img, vec2 resolution, vec2 texel, vec2 axis, int radius) 
+{   
+    vec4 result = texture(img, texel/resolution);
+    float weightSum = 1.;    
+    float sigma = float(radius)*0.5;
+    for(int i = 1; i <= radius; i++) {
+        float weight = exp(-0.5 * float(i * i) / (sigma * sigma));
+        vec2 offset = float(i) * axis;
+        result += texture(img, (texel + offset)/resolution) * weight;
+        result += texture(img, (texel - offset)/resolution) * weight;
+        weightSum += 2.0 * weight;
+    }
+    // normalize kernel to make it mass-preserving
+    return result / weightSum;
+}
+```
+
+
 ## Keyboard input
 
 Shadertoy offers a keyboard input type for the iChannel texture inputs. 
@@ -676,44 +716,6 @@ A common trick is a "mouse down to zoom in", which is really easy to do just by 
         uv /= magnification;
         uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));
     }
-```
-
-## Larger convolutions
-
-A large and symmetric kernel convolution is sometimes desired, e.g. for a large blur, but this can be terribly expensive. Instead, a faster solution to apply the kernel in two passes; one horizontally, the next vertically. 
-
-### Gaussian blur
-
-For example, a blur of up to 7 pixels in each direction calls for a 13x13 pixel kernel, which is **169** texture lookups per pixel of the image! 
-
-Instead, a common technique is to turn this into a multi-pass effect, e.g. using two Buffers in Shadertoy. The first pass applies a 13x1 blur horizontally, and the second pass applies a 1x13 pass vertically.  This is a total of only **26** texture lookups -- much cheaper, and the result is essentially the same. 
-
-To make it easier, you can define the blur operation as a function (stored in the "Common" section in Shadertoy), and re-use this function in each buffer, passing in the desired axis to use. 
-
-```glsl
-// Gaussian blur
-// img is e.g. iChannel0, iChannel1, etc.
-// resolution is the resolution of the img, e.g. iResolution.xy
-// texel is the coordinate within that resolution
-// axis is vec2(1, 0) for horizontal or vec2(0, 1) for vertical
-// radius is the number of pixels to blur in each direction (larger is more expensive)
-// e.g. for horizontal 
-// blur(iChannel 0, fragCoord, iResolution.xy, vec2(1, 0), 2);
-vec4 gaussianBlurOneAxis(sampler2D img, vec2 resolution, vec2 texel, vec2 axis, int radius) 
-{   
-    vec4 result = texture(img, texel/resolution);
-    float weightSum = 1.;    
-    float sigma = float(radius)*0.5;
-    for(int i = 1; i <= radius; i++) {
-        float weight = exp(-0.5 * float(i * i) / (sigma * sigma));
-        vec2 offset = float(i) * axis;
-        result += texture(img, (texel + offset)/resolution) * weight;
-        result += texture(img, (texel - offset)/resolution) * weight;
-        weightSum += 2.0 * weight;
-    }
-    // normalize kernel to make it mass-preserving
-    return result / weightSum;
-}
 ```
 
 
