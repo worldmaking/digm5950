@@ -602,6 +602,8 @@ Here is this model at a lower resolution using our starter kit:
 
 Some of these systems share resemblance with analog video feedback ([example](http://www.youtube.com/watch?v=hDYEVv9t32U), [example](http://www.youtube.com/watch?v=Uw5onuS2_mw)), which has been exploited by earlier media artists (notably the Steiner and Woody Vasulka). 
 
+------------
+
 ### Fully continuous automata
 
 Is it possible to completely eliminate discreteness in all aspects, to create a truly continuous CA?  To do so, let's return to our original definition of a CA, and for each component in turn, change discrete into continuous:
