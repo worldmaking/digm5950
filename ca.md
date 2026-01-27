@@ -579,7 +579,11 @@ Karl Sims has suggestions for exploring variations:
 
 It might be interesting to see what bringing external textures (or video streams) in as influences might do. 
 
-> The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you'll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  Another option is to run several passes per frame (we can do this in Shadertoy by using several Buffer passes in a loop A -> B -> C -> D -> A etc.; and writing the simulation code in a function in Common to re-use in each Buffer).  Another option for larger kernels is to apply the diffusion as two separate passes: one pass diffuses horizontally, the second pass diffuses the result vertically (again, in Shadertoy this would mean using two Buffer passes). This two pass (horizontal, vertical) structure is often how high [quality blur shaders work](glsl.html#gaussian_blur). 
+> The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you'll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  Another option is to run several passes per frame (we can do this in Shadertoy by using several Buffer passes in a loop A -> B -> C -> D -> A etc.; and writing the simulation code in a function in Common to re-use in each Buffer).  
+
+https://www.shadertoy.com/view/33GyRc
+
+> Another option for larger kernels is to apply the diffusion as two separate passes: one pass diffuses horizontally, the second pass diffuses the result vertically (again, in Shadertoy this would mean using two Buffer passes). This two pass (horizontal, vertical) structure is often how high [quality blur shaders work](glsl.html#gaussian_blur). 
 
 This system is also known as the *Gray-Scott* model, as described in [Pearson, J. E. Complex Patterns in a Simple System](http://arxiv.org/pdf/patt-sol/9304003.pdf). An optimized browser-based example is [here](https://pmneila.github.io/jsexp/grayscott/).  Another implementation in Shadertoy: https://www.shadertoy.com/view/ldXBz8
 
