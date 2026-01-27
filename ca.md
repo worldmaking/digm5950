@@ -328,7 +328,8 @@ Sometimes this is considered "mass preserving".  That is, the total amount of "s
 - Mass-preserving CAs can be guaranteed *not* to dissolve into homogenous final states of all-black/all-white/etc. -- which can alleviate any need for an external limiter to keep the balance -- but this does not mean they won't find a stable or cyclic end. (On the other hand, CAs whose rules do not appear to preserve mass can still avoid dissolution into homogeneity.)
 
 - Note that mass-preservation does not imply that the system is reversible. Reversibility is quite a different property, which states that each output neighbourhood can only be caused by a single predecessor neighbourhood. Some, but certainly not all, particle CAs are reversible.
-  
+
+
 <!--
 
 ### Block rule CA
@@ -656,5 +657,44 @@ Additionally, his system does not measure all cells within a radius; instead it 
 In certain CA variants, more than one substitution could be valid to undertake. We have seen how some CA simply choose randomly between options, while Monte Carlo systems consider two or more options and take the one with the highest entropy. In a sense, for a brief moment, these systems follow two parallel histories, and then choose which one to discard. But there is no reason why we can't follow two (or more) histories for a little longer than a single step, nor to limit our decision-making to an energetic/entropic basis. We may return to this idea when exploring evolutionary systems, which present a similar parallelism. 
 
 > Wolfram also explored ['multi-way'](http://www.wolframscience.com/nksonline/page-204#previous) CA executions, in which all possible histories for a given state are explored, considering their long-term evolutions, and in particular exploring which rules lead to exponentially more universes, which tend to stabilize, and which ultimately lead to the same results.
+
+-->
+
+
+<!--
+
+Some amazing ones: 
+
+https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different?
+
+slime moulds
+https://cargocollective.com/sagejenson/physarum 
+https://www.shadertoy.com/view/WtBcDG 
+https://www.shadertoy.com/view/tlKGDh
+
+
+
+https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos
+
+
+voronoi particles
+https://www.shadertoy.com/view/ts3XWf 
+https://www.shadertoy.com/view/3s3cWr
+
+https://www.shadertoy.com/view/WdSfzD -- is it really boids?
+https://www.shadertoy.com/view/tdXBRf - smooth particle hyrdodynamics
+
+
+
+-- webgpu
+Particle Life
+https://www.ventrella.com/Clusters/
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+
+Particle Lenia
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
 
 -->

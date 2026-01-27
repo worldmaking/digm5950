@@ -47,7 +47,6 @@ footer {
 </ul>
 </li>
 <li><a href="#particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</a><ul>
-<li><a href="#block-rule-ca">Block rule CA</a></li>
 <li><a href="#digital-physics">Digital Physics</a></li>
 </ul>
 </li>
@@ -371,23 +370,28 @@ How would we implement this in GLSL? Let's start with what data is in each cell:
 <li><p>Mass-preserving CAs can be guaranteed <em>not</em> to dissolve into homogenous final states of all-black/all-white/etc. -- which can alleviate any need for an external limiter to keep the balance -- but this does not mean they won&#39;t find a stable or cyclic end. (On the other hand, CAs whose rules do not appear to preserve mass can still avoid dissolution into homogeneity.)</p>
 </li>
 <li><p>Note that mass-preservation does not imply that the system is reversible. Reversibility is quite a different property, which states that each output neighbourhood can only be caused by a single predecessor neighbourhood. Some, but certainly not all, particle CAs are reversible.</p>
-<!--
-
 </li>
 </ul>
-<h3 id="block-rule-ca">Block rule CA</h3>
-<p>Since mass-preservation can be ensured by considering the neighbourhood before <em>and</em> after each transition, rules are often expressed in terms of a <em>block</em>. For a 2D CA, the simplest block is a 2x2 region (the <em>Margolus neighborhood</em>).</p>
-<p><img src="img/mnhood.gif" alt="Margolus neigborhood"></p>
-<p>A 2x2 block of 2-state automata has 2^3 = 16 possible configurations. A bit like a sprite-sheet in fact. So, one way of encoding a rule is to map all the 16 transitions in a lookup table. But, how does this &quot;move&quot;?</p>
-<p>A clever technique to simulate block-based rules is to shift the block grid on each successive frame, such that the even-aligned and then odd-aligned blocks interleave  (<a href="http://en.wikipedia.org/wiki/Block_cellular_automaton">see wikipedia</a>). Note that a block rule CA does not need to be double-buffered, since block updates do not overlap. (By extension, a 3x3 block rule would need 3 steps to cover the space.)</p>
-<p>Examples of 2x2 block rule CA are listed <a href="http://psoup.math.wisc.edu/mcell/rullex_marg.html">here</a> -- many of these are implemented below. Note how simply the rules can be encoded using a minimal notation. Could you write a program to read this notation &amp; turn it into a simulation? Could you use such an idea for other systems?</p>
+<!--
+
+### Block rule CA
+
+Since mass-preservation can be ensured by considering the neighbourhood before *and* after each transition, rules are often expressed in terms of a *block*. For a 2D CA, the simplest block is a 2x2 region (the *Margolus neighborhood*).
+
+![Margolus neigborhood](img/mnhood.gif)
+
+A 2x2 block of 2-state automata has 2^3 = 16 possible configurations. A bit like a sprite-sheet in fact. So, one way of encoding a rule is to map all the 16 transitions in a lookup table. But, how does this "move"?
+
+A clever technique to simulate block-based rules is to shift the block grid on each successive frame, such that the even-aligned and then odd-aligned blocks interleave  ([see wikipedia](http://en.wikipedia.org/wiki/Block_cellular_automaton)). Note that a block rule CA does not need to be double-buffered, since block updates do not overlap. (By extension, a 3x3 block rule would need 3 steps to cover the space.)
+
+Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell/rullex_marg.html) -- many of these are implemented below. Note how simply the rules can be encoded using a minimal notation. Could you write a program to read this notation & turn it into a simulation? Could you use such an idea for other systems?
+
 <p data-height="300" data-theme-id="18447" data-slug-hash="NGxJpP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Block Rules: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/NGxJpP/">Block Rules: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-<ul>
-<li>The block-rule CA especially hints at another interpretation of CA as a pattern-based <em>rewriting system</em> -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template&#39;s corresponding result (or action). Can you think of other ways to use pattern-matching &amp; rewriting for CA?</li>
-<li>-&gt;</li>
-</ul>
+- The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
+-->
+
 <h3 id="digital-physics">Digital Physics</h3>
 <p><img src="img/zuse.jpg" alt="Zuse&#39;s vision of nature"></p>
 <blockquote>
@@ -625,6 +629,45 @@ Additionally, his system does not measure all cells within a radius; instead it 
 In certain CA variants, more than one substitution could be valid to undertake. We have seen how some CA simply choose randomly between options, while Monte Carlo systems consider two or more options and take the one with the highest entropy. In a sense, for a brief moment, these systems follow two parallel histories, and then choose which one to discard. But there is no reason why we can't follow two (or more) histories for a little longer than a single step, nor to limit our decision-making to an energetic/entropic basis. We may return to this idea when exploring evolutionary systems, which present a similar parallelism. 
 
 > Wolfram also explored ['multi-way'](http://www.wolframscience.com/nksonline/page-204#previous) CA executions, in which all possible histories for a given state are explored, considering their long-term evolutions, and in particular exploring which rules lead to exponentially more universes, which tend to stabilize, and which ultimately lead to the same results.
+
+-->
+
+
+<!--
+
+Some amazing ones: 
+
+https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different?
+
+slime moulds
+https://cargocollective.com/sagejenson/physarum 
+https://www.shadertoy.com/view/WtBcDG 
+https://www.shadertoy.com/view/tlKGDh
+
+
+
+https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos
+
+
+voronoi particles
+https://www.shadertoy.com/view/ts3XWf 
+https://www.shadertoy.com/view/3s3cWr
+
+https://www.shadertoy.com/view/WdSfzD -- is it really boids?
+https://www.shadertoy.com/view/tdXBRf - smooth particle hyrdodynamics
+
+
+
+-- webgpu
+Particle Life
+https://www.ventrella.com/Clusters/
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+
+Particle Lenia
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
 
 -->
 <footer>2025</footer>
