@@ -17,6 +17,7 @@ const template = require('es6-dynamic-template')
 const server_path = __dirname;
 const public_path = server_path; //path.join(server_path, "public");
 const PORT = 8080
+let server
 
 const meta_default = {
 	author: "Graham Wakefield",
@@ -100,7 +101,7 @@ function generate(file) {
 		const match = /id="(.+)"/gm.exec(html)
 		if (match && match.length > 1 && level < MAX_TOC_LEVEL) {
 			const id = match[1]
-			console.log(text, level, id)
+			//console.log(text, level, id)
 			toc.push({
 				level: level,
 				text: text,
@@ -126,6 +127,7 @@ function generate(file) {
 	const writename = `${file.name}.html`
 	const writepath = path.join(__dirname, writename)
 	fs.writeFileSync(writepath, html)
+
 	return writename;
 }
 
@@ -133,11 +135,14 @@ console.log("written:", fs.readdirSync(server_path, "utf8").map(file=>path.parse
 
 // watch for file changes:
 fs.watch(server_path, (event, filename)=>{
-	console.log(event, filename)
+	//console.log(event, filename)
 	let file = path.parse(filename)
 	if (file.ext == ".md") {
 		console.log("generating", file)
 		generate(file);
+
+		if (server) console.log(`updated http://localhost:${server.address().port}/${file.name}.html`);
+
 		send_all_clients("reload")
 	}
 })
@@ -151,9 +156,13 @@ app.get('/', function(req, res) {
 });
 
 //app.get('*', function(req, res) { console.log(req); });
-const server = http.createServer(app);
+server = http.createServer(app);
 // add a websocket service to the http server:
 const wss = new WebSocket.Server({ server });
+
+const nets = networkInterfaces();
+const selfIPs = []
+const results = Object.create(null); // Or just '{}', an empty object
 
 // send a (string) message to all connected clients:
 function send_all_clients(msg) {
@@ -208,9 +217,6 @@ wss.on('connection', function(ws, req) {
     });
 });
 
-const nets = networkInterfaces();
-const selfIPs = []
-const results = Object.create(null); // Or just '{}', an empty object
 for (const name of Object.keys(nets)) {
     for (const net of nets[name]) {
         // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses

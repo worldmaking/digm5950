@@ -46,11 +46,8 @@ footer {
 <li><a href="#termites">Termites</a></li>
 </ul>
 </li>
-<li><a href="#particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</a><ul>
-<li><a href="#digital-physics">Digital Physics</a></li>
-</ul>
-</li>
 <li><a href="#probabilisticstochastic-ca">Probabilistic/Stochastic CA</a><ul>
+<li><a href="#pseudo-randomness">Pseudo-randomness</a></li>
 <li><a href="#forest-fire">Forest Fire</a></li>
 <li><a href="#contact-processes">Contact processes</a></li>
 <li><a href="#ising-model">Ising model</a></li>
@@ -62,6 +59,10 @@ footer {
 <li><a href="#fully-continuous-automata">Fully continuous automata</a></li>
 <li><a href="#smoothlife">Smoothlife</a></li>
 <li><a href="#lenia">Lenia</a></li>
+</ul>
+</li>
+<li><a href="#particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</a><ul>
+<li><a href="#digital-physics">Digital Physics</a></li>
 </ul>
 </li>
 </ul>
@@ -358,67 +359,66 @@ How would we implement this in GLSL? Let's start with what data is in each cell:
 <p>This is a trickier model to implement in GLSL -- it takes careful attention to movement of cells to make sure the number of termites does not accidentally increase!  But it&#39;s the same basic idea as Langton&#39;s Ant.  Remember: the fragment shader program is always from the perspective of the cell (not the ant/termite): a cell needs to know if a termite is entering it from a neighbor, or if a termite currently in the cell will remain there. If neither of those cases are true, then the cell will end the frame with no termite present. </p>
 <p><a href="https://www.shadertoy.com/view/33cyRS">https://www.shadertoy.com/view/33cyRS</a></p>
 <hr>
-<p><a href="#top"><img src="img/up.png"></a></p>
-<h2 id="particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</h2>
-<p>This concept of a cell&#39;s perspective on occupancy can be extended to modeling particles in a cellular fashion! </p>
-<p>If the transition rule (or, the set of transition rules as a whole) is careful to preserve a total cell values before and after, it can give the impression of a mass-conserving system, such as modeling the motion of particles and fluids. The elementary 1D traffic CA <a href="http://atlas.wolfram.com/01/01/184/">(rule 184)</a> is a simple particle CA. </p>
-<p>Sometimes this is considered &quot;mass preserving&quot;.  That is, the total amount of &quot;stuff&quot; in the world never changes, it just moves around. </p>
-<blockquote>
-<p>Note that our Ant and Termite models are not strictly mass-preserving: can you explain why? </p>
-</blockquote>
-<ul>
-<li><p>Mass-preserving CAs can be guaranteed <em>not</em> to dissolve into homogenous final states of all-black/all-white/etc. -- which can alleviate any need for an external limiter to keep the balance -- but this does not mean they won&#39;t find a stable or cyclic end. (On the other hand, CAs whose rules do not appear to preserve mass can still avoid dissolution into homogeneity.)</p>
-</li>
-<li><p>Note that mass-preservation does not imply that the system is reversible. Reversibility is quite a different property, which states that each output neighbourhood can only be caused by a single predecessor neighbourhood. Some, but certainly not all, particle CAs are reversible.</p>
-</li>
-</ul>
-<!--
-
-### Block rule CA
-
-Since mass-preservation can be ensured by considering the neighbourhood before *and* after each transition, rules are often expressed in terms of a *block*. For a 2D CA, the simplest block is a 2x2 region (the *Margolus neighborhood*).
-
-![Margolus neigborhood](img/mnhood.gif)
-
-A 2x2 block of 2-state automata has 2^3 = 16 possible configurations. A bit like a sprite-sheet in fact. So, one way of encoding a rule is to map all the 16 transitions in a lookup table. But, how does this "move"?
-
-A clever technique to simulate block-based rules is to shift the block grid on each successive frame, such that the even-aligned and then odd-aligned blocks interleave  ([see wikipedia](http://en.wikipedia.org/wiki/Block_cellular_automaton)). Note that a block rule CA does not need to be double-buffered, since block updates do not overlap. (By extension, a 3x3 block rule would need 3 steps to cover the space.)
-
-Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell/rullex_marg.html) -- many of these are implemented below. Note how simply the rules can be encoded using a minimal notation. Could you write a program to read this notation & turn it into a simulation? Could you use such an idea for other systems?
-
-<p data-height="300" data-theme-id="18447" data-slug-hash="NGxJpP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Block Rules: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/NGxJpP/">Block Rules: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
-- The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
--->
-
-<h3 id="digital-physics">Digital Physics</h3>
-<p><img src="img/zuse.jpg" alt="Zuse&#39;s vision of nature"></p>
-<blockquote>
-<p>In 1969, German computer pioneer (and painter) Konrad Zuse published his book <a href="ftp://ftp.idsia.ch/pub/juergen/zuserechnenderraum.pdf">Calculating Space</a>, proposing that the physical laws of the universe are discrete by nature, and that the entire universe is the output of a deterministic computation on a single cellular automaton. This became the foundation of the field of study called <em>digital physics</em>. Zuse&#39;s first model is a 3D particle CA.</p>
-</blockquote>
-<p>A CA-inspired digital physics hypothesis is currently being promoted by Stephen Wolfram, as described in his magnum opus <a href="http://www.wolframscience.com/nksonline/toc.html">A New Kind Of Science</a>.</p>
-<p>Those models are determinsitic, but particle CA can also use probabilistic rules to simulate brownian motions (like our termite explorers) and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a <em>dissipative system</em>).</p>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="probabilisticstochastic-ca">Probabilistic/Stochastic CA</h2>
-<p>In this case the transition rule is not deterministic, but includes some (pseudo-)randomized factors. This can help avoid the CA falling into a stable or cyclic pattern -- at the risk of descending into uninteresting noise.</p>
+<p>A stochastic CA uses some kind of (pseudo-)random probabilities of change in the transition rules. This could be to emulate real-world systems that are subject to probabilistic or chance-based factors.  It may also help avoid the CA falling into a stable or cyclic pattern -- but at the same time, it also runs the risk of descending into uninteresting noise.</p>
+<h3 id="pseudo-randomness">Pseudo-randomness</h3>
+<p>Why do we call it &quot;pseudo-&quot; random?  </p>
+<p>Take a look at how our <code>random4</code> function is written in GLSL:</p>
+<pre><code class="language-glsl"><span class="hljs-comment">// given a vec3 input seed, return a pseudorandom vec4</span>
+<span class="hljs-type">vec4</span> random4(<span class="hljs-type">vec3</span> p) {
+    <span class="hljs-type">vec4</span> p4 = <span class="hljs-built_in">fract</span>(p.xyzx * <span class="hljs-type">vec4</span>(<span class="hljs-number">.1031</span>, <span class="hljs-number">.1030</span>, <span class="hljs-number">.0973</span>, <span class="hljs-number">.1099</span>));
+    p4 += <span class="hljs-built_in">dot</span>(p4, p4.wzxy + <span class="hljs-number">19.19</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">fract</span>((p4.xxyz + p4.yzzw) * p4.zywx);
+}
+</code></pre>
+<p>Given the same input seed, the <code>random4()</code> function will do some math that is <strong>completely deterministic</strong>, which means, it will compute the same result every single time.   (Here, <code>fract</code> simply returns the fractional component of a number, and <code>dot</code> is the dot product, which multiplies each of the vec4 components of its arguments, then sums them up. This all boils down to multiplications, additions, and divisions.)  </p>
+<p><strong>There is nothing random in this at all!</strong>  Or rather, it is only as random as the input seed is.  Typically we seed it with something dependent on space and time, such as <code>vec4 noise = random4(vec3(fragCoord, iTime))</code>, to ensure the seed value is unique per cell and per frame. But that is still not random! </p>
+<p>The nature of the math however has two important properties that make it very useful to us:</p>
+<ul>
+<li><p><strong>For any particular input seed, it is very difficult to predict what the output value would be, without actually doing the math</strong>.  It is <strong>unpredictable</strong> even though it is not random. </p>
+</li>
+<li><p>Given a random input seed, the output value is roughly equally likely to be in any particular place between 0.0 and 1.0. That is, over enough time, the <strong>range of output values is equally distributed</strong>.  </p>
+<p>This is similar to rolling a dice: any particular face of the dice is equally likely to come up (<strong>flat distribution</strong>), but you have no idea which one it will be without doing the actual physics of rolling the dice (<strong>unpredictable</strong>).   </p>
+</li>
+</ul>
+<p>So, even though our generator is not truly random, so long as we keep using unique seeds, it is unpredictable and equally likely to be anywhere in the output range.  </p>
+<p>Most of the time this is good enough to create the appearance of randomness -- but it is important to remember that we shouldn&#39;t trust it to be truly random. In simulation sciences, the choice of random source, and the diversity of seeds used, can be incredibly important to ensure the validity of any conclusions drawn.  A poor pseudo-random generator may also manifest patterns in the output (where the distribution and colour is no longer flat), or may not completely cover all values in the distribution, for example. </p>
 <h3 id="forest-fire">Forest Fire</h3>
-<p>A probability can be assigned to each successor state according to the prior states. For example, take a look at the Forest Fire CA below, and try changing the probabilities to see how it behaves:</p>
+<p>Let&#39;s look at some example CAs using probabilistic rules.  </p>
+<p>The Forest Fire model below has three states: a cell can be &quot;empty&quot;, &quot;tree&quot;, or &quot;burning&quot;.  </p>
+<ul>
+<li>If a cell is &quot;empty&quot;, there is a chance that a seed blown in the wind landed here, and becomes a new &quot;tree&quot;</li>
+<li>If a cell is &quot;empty&quot; but there are cells next to it that are &quot;tree&quot;, there is a chance that the trees grow larger and this cell also becomes a &quot;tree&quot;</li>
+<li>There is a chance that a &quot;tree&quot; is struck by lightning and becomes &quot;burning&quot;. </li>
+<li>If a cell is a &quot;tree&quot; and there are cells nearby that are &quot;burning&quot;, there is a chance that this tree catches fire and is also now &quot;burning&quot;</li>
+<li>If a cell is burning, there is a chance that rain falls and puts the fire out, so it becomes &quot;empty&quot; again. </li>
+</ul>
+<p>So we five several probability thresholds here: Chance of spore; Chance of growth; Chance of lightning; Chance of fire spreading; Chance of rain;</p>
+<p>Here&#39;s this model runing in a Javascript simulation. It can be interesting to change the probabilities to see how it behaves:</p>
 <p data-height="300" data-theme-id="18447" data-slug-hash="OroeKW" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Forest Fire: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/OroeKW/">Forest Fire: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
-<p>Unfortunately, this one poses a few challenges to translate to GLSL, because of the extremely low numbers we use in the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator we have availble in our GLSL code. </p>
-<p>We can work around this partly by applying our probability tests against two values at the same time, e.g. </p>
-<pre><code class="language-glsl"><span class="hljs-keyword">if</span> (noise.x &lt; growth_probability &amp;&amp; noise.y &lt; growth_probability) {
-
-}
+<p>Unfortunately, this one poses a few challenges to translate to GLSL, because of the extremely low numbers we need for the probability tests. The reason is limits of floating point resolution on the GPU, and the quality of the random number generator we have availble in our GLSL code.  Simply put, if the probability threshold is too low, it no longer seems to make any difference.  Compare the output for example of these:</p>
+<pre><code class="language-glsl"><span class="hljs-type">vec4</span> noise = random4(<span class="hljs-type">vec3</span>(fragCoord, iTime));
+fragColor = <span class="hljs-type">vec4</span>(noise.x &lt; <span class="hljs-number">0.1</span>);
+fragColor = <span class="hljs-type">vec4</span>(noise.x &lt; <span class="hljs-number">0.01</span>);
+fragColor = <span class="hljs-type">vec4</span>(noise.x &lt; <span class="hljs-number">0.001</span>);
+fragColor = <span class="hljs-type">vec4</span>(noise.x &lt; <span class="hljs-number">0.0001</span>);
+fragColor = <span class="hljs-type">vec4</span>(noise.x &lt; <span class="hljs-number">0.00001</span>);
 </code></pre>
+<p>At a certain point, the outputs look the same. Why?</p>
+<p>We can work around this limitation by applying our probability tests against two values at the same time:</p>
+<pre><code class="language-glsl">fragColor = <span class="hljs-type">vec4</span>(noise.x &lt; <span class="hljs-number">0.001</span> &amp;&amp; noise.y &lt; <span class="hljs-number">0.001</span>); 
+</code></pre>
+<p>This is like testing against 0.000001, because 0.001 x 0.001 = 0.000001.</p>
+<p>With that, we can write the Forest Fire model with the very low probabilities we need:</p>
 <p><a href="https://www.shadertoy.com/view/tXdcDN">https://www.shadertoy.com/view/tXdcDN</a></p>
-<p>Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here. </p>
+<p>Play with different values to see what you find.  There can be temporal and spiral oscillations hiding in here, if you can find them.</p>
 <h3 id="contact-processes">Contact processes</h3>
 <p>The key factor in a probabilistic model is how you calculate the probability of a change.  In the forest fire model, these were simply constants, but are only tested according the presence of particular types of neighbors (burning trees, empty land, etc.). </p>
-<p>In many probabilistic models, the probability of a change depends on the local difference of a cell from its neighbors. This kind of model is sometimes called a <a href="https://en.wikipedia.org/wiki/Contact_process_(mathematics)">contact process</a> model. It can be used to model the spread of infection, voter bias, or behaviours of fundamental physics. </p>
+<p>In many probabilistic models, the probability of a change depends on the local difference of a cell from its neighbors. So, instead of using if/else conditions along with probabilities, we <strong>only</strong> use probabilities. This kind of model is sometimes called a <a href="https://en.wikipedia.org/wiki/Contact_process_(mathematics)">contact process</a> model. It can be used to model the spread of infection, voter bias, or behaviours of fundamental physics. </p>
 <p>A simple infection model, for example:
     - infected sites become healthy at a constant probability
     - healty sites become infected at a probability proportional to the number infected neighbours</p>
@@ -426,26 +426,28 @@ Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell
 <p>(This is not the same as the <a href="#hodgepodge">Hodgepodge</a> we saw above -- that one was completely determinsitc, not stochastic.)</p>
 <p>Let&#39;s start from something simpler:</p>
 <h3 id="ising-model">Ising model</h3>
-<p>The <em>Ising model</em> of ferromagnetism in statistical mechanics models the probability of a point in space flipping between positive or negative spin.  The probability of this change happening depends on the <strong>local entropy</strong>: the probability is higher if the change of state would move the site closer to energetic equilibrium with its local neigborhood. That is, nearby cells are more likely to become the same than to become different.</p>
-<p>However, there is also an increasing chance of a site changing state according to the local temperature. Thus at high temperatures, the system remains noisy, while at lower temperatures it gradually self-organizes into grouped zones with equal spin.  This idea of a <strong>temperature control</strong> generalizes to many kinds of systems. </p>
-<p><strong>This creates two opposing forces, one diffusion like, which promotes order, and one destructive, which induces chaos.</strong></p>
-<p>Implementation:</p>
+<p>The <em>Ising model</em> of ferromagnetism in statistical mechanics models the probability of a point in space flipping between positive or negative spin.  The probability of this change happening depends on the <strong>local entropy</strong>: the probability is higher if the change of state would move the site closer to energetic equilibrium with its local neigborhood. That is, <strong>nearby cells are more likely to become the same than to become different</strong>.</p>
+<p>However, there is also an increasing chance of a site changing state randomly, according to the <strong>temperature</strong>. </p>
+<p><strong>This implies two opposing tendencies, one diffusion like and convergent, which promotes order (entropy reduction), and one destructive, which induces divergent chaos (temperature).</strong></p>
+<p>To implement this, we need to think about each element in turn:</p>
 <ul>
-<li><p>state (&quot;spin&quot;) is either 0 or 1. This is actually our only cell value. However, we can use the other channels of our pixel to capture more information about the system, so that we can visualize it in the final image. </p>
+<li><p><strong>State</strong> (&quot;spin&quot;) is either 0 or 1. This is actually our only cell value. However, we can use the other channels of our pixel to capture more information about the system, so that we can visualize it in the final image. </p>
 </li>
-<li><p>&quot;temperature&quot; is just a parameter, between 0.0 and 1.0.  It could vary over time, over space, or by mouse interaction.  </p>
+<li><p>For <strong>neighborhood</strong> we could use the Moore region of 8 neighbors, just like the Game of Life. </p>
 </li>
-<li><p>neighborhood is Moore: 8 neighbors, just like the Game of Life. </p>
+<li><p><strong>Temperature</strong> is just a parameter, which we could say is between 0.0 and 1.0.  Perhaps it is a constant, or perhaps we might try varying it over time, over space, by mouse interaction, etc.  </p>
 </li>
-<li><p>&quot;entropy&quot; is the proportion of neighbors that are in a <strong>different</strong> state (0.0 if all the same, 1.0 if all different)</p>
+<li><p>The <strong>entropy</strong> could be modeled as the proportion of neighbors that are in a <strong>different</strong> state (0.0 if all the same, 1.0 if all different).  This is a bit of a simplification of the physics, but it captures the essence of it. </p>
 </li>
-<li><p>&quot;probability&quot; of change, between 0.0 and 1.0.  Change should be more probable if entropy is high, and also if temperature is high. The physically correct way to calculate this uses Hamiltonians and some more involved math, but we can approximate it with simpler math.  I found that <code>pow(entropy, 1./temperature)</code> can give interesting results. </p>
+<li><p>From these we compute the <strong>probability of change</strong>, between 0.0 and 1.0.  Change should be more probable if entropy is high, and also if temperature is high. The physically correct way to calculate this uses Hamiltonians and some more complex math, but we can use a simpler approximation. I found that <code>pow(entropy, 1./temperature)</code> gives decent outcomes.  See <a href="https://www.desmos.com/3d/cgr7h3xbyd">https://www.desmos.com/3d/cgr7h3xbyd</a> </p>
 </li>
-<li><p>Then the transition rule is simple: if a noise value is less than the probability, flip the cell&#39;s state. </p>
+<li><p>Then the transition rule is simple: if a random (noise) value is less than the probability, flip the cell&#39;s state. </p>
 </li>
 </ul>
+<p>Try mapping temperature over space, e.g. using <code>uv.x</code>. Or mapping it to the proximity to the mouse, to create hotspots. </p>
+<p>As is often the case, it can be interesting to visualize different parts of the system in the final shader using different colours. For example, we use this to visualize the entropy, temperature, and probability. </p>
 <p><a href="https://www.shadertoy.com/view/tXtcz2">https://www.shadertoy.com/view/tXtcz2</a></p>
-<p>As is often the case, it can be interesting to visualize different parts of the system in the final shader. </p>
+<p>At high temperatures, the system remains noisy, while at lower temperatures it gradually self-organizes into grouped zones with equal spin.  This idea of a <strong>temperature control</strong> generalizes to many kinds of systems. </p>
 <!--
 A simplified Ising model on codepen -- try changing the temperature:
 
@@ -457,12 +459,27 @@ A simplified Ising model on codepen -- try changing the temperature:
 -->
 
 <h3 id="largeunboundedcomplex-states">Large/unbounded/complex states</h3>
-<p>The cellular <em>Potts model</em> (also known as the <em>Glazier-Graner</em> model) generalizes probabilistic CA beyond the two states of the Ising model to allow more states, and in some cases, an unbounded number of possible site states; however it still utilizes the notion of statistical movement toward neighbor equilibrium to drive change, though the definition of a local Hamiltonian. Variations have been used to model grain growth, foam, fluid flow, chemotaxis, biological cells, and even the developmental cycle of whole organisms. </p>
-<p>For example, there can be a probability of a cell copying the state of one of its neighbours.  For example, in modeling foam, all connected cells with the same state value are considered to be a single bubble. Most changes happen at the boundaries between these groups of cells. </p>
-<p>It&#39;s remarkable how few changes are needed to convert the Ising Model into a simple model of foam. All we need to do is to change the &quot;flip state&quot; action to a &quot;copy a random neighbor&quot; action!</p>
+<p>The cellular <em>Potts model</em> (also known as the <em>Glazier-Graner</em> model) generalizes probabilistic CA beyond the two states of the Ising model to allow more states, and in some cases, an unbounded number of possible site states; however it still utilizes the notion of statistical movement toward neighbor equilibrium to drive change, though the definition of a local entropic differene (the Hamiltonian). Variations have been used to model grain growth, foam, fluid flow, chemotaxis, biological cells, and even the developmental cycle of whole organisms. </p>
+<p>How would we need to change the Isnig model to have more than 2 states?</p>
+<ul>
+<li>Initialize the field not just with 0 and 1, but with several possible values, e.g. 0.0, 0.2, 0.4, 0.6, 0.8.  </li>
+<li>When a cell is to change value, it should copy the value of one of its neighbors, selected at random.  </li>
+</ul>
+<p>One way to initialize the cell values is using e.g. <code>floor(noise.x * 5.) / 5.</code>. </p>
+<p>To select a random neighbor, we could either generate a new texture lookup with a random offset. Or, we could store all our neighbors in an array, and pick one at random. E.g.:</p>
+<pre><code class="language-glsl"><span class="hljs-comment">// store neighbors in array:</span>
+<span class="hljs-type">float</span> near[<span class="hljs-number">8</span>] = <span class="hljs-type">float</span>[<span class="hljs-number">8</span>](N.b, E.b, S.b, W.b, NW.b, SW.b, NE.b, SE.b);
+<span class="hljs-comment">// pick a cell at random:</span>
+<span class="hljs-type">int</span> idx = <span class="hljs-type">int</span>(noise.z * <span class="hljs-number">8.</span>);
+<span class="hljs-comment">// copy their state</span>
+C.b = near[idx];
+</code></pre>
+<p>This starts to look a bit like a map of provinces, or perhaps something like foam. </p>
+<p>Again, visualize the entropy, probability, and moments of change. </p>
+<p>What if we allowed the states to be <em>any</em> value between 0.0 and 1.0 -- seeding the state with <code>noise.x</code>?  It starts to look even more like foam! </p>
 <p><a href="https://www.shadertoy.com/view/W3dyWl">https://www.shadertoy.com/view/W3dyWl</a></p>
-<p>This would be a great starting point for more exploration!</p>
-<p>States need not be limited to single numbers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. Stan Marée used this model to simulate the whole life cycle of <a href="https://www.researchgate.net/publication/46594643_Phototaxis_during_the_slug_stage_of_Dictyostelium_discoideum_A_model_study">Dictyostelium discoideum</a>!</p>
+<p>This would be a great starting point for more exploration! Here&#39;s one in which I modified the entropy to take into account relative differences of state, and modifed the update rule to also introduce a mutation of state each time: <a href="https://www.shadertoy.com/view/tXVyRV">https://www.shadertoy.com/view/tXVyRV</a></p>
+<p>States need not be limited to single numbers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. Stan Marée, Paulien Hogeweg and Alexander Panfilov used this model to simulate the whole life cycle of <a href="https://www.researchgate.net/publication/46594643_Phototaxis_during_the_slug_stage_of_Dictyostelium_discoideum_A_model_study">Dictyostelium discoideum</a> -- see the <a href="https://tbb.bio.uu.nl/stan/Thesis/Thesis/node7.htm">webpage here</a>, e.g. Fig 4.1c.  This is all a cellular automaton! </p>
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="continuous-state--function-ca">Continuous state &amp; function CA</h2>
@@ -670,6 +687,51 @@ https://google-research.github.io/self-organising-systems/particle-lenia/
 
 
 -->
+
+
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
+<h2 id="particle-ca-and-lattice-gas-automata">Particle CA and Lattice-Gas Automata</h2>
+<p>When we looked at porting the Ant and Termite models to GLSL, we found that we had to shift our perspective. Rather than taking the perspective of a living agent -- the ant or termite -- as it moves around space, we had to shift our perspective to a single, unmoving point in space -- the cell -- and handle the conditions under which this cell is occupied or not. This is a less intuitive way of thinking, but it can be quite a powerful technique.  </p>
+<p>If the transition rule (or, the set of transition rules as a whole) is careful to preserve a total cell occupancy values before and after, it can give the impression of a mass-conserving system, such as modeling the motion of particles and fluids. The elementary 1D traffic CA <a href="http://atlas.wolfram.com/01/01/184/">(rule 184)</a> is a simple particle CA. </p>
+<p>Sometimes this is considered &quot;mass preserving&quot;.  That is, the total amount of &quot;stuff&quot; in the world never changes, it just moves around. </p>
+<blockquote>
+<p>Note that our Ant and Termite models are not strictly mass-preserving: can you explain why? </p>
+</blockquote>
+<ul>
+<li><p>Mass-preserving CAs can be guaranteed <em>not</em> to dissolve into homogenous final states of all-black/all-white/etc. -- which can alleviate any need for an external limiter to keep the balance -- but this does not mean they won&#39;t find a stable or cyclic end. (On the other hand, CAs whose rules do not appear to preserve mass can still avoid dissolution into homogeneity.)</p>
+</li>
+<li><p>Note that mass-preservation does not imply that the system is reversible. Reversibility is quite a different property, which states that each output neighbourhood can only be caused by a single predecessor neighbourhood. Some, but certainly not all, particle CAs are reversible.</p>
+</li>
+</ul>
+<!--
+
+### Block rule CA
+
+Since mass-preservation can be ensured by considering the neighbourhood before *and* after each transition, rules are often expressed in terms of a *block*. For a 2D CA, the simplest block is a 2x2 region (the *Margolus neighborhood*).
+
+![Margolus neigborhood](img/mnhood.gif)
+
+A 2x2 block of 2-state automata has 2^3 = 16 possible configurations. A bit like a sprite-sheet in fact. So, one way of encoding a rule is to map all the 16 transitions in a lookup table. But, how does this "move"?
+
+A clever technique to simulate block-based rules is to shift the block grid on each successive frame, such that the even-aligned and then odd-aligned blocks interleave  ([see wikipedia](http://en.wikipedia.org/wiki/Block_cellular_automaton)). Note that a block rule CA does not need to be double-buffered, since block updates do not overlap. (By extension, a 3x3 block rule would need 3 steps to cover the space.)
+
+Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell/rullex_marg.html) -- many of these are implemented below. Note how simply the rules can be encoded using a minimal notation. Could you write a program to read this notation & turn it into a simulation? Could you use such an idea for other systems?
+
+<p data-height="300" data-theme-id="18447" data-slug-hash="NGxJpP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Block Rules: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/NGxJpP/">Block Rules: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+- The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
+-->
+
+<h3 id="digital-physics">Digital Physics</h3>
+<p><img src="img/zuse.jpg" alt="Zuse&#39;s vision of nature"></p>
+<blockquote>
+<p>In 1969, German computer pioneer (and painter) Konrad Zuse published his book <a href="ftp://ftp.idsia.ch/pub/juergen/zuserechnenderraum.pdf">Calculating Space</a>, proposing that the physical laws of the universe are discrete by nature, and that the entire universe is the output of a deterministic computation on a single cellular automaton. This became the foundation of the field of study called <em>digital physics</em>. Zuse&#39;s first model is a 3D particle CA.</p>
+</blockquote>
+<p>A CA-inspired digital physics hypothesis is currently being promoted by Stephen Wolfram, as described in his magnum opus <a href="http://www.wolframscience.com/nksonline/toc.html">A New Kind Of Science</a>.</p>
+<p>Those models are determinsitic, but particle CA can also use probabilistic rules to simulate brownian motions (like our termite explorers) and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a <em>dissipative system</em>).</p>
+
 <footer>2025</footer>
 
 </body>
