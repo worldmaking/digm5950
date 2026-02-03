@@ -635,16 +635,17 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 ## Larger convolutions
 
-A large and symmetric kernel convolution is sometimes desired, e.g. for a large blur, but this can be terribly expensive. Instead, a faster solution to apply the kernel in two passes; one horizontally, the next vertically. 
-
-### Gaussian blur
-
-For example, a blur of up to 7 pixels in each direction calls for a 13x13 pixel kernel, which is **169** texture lookups per pixel of the image! 
+A large and symmetric kernel convolution is sometimes desired, e.g. for a large blur, but this can be terribly expensive. Instead, a faster solution to apply the kernel in two passes; one horizontally, the next vertically. For example, a blur of up to 7 pixels in each direction calls for a 13x13 pixel kernel, which is **169** texture lookups per pixel of the image! 
 
 Instead, a common technique is to turn this into a multi-pass effect, e.g. using two Buffers in Shadertoy. The first pass applies a 13x1 blur horizontally, and the second pass applies a 1x13 pass vertically.  This is a total of only **26** texture lookups -- much cheaper, and the result is essentially the same. 
 
 To make it easier, you can define the blur operation as a function (stored in the "Common" section in Shadertoy), and re-use this function in each buffer, passing in the desired axis to use. 
 
+### Gaussian blur
+
+A Gaussian blur is mass-preserving (also known as brightness-preserving or intensity-preserving). Each output pixel value is a weighted average of its neighbors. The kernel of weights is normalized, meaning the sum of all its values (weights) equals 1. Because the sum of the weights is 1, the total intensity (or "mass") of the image remains constant.
+
+<!--
 ```glsl
 // Gaussian blur
 // img is e.g. iChannel0, iChannel1, etc.
@@ -669,6 +670,59 @@ vec4 gaussianBlurOneAxis(sampler2D img, vec2 resolution, vec2 texel, vec2 axis, 
     // normalize kernel to make it mass-preserving
     return result / weightSum;
 }
+```
+-->
+
+```glsl
+// Perform a Gaussian blur in one axis 
+// img: texture to sample from, e.g. iChannel0
+// uv: texture coordinate center, e.g. fragCoord/iResolution.xy
+// N: radius in texture samples
+// dir: direction axis / resolution, e.g. vec2(1, 0)/iResolution.xy
+vec4 blur(sampler2D img, vec2 uv, int N, vec2 dir) {    
+    float sigma = float(N)/3.;   // typically between N/2 to N/4
+    float exp_factor = -0.5/(sigma*sigma); // precomputed
+    vec4 result = texture(img, uv); // sum of weighted samples 
+    float mass = 1.; // sum of all weights used
+    for (int i = 1; i < N; i++) {
+        float weight = exp(float(i*i)*exp_factor); 
+        vec2 uv_offset = dir*float(i);
+        result += (texture(img, uv+uv_offset) + texture(img, uv-uv_offset)) * weight;
+        mass += weight*2.0;
+    }
+    return result / mass;
+}
+
+vec4 blurWithComments(sampler2D img, vec2 uv, int N, vec2 dir) {    
+    // Gaussian weight in one axis for distance "x" and standard deviation "sigma"
+    // = exp(-x^2 / 2sigma^2) / sqrt(2pi*sigma^2)
+    // typical values for the sigma are between N/2 to N/4
+    float sigma = float(N)/3.;  
+    // the divisor here is just to ensure mass-preservation,
+    // but we can achieve this simply by dividing by the sum of weights used
+    // so we only care about the exp() term
+    // most of the exp() computation is also a constant;
+    // for efficiency, we can calculate this part outside the loop
+    float exp_factor = -0.5/(sigma*sigma);
+    // compute center pixel first
+    // Gaussian weight for center pixel simplifies because exp(0)=1
+    vec4 result = texture(img, uv);
+    float mass = 1.; // sum of all weights used
+    // then add for each distance from 1 pixel onward:
+    for (int i = 1; i < N; i++) {
+        // Gaussian weight -- just the exp() part, because the rest is constant:
+        float weight = exp(float(i*i)*exp_factor); 
+        // texture coordinate offset:
+        vec2 uv_offset = dir*float(i);
+        // add the results for both positive & negative directions:
+        result += (texture(img, uv+uv_offset) + texture(img, uv-uv_offset)) * weight;
+        mass += weight*2.0; // we added two texture samples with this weight
+    }
+    // apply normalization at the end as the sum of all weights used
+    // this ensures the kernel is mass-preserving
+    return result / mass;
+}
+
 ```
 
 

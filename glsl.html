@@ -593,33 +593,86 @@ footer {
 <hr>
 <p><a href="#top"><img src="img/up.png"></a></p>
 <h2 id="larger-convolutions">Larger convolutions</h2>
-<p>A large and symmetric kernel convolution is sometimes desired, e.g. for a large blur, but this can be terribly expensive. Instead, a faster solution to apply the kernel in two passes; one horizontally, the next vertically. </p>
-<h3 id="gaussian-blur">Gaussian blur</h3>
-<p>For example, a blur of up to 7 pixels in each direction calls for a 13x13 pixel kernel, which is <strong>169</strong> texture lookups per pixel of the image! </p>
+<p>A large and symmetric kernel convolution is sometimes desired, e.g. for a large blur, but this can be terribly expensive. Instead, a faster solution to apply the kernel in two passes; one horizontally, the next vertically. For example, a blur of up to 7 pixels in each direction calls for a 13x13 pixel kernel, which is <strong>169</strong> texture lookups per pixel of the image! </p>
 <p>Instead, a common technique is to turn this into a multi-pass effect, e.g. using two Buffers in Shadertoy. The first pass applies a 13x1 blur horizontally, and the second pass applies a 1x13 pass vertically.  This is a total of only <strong>26</strong> texture lookups -- much cheaper, and the result is essentially the same. </p>
 <p>To make it easier, you can define the blur operation as a function (stored in the &quot;Common&quot; section in Shadertoy), and re-use this function in each buffer, passing in the desired axis to use. </p>
-<pre><code class="language-glsl"><span class="hljs-comment">// Gaussian blur</span>
-<span class="hljs-comment">// img is e.g. iChannel0, iChannel1, etc.</span>
-<span class="hljs-comment">// resolution is the resolution of the img, e.g. iResolution.xy</span>
-<span class="hljs-comment">// texel is the coordinate within that resolution</span>
-<span class="hljs-comment">// axis is vec2(1, 0) for horizontal or vec2(0, 1) for vertical</span>
-<span class="hljs-comment">// radius is the number of pixels to blur in each direction (larger is more expensive)</span>
-<span class="hljs-comment">// e.g. for horizontal </span>
-<span class="hljs-comment">// blur(iChannel 0, fragCoord, iResolution.xy, vec2(1, 0), 2);</span>
-<span class="hljs-type">vec4</span> gaussianBlurOneAxis(<span class="hljs-type">sampler2D</span> img, <span class="hljs-type">vec2</span> resolution, <span class="hljs-type">vec2</span> texel, <span class="hljs-type">vec2</span> axis, <span class="hljs-type">int</span> radius) 
+<h3 id="gaussian-blur">Gaussian blur</h3>
+<p>A Gaussian blur is mass-preserving (also known as brightness-preserving or intensity-preserving). Each output pixel value is a weighted average of its neighbors. The kernel of weights is normalized, meaning the sum of all its values (weights) equals 1. Because the sum of the weights is 1, the total intensity (or &quot;mass&quot;) of the image remains constant.</p>
+<!--
+```glsl
+// Gaussian blur
+// img is e.g. iChannel0, iChannel1, etc.
+// resolution is the resolution of the img, e.g. iResolution.xy
+// texel is the coordinate within that resolution
+// axis is vec2(1, 0) for horizontal or vec2(0, 1) for vertical
+// radius is the number of pixels to blur in each direction (larger is more expensive)
+// e.g. for horizontal 
+// blur(iChannel 0, fragCoord, iResolution.xy, vec2(1, 0), 2);
+vec4 gaussianBlurOneAxis(sampler2D img, vec2 resolution, vec2 texel, vec2 axis, int radius) 
 {   
-    <span class="hljs-type">vec4</span> result = <span class="hljs-built_in">texture</span>(img, texel/resolution);
-    <span class="hljs-type">float</span> weightSum = <span class="hljs-number">1.</span>;    
-    <span class="hljs-type">float</span> sigma = <span class="hljs-type">float</span>(radius)*<span class="hljs-number">0.5</span>;
-    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= radius; i++) {
-        <span class="hljs-type">float</span> weight = <span class="hljs-built_in">exp</span>(<span class="hljs-number">-0.5</span> * <span class="hljs-type">float</span>(i * i) / (sigma * sigma));
-        <span class="hljs-type">vec2</span> <span class="hljs-keyword">offset</span> = <span class="hljs-type">float</span>(i) * axis;
-        result += <span class="hljs-built_in">texture</span>(img, (texel + <span class="hljs-keyword">offset</span>)/resolution) * weight;
-        result += <span class="hljs-built_in">texture</span>(img, (texel - <span class="hljs-keyword">offset</span>)/resolution) * weight;
-        weightSum += <span class="hljs-number">2.0</span> * weight;
+    vec4 result = texture(img, texel/resolution);
+    float weightSum = 1.;    
+    float sigma = float(radius)*0.5;
+    for(int i = 1; i <= radius; i++) {
+        float weight = exp(-0.5 * float(i * i) / (sigma * sigma));
+        vec2 offset = float(i) * axis;
+        result += texture(img, (texel + offset)/resolution) * weight;
+        result += texture(img, (texel - offset)/resolution) * weight;
+        weightSum += 2.0 * weight;
     }
-    <span class="hljs-comment">// normalize kernel to make it mass-preserving</span>
-    <span class="hljs-keyword">return</span> result / weightSum;
+    // normalize kernel to make it mass-preserving
+    return result / weightSum;
+}
+```
+-->
+
+<pre><code class="language-glsl"><span class="hljs-comment">// Perform a Gaussian blur in one axis </span>
+<span class="hljs-comment">// img: texture to sample from, e.g. iChannel0</span>
+<span class="hljs-comment">// uv: texture coordinate center, e.g. fragCoord/iResolution.xy</span>
+<span class="hljs-comment">// N: radius in texture samples</span>
+<span class="hljs-comment">// dir: direction axis / resolution, e.g. vec2(1, 0)/iResolution.xy</span>
+<span class="hljs-type">vec4</span> blur(<span class="hljs-type">sampler2D</span> img, <span class="hljs-type">vec2</span> uv, <span class="hljs-type">int</span> N, <span class="hljs-type">vec2</span> dir) {    
+    <span class="hljs-type">float</span> sigma = <span class="hljs-type">float</span>(N)/<span class="hljs-number">3.</span>;   <span class="hljs-comment">// typically between N/2 to N/4</span>
+    <span class="hljs-type">float</span> exp_factor = <span class="hljs-number">-0.5</span>/(sigma*sigma); <span class="hljs-comment">// precomputed</span>
+    <span class="hljs-type">vec4</span> result = <span class="hljs-built_in">texture</span>(img, uv); <span class="hljs-comment">// sum of weighted samples </span>
+    <span class="hljs-type">float</span> mass = <span class="hljs-number">1.</span>; <span class="hljs-comment">// sum of all weights used</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt; N; i++) {
+        <span class="hljs-type">float</span> weight = <span class="hljs-built_in">exp</span>(<span class="hljs-type">float</span>(i*i)*exp_factor); 
+        <span class="hljs-type">vec2</span> uv_offset = dir*<span class="hljs-type">float</span>(i);
+        result += (<span class="hljs-built_in">texture</span>(img, uv+uv_offset) + <span class="hljs-built_in">texture</span>(img, uv-uv_offset)) * weight;
+        mass += weight*<span class="hljs-number">2.0</span>;
+    }
+    <span class="hljs-keyword">return</span> result / mass;
+}
+
+<span class="hljs-type">vec4</span> blurWithComments(<span class="hljs-type">sampler2D</span> img, <span class="hljs-type">vec2</span> uv, <span class="hljs-type">int</span> N, <span class="hljs-type">vec2</span> dir) {    
+    <span class="hljs-comment">// Gaussian weight in one axis for distance &quot;x&quot; and standard deviation &quot;sigma&quot;</span>
+    <span class="hljs-comment">// = exp(-x^2 / 2sigma^2) / sqrt(2pi*sigma^2)</span>
+    <span class="hljs-comment">// typical values for the sigma are between N/2 to N/4</span>
+    <span class="hljs-type">float</span> sigma = <span class="hljs-type">float</span>(N)/<span class="hljs-number">3.</span>;  
+    <span class="hljs-comment">// the divisor here is just to ensure mass-preservation,</span>
+    <span class="hljs-comment">// but we can achieve this simply by dividing by the sum of weights used</span>
+    <span class="hljs-comment">// so we only care about the exp() term</span>
+    <span class="hljs-comment">// most of the exp() computation is also a constant;</span>
+    <span class="hljs-comment">// for efficiency, we can calculate this part outside the loop</span>
+    <span class="hljs-type">float</span> exp_factor = <span class="hljs-number">-0.5</span>/(sigma*sigma);
+    <span class="hljs-comment">// compute center pixel first</span>
+    <span class="hljs-comment">// Gaussian weight for center pixel simplifies because exp(0)=1</span>
+    <span class="hljs-type">vec4</span> result = <span class="hljs-built_in">texture</span>(img, uv);
+    <span class="hljs-type">float</span> mass = <span class="hljs-number">1.</span>; <span class="hljs-comment">// sum of all weights used</span>
+    <span class="hljs-comment">// then add for each distance from 1 pixel onward:</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt; N; i++) {
+        <span class="hljs-comment">// Gaussian weight -- just the exp() part, because the rest is constant:</span>
+        <span class="hljs-type">float</span> weight = <span class="hljs-built_in">exp</span>(<span class="hljs-type">float</span>(i*i)*exp_factor); 
+        <span class="hljs-comment">// texture coordinate offset:</span>
+        <span class="hljs-type">vec2</span> uv_offset = dir*<span class="hljs-type">float</span>(i);
+        <span class="hljs-comment">// add the results for both positive &amp; negative directions:</span>
+        result += (<span class="hljs-built_in">texture</span>(img, uv+uv_offset) + <span class="hljs-built_in">texture</span>(img, uv-uv_offset)) * weight;
+        mass += weight*<span class="hljs-number">2.0</span>; <span class="hljs-comment">// we added two texture samples with this weight</span>
+    }
+    <span class="hljs-comment">// apply normalization at the end as the sum of all weights used</span>
+    <span class="hljs-comment">// this ensures the kernel is mass-preserving</span>
+    <span class="hljs-keyword">return</span> result / mass;
 }
 </code></pre>
 <hr>

@@ -480,7 +480,7 @@ What if we allowed the states to be *any* value between 0.0 and 1.0 -- seeding t
 
 https://www.shadertoy.com/view/W3dyWl
 
-This would be a great starting point for more exploration! Here's one in which I modified the entropy to take into account relative differences of state, and modifed the update rule to also introduce a mutation of state each time: https://www.shadertoy.com/view/tXVyRV
+This would be a great starting point for more exploration! Here's one in which I modified the entropy to take into account relative differences of state, and modifed the update rule to also introduce a mutation of state each time: https://www.shadertoy.com/view/tXVyRV 
 
 States need not be limited to single numbers -- in other systems the state could be represented by an n-tuple of values, or a recursive structure allowing unbounded complexity. Stan Marée, Paulien Hogeweg and Alexander Panfilov used this model to simulate the whole life cycle of [Dictyostelium discoideum](https://www.researchgate.net/publication/46594643_Phototaxis_during_the_slug_stage_of_Dictyostelium_discoideum_A_model_study) -- see the [webpage here](https://tbb.bio.uu.nl/stan/Thesis/Thesis/node7.htm), e.g. Fig 4.1c.  This is all a cellular automaton! 
 
@@ -490,30 +490,30 @@ Now we have seen a few examples of CA that use continuous-valued states (e.g. an
 
 ### Reaction Diffusion
 
-The reaction-diffusion model was proposed by Alan Turing (shortly before his passing) to describe embryo development and pattern-generation ([Turing, A. The Chemical Basic for Morphogenesis.](http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf)); it is still used today in computer graphics ([Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf)). RD systems and other differential equation systems can be approximated using continuous automata.
+The reaction-diffusion model was proposed by Alan Turing (shortly before his passing) to describe embryo development and pattern-generation ([Turing, A. The Chemical Basic for Morphogenesis.](http://www.dna.caltech.edu/courses/cs191/paperscs191/turing.pdf)). His RD systems were presented as continuous functions in mathematics, but they can be approximated using cellular automata with continuous-ranged values. This is still used today in computer graphics -- a landmark publication being [Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf) paper on animal pattern generation using cellular automata across meshes. 
 
-[Here's a clear explanation on Karl Sims' website](https://www.karlsims.com/rd.html)
+Let's look at a simple RD system. [Here's a clear explanation of one on Karl Sims' website](https://www.karlsims.com/rd.html).
 
 The chemical interpretation:
 
-- A's are constantly added.  A diffuses quickly through the space.  
-- B's are constantly removed. B diffuses too, but more gradually than A. 
+- A's are constantly added.  A's diffuse quickly through the space.  
+- B's are constantly removed. B's diffuse too, but more slowly than A. 
 - Two B's plus one A causes a chemical reaction that turns the A into a B (so you get 3 B's at the end)
 
-That's a discrete description, but we'll assume that a pixel could contain thousands or millions of A's and B's, so instead we'll model them in a continuous way as "concentrations". So our cell state is two numbers, as concentrations of A and B. 
+That's a discrete description, but we'll assume that a pixel could contain thousands or millions of A's and B's, so instead we'll model them in a continuous way as "concentrations". So our cell state is two numbers, for the concentrations of A and B. 
 
 The update rule applies the reaction equations for both A and B. These are "rate of change" equations, so they add to (or remove from) the existing concentrations.  Here's are the two rates of change:
 
 - Change of A = (Diffusion inflow of A) - (Reaction product removal of A) + (Feed rate of A)
 - Change of B = (Diffusion inflow of B) + (Reaction product addition of B) + (Kill rate of B)
 
-The Reaction Product change is the same in both cases. Since it takes two B's to make an A, it is `A * B * B`. 
+The **Reaction Product** change is the same in both cases. Since it takes two B's to make an A, it is `A * B * B`. 
 
-The Feed rate is proportional to existing A, using `feedrate * (1.0 - A)`, which ensures A is never > 1.0.  Typically in the range of from 0.01 to 0.1. 
+The **feed rate** is proportional to existing A, using `feedrate * (1.0 - A)`, which ensures A is never > 1.0.  Typically in the range of from 0.01 to 0.1. 
 
-The kill rate uses `(killrate + feedrate)*B` to ensure the kill rate is never less than the feed rate.   Typically in the range of from .045 to 0.07. 
+The **kill rate** uses `(killrate + feedrate)*B` to ensure the kill rate is never less than the feed rate.   Typically in the range of from .045 to 0.07. 
 
-The most complex part is the diffusion. The basic idea is that, over time, any chemical becomes more evenly distributed in space. That's a bit like what a blur does (actually it is closer to the classic "emboss" photoshop filter). However, for diffusion it is **essential** that this is done in such a way that the total quantity over space does not increase or decrease, i.e. it is "mass preserving".  (Otherwise, the system could easily just blow up in an unrealistic way!) 
+The most complex part is the diffusion. The basic idea is that, over time, any chemical becomes more evenly distributed in space. That's a bit like what a blur does. However, for diffusion it is **essential** that this is done in such a way that the total quantity over space does not increase or decrease, i.e. it is "mass preserving".  (Otherwise, the system could easily just blow up in an unrealistic way!) 
 
 We can implement this as a filter kernel, to find out for a given cell, how different its average neighborhood is. In Karl Sims' webpage, he suggests using a 3x3 kernel like so:
 
@@ -550,9 +550,22 @@ Or if you want a more programmatic way:
     }
 ```
 
-The system can be quite sensitive to start conditions, and can easily blow up.  I find that starting with a field full of A's and a few blobs of B here & there is a good starting point. 
+With that, we have *almost* enough to build our first RD system. 
 
-Some classic parameters:
+But what should the **initial conditions** be? I find that this system can be quite sensitive to start conditions, and can easily blow up.  I find that starting with a field full of A's and a few blobs of B here & there is a good starting point. 
+
+https://www.shadertoy.com/view/W3dyDl
+
+---
+
+
+> Interpretation: There are two parts to this system: an "activator" and an "inhibitor".  Both diffuse over space, but the activator diffuses more slowly, leading to local-scale positive feedback, but longer-range negative feedback.
+
+> This isn't the first time we have had a system that has balanced two different tendencies. Can you see any parallels with, for example, the Game of Life, or the Ising Model?
+
+---
+
+Some classic parameters for specific behaviours:
 
 ```
 Mitosis     : killrate = 0.062 ; feedrate = 0.028
@@ -564,13 +577,27 @@ Mazes       : killrate = 0.057 ; feedrate = 0.029
 Spirals     : killrate = 0.047 ; feedrate = 0.014
 ```
 
-https://www.shadertoy.com/view/W3dyDl
+This system is also known as the *Gray-Scott* model, as described in [Pearson, J. E. Complex Patterns in a Simple System](http://arxiv.org/pdf/patt-sol/9304003.pdf). An optimized browser-based example is [here](https://pmneila.github.io/jsexp/grayscott/).  Another implementation in Shadertoy: https://www.shadertoy.com/view/ldXBz8
 
-> Interpretation: There are two parts to this system: an "activator" and an "inhibitor".  Both diffuse over space, but the activator diffuses more slowly, leading to local-scale positive feedback, but longer-range negative feedback.
+There is [a wonderful archive of this model at this webpage](http://mrob.com/pub/comp/xmorphia/), including many great video examples of the [u-skate world](http://www.youtube.com/watch?v=F5oKgVZ6bTk), and even [u-skate in 3D](http://www.youtube.com/watch?v=B03lcPEmSOQ). 
 
-> This isn't the first time we have had a system that has balanced two different tendencies. Can you see any parallels with, for example, the Game of Life, or the Ising Model?
+![The Gray-Scott parameter map](img/xmorphia-parameter-map.jpg)
 
-Karl Sims has suggestions for exploring variations:
+Some of the results share resemblance with analog video feedback ([example](http://www.youtube.com/watch?v=hDYEVv9t32U), [example](http://www.youtube.com/watch?v=Uw5onuS2_mw)), which has been exploited by earlier media artists (notably the Steiner and Woody Vasulka). 
+
+---
+
+### Multipass
+
+The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you'll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  Another option is to run several passes per frame. 
+
+We can do this in Shadertoy by using several Buffer passes in a loop A -> B -> C -> D -> A etc. To save us writing the same code four times, we can re-write it as a function in the Common tab and re-use that in each Buffer tab.
+
+https://www.shadertoy.com/view/33GyRc
+
+### Extensions
+
+Karl Sims has suggestions for exploring variations -- maybe these are interesting for us to try?
 
 - Orientation: diffusion can occur faster in one direction than another to give an orientation to the results.
 - Style Map: the feed and kill rates can vary across the grid to give different patterns in different areas.
@@ -578,18 +605,6 @@ Karl Sims has suggestions for exploring variations:
 - Scale: the size of the pattern changes when the reaction rate is sped up or slowed down relative to the diffusion rate.
 
 It might be interesting to see what bringing external textures (or video streams) in as influences might do. 
-
-> The results are good, but the diffusion is quite slow -- maximum one pixel per frame for the faster chemical.  If you want to play with faster reaction-diffusion systems, you'll need to use a way of diffusing over wider ranges. You can try using larger kernels, such as a 5x5 kernel for up to two pixels per frame. But that means 25 texture lookups per pixel. This quickly gets very expensive.  Another option is to run several passes per frame (we can do this in Shadertoy by using several Buffer passes in a loop A -> B -> C -> D -> A etc.; and writing the simulation code in a function in Common to re-use in each Buffer).  
-
-https://www.shadertoy.com/view/33GyRc
-
-> Another option for larger kernels is to apply the diffusion as two separate passes: one pass diffuses horizontally, the second pass diffuses the result vertically (again, in Shadertoy this would mean using two Buffer passes). This two pass (horizontal, vertical) structure is often how high [quality blur shaders work](glsl.html#gaussian_blur). 
-
-This system is also known as the *Gray-Scott* model, as described in [Pearson, J. E. Complex Patterns in a Simple System](http://arxiv.org/pdf/patt-sol/9304003.pdf). An optimized browser-based example is [here](https://pmneila.github.io/jsexp/grayscott/).  Another implementation in Shadertoy: https://www.shadertoy.com/view/ldXBz8
-
-There is [a wonderful archive of this model at this webpage](http://mrob.com/pub/comp/xmorphia/), including many great video examples of the [u-skate world](http://www.youtube.com/watch?v=F5oKgVZ6bTk), and even [u-skate in 3D](http://www.youtube.com/watch?v=B03lcPEmSOQ). 
-
-![The Gray-Scott parameter map](img/xmorphia-parameter-map.jpg)
 
 <!--
 
@@ -600,7 +615,69 @@ Here is this model at a lower resolution using our starter kit:
 
 -->
 
-Some of these systems share resemblance with analog video feedback ([example](http://www.youtube.com/watch?v=hDYEVv9t32U), [example](http://www.youtube.com/watch?v=Uw5onuS2_mw)), which has been exploited by earlier media artists (notably the Steiner and Woody Vasulka). 
+### Implementing a simplified Reaction Diffusion via blur
+
+It's still a little frustrating that the diffusion is expensively slow. 
+
+> Another option for larger kernels is to apply the diffusion as two separate passes: one pass diffuses horizontally, the second pass diffuses the result vertically (again, in Shadertoy this would mean using two Buffer passes). This two pass (horizontal, vertical) structure is often how high [quality blur shaders work](glsl.html#gaussian_blur). 
+
+The thinking goes like this: To simulate diffusion at a given cell, we want the average value of all grid locations within a fixed radius of that cell. Averaging over a larger radius corresponds to having a faster diffusion rate, because there are more cells contributing to the new value. 
+
+One of the most common methods to compute an average over an area is to take the Gaussian convolution. A neat feature of the Gaussian convolution kernel is that it is mass-preserving (also known as brightness-preserving or intensity-preserving). Each output pixel value is a weighted average of its neighbors. The kernel of weights is normalized, meaning the sum of all its values (weights) equals 1. Because the sum of the weights is 1, the total intensity (or "mass") of the image remains constant. And the Gaussian blur decays exponentially with distance, so it actually makes a workable model for diffusion. 
+
+The problem is, it is very expensive. To get a deep blur (or fast diffusion) we need to average over many pixels, which means we need to do a huge number of computations. But there's a neat trick we can use here that is often used for efficient blur image processing. Another neat feature of a gaussian function is that the product of two Gaussian functions is a Gaussian, and the convolution of two Gaussian functions is also a Gaussian.  This means that we can apply a gaussian convolution blur in one axis only (say, only horizontally in the X axis), and then to the result of this, apply another Gaussian in the other axis (say, only vertically in the Y axis), and the final result we get here is a Gaussian blur in two dimensions. This two pass (horizontal, vertical) structure is often how high [quality blur shaders work](glsl.html#gaussian_blur). In Shadertoy, we can do this by using two Buffer passes. 
+
+> (This two-pass diffusion or regional average technique will also help us with some other continuous automata.)
+
+With a workable mass-preserving Gaussian blur convolution, we can turn that into diffusion just by running it in a feedback loop. If we repeatedly apply our blurs in feedback over many frames, it will become more and more diffused over the space.  
+
+Now, the core pattern-generating capacity of a reaction diffusion system is the way that one chemical diffuses more quickly than the other.  We can model that by applying two blurs, one with a larger radius than the other. In the Turing reaction, activators and inhibitors diffuse at different rates, which corresponds to taking averages over different radii.
+
+To model the reaction, then we just need to take the difference between the two chemicals. This is just like the subtraction of a smaller blur from a larger blur!
+
+In fact this can be modeled with only 1 value -- think of it as representing the proportion between chemical A and chemical B.  If the reaction difference is positive, our proportion of A:B goes up; if the reaction difference is negative, our proportion of A:B goes down.  
+
+So we have one channel representing a proportion of A:B, two blurs of this at different radii, and the difference of the blurs tells us whether the proportion should increase or decrease.  Amazingly that is also enough to produce Turing-style patterns! 
+
+You can also try adding a little bias to the proportion on every frame, to emulate the case of one chemical being constantly fed into the system. 
+
+https://www.shadertoy.com/view/33cBz4
+
+What else can you think of that might be interesting to do with this?
+
+
+<!--
+
+
+### Multi-scale Turing Patterns
+
+<iframe src="https://player.vimeo.com/video/137778082" width="720" height="405" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+[Jonathan McCabe's cyclic multi-scale Turing patterns](http://www.jonathanmccabe.com/), and a [commentary by Mitchell Whitelaw](http://teemingvoid.blogspot.kr/2007/02/jonathan-mccabe-very-cellular-automata.html). The implementation is described [in this paper](http://www.archive.bridgesmathart.org/2010/bridges2010-387.pdf).
+
+It starts with a straightforward reaction-diffusion system:
+
+- Diffusion is simulated by averaging the continuous cell values over small (activator) and large (inhibitor) radii; if the the smaller (activator) concentration is greater than the larger (inhibitor) concentration, increase the cell value by a small amount; otherwise decrease. 
+- After running the rule over all cells, the entire field is *normalized* (to ensure the minimum cell value is zero and the maximum cell value is 1).
+
+Since this creates structure at a single spatial scale, it can be elaborated by super-imposing several models at different spatial scales (different small and large radii). Or, by changing the radii dynamically over time (as in [Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf)). McCabe's system uses several pre-defined scales, but selects which scale to apply for a particular cell according to which one currently shows the least local variation. 
+
+Additionally, his system does not measure all cells within a radius; instead it selects cells at the radius distance and certain angular directions, creating cyclical symmetries in the result. For example, 3-fold symmetry may be used at a smaller scale, and 9-fold symmetry at a larger scale.
+
+<iframe width="640" height="360" src="https://www.youtube.com/embed/4Sz-iEdNFDc?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+References:
+- https://softologyblog.wordpress.com/2011/07/05/multi-scale-turing-patterns/
+- https://foo.net/projects/turing-clouds/background.html
+- https://rreusser.github.io/multiscale-turing-pattern-gallery/
+- https://www.semanticscholar.org/paper/Cyclic-Symmetric-Multi-Scale-Turing-Patterns-McCabe/2bbce66e648b5f6c27df147230872a16eafd21fa
+- http://www.archive.bridgesmathart.org/2010/bridges2010-387.pdf
+- https://vimeo.com/521001744
+- https://observablehq.com/@rreusser/multiscale-turing-pattern-bot-v2
+Of course, someone has ported McCabes model to GLSL: https://www.shadertoy.com/view/MdGGzR
+
+-->
 
 ------------
 
@@ -608,27 +685,29 @@ Some of these systems share resemblance with analog video feedback ([example](ht
 
 Is it possible to completely eliminate discreteness in all aspects, to create a truly continuous CA?  To do so, let's return to our original definition of a CA, and for each component in turn, change discrete into continuous:
 
-**States:** In this case, the states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0.0 to 1.0). The [Hodgepodge model](#hodgepodge) pointed down this path. With a continuous range of states, the transition rule can no longer be a simple lookup table, but instead must map continuous ranges. Comparators can be used to segment continuous space into ranges, and drive control flow, but the use of control flow implies that the output of the transition rule is still principally discontinuous. 
+**States:** The states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0.0 to 1.0). We've seen many CAs of this kind now. 
 
-**Transition functions:** One step further requires that the transition rule be expressible as a purely mathematical function, that is predominantly smooth. That is, all transition rules are combined into a single function, which handles both continuous input and produces continuous output. A [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function), for example, is a continuous input & output function that nevertheless approximates the states of discrete functions.
+**Neighborhood:** Instead of simply considering whole neighbor cells, we may want to apply some kind of weighted average over the surrounding region -- a sampling "kernel".  Proper weighting of a kernel can eliminate much of the artifacts due to regular grid spacing.  We saw how to do this using Gaussian convolution -- like blur -- for diffusion. The same idea can be used to compute the average in a circular neighborhood!
+
+The kernel could be simply expressed as an inner and outer radius, for example, or an ideal distance with sampling weighted according to a function of distance from this radius.  This is just like the subtraction of a smaller blur from a larger blur!
+
+(Alternatively, it may also be viable to explore a statistical sampling strategy, selecting each time only a random sub-set of the possible sampling locations to create a cheaper approximation of continuous sampling.)
+
+**Transition functions:** With a continuous range of states, the transition rule can no longer be a simple lookup table, but instead must map continuous ranges. For example, we have already seen several continuous-valued CAs in which the transition function is a mathematical function, such as accumulating reaction diffusion rates of change. 
+
+But what if we want something that more approximates a logical decision? Comparators can be used to segment continuous space into ranges, and drive control flow, but the use of control flow implies that the output of the transition rule is still principally discontinuous. To express a decision continuously, we can choose a smooth saturation function. A [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function), for example, is a continuous input & output function that nevertheless approximates the states of discrete functions. A convenient option is the `smoothstep()` function built into GLSL. 
 
 ![sigmoid](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/600px-Logistic-curve.svg.png)
 
 Another option here is to use probabilistic functions. Finding a continuous system whose behaviours persist with the addition of some random noise is tantamount to finding an interesting system that is *robust to perturbations* -- a useful feature for anything that must interact with the real world!
 
-**Neighborhood:** Instead of simply considering whole neighbor cells, we may want to apply some kind of weighted average over the surrounding region -- a sampling "kernel".  Proper weighting of a kernel can eliminate much of the artifacts due to regular grid spacing.  This is similar to how we can apply certain kinds of blur to images, such as Gaussian blur.
-
-The kernel could be simply expressed as an inner and outer radius, for example, or an ideal distance with sampling weighted according to a function of distance from this radius.  This is like the subtraction of a smaller blur from a larger blur.
-
-If radii are not expected to change, then kernel locations and weights can be pre-computed. Nevertheless, continuous neighborhood sampling can easily become processor-intensive. It may also be viable to explore a statistical sampling strategy, selecting each time only a random sub-set of the possible sampling locations to create a cheaper approximation of continuous sampling.
-
-Another option is to apply an intermediate process of diffusion -- i.e. blur -- across the entire space between each application of the transition rule. However it is important that the diffusion kernel is mass-preserving -- that is, that repeated applications of the blur will not make the sum of all cell values greater or lesser. 
-
 **Time:** How can we turn discrete steps in time into a smooth flow? Instead of simply outputting a new state, change may be spread over time as a *differential*. That is, what is output from the transition function is an offset to accumulate to the current state. 
 
+<!--
 This offset may also be distributed over a weighted neighbourhood, rather than a single state. 
 
 Another possible strategy to explore is delayed application (i.e., spreading the double-buffering over continuous time): maintaining copies of past and future cell states and interpolating between them. This can be used to smoothen the visual output of the CA, and also to support sampling the field at arbitrary points of time between frames.
+-->
 
 ### Smoothlife
 
@@ -670,28 +749,14 @@ Ima traveller (1996) is interactive computer software for exploring an infinite 
 
 This work has inspired discussion by several critics, including [Mitchell Whitelaw](http://www.tandfonline.com/doi/abs/10.1076/digc.14.1.43.8810) and [Jon McCormack and Alan Dorin](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.16.6640&rep=rep1&type=pdf&utm_source=twitterfeed&utm_medium=twitter).
 
-### Multi-scale systems
+--
+
 
 Several cellular systems can be coupled together at different scales. 
 
 - Perhaps each cell of a macro-CA is itself an entire micro-CA world. Or several CA can overlap with different spatial relationships. 
 - Higher- and lower-level systems could progress at different rates (or statistical frequencies).
-
-<iframe src="https://player.vimeo.com/video/137778082" width="720" height="405" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-[Jonathan McCabe's cyclic multi-scale Turing patterns](http://www.jonathanmccabe.com/), and a [commentary by Mitchell Whitelaw](http://teemingvoid.blogspot.kr/2007/02/jonathan-mccabe-very-cellular-automata.html). The implementation is described [in this paper](http://www.jonathanmccabe.com/Cyclic_Symmetric_Multi-Scale_Turing_Patterns.pdf).
-
-It starts with a straightforward reaction-diffusion system:
-
-- Diffusion is simulated by averaging the continuous cell values over small (activator) and large (inhibitor) radii; if the the smaller (activator) concentration is greater than the larger (inhibitor) concentration, increase the cell value by a small amount; otherwise decrease. 
-- After running the rule over all cells, the entire field is *normalized* (to ensure the minimum cell value is zero and the maximum cell value is 1).
-
-Since this creates structure at a single spatial scale, it can be elaborated by super-imposing several models at different spatial scales (different small and large radii). Or, by changing the radii dynamically over time (as in [Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf)). McCabe's system uses several pre-defined scales, but selects which scale to apply for a particular cell according to which one currently shows the least local variation. 
-
-Additionally, his system does not measure all cells within a radius; instead it selects cells at the radius distance and certain angular directions, creating cyclical symmetries in the result. For example, 3-fold symmetry may be used at a smaller scale, and 9-fold symmetry at a larger scale.
-
-<iframe width="640" height="360" src="https://www.youtube.com/embed/4Sz-iEdNFDc?rel=0" frameborder="0" allowfullscreen></iframe>
-
+  
 ## Multi-way CA & parallel histories
 
 In certain CA variants, more than one substitution could be valid to undertake. We have seen how some CA simply choose randomly between options, while Monte Carlo systems consider two or more options and take the one with the highest entropy. In a sense, for a brief moment, these systems follow two parallel histories, and then choose which one to discard. But there is no reason why we can't follow two (or more) histories for a little longer than a single step, nor to limit our decision-making to an energetic/entropic basis. We may return to this idea when exploring evolutionary systems, which present a similar parallelism. 
