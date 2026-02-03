@@ -681,7 +681,7 @@ Of course, someone has ported McCabes model to GLSL: https://www.shadertoy.com/v
 
 ------------
 
-### Fully continuous automata
+## Fully continuous automata
 
 Is it possible to completely eliminate discreteness in all aspects, to create a truly continuous CA?  To do so, let's return to our original definition of a CA, and for each component in turn, change discrete into continuous:
 

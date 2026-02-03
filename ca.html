@@ -59,7 +59,9 @@ footer {
 <li><a href="#multipass">Multipass</a></li>
 <li><a href="#extensions">Extensions</a></li>
 <li><a href="#implementing-a-simplified-reaction-diffusion-via-blur">Implementing a simplified Reaction Diffusion via blur</a></li>
-<li><a href="#fully-continuous-automata">Fully continuous automata</a></li>
+</ul>
+</li>
+<li><a href="#fully-continuous-automata">Fully continuous automata</a><ul>
 <li><a href="#smoothlife">Smoothlife</a></li>
 <li><a href="#lenia">Lenia</a></li>
 </ul>
@@ -632,7 +634,9 @@ Of course, someone has ported McCabes model to GLSL: https://www.shadertoy.com/v
 -->
 
 <hr>
-<h3 id="fully-continuous-automata">Fully continuous automata</h3>
+<hr>
+<p><a href="#top"><img src="img/up.png"></a></p>
+<h2 id="fully-continuous-automata">Fully continuous automata</h2>
 <p>Is it possible to completely eliminate discreteness in all aspects, to create a truly continuous CA?  To do so, let&#39;s return to our original definition of a CA, and for each component in turn, change discrete into continuous:</p>
 <p><strong>States:</strong> The states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0.0 to 1.0). We&#39;ve seen many CAs of this kind now. </p>
 <p><strong>Neighborhood:</strong> Instead of simply considering whole neighbor cells, we may want to apply some kind of weighted average over the surrounding region -- a sampling &quot;kernel&quot;.  Proper weighting of a kernel can eliminate much of the artifacts due to regular grid spacing.  We saw how to do this using Gaussian convolution -- like blur -- for diffusion. The same idea can be used to compute the average in a circular neighborhood!</p>
