@@ -713,7 +713,22 @@ Another possible strategy to explore is delayed application (i.e., spreading the
 
 <iframe width="640" height="360" src="https://www.youtube.com/embed/ISQChKRH4NI?list=PL69EDA11384365494" frameborder="0" allowfullscreen></iframe> 
 
-[SmoothLife](http://www.youtube.com/playlist?list=PL69EDA11384365494) uses a discrete grid, but all of states, kernel, and transition functions are adjusted for smooth, continuous values. A disc around a cell's center is integrated and normalized (i.e. averaged) for the cell's state, and a ring surrounding this is integrated & normalized (averaged) for the neighbor state. Cell transition functions are expressed in terms of continuous sigmoid thresholds over the [0, 1] range, and re-expressed in terms of differential functions (velocities of change) to approximate continuous time. [Paper here](http://arxiv.org/pdf/1111.1567v2.pdf). By doing so, it removes the discrete bias and leads to fascinating results. [Another implementaton](http://www.youtube.com/watch?v=l7t8LtdBAV8). [Taken to 3D](http://www.youtube.com/watch?v=zA857JdUn9o&list=PL69EDA11384365494&index=46). In effect, by making all components continuous, it is essentially a simulation of differential equations. [Here is a great explanation of the SmoothLife implementation, with a jsfiddle demo](http://0fps.net/2012/11/19/conways-game-of-life-for-curved-surfaces-part-1/)
+[SmoothLife](http://www.youtube.com/playlist?list=PL69EDA11384365494) uses a discrete grid, but all of states, kernel, and transition functions are adjusted for smooth, continuous values. [Paper here](http://arxiv.org/pdf/1111.1567v2.pdf). By doing so, it removes the discrete bias and leads to fascinating results. [Another implementaton](http://www.youtube.com/watch?v=l7t8LtdBAV8). [Taken to 3D](http://www.youtube.com/watch?v=zA857JdUn9o&list=PL69EDA11384365494&index=46). In effect, by making all components continuous, it is essentially a simulation of differential equations. [Here is a great explanation of the SmoothLife implementation, with a jsfiddle demo](http://0fps.net/2012/11/19/conways-game-of-life-for-curved-surfaces-part-1/)
+
+States are continuous pixel values are between 0.0 and 1.0.  
+
+A "cell", in the Game of Life sense, is considered to be a diffuse region covering several pixels. To get its value, a disc around a cell's center is integrated and normalized (that is, we are computing the average, also between 0.0 and 1.0) for the cell's likely state.
+
+The neighbor state is a ring surrounding the center disc. This can be implemented as summing over a larger disc, and subtracting the sum of the smaller center disc.  Again, the neighbor state is normalized between 0.0 and 1.0.  
+
+How do we make the transition function (the Game of Life rules) continuous?  First, we translate the neighborhood rules to a normalized 0.0 to 1.0 range (by dividing by 8) to get our thresholds for survival, death, and rebirth, so that they can work with our normalized neighborhood value.  We also want to smooth the boundaries between these regions, which we can do with sigmoid shapers, something like this:
+
+![smoothlife transition rules](img/smoothlife.png)
+
+That's already enough to get some SmoothLife behaviour. All we need to know is what are good initial conditions?
+
+We can also translate the transition function from discrete time to continuous time by re-epxressing them in terms of differential functions (velocities of change).
+
 
 ### Lenia
 
