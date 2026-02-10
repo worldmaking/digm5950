@@ -683,25 +683,131 @@ Of course, someone has ported McCabes model to GLSL: https://www.shadertoy.com/v
 
 ## Fully continuous automata
 
-Is it possible to completely eliminate discreteness in all aspects, to create a truly continuous CA?  To do so, let's return to our original definition of a CA, and for each component in turn, change discrete into continuous:
+Is it possible to completely eliminate discreteness in all aspects, to create a truly continuous CA?  
 
-**States:** The states are not discrete (such as 0 or 1) but belong to a continuum (such as the linear range 0.0 to 1.0). We've seen many CAs of this kind now. 
+Take for example the Game of Life -- it is entirely discrete:  
 
-**Neighborhood:** Instead of simply considering whole neighbor cells, we may want to apply some kind of weighted average over the surrounding region -- a sampling "kernel".  Proper weighting of a kernel can eliminate much of the artifacts due to regular grid spacing.  We saw how to do this using Gaussian convolution -- like blur -- for diffusion. The same idea can be used to compute the average in a circular neighborhood!
+1. states are discrete, either `0` or `1`
+2. the definition of "self" is hard-edged: a single cell. Similarly, the definition of "neighbourhood" is also hard-edged: the 8 nearest cells
+3. the transition function is a combination of discrete `if`/`else` rules, combined with discrete `>` and `<` comparisions. 
+4. the way time passes is discrete, with cells either flipping or not flipping state
 
-The kernel could be simply expressed as an inner and outer radius, for example, or an ideal distance with sampling weighted according to a function of distance from this radius.  This is just like the subtraction of a smaller blur from a larger blur!
+Is it at all possible to turn all these discrete aspects into continuous forms?  And if so, would you be able to somehow preserve some of the characteristic complexity of the Game of Life -- the mixture of stable forms, mobile forms, and the complex interactions between them?
 
-(Alternatively, it may also be viable to explore a statistical sampling strategy, selecting each time only a random sub-set of the possible sampling locations to create a cheaper approximation of continuous sampling.)
+This is what Stefan Rafler wanted to do: to translate the Game of Life into a purely continuous realm, which he called **SmoothLife**
 
-**Transition functions:** With a continuous range of states, the transition rule can no longer be a simple lookup table, but instead must map continuous ranges. For example, we have already seen several continuous-valued CAs in which the transition function is a mathematical function, such as accumulating reaction diffusion rates of change. 
+### Smoothlife
 
-But what if we want something that more approximates a logical decision? Comparators can be used to segment continuous space into ranges, and drive control flow, but the use of control flow implies that the output of the transition rule is still principally discontinuous. To express a decision continuously, we can choose a smooth saturation function. A [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function), for example, is a continuous input & output function that nevertheless approximates the states of discrete functions. A convenient option is the `smoothstep()` function built into GLSL. 
+Here's the original paper: 
+
+[Rafler, Stephan. "Generalization of Conway's" Game of Life" to a continuous domain-SmoothLife." arXiv preprint arXiv:1111.1567 (2011).](https://arxiv.org/pdf/1111.1567). 
+
+[SmoothLife](http://www.youtube.com/playlist?list=PL69EDA11384365494) uses a discrete grid, but all of states, kernel, and transition functions are adjusted for smooth, continuous values. By doing so, it removes the discrete bias and leads to fascinating results. 
+
+Let's work through those discrete components one by one. 
+
+First of all, **cell states** cannot be discrete, they must be continuous, say between 0.0 (definitely dead) to 1.0 (definitely alive), with variable degrees of "liveness" between. We've seen many CAs of this form by now.   
+
+Rafler actually takes the idea a little further. What if we want something that more approximates a logical decision?  Our life-or-death state in the Game of Life is the result of a **decision**, an if/else or `>`/`<` comparator, where the input value could be anything but the output value is either true (`1`) or false (`0`).  Comparators can also be used to segment continuous inputs into distinct outputs, but this means that the output of the transition rule is still principally discontinuous. Is there a smooth equivalent to these kinds of decisions? 
+
+That is, we are looking for a function that can allow any possible input value, and map it to a potential range between 0.0 and 1.0, in an entirely *smooth* way, i.e. with no hard edges or corners, however it should have a definite center point for the transition, and a degree of how quickly it smoothly transitions around that.  The classic function shape that can achieve this is called a sigmoid:
 
 ![sigmoid](https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logistic-curve.svg/600px-Logistic-curve.svg.png)
 
-Another option here is to use probabilistic functions. Finding a continuous system whose behaviours persist with the addition of some random noise is tantamount to finding an interesting system that is *robust to perturbations* -- a useful feature for anything that must interact with the real world!
+No matter what the input value `x` is, the output value `y` is always between 0.0 and 1.0, and moreover, the transition between them is a completely smooth curve.  As such, the sigmoid is great for making "smooth decisions": it is a continuous input & output function that nevertheless approximates the states of discrete functions. That's why it is often used as the final stage of a neuron within artificial neural networks. 
 
-**Time:** How can we turn discrete steps in time into a smooth flow? Instead of simply outputting a new state, change may be spread over time as a *differential*. That is, what is output from the transition function is an offset to accumulate to the current state. 
+The `smoothstep` function built into GLSL is a kind of sigmoid. But Rafler instead proposes using a sigmoid defined as `1.0 / (1.0 + exp(-4(x - c)/a))`, where `x` is the input value, `c` is the center of the transition between false and true, and `a` is the width of that transition. Here's what that looks like: 
+
+https://www.desmos.com/calculator/n57ubfqwnn
+
+Next, Rafler wants to look at a different way of **sampling space**, so that we are no longer using hard-edged single pixels, but instead using a more smoothly-bounded region. A "cell", in the Game of Life sense, is considered to be a diffuse region covering several pixels.  To get its value, a disc around a cell's center is integrated and normalized (that is, we are computing the average, also between 0.0 and 1.0) for the cell's likely state.
+
+This is somewhat similar to the idea of the weighted average kernel we used in Reaction Diffusion systems: if we consider, for example, a circular radius, then we can add up all the values of the pixels within this radius, and divide by the area, to get an average density of life in that region.  Rafler calls this the "fullness" of the region.  So our "self state" is now the average density of life, or the "fullness", of all the cells within a given radius.  
+
+`Density = Sum of cells in disk / area of disk`
+
+This is really helpful to remove the discrete bias toward horizontal, vertical, and diagonal directions that come from using a pixelated grid. So long as a kernel is large enough, and the kernel weights are defined in terms of distance, it should be direction-independent. Rafler here suggests using a weight of 1.0 within the disk radius, and a weight of 0.0 outside the disk radius, but with a linear transition between 0.0 and 1.0 on the pixels that the boundary of the disk passes through, to make these boundaries smooth and direction-independent too. 
+
+The same idea is used for the **neighborhood**: If you look at the neighbourhood in the original Game of Life, it is a squarish ring around the center cell.  For SmoothLife, he suggests making this ring circular (and thus direction independent too).  The solution here is very similar to one of the Reaction-Diffusion systems we looked at: we simply subtract the smaller "self" disk from the larger "neighborhood" disk, to get the neighborhood ring. 
+
+`Density = (Sum of outer disk - sum of inner disk) / (area of outer disk - area of inner disk)`
+
+> Because liveness is between 0.0 and 1.0, and our sums are divided by areas, thse densities are also going to be between 0.0 and 1.0. 
+
+Next, we need to look at the **transition fucntion**.   In the Game of Life, this depends on the self-state and the neighborhood total, and these drive two levels of if/else conditions.  If we laid all this out as a decision matrix, we end up with a 2D decision space:
+
+![Game of Life decision matrix](img/gameoflife.png)
+
+Try it out:  If I am alive (`1`), and my neighborhood total is 3, then I stay alive. If I am dead (`0`) but my neighborhood total is 3, then I come to life. 
+
+The Game of Life neighborhood is between 0 and 8, because we are summing the life bits of 8 cells; but in Smoothlife our neighborhood-density is between 0.0 and 1.0.  We can normalize the Game of Life to a unit density like this simply by dividing by 8.  For example, our "death by loneliness" threshold is 2/8, which is 0.25. 
+
+But that's not enough -- this transition matrix still has hard edges everywhere, because they are hard-edged if/else and less-than/greater-than logical choices. Here's where we need to convert this decision space into a smooth-edged one, and that's where our sigmoid boundaries can help.  What we want to end up with is something that looks more like this: 
+
+![smoothlife transition rules](img/smoothlife.png)
+
+Some details here: 
+
+- The simple sigmoid function is a smoothed equivalent to a `>` greater-than operator.  
+- How do we turn it into a `<` operator?   We can simply do the logical inversion via `1.0 - sigmoid`.   This is the "analog logic" equivalent of a NOT operator. 
+- The rule for a living cell to survive requires both a `>` AND and `<` threshold. Greater than two (to avoid loneliness) AND less than four (to avoid overcrowding).  How do we do a "continuous" AND operation?  The "analog logic" equivalent of AND is simply to multiply the two conditions!  (Think about it: if both are 1.0, the output is 1.0. If any of the inputs are 0.0, the output is 0.0. That is a logical AND!)
+
+That handles the inner if/else blocks in a smooth way. But what about the outer block?  Since our "self" state is not merely dead or alive, but may have a variable amount of liveness, we have to compute both sets of rules, and then blend between the results.  Rafler does this final blend according to the sigmoid decision over our self-state.  
+
+> It's a bit like a bilinear interpolation: first we interpolate across the X axis (the rules according to density of neighbors), then we interepolate the results of these across the Y axis (according to our self-state).
+
+At this point there's enough to actually run Smoothlife, and there are some interesting behaviours to find. But there's still one aspect that is discrete: the **passage of time**. 
+
+Our rule gives an immediate change, but it might be better if we make changes gradual over several frames.  We already did something like this in our Reaction Diffusion systems too.  There, we computed the velocity of change, and applied a small amount of it scaled by a "delta time".  
+
+We can do the same with our decision outcome from the transition function. First, we need to convert our result into a form that is signed, positive for increasing life, negative for decreasing life.  The simplest version of this is: 
+
+`change = result * 2.0 - 1.0`
+
+Then we can apply this change to our cell's state by adding it, multiplied by some delta time that is less than 1.0:
+
+`self += change * dt`
+
+And with that -- and the appropriate choice of parameters for the outer and inner radii, the survival thresholds and birth thresholds, the sigmoid alpha sharpnesses, the delta time, etc, we should be able to see behaviour like this. 
+
+<iframe width="640" height="360" src="https://www.youtube.com/embed/ISQChKRH4NI?list=PL69EDA11384365494" frameborder="0" allowfullscreen></iframe> 
+
+> Well, we also need to know are good initial conditions! Fortunately, if the parameters are good, then noise can make a good initital state. 
+
+---
+
+Will it eventually settle into a final state, like GoL?  Sometimes it looks like it has, but it's hard to be sure...
+
+How would you like to extend or vary this system?
+
+- We are really only using 1 channel.  What if we used R G B channels for different "life", and have them interact, in a multi-species way?  See for example https://smooth-life.netlify.app/ for one way this might work. 
+
+- Can a Gaussian kernel work for the neighborhood? See this example: https://www.shadertoy.com/view/XtVXzV
+
+- Can we use probabilities and stochastics to approximate smooth ranges?  E.g. it may also be viable to explore a statistical sampling strategy, selecting each time only a random sub-set of the possible sampling locations to create a cheaper approximation of continuous sampling.  
+- Or, another option here is to use probabilistic transition functions. Finding a continuous system whose behaviours persist with the addition of some random noise is tantamount to finding an interesting system that is *robust to perturbations* -- a useful feature for anything that must interact with the real world!
+
+Or alternatively, can you take the same kind of continuous approach to other CAs we have seen?
+
+Or can you invent a new "smooth" system with interesting behaviours?
+
+More reading:
+
+[Here is a great explanation of the SmoothLife implementation, with a jsfiddle demo](http://0fps.net/2012/11/19/conways-game-of-life-for-curved-surfaces-part-1/)
+
+A more detailed study: [Guillet, Alexandre, and Frank Jülicher. "Continuous Game of Life: a minimal model for the emergence of cell division and motility." Artificial Life Conference Proceedings 37. Vol. 2025. No. 1. One Rogers Street, Cambridge, MA 02142-1209, USA journals-info@ mit. edu: MIT Press, 2025.](https://direct.mit.edu/isal/proceedings/isal2025/37/21/134046)
+
+[Another implementaton](http://www.youtube.com/watch?v=l7t8LtdBAV8). 
+
+[Taken to 3D](http://www.youtube.com/watch?v=zA857JdUn9o&list=PL69EDA11384365494&index=46). In effect, by making all components continuous, it is essentially a simulation of differential equations. 
+
+### Other ways we could make a discrete continuous
+
+**Neighborhood:** There's other kinds of kernels we could use here, beside the "disk" kernels used by Rafler. Would a Gaussian kernel work?   That might be a way to speed up the neighborhood convolution, which is by far the most expensive part of the computation! 
+
+Alternatively, it may also be viable to explore a statistical sampling strategy, selecting each time only a random sub-set of the possible sampling locations to create a cheaper approximation of continuous sampling.
+
+**Transition functions:** Another option here is to use probabilistic functions. Finding a continuous system whose behaviours persist with the addition of some random noise is tantamount to finding an interesting system that is *robust to perturbations* -- a useful feature for anything that must interact with the real world!
 
 <!--
 This offset may also be distributed over a weighted neighbourhood, rather than a single state. 
@@ -709,28 +815,15 @@ This offset may also be distributed over a weighted neighbourhood, rather than a
 Another possible strategy to explore is delayed application (i.e., spreading the double-buffering over continuous time): maintaining copies of past and future cell states and interpolating between them. This can be used to smoothen the visual output of the CA, and also to support sampling the field at arbitrary points of time between frames.
 -->
 
-### Smoothlife
+---
 
-<iframe width="640" height="360" src="https://www.youtube.com/embed/ISQChKRH4NI?list=PL69EDA11384365494" frameborder="0" allowfullscreen></iframe> 
-
-[SmoothLife](http://www.youtube.com/playlist?list=PL69EDA11384365494) uses a discrete grid, but all of states, kernel, and transition functions are adjusted for smooth, continuous values. [Paper here](http://arxiv.org/pdf/1111.1567v2.pdf). By doing so, it removes the discrete bias and leads to fascinating results. [Another implementaton](http://www.youtube.com/watch?v=l7t8LtdBAV8). [Taken to 3D](http://www.youtube.com/watch?v=zA857JdUn9o&list=PL69EDA11384365494&index=46). In effect, by making all components continuous, it is essentially a simulation of differential equations. [Here is a great explanation of the SmoothLife implementation, with a jsfiddle demo](http://0fps.net/2012/11/19/conways-game-of-life-for-curved-surfaces-part-1/)
-
-States are continuous pixel values are between 0.0 and 1.0.  
-
-A "cell", in the Game of Life sense, is considered to be a diffuse region covering several pixels. To get its value, a disc around a cell's center is integrated and normalized (that is, we are computing the average, also between 0.0 and 1.0) for the cell's likely state.
-
-The neighbor state is a ring surrounding the center disc. This can be implemented as summing over a larger disc, and subtracting the sum of the smaller center disc.  Again, the neighbor state is normalized between 0.0 and 1.0.  
-
-How do we make the transition function (the Game of Life rules) continuous?  First, we translate the neighborhood rules to a normalized 0.0 to 1.0 range (by dividing by 8) to get our thresholds for survival, death, and rebirth, so that they can work with our normalized neighborhood value.  We also want to smooth the boundaries between these regions, which we can do with sigmoid shapers, something like this:
-
-![smoothlife transition rules](img/smoothlife.png)
-
-That's already enough to get some SmoothLife behaviour. All we need to know is what are good initial conditions?
-
-We can also translate the transition function from discrete time to continuous time by re-epxressing them in terms of differential functions (velocities of change).
-
+<!--
 
 ### Lenia
+
+
+Video: https://www.youtube.com/watch?v=6kiBYjvyojQ
+
 
 Lenia continues in the spirit of SmoothLife, and has been extensively explored & documented to identify over 400 different organisms, occuping distict environmental niches (different physical constants), with various locomotive patterns catalogued, etc.
 
@@ -740,6 +833,9 @@ Lenia continues in the spirit of SmoothLife, and has been extensively explored &
 - [Code](https://github.com/Chakazul/Lenia)
 - [Winner in Virtual Creatures Contest, GECCO 2018, Kyoto](https://virtualcreatures.github.io/)
 - [Honorable Mention in ALife Art Award, ALIFE 2018, Tokyo.](http://artaward2018.alifelab.org/)
+
+-->
+
 
 <!--
 
@@ -766,7 +862,6 @@ This work has inspired discussion by several critics, including [Mitchell Whitel
 
 --
 
-
 Several cellular systems can be coupled together at different scales. 
 
 - Perhaps each cell of a macro-CA is itself an entire micro-CA world. Or several CA can overlap with different spatial relationships. 
@@ -781,7 +876,7 @@ In certain CA variants, more than one substitution could be valid to undertake. 
 -->
 
 
-
+<!--
 ## Particle CA and Lattice-Gas Automata
 
 When we looked at porting the Ant and Termite models to GLSL, we found that we had to shift our perspective. Rather than taking the perspective of a living agent -- the ant or termite -- as it moves around space, we had to shift our perspective to a single, unmoving point in space -- the cell -- and handle the conditions under which this cell is occupied or not. This is a less intuitive way of thinking, but it can be quite a powerful technique.  
@@ -797,7 +892,6 @@ Sometimes this is considered "mass preserving".  That is, the total amount of "s
 - Note that mass-preservation does not imply that the system is reversible. Reversibility is quite a different property, which states that each output neighbourhood can only be caused by a single predecessor neighbourhood. Some, but certainly not all, particle CAs are reversible.
 
 
-<!--
 
 ### Block rule CA
 
@@ -815,7 +909,7 @@ Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell
 <script async src="https://static.codepen.io/assets/embed/ei.js"></script>
 
 - The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
--->
+
 
 ### Digital Physics
 
@@ -829,7 +923,18 @@ Those models are determinsitic, but particle CA can also use probabilistic rules
 
 
 
-<!--
+
+Particle Life
+
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+https://www.reddit.com/r/GraphicsProgramming/comments/1kr3u9i/i_made_an_inbrowser_particle_life_simulation_with/
+
+Particle Lenia
+
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
 
 Some amazing ones: 
 
