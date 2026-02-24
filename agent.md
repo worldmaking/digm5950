@@ -1,3 +1,4 @@
+
 # Multi-Agent Systems
 
 Some of the most beautiful, fascinating or strange phenomena of nature can be understood as emerging from the behaviors of interacting agents. Widely acknowledged examples include the murmuration of birds (or swarming insects, schools of fish), and the societal 'superorganisms' of ant colonies. We have come to understand that despite the obvious organization that we see at the macro-scale, there is no hierarchical center of coordination, but rather the whole emerges from simple interactions at local levels. These have been suggested as examples of emergence, or of self-organization. Which is to say, the whole is greater than a naive sum of its parts. 
@@ -6,141 +7,249 @@ Some of the most beautiful, fascinating or strange phenomena of nature can be un
 
 Agent-based models, or multi-agent systems, attempt to understand how non-trivial organized macro-behavior emerges from individuals, known as **agents**, who are typically mobile, and sense and respond to their world primarily at a local-level. Agent-based abstractions have arisen somewhat independently in several fields, thus their definition can vary widely. However, in most cases, agent-based models consist of **populations** that typically operate in parallel within a spatial environment. Each autonomous agent interacts locally within an environment populated by other agents, but behaves independently without taking direct commands from other agents nor a global planner or leader.
 
-Agent-based models have applications from microbiology to sociology, as well as video games and computer graphics. As a biological approximation, an agent could refer to anything from an individual protein, virus, cell, bacterium, organism, or deme (a population group). Agent systems also share many features with particle systems, and the two are sometimes conflated.
+Agent-based models have applications from microbiology to sociology, as well as video games and computer graphics. As a biological approximation, an agent could refer to anything from an individual protein, virus, cell, bacterium, organism, or deme (a population group). Agent-based simulations share many features with particle systems, and the two are sometimes conflated.
 
 Just like CA, agents sense and act at local distances, and at times, the self-organizing behavior of systems of even relatively simple agents can be unpredictable, complex, and generate new emergent structures of order. But unlike CA, which roots a program in a particular spatial location (the cell), an agent-based program is mobile in free space.
 
-## A minimal agent model
+### System components
 
-The first distinction between CA and agent-based systems are that agents are not typically distributed in a grid, and are quite often mobile: a potentially **variable position** in potentially continuous space. The second distinction is that agents may have a number of other **properties** (persistent individual variances) besides position. At the least, a mobile agent may have a **direction** and/or a **velocity**. 
+Here are some of the features typically considered in an **agent-based model** or **multi-agent system**:
 
-For our purposes, the Javascript ```Object``` is a general container for properties, and may serve as the representation of agents:
+- A **population** of agents, each with:
+  - **Properties**: Persistent but variable features of an agent (varying between population members and over time), **location** such as position, direction; **mobility**. such as speed, velocity; **external features**, such as size, color, and **internal features** such as energy level, and so on. 	
+  - **Affects**: Limited capacities of sensing (or receiving messages from) the environment (possibly but not necessarily other agents). Importantly, these senses are **egocentric** rather than **allocentric**; and usually at a relatively short maximum distance.
+  - **Effects**: Limited capacities of performing actions on (or sending messages to) the environment, or changing its own properties. Usually this includes some capacity to move through space. Again, these are egocentric rather than allocentric.
+  - **Processing**: An information processing capacity to select responses to sensations and states. 
+    - This can be seen as a form of **decision making** or more generally **action selection**
+    - This capacity may also include information storage (memory).
+- An **environment**: an essential and sometimes overlooked aspect of models is the environment the agent inhabits -- which may include:
+  - other agents, with physical and/or communication interactions, as well as 
+  - other spatial dynamics that can affect and be effected by the agents therein, including addition, removal, diffusion, limiting, stochastics, etc.
+- **Initial conditions** and **limiting conditions** (including **boundary consitions**) of the above
 
-```javascript
-let agent = {
-	pos: [0.5, 0.5],  // position, x and y components
-	vel: [0.01, 0],  // velocity, x and y components
-	size: 0.1,
-};
+## Agents and Cellular Automata
 
-function draw(ctx) {
-	// draw a circle at the agent's position,
-	// matching the agent's size:
-	draw2D.circle(agent.pos, agent.size);
-}
+So far we have been building everything as cellular automata in shader programs, because these are a natural fit. Among these we *have* seen or built some agent-like systems, such as Langton's Ant and the Termite model. 
 
-function update(dt) {
-	// apply motion:
-	agent.pos[0] += agent.vel[0];
-	agent.pos[1] += agent.vel[1];
+The most clear distinction between most CA and most agent-based systems are that agents are not typically distributed in a grid, and are quite often mobile over a potentially **variable position** in continuous space. The Ant and Termite models had mobile agents, but they were always fixed in a single grid location. 
+
+Typically agents have a number of other **properties** (persistent individual variable states) besides position that they carry with them as they move. Usually a mobile agent will have a freely variable continuous **direction** or a **velocity**. The Ant and Termite models also had a direction, but it was limited to discrete N, S, E or W directions, not any continuous direction. 
+
+Is it possible to model agents with continuous positions and directions within a discrete shader-based program? Before tackling the complexities of agents, let's start with something more elementary: continuously mobile particles. 
+
+## Particle CA
+
+When we looked at porting the Ant and Termite models to GLSL, we found that we had to shift our perspective. Rather than taking the perspective of a living agent -- the ant or termite -- as it moves around space, we had to shift our perspective to a single, unmoving point in space -- the cell -- and handle the conditions under which this cell is occupied or not. This is a less intuitive way of thinking, but it can be the basis of some quite powerful techniques.  
+
+
+<!--
+### Block rule CA
+
+Since mass-preservation can be ensured by considering the neighbourhood before *and* after each transition, rules are often expressed in terms of a *block*. For a 2D CA, the simplest block is a 2x2 region (the *Margolus neighborhood*).
+
+![Margolus neigborhood](img/mnhood.gif)
+
+A 2x2 block of 2-state automata has 2^3 = 16 possible configurations. A bit like a sprite-sheet in fact. So, one way of encoding a rule is to map all the 16 transitions in a lookup table. But, how does this "move"?
+
+A clever technique to simulate block-based rules is to shift the block grid on each successive frame, such that the even-aligned and then odd-aligned blocks interleave  ([see wikipedia](http://en.wikipedia.org/wiki/Block_cellular_automaton)). Note that a block rule CA does not need to be double-buffered, since block updates do not overlap. (By extension, a 3x3 block rule would need 3 steps to cover the space.)
+
+Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell/rullex_marg.html) -- many of these are implemented below. Note how simply the rules can be encoded using a minimal notation. Could you write a program to read this notation & turn it into a simulation? Could you use such an idea for other systems?
+
+<p data-height="300" data-theme-id="18447" data-slug-hash="NGxJpP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Block Rules: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/NGxJpP/">Block Rules: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
+
+- The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
+-->
+
+
+### Nearest Particle Tracking
+
+Typically to render millions of particles in OpenGL we need to have a vertex buffer of point locations and vertex array rendering pass.  Each vertex stores the position of the particle in space, which can be any floating point numbers. The vertex array buffer is a block of memory, with one element per particle, and space is implicit. 
+
+None of this is possible in the more constrained space of a fragment shader, nor can it be formulated as a Cellular Automaton.  In a cellular automaton, the ONLY data structure we have is the lattice of cells. There cannot be a separate array of particles; the particles have to be represented by the cell states. How can a particle, which can be at any floating-point location in space (not just at a specific pixel), be represented in a Celllar Automaton, where cells are only at discrete pixel locations?
+
+> The core idea here is relatively simple, but remarkably flexible and efficient: **each pixel stores information about the nearest particle to it**. 
+
+It's worth considering some implications of this idea:
+
+- The nearest particle might be within the bounds of the cell, or it might be in a neighbouring cell, or it might be tens or hundreds of cells' distance away. Nevertheless, this cell must track the nearest particle.  
+
+- We'll need to make sure that a cell is always tracking the nearest particle. That means we need some kind of search & sorting method to figure out if any other nearby cell has a particle that is actually closer, and switch to tracking that instead. 
+
+- There could be hundreds of cells tracking the same particle.  Every one of them will run a simulation step for the particle, to determine how it moves through space, so they all better agree on what that simulation step is!  That is, **the simulation system should be deterministic**. 
+
+- What happens if two particles end up passing through the same cell? [A good thought experiment to consider!]
+
+---
+
+Let's use a Buffer to store our particle information. Let's say that each particle has a position (in pixel coordinates), stored in the `.xy` component of the Buffer. Perhaps the particle also has a current heading direction, which we can store in the `.z` component of the buffer. And perhaps it has a color hue, which we can store in the `.w` component of the buffer. 
+
+```glsl
+    // initialization:
+    if (iFrame == 0) {
+        // first property is location (in pixels), stored in .xy:
+        // quantize location by rounding to nearest N
+        float N = 100.;
+        A.xy = N * floor(fragCoord/N + 0.5);
+        // seed a random number from this position:
+        vec4 noise = random4(vec3(A.xy, iTime));
+        // random direction, in 0..1 (or you could also store it as radians in 0..TWOPI)
+        A.z = noise.z;
+        // another agent property -- e.g. could be used for colour hue:
+        A.w = noise.w;
+    }
+```
+
+> Notice something important here: we seed the random number generator using the quantized location, not fragCoord.  **Why?**
+
+Now how can we render this?
+
+We can't just draw the contents of this buffer directly, because the .xy component is measured in pixels, and these numbers are mostly going to be much larger than the 0..1 range we can render as pixels.  But we can simply divide `A.xy/iResolution.xy` to get a normalized 0..1 range, similar to a texture coordinate, which we can use to render the data. 
+
+These don't look like particles though. To render them as a particle, we can look at the **distance** between our actual pixel location (`fragCoord`) and the particle's pixel location (`A.xy`), and make the pixel bright if the distance is small, and dark if the distance is large.  Examples:
+
+```glsl
+
+    fragColor = vec4(exp(-0.3*distance(fragCoord, A.xy)));
+
+    fragColor = vec4(smoothstep(4., 1., distance(fragCoord, A.xy)));
+```
+
+We could also paint the colour of this particle, as a helpful way to see what pixels are currently tracking it.  Here we take the `A.w` value, which we initialized to a random number, and convert this into a colour using the `hsv2rgb()` function [defined in our GLSL tutorial page here](glsl.html#common-color-manipulations).  This would make a nice background region for the particle to be drawn on top of. 
+
+```glsl
+  fragColor = hsv2rgb(vec4(A.w, 1., 0.75, 1));
+```
+
+Next, we want the particles to start moving.  First we extract the heading `A.z`, and convert it from the 0..1 initial range into an angle in radians by multipling by 2*pi (6.283185307).  Then we turn that angle into X and Y direction components using `cos` and `sin`, as usual for a polar to cartesian conversion.  Then we scale that by our delta time to turn it into a velocity, and add that to our particle's position:
+
+```glsl
+    // get the heading of the particle (in radians)
+    float angle = A.z * TWOPI;
+    // convert this polar direction to cartesian X & Y components:
+    vec2 dir = vec2(cos(angle), sin(angle));
+    // use this to move the particle's position:
+    A.xy += dir * iTimeDelta;;
+```
+
+Something is still clearly missing. Our particles are now moving, but their regions -- the cells that track them -- are not changing. Pretty soon the particles have left their tracked region behind.  How do we get the regions to move with the particles?  
+
+Actually, that's not the right way to state the problem.  Remember, for a CA, we always have to think from the cell's point of view.  And from the cell's point of view, the problem is this: how can we make sure it is still tracking the nearest particle?
+
+In most CA's, what a cell can do is ask what its neighbours are up to. In this case, a cell can ask the neighboring cells, "what is *your* nearest particle?".  Based on that, it can ask whether *that* particle is actually nearer than the particle the cell is currently tracking, and if so, switch to tracking *that* particle. We're going to want to ask this question for many neighbours, so let's wrap it up into a function:
+
+```glsl
+vec4 getNearer(vec4 A, vec2 fragCoord, vec2 offset) {
+    // N is the particle at a pixel nearby
+    vec4 N = texture(iChannel0, (fragCoord+offset)/iResolution.xy);
+    // return whichever is closer, A or B:
+    return distance(N.xy, fragCoord) < distance(A.xy, fragCoord) ? N : A;
 }
 ```
 
-We could also use a vector object to represent position & velocity, which would offer more useful methods (see the [Labs](labs.html) page for details on ```vec2```):
+Even if we only compare the four nearest pixels, or even the 8 neighboring pixels, this is enough to ensure that before long, the pixels are almost always tracking their nearest particles. 
 
-```javascript
-let agent = {
-	pos: new vec2(0.5, 0.5),  // position, x and y components
-	vel: new vec2(0.01, 0),  // velocity, x and y components
-	size: 0.1,
-};
-
-function update(dt) {
-	// apply motion:
-	agent.pos.add(agent.vel);
-}
+```glsl
+    A = getNearer(A, fragCoord, vec2(-1,  0));
+    A = getNearer(A, fragCoord, vec2( 1,  0));
+    A = getNearer(A, fragCoord, vec2( 0, -1));
+    A = getNearer(A, fragCoord, vec2( 0,  1));
 ```
+
+Or for a wider search, using for loops:
+
+```glsl
+  for (int x=-2; x<=2; x++) {
+        for (int y=-2; y<=2; y++) {
+            A = getNearer(A, fragCoord, vec2(x, y));
+        }
+    }
+```
+
+This converges toward a **Voronoi partition** of the space. 
+
+![Voronoi diagram](https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Euclidean_Voronoi_diagram.svg/1920px-Euclidean_Voronoi_diagram.svg.png)
+
+In mathematics, a Voronoi diagram is a partition of a plane into regions, where each region is defined as being nearer to one specific object point than any other.  Each region, or "Voronoi cell", consists of all points of the plane that are closer to one object point than to any other.  
+
+> It may remind you of the *foam-like* images we saw when [we modified the Ising Model to have multiple possible states](https://www.shadertoy.com/view/W3dyWl), and copying neighbour states at random if the entropic gradient was more preferable.  In many ways we are doing the same, but rather than minimizing energy gradients, here we are copying neighbors to minimize particle distances. 
+
+It converges very quickly in most cases, though sometimes you will notice a kind of 'paint filling' action. This is the result of a progressive search & sort that we are doing at the pixel level, updating one pixel per frame.  Testing against a wider radius of pixels with the `getNearer` function will make this filling action progress more quickly. 
+
+> This also defines a kind of 'maximum speed' for particles in the space - if they moved too quickly, the search & sort action would not be able to keep up with them, and some particles may be lost or some other boundary issues manifest. Try setting the particle velocities higher to see how the Voronoi partitioning struggles to keep up. 
 
 ### Boundary conditions
 
-This agent wanders off the page. As with CA, we can decide how to handle the **boundary conditions** of an agent-based system in a few different ways, including:
+Since particle positions can be any floating point value, they can easily go outside the pixel extents of the image -- and indeed our particles are wandering off the image. As with CA, we can decide how to handle the **boundary conditions** of an agent-based system in a few different ways, including:
 
-- **clamping** agents at the borders; use ```agent.pos.clip(1)```
-- **wrapping** agents around opposite borders (making a 'toroidal' space); use ```agent.pos.wrap(1)``` 
-- other strategies can respond to the *condition* of being 'out of bounds', using ```if (agent.pos.oob(1))...```, by: 
-- **modifying** their velocities/directions to point them back toward the center, etc., or
-- **resetting** agents with a new position, such as at the centre of the world (```agent.pos.set(0.5)```), or at a random position (```agent.pos.set(random(),random())```), or some variant, such as random distance from centre of the world (```agent.pos.random(random()*0.1).add(0.5)```), and possibly also changing other properties
-- simply letting them die (see below on how to manage variable population sizes)
+- **clamping** agents at the borders, with `clamp(pos, vec2(0), iResolution.xy)`
+- **modifying** their velocities/directions to point them back toward the center, like a reflection or 'bounce', etc.
+- **wrapping** agents around opposite borders (making a 'toroidal' space).  
+- simply letting them die
 
-Note that we might also consider different boundary regions -- it doesn't have to be a square!
+> Note that we might also consider different boundary regions -- it doesn't have to be a rectangle!  
 
-### Random walks in nature
+For example, here's how to make particles "bounce" off the boundaries:
 
-The agent also moves very robotically at present. We can give it some "life" by introducing variations into its motion, suggestive of it making decisions in response to an environment. 
+```glsl
+    // get the bounded position within the screen image
+    vec2 b = clamp(A.xy, vec2(0), iResolution.xy);
+    // compare the bounded and actual positions -- if they are different, reflect their orientations:
+    if (A.x != b.x) { A.z = 0.5 - A.z; } // reflect in Y axis
+    if (A.y != b.y) { A.z = 1.0 - A.z; } // reflect in X axis
+    // also, actually clamp the position on screen
+    A.xy = b.xy; 
+```
 
-The simplest way is to introduce stochastic changes to the velocity in direction and magnitute (speed). For direction, we would typically want to turn up to a certain limit (in radians), with equal chance of clockwise and anticlockwise rotation: ```agent.vel.rotate((random()-0.5)*turnfactor)```. For speed, we can randomize the length of the velocity up to a certain limit: ```agent.vel.len(random()*maxspeed)```
+If you wanted the space to be toroidal, such that leaving one edge a particle would appear on the opposite edge, you would also need to make several changes to `getNearer`.  Can you think why?
+
+### Observations
+
+> Step back for a moment and think about what is happening here, because it is quite odd.  We appear to be tracking individual particle points through continuous space, and updating the boundary regions between them, without ever having a data structure storing a list of particles.  We *only* have pixels, creating the illusion (or simulation) of freely moving particles!
+
+Try reducing the `N` we used to initialize the particles in the space.  How many particles can this system simulate? Does it cost more computation to have more particles?
+
+### Mass Preservation
+
+We have looked at mass preservation in some of our earlier CAs, including for processes of diffusion (blur).  Simply it means that the total amount of "stuff" before running a frame's transition rules (the update program) is the same as the total amount of "stuff" after running it.  For a particle system, it could mean that the total number of particles in motion should remain constant. That is, the total amount of "stuff" in the world never changes, it just moves around.  Mass preservation is a key requirement for accurately modeling fluids using particle hydrodynamics, for example. 
+
+> Note that our Ant and Termite models were not strictly mass-preserving: can you explain why? 
+
+Is our particle-tracking CA mass-preserving?  Does the total number of particles remain constant?  Strictly speaking it isn't, but it can survive at *near preservation* for longer than you might expect. Even if two particles move through the same cell, they may continue to survive because nearby pixels may still be tracking them!  Only when the particle density gets closer to the pixel density are we likely to lose many particles. If you zoom in to look at the voronoi regions at a closer pixel level, it's actually remarkable how well particles survive. 
+
+### Particle-based CA and Digital Physics
+
+![Zuse's vision of nature](img/zuse.jpg)
+
+> In 1969, German computer pioneer (and painter) Konrad Zuse published his book [Calculating Space](ftp://ftp.idsia.ch/pub/juergen/zuserechnenderraum.pdf), proposing that the physical laws of the universe are discrete by nature, and that the entire universe is the output of a deterministic computation on a single cellular automaton. This became the foundation of the field of study called *digital physics*. Zuse's first model is a 3D particle CA.
+
+A CA-inspired digital physics hypothesis is currently being promoted by Stephen Wolfram, as described in his magnum opus [A New Kind Of Science](http://www.wolframscience.com/nksonline/toc.html).
+
+Those models are determinsitic, but particle CA can also use probabilistic rules to simulate brownian motions (like our termite explorers) and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a *dissipative system*).
+
+## Random Walks in Nature
+
+Our particles move very robotically at present. We can give them some "life" by introducing variations into the motion, suggestive of an agent making decisions in response to an environment. 
+
+The simplest way is to introduce stochastic changes to the direction/velocity of motion. We would typically want to allow turns up to a certain limit (in radians), with equal chance of clockwise and anticlockwise rotation, e.g. ```maxturn * (noise.x - 0.5)```. 
 
 The result is a **random walk**. Random walks are a well-established model in mathematics, with a physical interpretation as [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion) -- though, a more physically accurate form of Brownian motion would update the velocity sporadically (modeling random collision by a particle), rather than on every frame. 
 
 Essentially, for an agent a **random walk** involves small random deviations to steering. This form of movement is widely utilized by nature, whether purposefully or simply through environmental interactions. Can you think why?
 
----codepen:https://codepen.io/grrrwaaa/pen/YwEbRO
-
-### Multiple agents
-
-A good way of seeing why random walks work is to deploy a **population** of agents, rather than a single one. We can do this by storing our agents in an array:
-
-```javascript
-let agents = [];
-let population_size = 24;
-
-function reset() {
-	for (let i=0; i<population_size; i++) {
-		// create a randomized agent:
-		let agent = {
-			pos: new vec2(random(), random()),
-			vel: vec2.random(),
-			size: 0.1,
-		};
-		// store in population array:
-		agents[i] = agent;
-	}
-}
-
-function update(dt) {
-	// iterate over population:
-	for (let agent of agents) {
-		// update agent as before
-	}
-}
-
-function draw(ctx) {
-	// iterate over population:
-	for (let agent of agents) {
-		// draw agent as before
-	}
-}
-```
-
-## System components
-
-At this point, we have enough to constitute an **agent-based model** or **multi-agent system**, and we can turn our attention to the components of agents and systems. Here are some of the features often considered in agent-based models:
-
-
-- A **population** of agents, each with:
-  - **Properties**: Persistent but variable features of an agent (varying between population members and over time), **location** such as position, direction; **mobility**. such as speed, velocity; **external features**, such as size, color, and **internal features** such as energy level, and so on. 	
-  - **Affects**: Limited capacities of sensing (or receiving messages from) the environment (possibly but not necessarily other agents). Importantly, these senses are **egocentric** rather than **allocentric**; and usually at a short distance.
-  - **Effects**: Limited capacities of performing actions on (or sending messages to) the environment, or its own properties. Usually this includes some capacity to move through space. Again, these are egocentric rather than allocentric.
-  - **Processing**: An information processing capacity to select responses to sensations and states. 
-    - This can be seen as a form of **decision making** or more generally **action selection**
-    - This capacity may also include information storage (memory).
-  - **Higher-level individuation/agency**: For example, the agent may also incorporate explicit needs or purposes in the form of self-evaluation and self-adaptation; or these may be implict in the design of the processing algorithm.
-- An **environment**: an essential and sometimes overlooked aspect of models is the environment the agent inhabits -- which may include:
-  - other agents, with physical and/or communication interactions, as well as 
-  - other spatial dynamics that can affect and be effected by the agents therein, including addition, removal, diffusion, limiting, stochastics, etc.
-- **Initial conditions** and **limiting conditions** of the above
-
-## Agent-environment Dynamics
+### Agent-environment Dynamics
 
 Our agent however still lives in a void, with no environment to respond to. Even the simplest organisms have the ability to sense their environment, and direct their motions accordingly; they depend on it for survival. 
 
-### Traversing environmental gradients
+## Chemotaxis: traversing environmental gradients
 
 One of the simplest examples is **chemotaxis**. Chemotaxis is the phenomenon whereby somatic cells, bacteria, and other single-cell or multicellular organisms direct their movements according to certain chemicals in their environment. This is important for bacteria to find food (for example, glucose) by swimming towards the highest **concentration** of food molecules, or to flee from poisons (for example, phenol). For example, the E. Coli bacterium's *goal* is to find the highest sugar concentration (see video below). In multicellular organisms, chemotaxis is critical to early development (e.g. movement of sperm towards the egg during fertilization) and subsequent phases of development (e.g. migration of neurons or lymphocytes) as well as in normal function. [wikipedia](https://en.wikipedia.org/wiki/Chemotaxis)
 
 ---youtube:F6QMU3KD7zw
 
-Sensing a **concentration** is rather like smell: the feature being detected is local to the agent, but is not a solid object with a distinct boundary. It is *diffuse*: it seems instead to occupy all parts of space to varying degrees. We model such kinds of spatial properties as intensity **fields**, such as density fields, probability fields, magnetic fields, etc. Fields occupy all space but in different intensities. But since our simulations are limited in memory, we *simulate* such continuous fields with discrete approximations, such as grids. Thus we can re-use the ```field2D``` to represent enviornmental features for agents to sense. 
+---youtube:-GD0kXgYv2A
+
+Sensing a **concentration** is rather like smell: the feature being detected is local to the agent, but is not a solid object with a distinct boundary. It is *diffuse*: it seems instead to occupy all parts of space to varying degrees. We model such kinds of spatial properties as intensity **fields**, such as density fields, probability fields, magnetic fields, etc. Fields occupy all space but in different intensities. But since our simulations are limited in memory, we *simulate* such continuous fields with discrete approximations, such as grids. We can model this in our shaders using an external texture (for a static field) or an additional Buffer (for a dynamic field).
 
 The choice of **environment** agents will respond is just as important as the design of agents themselves, including both its **initial state** and its **continuous processes**. If the field is entirely homogenous, in which there are no spatial variations, there is nothing significant to sense. On the other hand, if the field is too noisy, it can be too difficult to make sense of. How can we make a better environment?
 
@@ -150,95 +259,27 @@ It is helpful to think of the environment as a landscape, with mountain tops whe
 
 **What makes an interesting landscape to explore & make sense of?** A homongenous landscape is like a flat plain -- no place is better than any other. But a noisy landscape is like a city block designed by a madman -- difficult to do anything but get lost. Perhaps one that has an interesting distribution of hills and valleys; where height (intensity) tends to be more similar at shorter distances but tends to be more different at larger distances. 
 
-> [Law of requisite variety](https://en.wikipedia.org/wiki/Variety_(cybernetics)#Law_of_requisite_variety): The term 'variety' was introduced by W. Ross Ashby to denote the count of the total number of states of a system. The condition for dynamic stability under perturbation (or input) was described by his Law of Requisite Variety. If a system is to be stable, the number of states of its control mechanism must be greater than or equal to the number of states in the system being controlled. (Paraphrased: if an agent is to exploit the ways of living of an environment, it must have at least the variety of complexity of the environment; or, if a landscape is to satisfy the complexity of its agents, it must have at least the variety of complexity of them.) 
-
 ### Generating landscapes
 
-Here's a single central "intensity mountain", by computing the distance from the centre:
+One way to get a landscape is to use an existing image. 
 
-```javascript
-let dim = 256;
-let sugar = new field2D(dim);
-let center = new vec2(0.5, 0.5);
+Another way is to create a landscape through distance functions:
 
-sugar.set(function(x, y) {
-	// convert x, y in to 0..1 range:
-	let p = new vec2(x / dim, y / dim);
-	// get distance from center:
-	let d = p.distance(center);
-	// make concentration high at center, lower with increasing distance:
-	return 1 - d;
-})
-```
+- A simple "intensity mountain" can be a function of distance from a central point (the peak or apex of the mountain). 
+- A bounded region, by comparing or smooth-stepping with a distance threshold
+- A more complex environment created by combining multiple such distance functions, whether additively, subtractively, or using min and max operators, etc. 
 
-Or, for a more interesting and variegated landscape, we can start from uniform noise, and then smoothen it out:
+Another way is to start with noise, and progressively smoothen it to turn it into a more gentle field of hills.  Smoothing can be as simple as an interation of blur or other averaging operations. 
 
-```javascript
-// fill with uniform noise
-sugar.set(function(x, y) { return random(); });
-// smoothen it out by long-range diffusion:
-sugar.diffuse(sugar.clone(), sugar.width, 100);
-// make it vary between 0 and 1:
-sugar.normalize();
-```
-
-Or, we could design a CA to generate an interesting landscape, such as using a stochastic Monte Carlo process that prefers making neigbhour cells more similar, starting from a field of noise.
-
-```javascript
-// fill with uniform noise
-  sugar.set(function(x, y) { return random(); });
-  // run a stochastic CA for a while:
-  for (let i=0; i<dim*dim*40; i++) {
-    // pick a random cell:
-    let x0 = random(dim);
-    let y0 = random(dim);
-    let v0 = sugar.get(x0, y0);
-    // pick a random neighbor:
-    let x1 = x0 + random(3)-1;
-    let y1 = y0 + random(3)-1;
-    let v1 = sugar.get(x1, y1);
-    // average them:
-    let v2 = (v0 + v1)*0.5;
-    // and update cell with this new value
-    sugar.set(v2, x0, y0);
-  }
-  // make it vary between 0 and 1:
-  sugar.normalize();
-```
+Or another way is to use a cellular automaton, such as any of the methods we have explored so far, to generate environments. 
 
 ### Sensing the field
 
-The simplest way to sense a field by "smell" is to sample the field's value at the agent's location. (More accurately, we could sample at the location of a sense-organ on the agent's body). 
+The simplest way for an agent to sense a field by "smell" is to sample the field's value at the agent's location, using texture lookup. (More accurately, we could sample at the location of a sense-organ on the agent's body).
 
-We could compute the nearest cell index to the agent/sensor location, and then get the value:
+## Action Selection
 
-```javascript
-// scale position (0..1) to field cell width
-// and use Math.floor to round this to a whole number:
-let x = Math.floor(agent.pos[0] * sugar.width);
-let y = Math.floor(agent.pos[1] * sugar.height);
-// get field value at this cell:
-agent.sense = sugar.get(x, y);
-```
-
-This is fine so long as we think of the environment as being really made up of discrete blocks in a grid. But in many cases, our grid-based field is only a *discrete approximation* of a continuous field. In that case, sensing single discrete cells breaks the approximation. What we really want is an approximate value taken between *all* the nearest cells. We can do this by *bilinear interpolation* between the four nearest cells. That just means a weighted average: weighted according to which ones are closer or further from the specific agent position. This involves a lengthier bit of code, so the ```field2D``` object provides a convenient method for us:
-
-```javascript
-// get an interpolated value from the field, 
-// using the nearest four cells to the agent's position:
-agent.sense = sugar.sample(agent.pos);
-```
-
-We can test whether this is working by for example setting the hue of an agent before drawing:
-
-```javascript
-// before drawing the agent:
-draw2D.color = hsl(agent.sense);
-```
-
-## Action Selection: Chemotaxis
-
-Once we have a sense, how should we respond? Here we need to equip our agent with some capabilities of taking **action**, and likely **decision-making**, sometimes known as **action selection**, that uses the input of sense to map to the output of action, in order to achieve a desired result. (The random walker's action was to change velocity, while decision-making was a simple random choice.)
+Once we have a sense, how should we respond? Here we need to equip our agent with some capabilities of taking **action**, and likely **decision-making**, sometimes known as **action selection**, that uses the input of sense to map to the output of action, in order to achieve a desired result. 
 
 When we look at microbiology we can find some remarkably simple action & decision-making mechanisms to achieve effective goal satisfaction. Let's look at chemotaxis with the E. Coli again: 
 
@@ -254,25 +295,10 @@ An E. Coli bacterium lives in a very limited world:
 
 This is a very limited [umwelt](https://en.wikipedia.org/wiki/Umwelt).
 
-We can certainly model these two modes of locomotion in an agent, by varing the factors of our random walker:
-
-```javascript
-// tumbling behaviour:
-turnfactor = 2;
-maxspeed = 0.01;
-agent.vel
-  .rotate((random() - 0.5) * turnfactor)
-  .len(random() * maxspeed * dt);
-
-// swimming behaviour:
-turnfactor = 0.01;
-maxspeed = 0.5;
-agent.vel
-  .rotate((random() - 0.5) * turnfactor)
-  .len(random() * maxspeed * dt);
-```
+We can certainly model these two modes of locomotion in an agent, by varing the factors of our random walker.  Even something as simple as modifying the maximum degree of random turn should alternate between more random walks versus more linear progressions. 
 
 But how does this solve the problem of climbing the sugar gradient?
+
 
 ### Modeling E. Coli
 
@@ -280,195 +306,191 @@ E. Coli uses a very simple chemical **memory** to detect whether the concentrati
 
 Even the actual intensity of the sugar concentration no longer matters; **all that matters is whether life is getting better or worse**, and acting accordingly. If things are getting better, keep swimming; otherwise, prefer tumbling. With just a few tuning parameters, the method can lead to a very rapid success. 
 
-So all we need is to compare the sugar concentration with the agent's memory (a stored member variable) of the concentration on the last time step, and choose the behaviour accordingly (and of course, store our sensed value in memory for the next update).
+So all we need is to compare the sugar concentration with the agent's memory (a stored property) of the concentration on the last time step, and choose the behaviour accordingly (and of course, store our sensed value in memory for the next update).
 
-```javascript
-// sense field here
-agent.sense = sugar.sample(agent.pos);
-// is life getting worse?
-if (agent.sense < agent.memory) {
-  // tumbling behaviour:
-  turnfactor = 2;
-  maxspeed = 0.01;
-} else {
-  // swimming behaviour:
-  turnfactor = 0.01;
-  maxspeed = 0.5;
-}
-// adjusted random walk:
-agent.vel
-  .rotate((random() - 0.5) * turnfactor)
-  .len(random() * maxspeed * dt);
-// remember this:
-agent.memory = agent.sense;
+Since our agent state is limited to a single `vec4`, and we have already used two floats for position, and one for direction, we only have one float left to work with -- and we can use this for the agent's memory.  Then our **action selection** could be expressed as approximate psuedocode like this:
+
+```
+  sense = [read texture at agent.xy]
+  heading = agent.z
+  memory = agent.w
+  if (sense < memory) 
+    // life is getting worse, tumble about:
+    heading += [large random deviation]
+  else 
+    // life is getting better, head on!
+    heading += [very small random deviation]
+  // update heading
+  agent.z = heading
+  // remember state for next frame
+  agent.w = sense
+  // now move agent with new heading
 ```
 
 Note that not all kinds of landscapes are **significant** to this life strategy. The strategy only works when the variations of sugar concentration in the environment are fairly smooth, which is generally true for an environment in which concentrations diffuse. Try again with noisy or homogenous environments, and see how well the agent fares. 
 
-### Dynamic fields
+## Dynamic fields
 
 So far, our sugar field is static. It would be nice to see what a continuously dynamic field offers. 
 
-For example, we could let the mouse add more sugar to the space, and watch it gradually diffuse away. Adding sugar in response to the mouse is fairly easy, by making use of the ```deposit``` method of field2D. This method accumulates into the field at a point coordinate, adding to its existing values. Note that the coordinate is in the normalized 0..1 range, and that it will spread the value over the nearest four cells:
+For example, we could let the mouse add more sugar to the space.  This might not be completely effective to attract agents, as there can be large spatial discontinuities. If agents happen to be on part of a drawn path, they might follow it, but otherwise they are unlikely to find it. 
 
-```javascript
-function mouse(e, pt) {
-	// add one unit of sugar at the location of the mouse:
-	sugar.deposit(1, pt);
-}
-```
+Or we could also remove the need of human input by creating a separate process as a "source", randomly depositing sugar over the space as it goes.  
 
-We could also remove the need of human input by creating another kind of agent, as the "source", randomly wandering the space and depositing sugar as it goes. 
-
-This might not be completely effective to attract agents, as there can be large spatial discontinuities. If agents happen to be on part of a drawn path, they might follow it, but otherwise they are unlikely to find it. 
-
-To create a smoother gradient, we must diffuse the field continuously. To add continuous dynamics, we need to add field processing to our ```update()``` routine. And since the ```diffuse()``` method requires a distinct source field, we'll need to double buffer like before:
-
-```javascript
-let sugar_past = sugar.clone();
-
-function update() {
-	// swap fields:
-	let tmp = sugar_past;
-	sugar_past = sugar;
-	sugar = tmp;
-	// diffuse it
-	sugar.diffuse(sugar_past, 1);
-
-	//... update agents as before
-}
-```
-
-Now the agents are able to find the areas of sugar more easily -- and might even show something like trail-following.
+Adding a diffusion process (a feedback blur) will help agents find  sources by creating gradients.  
 
 ### Background Noise
 
 We might also notice that even when the sugar is quite dissipated, the agents can still find the strongest concentrations. If we don't find this realistic, one thing we might consider adding is a low level of background noise. The rationale is that even if sensing is perfectly accurate, small fluctuations in the world (such as due to the Brownian motion of water and sugar molecules) make it impossible to discern very small differences. The randomness added must be signed noise, balanced around zero such that overall the total intensity is statistically preserved. Note that the amplitude of this noise will have to be extremely high if it is applied *before* the diffusion, or very low if applied *after* diffusion. The effective results are also quite different.
 
-```javascript
-	// applied after sugar.diffuse:
-	// use field2D.map() to modify a cell value
-	// adding a small random deviation
-	// whose average is zero
-	sugar.map(function(v) { 
-		return v + 0.1*(random() - 0.5);
-	});
-```
-
-Or instead, we could add small deviations to the sensors in the agents themselves, emulating a limited accuracy of sense:
-
-```javascript
-agent.sense = sugar.sample(agent.pos) + 0.1*(random()-0.5);
-```
+Or instead, we could add small deviations to the sensors in the agents themselves, emulating a limited accuracy of sense.
 
 ### Evaporation and Consumption
 
-If we are continuously adding sugar, it will accumulate over time, and the more we draw, the more the screen tends to fill with grey. This is because our `diffuse()` method spreads intensity out, but does not change the total quantity. We need some other process to reduce this total quantity to make a balance. One way to do that is to add a very weak overall decay to the field -- as if some particles of sugar occasionally evaporate:
+If we are continuously adding sugar, it will accumulate over time, and the more we draw, the more the screen tends to fill up. If we are also diffusing, the field will tend toward grey. We need some other process to reduce this total quantity to make a balance. One way to do that is to add a very weak overall decay to the field -- as if some particles of sugar occasionally evaporate.
 
-```javascript
-	// in update():
-	// multiply all cells with a number slightly less than 1
-	sugar.mul(0.995);
-```
+Of course, our agents aren't just looking for sugar to show it to us -- they want to eat it! We can also add the effect of this on the environment by *removing* intensity from the field near to each agent. 
 
-Of course, our agents aren't just looking for sugar to show it to us -- they want to eat it! We can also add the effect of this on the environment by *removing* intensity from the field by each agent. We can do this by calling the ```field2D.deposit()``` method with a negative argument (i.e. a debit!):
-
-```javascript
-	// get the sugar level at this location:
-	let sense = Math.max(sugar.sample(a.pos), 0);
-	// update the field to show that we removed sugar here:
-	sugar.deposit(-sense, agent.pos);
-```
-
-Note however this might lead to some locations getting negative concentrations -- a physical impossibility? We could fix this by clamping the field values as another step:
-
-```javascript
-	sugar.map(function(v) { 
-		return Math.max(v, 0); 
-	});
-```
-
----codepen:https://codepen.io/grrrwaaa/pen/QYjpKb/
+Since this changes the field, it will also have to be a process that is implemented in the field's shader.  We simply need to look up whichever agent the current pixel is tracking, figure out if that agent is close enough to the current pixel to actually eat it, and if so, remove quantity from the pixel accordingly.  You could do this by multiplying by a number less than one, or by subtracting (but if subtracing, you might need to be careful not to end up making the field intensity negative!)
 
 ### Other field dynamics
 
-A very different alternative to diffusion, scaling, adding noise, clamping etc. is to use something closer to an asynchronous CA, in continuous process, rather as we did before for field initialization. This makes a more challenging, but more interesting, dynamic landscape for the agents to navigate:
-
-```javascript
-  // some swaps:
-  for (let i=0; i<10000; i++) {
-    // pick a point at random
-    let x = random(sugar.width);
-    let y = random(sugar.height);
-    // pick a neighbour
-    let x1 = x + random(3)-1;
-    let y1 = y + random(3)-1;
-    // get the values
-    let a = sugar.get(x, y);
-    let b = sugar.get(x1, y1);
-    // pick a random interpolation factor
-    let t = 0.5*random();
-    // blend a and b into each other accordingly
-    let a1 = a + t*(b-a);
-    let b1 = b + t*(a-b);
-    // write these values back to the field
-    sugar.set(a1, x, y);
-    sugar.set(b1, x1, y1);
-  }
-  // some removals:
-  for (let i=0; i<100; i++) {
-    let x = random(sugar.width);
-    let y = random(sugar.height);
-    sugar.set(0, x, y);
-  }
-```
+A very different alternative to diffusion, scaling, adding noise, clamping etc. is to use something closer to an asynchronous CA, in continuous process, rather as we did before for field initialization. This makes a more challenging, but more interesting, dynamic landscape for the agents to navigate. 
 
 > Obviously there's a hint here of how it might be interesting to pair our agents with some other CAs for field processes... perhaps the Forest Fire model, for example.
 
-### Other taxes
-
-A variety of other *taxes* worth exploring can be found on the [wikipedia page](https://en.wikipedia.org/wiki/Taxis#Aerotaxis). Note how chemotaxis (and other taxes) can be divided into positive (attractive) and negative (repulsive) characters, just like forces (as we shall see in steering forces). This is closely related to the concepts of positive and negative feedback and the explorations of cybernetics.
 
 ## Are two sensors are better than one?
 
-Many arachnids and other organisms perform environmental sensing using a pair of antennae extended from their body; effectively 'sampling' the environment at two physical locations. What advantage might this have for chemotaxis? Perhaps, by sampling at two points in *space*, rather than at two points in *time*, we can determine the field gradient immediately without latency, and perhaps this can create a more responsive and continuous selection of swimming/turning choices?
+Many insects, arachnids, snails, and other organisms perform environmental sensing using a pair of antennae extended from their body; effectively 'sampling' the environment at two physical locations. What advantage might this have for chemotaxis? 
 
-We can try giving agents two sensors, both ahead of the agent (to draw movement forward) and to the left and right of the agent (to discriminate which direction is better to turn). 
+Perhaps, by sampling at two points in *space* we can determine the field gradient immediately without latency, and perhaps this can create a more responsive and continuous selection of swimming/turning choices?
 
-Let's call these sensors "antennae". A bit of math is needed to compute where each antenna is located in the world. Starting from a basic vector representing the antenna relative to tha agent, we can then scale, rotate, and translate the location, resulting in a location relative to the world (or, if we had agent pose as a matrix, we could have simply used matrix multiplication):
+We can try giving agents two sensors, both ahead of the agent (to draw movement forward) and to the left and right of the agent (to discriminate which direction is better to turn). Let's call these sensors "antennae". 
 
-```javascript
-// antenna is 50% forward and 50% to the left of the agent:
-let antennaleft = new vec2(0.5, 0.5);
-// compute what this is as a world location:
-antennaleft
-	.mul(agent.size) // scale to agent size
-	.rotate(agent.vel.angle()) // rotate to agent direction
-	.add(agent.pos); // move to agent location
+A bit of math is needed to compute where each antenna is located in the world. First let's define a vector representing an antenna in the local coordinate space of the agent, where the Y axis is always in front of the agent, and the X axis is to the right of the agent.  Then we need to rotate this vector to match the current angular heading of the agent, and translate this rotated vector to the position of the agent. Translation is just vector addition, but for rotation we will want to create a rotation matrix:
+
+```glsl
+// create a 2D rotation matrix from an angle in radians:
+mat2 rotate2d(float angle) {
+    float s = sin(angle);
+    float c = cos(angle);
+    return mat2(
+        c, -s, 
+        s, c
+    ); 
+}
 ```
 
-With this, and of course also `antennaright`, we can sample the environmental field at both locations to get two sensor values:
+With this rotation matrix, we can rotate any vector:
 
-```javascript
-let smellleft = sugar.sample(antennaleft);
-let smellright = sugar.sample(antennaright);
+```glsl
+  mat2 rot = rotate2d(agent.z * TWOPI);
+  vec2 sensor = vec2(1, 1);
+  vec2 sensor_in_world = agent.xy + rot * sensor;
 ```
 
-Now the decision-making can respond to these values. We might consider which direction has a better smell (left or right), we might consider the difference between the smells, we might consider the total of the smells too, in order to determine which way to turn, and how much to turn:
+With two such sensors we can sample the environmental field at both locations to get two sensor values, that are always ahead and to the right or left of the agent.  Now the decision-making can respond to these values. We might consider which direction has a better smell (left or right), we might consider the difference between the smells, we might consider the total of the smells too, in order to determine which way to turn, and how much to turn.
 
----codepen:https://codepen.io/grrrwaaa/pen/yeKWax
-
-It turns out that this strategy is not only great for diffuse fields, but also can function very well for following narrow lines of sugar. That is, aligning movement along given "trails" -- paths of more intense chemical markers, such as the pheromone trails laid down by ants:
-
----codepen:https://codepen.io/grrrwaaa/pen/qgPZBK
-
-From here it is relatively trivial to let the agents also *create* the trails, as well as following them:
-
----codepen:https://codepen.io/grrrwaaa/pen/pGWbWx
+It turns out that this strategy is not only great for diffuse fields, but also can function very well for following narrow lines of sugar. That is, aligning movement along given "trails" -- paths of more intense chemical markers, such as the pheromone trails laid down by ants!
 
 This process is integral to the agents navigating city data in the [Infranet](https://artificialnature.net) artwork:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/AbcZ2f5fdNc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+### Slime Mould
+
+A classic example here is the simulation of a slime mold (Physarum polycephalum), as described in Jeff Jones' paper for the Artificial Life Journal:
+
+> [Jones, Jeff. "Characteristics of pattern formation and evolution in approximations of Physarum transport networks." Artificial life 16.2 (2010): 127-153.](https://uwe-repository.worktribe.com/output/980579/characteristics-of-pattern-formation-and-evolution-in-approximations-of-physarum-transport-networks)
+
+> "Inspired by ... the true slime mold Physarum polycephalum, we present examples of complex emergent pattern formation and evolution formed by a population of simple particle-like agents. Using simple local behaviors based on chemotaxis, the mobile agent population spontaneously forms complex and dynamic transport networks. By adjusting simple model parameters, maps of characteristic patterning are obtained. Certain areas of the parameter mapping yield particularly complex long term behaviors..."
+
+The system presented essentially has two components: 
+
+1. A layer of particle-like **agents** moving through space, and
+2. A continuum **field** layer of chemical signals, in which creatures leave "trails" for others to follow
+
+These two layers affect each other in a feedback cycle: the agents sense the trail layer to change their locomotion, and as they move they also deposit material into the trail layer. That is, they both read and write trails. Meanwhile, the trail layer itself also has some dynamics of dissipation and decay. 
+
+The agent senses the space a three points in front of it: one straight ahead ("F"), one ahead to the left ("FL"), and one ahead to the right ("FR").  According to the trail map values under each sensor, it chooses how to turn as it moves. The pseudo code from the paper states:
+
+```
+    if (F > FL && F > FR) {
+        // no change to heading
+    } else if (F < FL && F < FR) {
+        // rotate randomly left or right
+    } else if (FL < FR) {
+        // rotate right
+    } else if (FR < FL) {
+        // rotate left
+    }
+```
+
+However, very similar results can be achieved without any branching code, and using only two sensors, as follows:
+
+```
+  rotation = (FL - FR)*trailfactor + (noise - 0.5)*wanderfactor
+```
+
+
+
+
+
+
+<!--
+Particle Life
+
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+https://www.reddit.com/r/GraphicsProgramming/comments/1kr3u9i/i_made_an_inbrowser_particle_life_simulation_with/
+
+Particle Lenia
+
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
+
+Some amazing ones: 
+
+LOTS OF PARTICLE CA HERE
+
+slime moulds -- these can be thought of as a particle CA?
+https://cargocollective.com/sagejenson/physarum 
+https://www.shadertoy.com/view/WtBcDG -- this is too complex because it is doing bit packing to fit a vec6 into a vec4
+https://www.shadertoy.com/view/tlKGDh -- a little less complex, but still too advanced I think. 
+
+
+https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos, also particle based
+
+https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different -- also particle based
+
+voronoi particles
+https://www.shadertoy.com/view/ts3XWf 
+https://www.shadertoy.com/view/tdXBRf - smooth particle hydrodynamics
+
+
+https://www.shadertoy.com/view/3s3cWr
+https://www.shadertoy.com/view/WdSfzD -- is it really boids?
+
+
+
+-- webgpu
+Particle Life
+https://www.ventrella.com/Clusters/
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+
+Particle Lenia
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
+
+-->
+
+
+<!--
 
 
 ### Stigmergy and Pheromone Trails
@@ -766,6 +788,7 @@ Flocking has become integral to many media artworks, including again in the Arti
 
 ---vimeo:120987833
 
+-->
 
 <!-- 
 

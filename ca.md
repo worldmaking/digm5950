@@ -645,40 +645,6 @@ https://www.shadertoy.com/view/33cBz4
 
 What else can you think of that might be interesting to do with this?
 
-
-<!--
-
-
-### Multi-scale Turing Patterns
-
-<iframe src="https://player.vimeo.com/video/137778082" width="720" height="405" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-[Jonathan McCabe's cyclic multi-scale Turing patterns](http://www.jonathanmccabe.com/), and a [commentary by Mitchell Whitelaw](http://teemingvoid.blogspot.kr/2007/02/jonathan-mccabe-very-cellular-automata.html). The implementation is described [in this paper](http://www.archive.bridgesmathart.org/2010/bridges2010-387.pdf).
-
-It starts with a straightforward reaction-diffusion system:
-
-- Diffusion is simulated by averaging the continuous cell values over small (activator) and large (inhibitor) radii; if the the smaller (activator) concentration is greater than the larger (inhibitor) concentration, increase the cell value by a small amount; otherwise decrease. 
-- After running the rule over all cells, the entire field is *normalized* (to ensure the minimum cell value is zero and the maximum cell value is 1).
-
-Since this creates structure at a single spatial scale, it can be elaborated by super-imposing several models at different spatial scales (different small and large radii). Or, by changing the radii dynamically over time (as in [Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf)). McCabe's system uses several pre-defined scales, but selects which scale to apply for a particular cell according to which one currently shows the least local variation. 
-
-Additionally, his system does not measure all cells within a radius; instead it selects cells at the radius distance and certain angular directions, creating cyclical symmetries in the result. For example, 3-fold symmetry may be used at a smaller scale, and 9-fold symmetry at a larger scale.
-
-<iframe width="640" height="360" src="https://www.youtube.com/embed/4Sz-iEdNFDc?rel=0" frameborder="0" allowfullscreen></iframe>
-
-
-References:
-- https://softologyblog.wordpress.com/2011/07/05/multi-scale-turing-patterns/
-- https://foo.net/projects/turing-clouds/background.html
-- https://rreusser.github.io/multiscale-turing-pattern-gallery/
-- https://www.semanticscholar.org/paper/Cyclic-Symmetric-Multi-Scale-Turing-Patterns-McCabe/2bbce66e648b5f6c27df147230872a16eafd21fa
-- http://www.archive.bridgesmathart.org/2010/bridges2010-387.pdf
-- https://vimeo.com/521001744
-- https://observablehq.com/@rreusser/multiscale-turing-pattern-bot-v2
-Of course, someone has ported McCabes model to GLSL: https://www.shadertoy.com/view/MdGGzR
-
--->
-
 ------------
 
 ## Fully continuous automata
@@ -817,13 +783,9 @@ Another possible strategy to explore is delayed application (i.e., spreading the
 
 ---
 
-<!--
-
 ### Lenia
 
-
 Video: https://www.youtube.com/watch?v=6kiBYjvyojQ
-
 
 Lenia continues in the spirit of SmoothLife, and has been extensively explored & documented to identify over 400 different organisms, occuping distict environmental niches (different physical constants), with various locomotive patterns catalogued, etc.
 
@@ -834,9 +796,39 @@ Lenia continues in the spirit of SmoothLife, and has been extensively explored &
 - [Winner in Virtual Creatures Contest, GECCO 2018, Kyoto](https://virtualcreatures.github.io/)
 - [Honorable Mention in ALife Art Award, ALIFE 2018, Tokyo.](http://artaward2018.alifelab.org/)
 
+
+<!--
+
+
+### Multi-scale Turing Patterns
+
+<iframe src="https://player.vimeo.com/video/137778082" width="720" height="405" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+[Jonathan McCabe's cyclic multi-scale Turing patterns](http://www.jonathanmccabe.com/), and a [commentary by Mitchell Whitelaw](http://teemingvoid.blogspot.kr/2007/02/jonathan-mccabe-very-cellular-automata.html). The implementation is described [in this paper](http://www.archive.bridgesmathart.org/2010/bridges2010-387.pdf).
+
+It starts with a straightforward reaction-diffusion system:
+
+- Diffusion is simulated by averaging the continuous cell values over small (activator) and large (inhibitor) radii; if the the smaller (activator) concentration is greater than the larger (inhibitor) concentration, increase the cell value by a small amount; otherwise decrease. 
+- After running the rule over all cells, the entire field is *normalized* (to ensure the minimum cell value is zero and the maximum cell value is 1).
+
+Since this creates structure at a single spatial scale, it can be elaborated by super-imposing several models at different spatial scales (different small and large radii). Or, by changing the radii dynamically over time (as in [Greg Turk's famous paper](http://www.cc.gatech.edu/~turk/my_papers/reaction_diffusion.pdf)). McCabe's system uses several pre-defined scales, but selects which scale to apply for a particular cell according to which one currently shows the least local variation. 
+
+Additionally, his system does not measure all cells within a radius; instead it selects cells at the radius distance and certain angular directions, creating cyclical symmetries in the result. For example, 3-fold symmetry may be used at a smaller scale, and 9-fold symmetry at a larger scale.
+
+<iframe width="640" height="360" src="https://www.youtube.com/embed/4Sz-iEdNFDc?rel=0" frameborder="0" allowfullscreen></iframe>
+
+
+References:
+- https://softologyblog.wordpress.com/2011/07/05/multi-scale-turing-patterns/
+- https://foo.net/projects/turing-clouds/background.html
+- https://rreusser.github.io/multiscale-turing-pattern-gallery/
+- https://www.semanticscholar.org/paper/Cyclic-Symmetric-Multi-Scale-Turing-Patterns-McCabe/2bbce66e648b5f6c27df147230872a16eafd21fa
+- http://www.archive.bridgesmathart.org/2010/bridges2010-387.pdf
+- https://vimeo.com/521001744
+- https://observablehq.com/@rreusser/multiscale-turing-pattern-bot-v2
+Of course, someone has ported McCabes model to GLSL: https://www.shadertoy.com/view/MdGGzR
+
 -->
-
-
 <!--
 
 ## Spatial transformation systems 
@@ -872,102 +864,5 @@ Several cellular systems can be coupled together at different scales.
 In certain CA variants, more than one substitution could be valid to undertake. We have seen how some CA simply choose randomly between options, while Monte Carlo systems consider two or more options and take the one with the highest entropy. In a sense, for a brief moment, these systems follow two parallel histories, and then choose which one to discard. But there is no reason why we can't follow two (or more) histories for a little longer than a single step, nor to limit our decision-making to an energetic/entropic basis. We may return to this idea when exploring evolutionary systems, which present a similar parallelism. 
 
 > Wolfram also explored ['multi-way'](http://www.wolframscience.com/nksonline/page-204#previous) CA executions, in which all possible histories for a given state are explored, considering their long-term evolutions, and in particular exploring which rules lead to exponentially more universes, which tend to stabilize, and which ultimately lead to the same results.
-
--->
-
-
-<!--
-## Particle CA and Lattice-Gas Automata
-
-When we looked at porting the Ant and Termite models to GLSL, we found that we had to shift our perspective. Rather than taking the perspective of a living agent -- the ant or termite -- as it moves around space, we had to shift our perspective to a single, unmoving point in space -- the cell -- and handle the conditions under which this cell is occupied or not. This is a less intuitive way of thinking, but it can be quite a powerful technique.  
-
-If the transition rule (or, the set of transition rules as a whole) is careful to preserve a total cell occupancy values before and after, it can give the impression of a mass-conserving system, such as modeling the motion of particles and fluids. The elementary 1D traffic CA [(rule 184)](http://atlas.wolfram.com/01/01/184/) is a simple particle CA. 
-
-Sometimes this is considered "mass preserving".  That is, the total amount of "stuff" in the world never changes, it just moves around. 
-
-> Note that our Ant and Termite models are not strictly mass-preserving: can you explain why? 
-
-- Mass-preserving CAs can be guaranteed *not* to dissolve into homogenous final states of all-black/all-white/etc. -- which can alleviate any need for an external limiter to keep the balance -- but this does not mean they won't find a stable or cyclic end. (On the other hand, CAs whose rules do not appear to preserve mass can still avoid dissolution into homogeneity.)
-
-- Note that mass-preservation does not imply that the system is reversible. Reversibility is quite a different property, which states that each output neighbourhood can only be caused by a single predecessor neighbourhood. Some, but certainly not all, particle CAs are reversible.
-
-
-
-### Block rule CA
-
-Since mass-preservation can be ensured by considering the neighbourhood before *and* after each transition, rules are often expressed in terms of a *block*. For a 2D CA, the simplest block is a 2x2 region (the *Margolus neighborhood*).
-
-![Margolus neigborhood](img/mnhood.gif)
-
-A 2x2 block of 2-state automata has 2^3 = 16 possible configurations. A bit like a sprite-sheet in fact. So, one way of encoding a rule is to map all the 16 transitions in a lookup table. But, how does this "move"?
-
-A clever technique to simulate block-based rules is to shift the block grid on each successive frame, such that the even-aligned and then odd-aligned blocks interleave  ([see wikipedia](http://en.wikipedia.org/wiki/Block_cellular_automaton)). Note that a block rule CA does not need to be double-buffered, since block updates do not overlap. (By extension, a 3x3 block rule would need 3 steps to cover the space.)
-
-Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell/rullex_marg.html) -- many of these are implemented below. Note how simply the rules can be encoded using a minimal notation. Could you write a program to read this notation & turn it into a simulation? Could you use such an idea for other systems?
-
-<p data-height="300" data-theme-id="18447" data-slug-hash="NGxJpP" data-default-tab="js,result" data-user="grrrwaaa" data-pen-title="Block Rules: 2019" data-preview="true" class="codepen">See the Pen <a href="https://codepen.io/grrrwaaa/pen/NGxJpP/">Block Rules: 2019</a> by Graham (<a href="https://codepen.io/grrrwaaa">@grrrwaaa</a>) on <a href="https://codepen.io">CodePen</a>.</p>
-<script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
-- The block-rule CA especially hints at another interpretation of CA as a pattern-based *rewriting system* -- a point we will return to later in the course. And in fact, many CA can be understood as the application of pattern-based rewrites, in which a region of space that matches a given template pattern is replaced by a new region with the template's corresponding result (or action). Can you think of other ways to use pattern-matching & rewriting for CA?
-
-
-### Digital Physics
-
-![Zuse's vision of nature](img/zuse.jpg)
-
-> In 1969, German computer pioneer (and painter) Konrad Zuse published his book [Calculating Space](ftp://ftp.idsia.ch/pub/juergen/zuserechnenderraum.pdf), proposing that the physical laws of the universe are discrete by nature, and that the entire universe is the output of a deterministic computation on a single cellular automaton. This became the foundation of the field of study called *digital physics*. Zuse's first model is a 3D particle CA.
-
-A CA-inspired digital physics hypothesis is currently being promoted by Stephen Wolfram, as described in his magnum opus [A New Kind Of Science](http://www.wolframscience.com/nksonline/toc.html).
-
-Those models are determinsitic, but particle CA can also use probabilistic rules to simulate brownian motions (like our termite explorers) and other non-deterministic media (but the rules would usually still need to be matter/energy preserving over long-term averages -- i.e. probabilities must balance to preserve mass). Particle CAs can also benefit from the inclusion of boundaries and other spatial non-homogeneities such as influx and outflow of particles at opposite edges to create more interesting gradients or otherwise keep the system away from equilibrium (a *dissipative system*).
-
-
-
-
-Particle Life
-
-https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
-https://www.reddit.com/r/GraphicsProgramming/comments/1kr3u9i/i_made_an_inbrowser_particle_life_simulation_with/
-
-Particle Lenia
-
-https://google-research.github.io/self-organising-systems/particle-lenia/
-
-
-
-
-Some amazing ones: 
-
-LOTS OF PARTICLE CA HERE
-
-slime moulds -- these can be thought of as a particle CA?
-https://cargocollective.com/sagejenson/physarum 
-https://www.shadertoy.com/view/WtBcDG 
-https://www.shadertoy.com/view/tlKGDh
-
-https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos, also particle based
-
-https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different -- also particle based
-
-voronoi particles
-https://www.shadertoy.com/view/ts3XWf 
-https://www.shadertoy.com/view/tdXBRf - smooth particle hyrdodynamics
-
-
-https://www.shadertoy.com/view/3s3cWr
-https://www.shadertoy.com/view/WdSfzD -- is it really boids?
-
-
-
--- webgpu
-Particle Life
-https://www.ventrella.com/Clusters/
-https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
-
-Particle Lenia
-https://google-research.github.io/self-organising-systems/particle-lenia/
-
-
-
 
 -->
