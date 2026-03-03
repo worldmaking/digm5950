@@ -407,6 +407,8 @@ A classic example here is the simulation of a slime mold (Physarum polycephalum)
 
 > "Inspired by ... the true slime mold Physarum polycephalum, we present examples of complex emergent pattern formation and evolution formed by a population of simple particle-like agents. Using simple local behaviors based on chemotaxis, the mobile agent population spontaneously forms complex and dynamic transport networks. By adjusting simple model parameters, maps of characteristic patterning are obtained. Certain areas of the parameter mapping yield particularly complex long term behaviors..."
 
+[Here's a quick teaser](https://www.shadertoy.com/view/mlSSWW)
+
 The system presented essentially has two components: 
 
 1. A layer of particle-like **agents** moving through space, and
@@ -434,63 +436,40 @@ However, very similar results can be achieved without any branching code, and us
   rotation = (FL - FR)*trailfactor + (noise - 0.5)*wanderfactor
 ```
 
+---
 
+### Death and Birth
 
+Over time, our particle tracking system may lose population, because when too many particles occupy a small region of space (such as a food source), we run out of pixels to track them.    
 
+We might also want to have a terimnation condition for particles/agents that have lived too long. If some parameter of the agent tracks energy level, health, or simply lifespan, we can make that a condition of being tracked.  For example, in our `getNearest()` function, we can take into account not only distance, but also health/lifespan, in how we choose which particle to track.  If a particle is considered "dead", it should not be chosen to be tracked. 
 
+We can re-populate by spawning new particles/agents in empty spaces.  If our nearest agent is beyond a certain threshold distance away, we consider it "too far", and clearly our pixel is in an empty space.  In this case, we can spawn a new particle at the current pixel coordinate.  Care may need to be taken to initialize this particle only by the chosen coordinate, to prevent accidentally spawning many particles all at once. For example, you might quantize the pixel location according to some regional distance, then offset this by some seeded random divergence, to ensure that each region only spawns one particle at a time. 
 
-<!--
-Particle Life
+```glsl
+  // get distance to particle
+  float d = distance(fragCoord, A.xy);
+  const float SPAWN_DISTANCE = 20.;
+  if (d > SPAWN_DISTANCE) {
+    // quantize to nearest region:
+    vec2 p = SPAWN_DISTANCE * floor(fragCoord/SPAWN_DISTANCE);
+    // generate a random value for this region, at this moment in time:
+    vec4 noise = random4(vec3(p, iTime));
+    // offset the start point to a random position in this region:
+    A.xy = p + (SPAWN_DISTANCE * noise.xy);
+    // initialize other properties of the new particle:
+    A.z = noise.z; 
+    A.w = noise.w;  
+  }
+```
 
-https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
-https://www.reddit.com/r/GraphicsProgramming/comments/1kr3u9i/i_made_an_inbrowser_particle_life_simulation_with/
+> This, by the way, is how we can create "particle flow visualization" or "particle stream visualization". This kind of visualization is frequently used to graph flow fields such as ocean currents and weather patterns.  We continuously spawn particles in empty spaces, allow them to live for a limited lifespan and trace their movements in space over that lifespan. Interestingly, essentially the same method is also sometimes used to render hair and fur. 
 
-Particle Lenia
+Q: What happens if we *don't* take care to seed the random number generator in a consistent way? 
 
-https://google-research.github.io/self-organising-systems/particle-lenia/
+---
 
-
-
-
-Some amazing ones: 
-
-LOTS OF PARTICLE CA HERE
-
-slime moulds -- these can be thought of as a particle CA?
-https://cargocollective.com/sagejenson/physarum 
-https://www.shadertoy.com/view/WtBcDG -- this is too complex because it is doing bit packing to fit a vec6 into a vec4
-https://www.shadertoy.com/view/tlKGDh -- a little less complex, but still too advanced I think. 
-
-
-https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos, also particle based
-
-https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different -- also particle based
-
-voronoi particles
-https://www.shadertoy.com/view/ts3XWf 
-https://www.shadertoy.com/view/tdXBRf - smooth particle hydrodynamics
-
-
-https://www.shadertoy.com/view/3s3cWr
-https://www.shadertoy.com/view/WdSfzD -- is it really boids?
-
-
-
--- webgpu
-Particle Life
-https://www.ventrella.com/Clusters/
-https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
-
-Particle Lenia
-https://google-research.github.io/self-organising-systems/particle-lenia/
-
-
-
-
--->
-
-
-<!--
+See also: https://cargocollective.com/sagejenson/physarum
 
 
 ### Stigmergy and Pheromone Trails
@@ -503,35 +482,26 @@ Stigmergy has become a key concept in the field of [swarm intelligence](https://
 
 Related environmental communication strategies include social nest construction (e.g. termites) and territory marking.
 
-### Implementation
 
-Being able to leave pheromones behind depends on having a specific signature marker in space, such as a particular smell. A simple way to emulate this is to have a field for each pheromone. For example, we may want one pheromone to signal "food this way", and another to signal "nest this way". (An alternative method would be to use a single field and use a different R, G, B channel for each pheromone in that field; but for simplicity here we'll go with multiple fields.)
+**Implementation**
 
-To draw multiple fields, we can turn on blending and apply different colors for each one:
+Being able to leave pheromones behind depends on having a specific signature marker in space, such as a particular smell. A simple way to emulate this is to have a channel for each pheromone. For example, we may want one pheromone in the red channel to signal "food trail", and another pheromone in the green channel to signal "nest trail". 
 
-```javascript
-function draw() {
-	draw2D.blend(true);
-		draw2D.color("navy");
-		phero1.draw();
-		draw2D.color("orange");
-		phero2.draw();
-	draw2D.blend(false);
-	
-	... now draw agents
-}
-```
+We already saw in the chemotaxis examples how to leave trails in a field, as well as how to let these diffuse and dissipate in order to attract more distant agents and make way for new trails to be made, and similar processing will be needed for each pheromone channel. And we saw how use pairs of antennae can estimate the *spatial gradient* of the field, and turn accordingly.
 
-
-We already saw in the chemotaxis example how to leave trails in a field, as well as how to let these diffuse and dissipate in order to attract more distant agents and make way for new trails to be made, and similar processing will be needed for each pheromone field. And we saw how use pairs of antennae can estimate the *spatial gradient* of the field, and turn accordingly.
-
-Here's a start in that direction:
-
----codepen:https://codepen.io/grrrwaaa/pen/gPeyPV
+---
 
 Stigmergy, and other agent behaviours as seen in this course section, were utilized in the Archipelago series of works by Artificial Nature:
 
 ---vimeo:89884440
+
+> An interesting anecdote: Once we were observing one of this series of works, and we noticed some food-carrying ants had started to march in a circular loop.   As they did so they dropped their pheromone, which strengthened the circular trail, until eventually the ants died of exhaustion.  We thought that this was an error, due to oversimplification of the system.  However, much later, we found out that this actually is a phenomenon that happens to real ants too!  It is called an "ant mill" or "death spiral": https://en.wikipedia.org/wiki/Ant_mill: "An ant mill is an observed phenomenon in which a group of army ants, separated from the main foraging party, lose the pheromone track and begin to follow one another, forming a continuously rotating circle. This circle is commonly known as a “death spiral” because the ants might eventually die of exhaustion."
+
+<!--
+
+Here's a start in that direction:
+
+---codepen:https://codepen.io/grrrwaaa/pen/gPeyPV
 
 ---
 
@@ -800,3 +770,59 @@ The neuron, von Neumann, biological & artificial plasticity, artificial neural n
 
 ### Complex adaptive systems
 -->
+
+
+<!--
+
+https://michaelmoroz.github.io/TODO/2021-3-13-Overview-of-Shadertoy-particle-algorithms/
+
+https://michaelmoroz.github.io/Reintegration-Tracking/
+
+Particle Life
+
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+https://www.reddit.com/r/GraphicsProgramming/comments/1kr3u9i/i_made_an_inbrowser_particle_life_simulation_with/
+
+Particle Lenia
+
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
+
+Some amazing ones: 
+
+LOTS OF PARTICLE CA HERE
+
+slime moulds -- these can be thought of as a particle CA?
+https://www.shadertoy.com/view/WtBcDG -- this is too complex because it is doing bit packing to fit a vec6 into a vec4
+https://www.shadertoy.com/view/tlKGDh -- a little less complex, but still too advanced I think. 
+
+
+https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos, also particle based
+
+https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different -- also particle based
+
+voronoi particles
+https://www.shadertoy.com/view/ts3XWf 
+https://www.shadertoy.com/view/tdXBRf - smooth particle hydrodynamics
+
+
+https://www.shadertoy.com/view/3s3cWr
+https://www.shadertoy.com/view/WdSfzD -- is it really boids?
+
+
+
+-- webgpu
+Particle Life
+https://www.ventrella.com/Clusters/
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+
+Particle Lenia
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
+
+-->
+
