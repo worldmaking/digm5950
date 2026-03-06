@@ -59,6 +59,8 @@ footer {
 </li>
 <li><a href="#are-two-sensors-are-better-than-one">Are two sensors are better than one?</a><ul>
 <li><a href="#slime-mould">Slime Mould</a></li>
+<li><a href="#death-and-birth">Death and Birth</a></li>
+<li><a href="#stigmergy-and-pheromone-trails">Stigmergy and Pheromone Trails</a></li>
 </ul>
 </li>
 </ul>
@@ -403,111 +405,51 @@ Examples of 2x2 block rule CA are listed [here](http://psoup.math.wisc.edu/mcell
 <p>However, very similar results can be achieved without any branching code, and using only two sensors, as follows:</p>
 <pre><code>  rotation = (FL - FR)*trailfactor + (noise - 0.5)*wanderfactor
 </code></pre>
-<!-- 
+<hr>
+<h3 id="death-and-birth">Death and Birth</h3>
+<p>Over time, our particle tracking system may lose population, because when too many particles occupy a small region of space (such as a food source), we run out of pixels to track them.    </p>
+<p>We might also want to have a terimnation condition for particles/agents that have lived too long. If some parameter of the agent tracks energy level, health, or simply lifespan, we can make that a condition of being tracked.  For example, in our <code>getNearest()</code> function, we can take into account not only distance, but also health/lifespan, in how we choose which particle to track.  If a particle is considered &quot;dead&quot;, it should not be chosen to be tracked. </p>
+<p>We can re-populate by spawning new particles/agents in empty spaces.  If our nearest agent is beyond a certain threshold distance away, we consider it &quot;too far&quot;, and clearly our pixel is in an empty space.  In this case, we can spawn a new particle at the current pixel coordinate.  Care may need to be taken to initialize this particle only by the chosen coordinate, to prevent accidentally spawning many particles all at once. For example, you might quantize the pixel location according to some regional distance, then offset this by some seeded random divergence, to ensure that each region only spawns one particle at a time. </p>
+<pre><code class="language-glsl">  <span class="hljs-comment">// get distance to particle</span>
+  <span class="hljs-type">float</span> d = <span class="hljs-built_in">distance</span>(fragCoord, A.xy);
+  <span class="hljs-keyword">const</span> <span class="hljs-type">float</span> SPAWN_DISTANCE = <span class="hljs-number">20.</span>;
+  <span class="hljs-keyword">if</span> (d &gt; SPAWN_DISTANCE) {
+    <span class="hljs-comment">// quantize to nearest region:</span>
+    <span class="hljs-type">vec2</span> p = SPAWN_DISTANCE * <span class="hljs-built_in">floor</span>(fragCoord/SPAWN_DISTANCE);
+    <span class="hljs-comment">// generate a random value for this region, at this moment in time:</span>
+    <span class="hljs-type">vec4</span> noise = random4(<span class="hljs-type">vec3</span>(p, iTime));
+    <span class="hljs-comment">// offset the start point to a random position in this region:</span>
+    A.xy = p + (SPAWN_DISTANCE * noise.xy);
+    <span class="hljs-comment">// initialize other properties of the new particle:</span>
+    A.z = noise.z; 
+    A.w = noise.w;  
+  }
+</code></pre>
+<blockquote>
+<p>This, by the way, is how we can create &quot;particle flow visualization&quot; or &quot;particle stream visualization&quot;. This kind of visualization is frequently used to graph flow fields such as ocean currents and weather patterns.  We continuously spawn particles in empty spaces, allow them to live for a limited lifespan and trace their movements in space over that lifespan. Interestingly, essentially the same method is also sometimes used to render hair and fur. </p>
+</blockquote>
+<p>Q: What happens if we <em>don&#39;t</em> take care to seed the random number generator in a consistent way? </p>
+<hr>
+<p>See also: <a href="https://cargocollective.com/sagejenson/physarum">https://cargocollective.com/sagejenson/physarum</a></p>
+<h3 id="stigmergy-and-pheromone-trails">Stigmergy and Pheromone Trails</h3>
+<p><em>Stigmergy</em> is a mechanism of indirect coordination between agents by leaving traces in the environment as a mode of stimulating future action by agents in the same location. For example, ants (and some other social insects) lay down a trace of pheromones when returning to the nest while carrying food. Future ants are attracted to follow these trails, increasing the likelihood of encountering food. This environmental marking constitutes a shared external memory (without needing a map). However if the food source is exhausted, the pheromone trails will gradually fade away, leading to new foraging behavior. </p>
+<p>Traces evidently lead to self-reinforcement and self-organization: complex and seeminly intelligent structures without global planning or control. Since the term stigmergy focuses on self-reinforcing, task-oriented signaling, E. O. Wilson suggested a more general term <em>sematectonic communication</em> for environmental communication that is not necessarily task-oriented.</p>
+<p>Stigmergy has become a key concept in the field of <a href="https://en.wikipedia.org/wiki/Swarm_intelligence">swarm intelligence</a>, and the method of <em>ant colony optimization</em> in particular. In ACO, the landscape is a parameter space (possibly much larger than two or three dimensions) in which populations of virtual agents leave pheromone trails to high-scoring solutions.</p>
+<p>Related environmental communication strategies include social nest construction (e.g. termites) and territory marking.</p>
+<p><strong>Implementation</strong></p>
+<p>Being able to leave pheromones behind depends on having a specific signature marker in space, such as a particular smell. A simple way to emulate this is to have a channel for each pheromone. For example, we may want one pheromone in the red channel to signal &quot;food trail&quot;, and another pheromone in the green channel to signal &quot;nest trail&quot;. </p>
+<p>We already saw in the chemotaxis examples how to leave trails in a field, as well as how to let these diffuse and dissipate in order to attract more distant agents and make way for new trails to be made, and similar processing will be needed for each pheromone channel. And we saw how use pairs of antennae can estimate the <em>spatial gradient</em> of the field, and turn accordingly.</p>
+<hr>
+<p>Stigmergy, and other agent behaviours as seen in this course section, were utilized in the Archipelago series of works by Artificial Nature:</p>
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/89884440?loop=1" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="fullscreen" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
-See also: https://cargocollective.com/sagejenson/physarum
--->
-
-
-
-
-
+<blockquote>
+<p>An interesting anecdote: Once we were observing one of this series of works, and we noticed some food-carrying ants had started to march in a circular loop.   As they did so they dropped their pheromone, which strengthened the circular trail, until eventually the ants died of exhaustion.  We thought that this was an error, due to oversimplification of the system.  However, much later, we found out that this actually is a phenomenon that happens to real ants too!  It is called an &quot;ant mill&quot; or &quot;death spiral&quot;: <a href="https://en.wikipedia.org/wiki/Ant_mill">https://en.wikipedia.org/wiki/Ant_mill</a>: &quot;An ant mill is an observed phenomenon in which a group of army ants, separated from the main foraging party, lose the pheromone track and begin to follow one another, forming a continuously rotating circle. This circle is commonly known as a “death spiral” because the ants might eventually die of exhaustion.&quot;</p>
+</blockquote>
 <!--
-
-https://michaelmoroz.github.io/TODO/2021-3-13-Overview-of-Shadertoy-particle-algorithms/
-
-https://michaelmoroz.github.io/Reintegration-Tracking/
-
-Particle Life
-
-https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
-https://www.reddit.com/r/GraphicsProgramming/comments/1kr3u9i/i_made_an_inbrowser_particle_life_simulation_with/
-
-Particle Lenia
-
-https://google-research.github.io/self-organising-systems/particle-lenia/
-
-
-
-
-Some amazing ones: 
-
-LOTS OF PARTICLE CA HERE
-
-slime moulds -- these can be thought of as a particle CA?
-https://cargocollective.com/sagejenson/physarum 
-https://www.shadertoy.com/view/WtBcDG -- this is too complex because it is doing bit packing to fit a vec6 into a vec4
-https://www.shadertoy.com/view/tlKGDh -- a little less complex, but still too advanced I think. 
-
-
-https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos, also particle based
-
-https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different -- also particle based
-
-voronoi particles
-https://www.shadertoy.com/view/ts3XWf 
-https://www.shadertoy.com/view/tdXBRf - smooth particle hydrodynamics
-
-
-https://www.shadertoy.com/view/3s3cWr
-https://www.shadertoy.com/view/WdSfzD -- is it really boids?
-
-
-
--- webgpu
-Particle Life
-https://www.ventrella.com/Clusters/
-https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
-
-Particle Lenia
-https://google-research.github.io/self-organising-systems/particle-lenia/
-
-
-
-
--->
-
-
-<!--
-
-
-### Stigmergy and Pheromone Trails
-
-*Stigmergy* is a mechanism of indirect coordination between agents by leaving traces in the environment as a mode of stimulating future action by agents in the same location. For example, ants (and some other social insects) lay down a trace of pheromones when returning to the nest while carrying food. Future ants are attracted to follow these trails, increasing the likelihood of encountering food. This environmental marking constitutes a shared external memory (without needing a map). However if the food source is exhausted, the pheromone trails will gradually fade away, leading to new foraging behavior. 
-
-Traces evidently lead to self-reinforcement and self-organization: complex and seeminly intelligent structures without global planning or control. Since the term stigmergy focuses on self-reinforcing, task-oriented signaling, E. O. Wilson suggested a more general term *sematectonic communication* for environmental communication that is not necessarily task-oriented.
-
-Stigmergy has become a key concept in the field of [swarm intelligence](https://en.wikipedia.org/wiki/Swarm_intelligence), and the method of *ant colony optimization* in particular. In ACO, the landscape is a parameter space (possibly much larger than two or three dimensions) in which populations of virtual agents leave pheromone trails to high-scoring solutions.
-
-Related environmental communication strategies include social nest construction (e.g. termites) and territory marking.
-
-### Implementation
-
-Being able to leave pheromones behind depends on having a specific signature marker in space, such as a particular smell. A simple way to emulate this is to have a field for each pheromone. For example, we may want one pheromone to signal "food this way", and another to signal "nest this way". (An alternative method would be to use a single field and use a different R, G, B channel for each pheromone in that field; but for simplicity here we'll go with multiple fields.)
-
-To draw multiple fields, we can turn on blending and apply different colors for each one:
-
-```javascript
-function draw() {
-    draw2D.blend(true);
-        draw2D.color("navy");
-        phero1.draw();
-        draw2D.color("orange");
-        phero2.draw();
-    draw2D.blend(false);
-    
-    ... now draw agents
-}
-```
-
-
-We already saw in the chemotaxis example how to leave trails in a field, as well as how to let these diffuse and dissipate in order to attract more distant agents and make way for new trails to be made, and similar processing will be needed for each pheromone field. And we saw how use pairs of antennae can estimate the *spatial gradient* of the field, and turn accordingly.
 
 Here's a start in that direction:
 <p class="codepen" data-height="520" data-default-tab="js,result" data-user="grrrwaaa" data-slug-hash="gPeyPV" data-preview="true"><span><a href="https://codepen.io/grrrwaaa/pen/gPeyPV">Open pen.</a></span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script>
-
-Stigmergy, and other agent behaviours as seen in this course section, were utilized in the Archipelago series of works by Artificial Nature:
-<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/89884440?loop=1" style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="fullscreen" allowfullscreen></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 
 ---
 
@@ -768,6 +710,63 @@ The neuron, von Neumann, biological & artificial plasticity, artificial neural n
 
 ### Complex adaptive systems
 -->
+
+
+<!--
+
+https://michaelmoroz.github.io/TODO/2021-3-13-Overview-of-Shadertoy-particle-algorithms/
+
+https://michaelmoroz.github.io/Reintegration-Tracking/
+
+Particle Life
+
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+https://www.reddit.com/r/GraphicsProgramming/comments/1kr3u9i/i_made_an_inbrowser_particle_life_simulation_with/
+
+Particle Lenia
+
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
+
+Some amazing ones: 
+
+LOTS OF PARTICLE CA HERE
+
+slime moulds -- these can be thought of as a particle CA?
+https://www.shadertoy.com/view/WtBcDG -- this is too complex because it is doing bit packing to fit a vec6 into a vec4
+https://www.shadertoy.com/view/tlKGDh -- a little less complex, but still too advanced I think. 
+
+
+https://www.shadertoy.com/view/Wl2yWm --- gravity cosmos, also particle based
+
+https://www.shadertoy.com/view/Wt2BR1 -- almost looks like a Lenia, but it is something different -- also particle based
+
+voronoi particles
+https://www.shadertoy.com/view/ts3XWf 
+https://www.shadertoy.com/view/tdXBRf - smooth particle hydrodynamics
+
+
+https://www.shadertoy.com/view/3s3cWr
+https://www.shadertoy.com/view/WdSfzD -- is it really boids?
+
+
+
+-- webgpu
+Particle Life
+https://www.ventrella.com/Clusters/
+https://lisyarus.github.io/blog/posts/particle-life-simulation-in-browser-using-webgpu.html
+
+Particle Lenia
+https://google-research.github.io/self-organising-systems/particle-lenia/
+
+
+
+
+-->
+
+
 <footer>2025</footer>
 
 </body>
