@@ -430,17 +430,89 @@ The agent senses the space a three points in front of it: one straight ahead ("F
     }
 ```
 
+--- 
+
+#### Implementation
+
+For the trail layer, we will want some kind of diffusion and decay.  A simple blend (say 25%) with the average of the four neighbor pixels is the simplest, and may be enough, combined with a decay factor (say 97%).  The diffusion could be improved and both can be made more variable if you want. 
+
+Maybe you want to mix in an external image source as a "map", or even the webcam -- it may have to be quite heavily mixed in to have an effect. 
+
+Deposits from the nearest agent depend on distance; I found that `e^-(distance_squared)` worked well. 
+
+For the agents, we will need to find the nearest agent first, perhaps searching over a 2 or 3 pixel range. 
+
+Then we create 3 sensors, ahead and to the left & right of the agent. (An angle of 30-40 degrees, or pi*0.2, and a distance of about 10 pixels, seemed to work for me.)  These sensors then sample the trail field, and this is used to select between motion using the rules above.  (I found turns of about 1 degree, or `pi*0.005`, worked well.)  
+
 However, very similar results can be achieved without any branching code, and using only two sensors, as follows:
 
 ```
   rotation = (FL - FR)*trailfactor + (noise - 0.5)*wanderfactor
 ```
 
+I also found it helpful to randomize the direction of an agent if the nearest agent is far away (say, more than 10 pixels). Can you think why?
+
+With the new heading, the agent moves forward at a certain speed. (I also found it helpful to scale the speed by the field intensity.)
+
 ---
+
+See also: https://cargocollective.com/sagejenson/physarum
+
+> A variation of this system is how we modeled the mycorrhizal fungal growth in the artworks "Entanglement", and interactively with "We Are Entanglement".
+
+---youtube:efAH6yUpw6U
+
+
+### Stigmergy and Pheromone Trails
+
+*Stigmergy* is a mechanism of indirect coordination between agents by leaving traces in the environment as a mode of stimulating future action by agents in the same location. For example, ants (and some other social insects) lay down a trace of pheromones when returning to the nest while carrying food. Future ants are attracted to follow these trails, increasing the likelihood of encountering food. This environmental marking constitutes a shared external memory (without needing a map). However if the food source is exhausted, the pheromone trails will gradually fade away, leading to new foraging behavior. 
+
+Traces evidently lead to self-reinforcement and self-organization: complex and seeminly intelligent structures without global planning or control. Since the term stigmergy focuses on self-reinforcing, task-oriented signaling, E. O. Wilson suggested a more general term *sematectonic communication* for environmental communication that is not necessarily task-oriented.
+
+Stigmergy has become a key concept in the field of [swarm intelligence](https://en.wikipedia.org/wiki/Swarm_intelligence), and the method of *ant colony optimization* in particular. In ACO, the landscape is a parameter space (possibly much larger than two or three dimensions) in which populations of virtual agents leave pheromone trails to high-scoring solutions.
+
+Related environmental communication strategies include social nest construction (e.g. termites) and territory marking.
+
+---
+
+Stigmergy, and other agent behaviours as seen in this course section, were utilized in the Archipelago series of works by Artificial Nature:
+
+---vimeo:89884440
+
+> An interesting anecdote: Once we were observing one of this series of works, and we noticed some food-carrying ants had started to march in a circular loop.   As they did so they dropped their pheromone, which strengthened the circular trail, until eventually the ants died of exhaustion.  We thought that this was an error, due to oversimplification of the system.  However, much later, we found out that this actually is a phenomenon that happens to real ants too!  It is called an "ant mill" or "death spiral": https://en.wikipedia.org/wiki/Ant_mill: "An ant mill is an observed phenomenon in which a group of army ants, separated from the main foraging party, lose the pheromone track and begin to follow one another, forming a continuously rotating circle. This circle is commonly known as a “death spiral” because the ants might eventually die of exhaustion."
+
+
+**Implementation**
+
+What buffers do we need?
+
+- A Buffer as a landscape for the ants to live in, which contains both a "nest", and deposits of "food".  
+- A Buffer for the ants, where .xy is the pixel location, .z is the direction, and we can use .w to denote whether the ant is carrying food. 
+- A Buffer to store their pheromone trails. Being able to leave pheromones behind depends on having a specific signature marker in space, such as a particular smell. A simple way to emulate this is to have a channel for each pheromone. For example, we may want one pheromone in the red channel to signal "nest trail", and another pheromone in the green channel to signal "food trail". 
+
+
+We can initialize the nest as a red circle in the center, and food as randomly deposited green pixels in space, e.g. by a threshold over some image.  In terms of dynamics, we only need to remove food when an ant picks it up. On each frame, we simply need to know if the current pixel contains an ant (e.g. distance to nearest agent < 1.5) and if so, clear any food (set green channel to 0);
+
+We already saw in the chemotaxis examples how to leave trails in a field, as well as how to let these diffuse and dissipate in order to attract more distant agents and make way for new trails to be made, and similar processing will be needed for each pheromone channel.  (I found a diffusion of about 10% mix and a decay of about 0.999 to work well. I also thought it would be good if the nest and food always produced a smell that can diffuse, using `max()`.)  
+
+To add the pheromone from ants, we just need to differentiate whether the ant is carrying food or not, and add to the .r or .g field accordingly. (I found `smoothstep(1., 0., distance)` worked well as the deposit amount.)  It may also be sensible to clamp the intensity between 0. and 1.
+
+The ants start the same way as usual, searching nearest pixels to find the nearest agent.   They also move the same way as normal, with some speed along their current direction.  Maybe we also want to bounce them off the image boundaries like we did for the E. Coli agents. 
+
+The ants need to check if they can pick up food (if they are standing on food) or deposit food (if they are in the nest).  Either way, if they have hit food or nest, they should turn around 180 degrees. 
+
+Ants also need to use their antennae to read the pheromone field, and turn accordingly. (I found that 45 degree sensors at 6 pixels' distance worked well.) Ants carrying food smell the nest pheromones, other ants smell the food pheromones. (I found that using the sensor difference scaled by pi worked well.)  They may also have some random wandering turn (I found up to 0.25*pi to work well). 
+
+We can also spawn new ants inside the nest if the current pixel is inside the nest but the nearest ant is outside the nest. 
+
+Here's a completed implementation: https://www.shadertoy.com/view/scXGzX
+
+
+
 
 ### Death and Birth
 
-Over time, our particle tracking system may lose population, because when too many particles occupy a small region of space (such as a food source), we run out of pixels to track them.    
+Over time, a particle or agent tracking system may lose population, because when too many particles occupy a small region of space (such as a food source), we run out of pixels to track them.    
 
 We might also want to have a terimnation condition for particles/agents that have lived too long. If some parameter of the agent tracks energy level, health, or simply lifespan, we can make that a condition of being tracked.  For example, in our `getNearest()` function, we can take into account not only distance, but also health/lifespan, in how we choose which particle to track.  If a particle is considered "dead", it should not be chosen to be tracked. 
 
@@ -468,34 +540,6 @@ We can re-populate by spawning new particles/agents in empty spaces.  If our nea
 Q: What happens if we *don't* take care to seed the random number generator in a consistent way? 
 
 ---
-
-See also: https://cargocollective.com/sagejenson/physarum
-
-
-### Stigmergy and Pheromone Trails
-
-*Stigmergy* is a mechanism of indirect coordination between agents by leaving traces in the environment as a mode of stimulating future action by agents in the same location. For example, ants (and some other social insects) lay down a trace of pheromones when returning to the nest while carrying food. Future ants are attracted to follow these trails, increasing the likelihood of encountering food. This environmental marking constitutes a shared external memory (without needing a map). However if the food source is exhausted, the pheromone trails will gradually fade away, leading to new foraging behavior. 
-
-Traces evidently lead to self-reinforcement and self-organization: complex and seeminly intelligent structures without global planning or control. Since the term stigmergy focuses on self-reinforcing, task-oriented signaling, E. O. Wilson suggested a more general term *sematectonic communication* for environmental communication that is not necessarily task-oriented.
-
-Stigmergy has become a key concept in the field of [swarm intelligence](https://en.wikipedia.org/wiki/Swarm_intelligence), and the method of *ant colony optimization* in particular. In ACO, the landscape is a parameter space (possibly much larger than two or three dimensions) in which populations of virtual agents leave pheromone trails to high-scoring solutions.
-
-Related environmental communication strategies include social nest construction (e.g. termites) and territory marking.
-
-
-**Implementation**
-
-Being able to leave pheromones behind depends on having a specific signature marker in space, such as a particular smell. A simple way to emulate this is to have a channel for each pheromone. For example, we may want one pheromone in the red channel to signal "food trail", and another pheromone in the green channel to signal "nest trail". 
-
-We already saw in the chemotaxis examples how to leave trails in a field, as well as how to let these diffuse and dissipate in order to attract more distant agents and make way for new trails to be made, and similar processing will be needed for each pheromone channel. And we saw how use pairs of antennae can estimate the *spatial gradient* of the field, and turn accordingly.
-
----
-
-Stigmergy, and other agent behaviours as seen in this course section, were utilized in the Archipelago series of works by Artificial Nature:
-
----vimeo:89884440
-
-> An interesting anecdote: Once we were observing one of this series of works, and we noticed some food-carrying ants had started to march in a circular loop.   As they did so they dropped their pheromone, which strengthened the circular trail, until eventually the ants died of exhaustion.  We thought that this was an error, due to oversimplification of the system.  However, much later, we found out that this actually is a phenomenon that happens to real ants too!  It is called an "ant mill" or "death spiral": https://en.wikipedia.org/wiki/Ant_mill: "An ant mill is an observed phenomenon in which a group of army ants, separated from the main foraging party, lose the pheromone track and begin to follow one another, forming a continuously rotating circle. This circle is commonly known as a “death spiral” because the ants might eventually die of exhaustion."
 
 <!--
 
@@ -614,8 +658,9 @@ Here combined with Chemotaxis:
 
 ---codepen:https://codepen.io/grrrwaaa/pen/QKXaGb
 
----
+-->
 
+<!--
 ## Agent-Agent Interactions
 
 As well as communicating via fields, agents may be aware of each other directly; perhaps through **distal senses** such as vision or hearing. Since agents are mobile, the set of agents that are close neighbours to another can change over time. We thus need to add routines to compute lists of near-neighbours on each frame.  
