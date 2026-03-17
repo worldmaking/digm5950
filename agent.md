@@ -456,6 +456,8 @@ With the new heading, the agent moves forward at a certain speed. (I also found 
 
 ---
 
+Here's another example of this method: https://www.shadertoy.com/view/t3yBRK
+
 See also: https://cargocollective.com/sagejenson/physarum
 
 > A variation of this system is how we modeled the mycorrhizal fungal growth in the artworks "Entanglement", and interactively with "We Are Entanglement".
