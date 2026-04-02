@@ -460,14 +460,15 @@ function loadShadertoy() {
 		shadertoy = null
 	}
 
+	/*
 	let which = Math.floor(Math.random() * data.length)
 	shadertoy = makeShadertoy(data[which])
-
-	/*
+*/
+	
 	let toy = data.shift()
 	data.push(toy)
 	shadertoy = makeShadertoy(toy)
-	*/
+	
 
 	setTimeout(loadShadertoy, 1000 * duration)
 }
