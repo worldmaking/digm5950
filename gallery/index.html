@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+	<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #111
+}
+
+.container {
+  display: flex;
+  justify-content: center; /* Horizontal centering */
+  align-items: center;     /* Vertical centering */
+  height: 100vh;           /* Full viewport height */
+  width: 100vw;            /* Full viewport width */
+}
+
+.container1 {
+  display: grid;
+  place-items: center; /* Centers both ways */
+  height: 100vh;
+  margin: 0;
+}
+
+canvas {
+    /*width: 100vw;
+    height: 100vh;
+    display: block
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;*/ /* Replace with your desired ratio */
+    flex-basis: 100%;
+}
+
+.roboto100 {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+#title {
+    color: #999;
+    text-align: center;
+    font-size: large;
+    flex-basis: 100%;
+}
+
+	</style>
+  </head>
+  <body>
+    <div class="container1">
+    <canvas id="gl" width="960" height="540"></canvas>
+    <p id="title" class="roboto100"></p>
+    </div>
+    <script src="./data.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

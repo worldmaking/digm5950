@@ -806,7 +806,7 @@ Lenia continues in the spirit of SmoothLife, and has been extensively explored &
 
 [Jonathan McCabe's cyclic multi-scale Turing patterns](http://www.jonathanmccabe.com/), and a [commentary by Mitchell Whitelaw](http://teemingvoid.blogspot.kr/2007/02/jonathan-mccabe-very-cellular-automata.html). The implementation is described [in this paper](http://www.archive.bridgesmathart.org/2010/bridges2010-387.pdf).
 
-It starts with a straightforward reaction-diffusion system:
+It starts with a simplified reaction-diffusion system:
 
 - Diffusion is simulated by averaging the continuous cell values over small (activator) and large (inhibitor) radii; if the the smaller (activator) concentration is greater than the larger (inhibitor) concentration, increase the cell value by a small amount; otherwise decrease. 
 - After running the rule over all cells, the entire field is *normalized* (to ensure the minimum cell value is zero and the maximum cell value is 1).
@@ -864,5 +864,40 @@ Several cellular systems can be coupled together at different scales.
 In certain CA variants, more than one substitution could be valid to undertake. We have seen how some CA simply choose randomly between options, while Monte Carlo systems consider two or more options and take the one with the highest entropy. In a sense, for a brief moment, these systems follow two parallel histories, and then choose which one to discard. But there is no reason why we can't follow two (or more) histories for a little longer than a single step, nor to limit our decision-making to an energetic/entropic basis. We may return to this idea when exploring evolutionary systems, which present a similar parallelism. 
 
 > Wolfram also explored ['multi-way'](http://www.wolframscience.com/nksonline/page-204#previous) CA executions, in which all possible histories for a given state are explored, considering their long-term evolutions, and in particular exploring which rules lead to exponentially more universes, which tend to stabilize, and which ultimately lead to the same results.
+
+-->
+
+
+<!--
+## A Minimal Fluid Simulation as a Cellular Automata
+
+.xy velocity
+.z pressure (convergence/divergence) 
+
+Get pressure difference (gradient) as a vec2 by subtracting neighbors
+add this to velocity, so that pressure evens itself out
+
+Get variance in velocity: (SW - NE)/4, 
+add that to diffused (avg neighbor) pressure
+
+Think of it this way: 
+- if e.x == w.x, there's no change in pressure along x
+- if e.x < 0 and w.x > 0, we have velocities coming in from both sides, so pressure increases
+- if e.x > 0 and w.x < 0 we have velocities moving away both sides, losing pressure
+
+But fluid is supposed to be incompressible, we can't have pressure building up.  
+We resolve this two ways.  First, we diffuse the pressure in space (averaging), to reduce the differences.  
+Second, any differences in pressure lead to the creation of new velocities, along the gradient of the pressure. 
+
+Now the clever bit: instead of just reading N E S W directly, 
+we backtrack along the velocity flow, to guess where energy is *really* coming from.  
+Example shader uses two half-steps. 
+
+For transport, we can use this back-tracked velocity to advect matter from those points into (or out of) our cell, and add that to the cell's current content. 
+
+
+
+
+(.w transported matter)
 
 -->
