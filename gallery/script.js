@@ -426,7 +426,7 @@ function render() {
 
 		let { width, height } = canvas
  
-		let fade = Math.min(shadertoy.time * 4, (duration - shadertoy.time) / 4)
+		let fade = Math.min(shadertoy.time * 2, (duration - shadertoy.time) / 2)
 		fade = Math.min(fade, 1)
 
 		{
@@ -450,34 +450,43 @@ function render() {
 		}
 	}
 
+	if (shadertoy && shadertoy.time > duration) {
+		loadNextShadertoy();
+	}
+
 	requestAnimationFrame(render);
 }
 
-
-function loadShadertoy() {
+function unloadShadertoy() {
 	if (shadertoy) {
 		shadertoy.freeMemory()
 		shadertoy = null
 	}
+}
 
-	/*
-	let which = Math.floor(Math.random() * data.length)
-	shadertoy = makeShadertoy(data[which])
-*/
-	
+function loadNextShadertoy() {
+	unloadShadertoy()
+
 	let toy = data.shift()
 	data.push(toy)
 	shadertoy = makeShadertoy(toy)
-	
-
-	setTimeout(loadShadertoy, 1000 * duration)
 }
 
-loadImages(imageUrls).then(images => {
-	// All images are loaded
-	loadShadertoy()
-	render();
-});
+function loadPrevShadertoy() {
+	unloadShadertoy()
+
+	let toy = data.pop()
+	data.unshift(toy)
+	shadertoy = makeShadertoy(toy)
+}
+
+function loadRandomShadertoy() {
+	unloadShadertoy()
+	
+	let which = Math.floor(Math.random() * data.length)
+	shadertoy = makeShadertoy(data[which])
+}
+
 
 // "Esc" to fullscreen
 document.addEventListener('keydown', (e) => {
@@ -488,6 +497,10 @@ document.addEventListener('keydown', (e) => {
         console.error(`Error attempting to enable full-screen mode: ${err.message}`);
       });
     }
+  } else if (e.key == "ArrowRight") {
+	loadNextShadertoy()
+  } else if (e.key == "ArrowLeft") {
+	loadPrevShadertoy()
   }
 });
 
@@ -501,3 +514,10 @@ document.addEventListener('keydown', (e) => {
 //     document.exitFullscreen();
 //   }
 // });
+
+
+loadImages(imageUrls).then(images => {
+	// All images are loaded
+	loadNextShadertoy()
+	render();
+});
