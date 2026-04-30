@@ -15,14 +15,6 @@ body {
 }
 
 .container {
-  display: flex;
-  justify-content: center; /* Horizontal centering */
-  align-items: center;     /* Vertical centering */
-  height: 100vh;           /* Full viewport height */
-  width: 100vw;            /* Full viewport width */
-}
-
-.container1 {
   display: grid;
   place-items: center; /* Centers both ways */
   height: 100vh;
@@ -36,7 +28,10 @@ canvas {
     width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;*/ /* Replace with your desired ratio */
-    flex-basis: 100%;
+    /*flex-basis: 100%;*/
+    display: block;
+    width: 90%;
+    height: 90%;
 }
 
 .roboto100 {
@@ -45,7 +40,7 @@ canvas {
   font-weight: 100;
   font-style: normal;
   font-variation-settings:
-    "wdth" 100;
+    "width" 100;
 }
 
 #title {
@@ -58,7 +53,7 @@ canvas {
 	</style>
   </head>
   <body>
-    <div class="container1">
+    <div class="container">
     <canvas id="gl" width="960" height="540"></canvas>
     <p id="title" class="roboto100"></p>
     </div>

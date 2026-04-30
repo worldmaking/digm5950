@@ -32,6 +32,9 @@ let lasttime = performance.now() / 1000;
 const title = document.getElementById('title');
 
 const canvas = document.getElementById('gl');
+const totalScreenWidth = canvas.clientWidth;
+const totalScreenHeight = canvas.clientHeight;
+
 const gl = canvas.getContext("webgl2");
 {
 	const ext = gl.getExtension('EXT_color_buffer_float');
@@ -194,14 +197,12 @@ let output_program = createProgram(output_fs)
 
 function makeShadertoy(json) {
 
-	const totalScreenWidth = screen.width;
-	const totalScreenHeight = screen.height;
 
-	const width = Math.floor(totalScreenWidth * 0.8)
-	const height = Math.floor(totalScreenHeight * 0.8)
+	const width = Math.floor(totalScreenWidth)
+	const height = Math.floor(totalScreenHeight)
 
-	canvas.width = width
-	canvas.height = height
+	canvas.width = canvas.clientWidth;
+	canvas.height = canvas.clientHeight;
 
 
 	let info = json.info
