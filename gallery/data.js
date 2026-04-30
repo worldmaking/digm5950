@@ -3890,5 +3890,3972 @@ const data = [
 			"parentid": "",
 			"parentname": ""
 		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\nSTUDENT NUMBER: 215907876\n\nASSIGNMENT NUMBER : FA/DATT4950M / GS/DIGM5950M Assignment 04 - FINAL\n\nNAME: PHILIP MICHALOWSKI\n\nTITLE: CHLOROPHYLL\n\nINTERACTIONS: The shader mostly illustrates particles that interact with each other. There is no interaction to be made\nby human other than mouse left click however there are quite a few possible modifications\n- It's definitely worth to play with the fluid particle settings in buffer A\nby changing speed or radius the effect drastically changing\n- It's also interesting to use the mouse to influence\nthe field. It's a good idea to disconnect the voronoi forces\nand try to move mouse among the particles - it gives interesting particle fluid looks\n\nDESCRIPTION: CHLOROPHYLL - is based on the plant cells movement inside the\nplant green areas. I got more insights based on the video of Microbehunter (Microbehunter\n,https://www.youtube.com/watch?v=XhQBXKlvVcA) who explains that the chloroplasts - plant cells\nresponsible for the plant photosynthesis as well as the one give the green color to the leafs have a movement.\nHe explains that it's because the nutrients produced by the cell must be equally distributed\nalong the body of the green leaf. The timelapse presented in the video\nshowcases interesting leaf cells and chloroplasts moving around that cell similarly to my work.\n\nThe system introduces combination of two systems covered in class: voronoi based improvised fluid simulation (extension of class voronoi particles, Graham Wakefield, https://www.shadertoy.com/view/7fl3zH) and physarum particles (Graham Wakefield, https://www.shadertoy.com/view/7ff3RX).\nPhysarum particles form a plant cell walls that influences the chloroplasts inside it. Because\nof the force distribution the physarum searches for free space to follow between the particles\nand plant particles are being pushed to the middle of the cell wall keeping the similar\nstructure as on the video. However, while plants cell wall doesn't change its structure\nit's interesting to see the physarum constantly morphing the spaces where particles are trapped\nbecause of the physics of the chloroplasts. The other thing is that the voronoi particles change the\nspeed based on the fluid particle speed values. It's interesting because it works quite similar to the time phase and imitates\nthe human circulatory system imitating the heartbeat. Unfortunately, the effect is only momentary.\nThere is no long term behaviour other than the physarum field modification.\n\nTECHNICAL REALIZATION : I've always wanted to code a fluid simulation\nthat uses the lists like in the following video(Sebastian Lague, https://www.youtube.com/watch?v=rSKMYc1CQHE&t=1319s). Because of GLSL usage, the first step\nwas to use the smoke simulation done in the previous shader (Philip Michalowski, https://www.shadertoy.com/view/W3yfDh) to influence the location and speed\nof the particles to simulate the force field tension between particles. However when there\nis no entity to generate the smoke and the smoke density buffer only attracts the particles rather than apply the forces\nand change the direction the effect is very poor and not as intended.\n\nUnfortunately, it was difficult to find an understandable shader on Shadertoy that does fluid particle simulation. To understand the implementation behind the system\nI used Claude AI Opus 4.6 Model to give me idea how the system is implemented with the code snippets and explanation.\nLater, after a conversation with professor Wakefield I had an idea on how to store the particle data in the list buffer\non per pixel basis as well as read those values as index based list. I initialized the buffer with the\nrandom values of position and velocity. With the help of AI I understood the particle forces application based on the neighbourhood. It's interesting\nthat traversal is very similar to the particle system we created in class (Graham Wakefield,https://www.shadertoy.com/view/7ff3RX) but instead of tracking the particles it tracks indexes.\nThe scan is to apply the forces based on the particle neighbourhood and use it to update the entire particle location list rather than updating\nthe list directly in the single for loop. In this case instead of around 9000 length for loop I scan the neighbourhood with 2 short for loops to seek\nfor the tracked index change as a boundary to get the neighbouring entities and calculate force which optimizes the system significantly. Before the 9000 particle loop was reducing fps significantly up to 13, now its around 40-60.\nWhen the implementation of list with the forces and particle tracking via index improved and made possible to create a great fluid visual effect which wast possible with the combination of the smoke density field with particles.\n\nThat method gave a very visually pleasing and efficient effect for fluid simulation. I decided to test it by adding mouse forces to see how the fluid responds to movement. It was working great creating ripples and viscosity. \nTo get the desired cellular division shape I copied the voronoi physarum particles from previous assignment (Philip Michalowski, https://www.shadertoy.com/view/7fBGWh) and applied the forces\nof the physarum the same way as the fluid simulation and mouse but with greater range to push away the fluid from the particles that moves around on trails.\nAI helped me to identify how the offset works and provided with the code snippets and explained the functionality. It needed couple value tweeks in the fluid shader because the forces of the fluid particles\nas times were too stiff when i push the force and radius in the range of 50.-100. and pushed either too hard against each other or were going through with almost no forces when values where around 5.-10.\n\nTo apply the final styling I mixed all the values however it was a little unclear for me\nhow to get a white background. I asked AI to give me code snippets and explain how the\naccumulation of buffers work in here to achieve edges, soft edged particles light trails\nas well as white background.With the help of AI I also added the sampling of the edge values to voronoi particle. It gave a nice effect of speed change but I latter found that\nthe speed is variable is better, creates this circularatory vessel effect based on the fluid particle speed values.\n\nFUTURE EXTENSIONS: It would be fascinating if the particles are driven by the AI or\ncamera and how interesting the effect will be if the camera tracking has edge detection kernel applied.\nThere can definitely be more forces applied to the voronoi buffer. This time it was good for the biological representation\nhowever in the other possibility it definitely can be expanded.\n\nAI References:\nClaude AI engine Opus 4.6 helped to generate code snippets, snippets explanation for the learning purposes as well as debugging\nfor the buffer A, buffer B, Buffer C, Image and getParticle function in the common.\nCode in those buffers are interchangeably modified by me and improved/debugged by the Opus 4.6 engine.\nIt was necessary since all other sources that used particle id tracking and fluid were difficult to interpret and\neven more difficult to learn. A great conversation with professor Wakefield and AI use gave me theoretical and practical understanding\nof voronoi fluid simulation and neighbour force propagation\nSAMPLE PROMPTS:\n\"so the x coordinate is just row selector and the y coordinate * resolution is column selector - can you explain how it works in the buffer index perspective ?\"\n\"explain how do i put those values to the separate buffer to treat it as a list in shadertoy\nexplain the reasoning behind the indexes and its scanning system. Generate Code snippets and explain. <SMOKE DENSITY BUFFER CODE>\"\n\"If i wanna store just particle ids and retreive the data from the id - can you explain what are the principles ?\"\n\"<CODE IN IMAGE TO DISPLAY FLUID PARTICLES>  - this gives me black screen. Explain what im doing wrong ? Provide code explanation\"\n\"I feel some particles are geting lost <FLUID PARTICLES CODE>\"\n\"where does it calculate distance between the particles ?\"\n\"so i have the A.xy and its 4 neighbours positions and then it can tell whats the density in the particle bertween the other ones\"\n\"can you explain again how vornoi works ? will it work if i apply the force in buffer A ? can you guide me step by step ?\"\n\"so whichever particle vornoi tracks now - bestID. so voronoi is essentially to display the particles\"\n\"<VORNOI PARTICLE TRACKING CODE> like this ?\"\n\"some the particless dissapear towards the botom\"\n\nThere are quite a few more but many of them are quite the same in the principle\nand structure to give explanation, give some code snippets or debug existing buffer code.\n\nPRIOR FEEDBACK: I did my best to make the code readable and indented\n*/\n\n// IMAGE BUFFER\n\n// Coded by the author with assistance of Claude Opus 4.6\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  vec2 uv = fragCoord / iResolution.xy;\n\n  // Get the buffers of particle tracking, trails, and voronoi particles\n  vec4 particleTracking = texture(iChannel0, uv);\n  vec4 voronoiTrails = texture(iChannel3, uv);\n  vec2 voronoiPosition = texture(iChannel2, uv).xy;\n\n  // Get the data from particle tracking buffer\n  float particleDistance = particleTracking.y;\n  float particleEdge = particleTracking.z;\n  float particleSize = particleTracking.w;\n\n  // Hardcoded colors\n  vec3 green = vec3(0.3, 0.95, 0.35);\n  vec3 lightGreen = vec3(0.2, 0.75, 0.15);\n  vec3 grayEdge = vec3(0.85, 0.85, 0.85);\n\n  // Fluid particle dot rendering\n  float fluidDots = particleSize / particleDistance;\n\n  // Voronoi particle dot rendering\n  float particleDist = distance(fragCoord, voronoiPosition);\n  float physDots = particleSize / particleDist;\n\n  // Combine both dots\n  float dots = fluidDots + physDots;\n\n  // Trail intensity reduce the intensity of the trail\n  float trailAmount = clamp(length(voronoiTrails.rgb) * 0.1, 0.0, 1.0);\n\n  // Final color - on white background\n  vec3 color = vec3(1.0);\n\n  // mix the white with edges based\n  color = mix(color, grayEdge, particleEdge);\n\n  // mix the color with green trails\n  color = mix(color, lightGreen, trailAmount);\n\n  // mix the color with green particles\n  color = mix(color, green, dots);\n\n  // everything combined\n  fragColor = vec4(color, 1.0);\n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// BUFFER A - PARTICLE LOCATIONS AND FORCES\n\n// Coded by the author with assistance of Claude Opus 4.6 based on the idea of Graham Wakefield\n// Conversation during class meeting\n\n/*\n// Settings of the forces of particles, voronoi\nconst float particleRadius = 55.0;\nconst float particleForce = 130.0;\nconst float voronoiRadius = 130.0;\nconst float voronoiForce = 128.0;\nconst float particleSpeedDamping = 0.999;\nconst float particleMaxSpeed = 150.0;\n*/\n\nconst float particleRadius = 15.0;\nconst float particleForce = 30.0;\nconst float voronoiRadius = 30.0;\nconst float voronoiForce = 28.0;\nconst float particleSpeedDamping = 0.999;\nconst float particleMaxSpeed = 50.0;\nconst float mouseRadius = 120.0;\nconst float mouseForce = 180.0;  \n\n// Repel function - repels the particles against each other\n// based on the distance between them. If the distance between particles is too small\n// apply force to repel own particle\n// Takes own particle data, other particle data, radius and strength of the force\n// Returns the force of the particle interaction\n// Idea of Graham Wakefield\n// In class review conversation\nvec2 repel(vec2 me, vec2 other, float radius, float strength) {\n  \n  // Difference in the x and y value between particles to  get the offset \n  vec2 diff = me - other;\n  \n  // Get the length of the offset vector\n  float dist = length(diff);\n  \n  // If the length of the offset vector is greater than\n  // radius the particles are far enough from each other\n  if (dist > radius) {\n    return vec2(0);\n  }\n  // else if the particle distance is smaller than radius\n  // apply the force to repel them from each other\n  // get the direction of the offset and multiply it by the how far off\n  // the radius the distance is and how strong it applies\n  else\n    return normalize(diff) * (1.0 - dist / radius) * strength;\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  \n  // Uv and texel initialization\n  vec2 uv = fragCoord / iResolution.xy;\n  vec2 texel = 1.0 / iResolution.xy;\n\n  // calculate the index for the particle stored in the buffer\n  // index is the x coordinate as column + y fragCoord values times resolution as a row\n  // it gives the buffer stable way to combine with buffer B to form a list\n  int index = int(fragCoord.x) + int(fragCoord.y) * int(iResolution.x);\n  \n  // if the index is greater than number of particles\n  // don't put the values into the texture anymore - saves a lot of power\n  if (index >= NUM_PARTICLES) {\n    fragColor = vec4(0);\n    return;\n  }\n\n  // Get previous frame, position and velocity of the particle\n  vec4 A = texture(iChannel0, uv);\n  vec2 pos = A.xy;\n  vec2 vel = A.zw;\n  vec2 force = vec2(0);\n\n  // Get Particle coordinates in the UV space\n  vec2 particleUV = pos / iResolution.xy;\n\n  // Go over the neighbours of the particle to calculate inner forces\n  // and apply them in the system.\n  for (int x = -1; x <= 1; x++){\n    for (int y = -1; y <= 1; y++){\n      \n      // If the values is not its own pixel (0,0)\n      if (x != 0 || y != 0) {\n        \n        // Get the offset position in the variable\n        vec2 offsetDirection = vec2(x, y);\n\n        // Calculate repulsion from the physarum particles. For loop tests the distances of 7,14,21 pixels away\n        // and calculate the position of all particles and physarum from the current particle\n        // DISCONNECT FOR THE PURE PARTICLE FLUID FIELD\n        for (float offsetDistance = 7.0; offsetDistance <= 21.0; offsetDistance += 7.0) {\n          // physarum particle location\n          vec2 physarumParticle = texture(iChannel2, particleUV + offsetDirection * offsetDistance * texel).xy;\n          // Accumulate the repellent forces in the variable to later add all the forces to the particle\n          force += repel(pos, physarumParticle, voronoiRadius, voronoiForce);\n        }\n\n        // Get the own neighbour particle ID\n        int neighborIndex = int(texture(iChannel1, particleUV + offsetDirection * particleRadius * texel).x);\n        // If neighbour pixel is not the own particle\n        if (neighborIndex != index) {\n          // Get the neighbour particle from the B buffer with\n          // ID locations tracking location through ID\n          vec2 neighborPosition = getParticle(neighborIndex, iResolution.xy, iChannel0).xy;\n          // Accumulate the forces\n          force += repel(pos, neighborPosition, particleRadius, particleForce);\n        }\n      }\n    }\n  }\n  \n  // Active while mouse button is pressed\n  if (iMouse.z > 0.0) {\n    // get mouse position\n    vec2 mouse = iMouse.xy;\n    // apply the force\n    force += repel(pos, mouse, mouseRadius, mouseForce);\n  }\n\n  // Main movement functionality calculations\n  // Accumulate the velocity over time so the values\n  // are smooth every frame\n  vel += force * iTimeDelta;\n  \n  // Reduce the speed over time with damping so it decreases\n  // when there is no external force\n  vel *= particleSpeedDamping;\n  \n  // clamp the values in case so the particle doesn't\n  // speed up over the maximum speed (when clamp is not there radius can be extremely low and the particles\n  // shoot in the space all around the screen)  \n  vel = clamp(vel, -vec2(particleMaxSpeed), vec2(particleMaxSpeed));\n  \n  // Accumulate the velocity in the position to change particle\n  // coordinates based on its location\n  pos += vel * iTimeDelta;\n\n  // Position Boundaries - if the positions are going over the wall\n  // change the velocity direction to the opposite sign\n  // this way particles are always in the viewport\n  // Modified from Graham Wakefield\n  // https://www.shadertoy.com/view/7ff3RX\n  vec2 reflectionBoundary = clamp(pos, vec2(1.0), iResolution.xy - 1.0);\n  if (pos.x != reflectionBoundary.x) vel.x *= -1.0;\n  if (pos.y != reflectionBoundary.y) vel.y *= -1.0;\n  pos = reflectionBoundary;\n\n  // initialize the particles to random noise location and 0 velocity\n  if (iFrame == 0) {\n    vec4 noise = random4(vec3(fragCoord, 0.0));\n    pos = noise.xy * iResolution.xy;\n    vel = vec2(0);\n  }\n\n  fragColor = vec4(pos, vel);\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "// Coded by the author with assistance of Claude Opus 4.6 based on the idea of Graham Wakefield\n// Conversation during class meeting\n\nconst int NUM_PARTICLES = 9000;\n\n// Function converts the index into the x,y coordinates to read\n// the data encoded in the pixel vec4\n// Expects index of the particle, resolution of the screen and texture from the buffer\n// Returns offset texture with the particle position and velocity\nvec4 getParticle(int index, vec2 resolution, sampler2D channel) {\n  // get the index column of the particle\n  float x = mod(float(index), resolution.x);\n  // get the index row of the particle\n  float y = floor(float(index) / resolution.x);\n  // adjust to fragCoord since the first fragCoord starts with (0.5,0.5) not\n  // (1,1)\n  vec2 uv = (vec2(x, y) + 0.5) / resolution;\n  return texture(channel, uv);\n}\n\n// Rotation Matrix taken from class\n// Graham Wakefield\n// https://www.shadertoy.com/view/7ff3RX\n\nmat2 rotate2d(float angle) {\n  float s = sin(angle);\n  float c = cos(angle);\n  return mat2(c, -s, s, c);\n}\n\n//  Taken from Lecture Slides\n//  Graham Wakefield\n//  https://alicelab.world/digm5950/glsl.html#randomnoise\n\nfloat TWOPI = 6.28318530718;\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n  vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n  p3 += dot(p3, p3.yzx + 19.19);\n  return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n  vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n  p3 += dot(p3, p3.yzx + 19.19);\n  return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n  p3 = fract(p3 * RANDOM_SCALE.xyz);\n  p3 += dot(p3, p3.yzx + 19.19);\n  return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n  vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n  p3 += dot(p3, p3.yzx + 19.19);\n  return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec2 p) {\n  vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n  p3 += dot(p3, p3.yxz + 19.19);\n  return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n  p = fract(p * RANDOM_SCALE.xyz);\n  p += dot(p, p.yxz + 19.19);\n  return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n  vec4 p4 = fract(p * RANDOM_SCALE);\n  p4 += dot(p4, p4.wzxy + 19.19);\n  return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec2 p) {\n  vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n  p4 += dot(p4, p4.wzxy + 19.19);\n  return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n  vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n  p4 += dot(p4, p4.wzxy + 19.19);\n  return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n  p4 = fract(p4 * RANDOM_SCALE);\n  p4 += dot(p4, p4.wzxy + 19.19);\n  return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// BUFFER: FLUID PARTICLE TRACKING\n\n// Tracks particle distances from the pixel\n// and returns whichever particle is closer\n// Based on Graham Wakefield's Particle Pixel Voronoi Tracking, modified by the author with assistance from Claude Opus 4.6\n// Graham Wakefield\n// https://www.shadertoy.com/view/7ff3RX\n// Takes current particle index, the pixel coordinate and other neighbour particle index\n// Returns the tracked particle vec3 with its index and distance among the particles\nvec3 trackParticles(vec3 currentParticle, vec2 coordinates, int otherIndex) {\n  int index = int(currentParticle.x);\n\n  // Get the position of the currently tracked particle based on the index\n  vec2 currentPosition = getParticle(index, iResolution.xy, iChannel0).xy;\n  // Get the other particle location based on its index\n  vec2 otherPosition = getParticle(otherIndex, iResolution.xy, iChannel0).xy;\n\n  // Calculate the own and other distance of the particle from the pixels\n  float distanceA = distance(coordinates, currentPosition);\n  float distanceB = distance(coordinates, otherPosition);\n\n  // Check if the other particle is closer to the pixel than the own particle\n  // If yes then return the other particle index and its distance if not return its neighbour\n  if (distanceB > distanceA) {\n    return vec3(float(index), distanceA, 0.0);\n  } \n  else {\n    return vec3(float(otherIndex), distanceB, 0.0);\n  }\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  vec2 uv = fragCoord / iResolution.xy;\n\n  // Assign a random particle index to each pixel to\n  // initialize the tracking via index\n  if (iFrame == 0) {\n    // Initialize the noise\n    vec4 noise = random4(fragCoord);\n\n    // Assign the random index in the range of particle number\n    int randomIndex = int(noise.x * float(NUM_PARTICLES));\n    // Assign random position of the particle of the random index\n    vec2 randomPosition = getParticle(randomIndex, iResolution.xy, iChannel0).xy;\n    // Add random distance of the particle from the pixel\n    float randomDistance = distance(fragCoord, randomPosition);\n\n    fragColor = vec4(float(randomIndex), randomDistance, 0.0, 0.5 + noise.y * 1.5);\n    return;\n  }\n\n  // Get the previous state of the particles tracking\n  vec4 previousPixel = texture(iChannel1, uv);\n\n  // Get the index that the pixel is\n  // tracking from the previous particle\n  int index = int(previousPixel.x);\n\n  // Store current particle index and distance\n  vec3 currentParticle = vec3(float(index), previousPixel.y, 0.0);\n\n  // Keep the particle size from the previous state\n  float particleSize = previousPixel.w;\n\n  // Sample the indexes from the 1px offset neighbourhood\n  int leftIndex = int(texture(iChannel1, (fragCoord + vec2(-1.0, 0.0)) / iResolution.xy).x);\n  int rightIndex = int(texture(iChannel1, (fragCoord + vec2(1.0, 0.0)) / iResolution.xy).x);\n  int downIndex = int(texture(iChannel1, (fragCoord + vec2(0.0, -1.0)) / iResolution.xy).x);\n  int upIndex = int(texture(iChannel1, (fragCoord + vec2(0.0, 1.0)) / iResolution.xy).x);\n\n  // If the indexes are different than current pixel index then it's a boundary\n  // Idea of Graham Wakefield\n  // Lecture conversation\n  float edge = 0.0;\n  if (leftIndex != index || rightIndex != index || downIndex != index || upIndex != index) {\n    edge = 1.0;\n  }\n\n  // Check nearby pixels and keep whichever particle is closer\n  // Modified based on Graham Wakefield's Particle Pixel Voronoi Tracking\n  // Graham Wakefield\n  // https://www.shadertoy.com/view/7ff3RX\n  for (int x = -4; x <= 4; x++) {\n    for (int y = -4; y <= 4; y++) {\n      int otherIndex = int(texture(iChannel1, (fragCoord + vec2(float(x), float(y))) / iResolution.xy).x);\n      currentParticle = trackParticles(currentParticle, fragCoord, otherIndex);\n    }\n  }\n\n  // Adds the value of the current particle data to the pixel\n  // x as index, y as the distance from the pixel, edge value, random particle size\n  fragColor = vec4(currentParticle.x, currentParticle.y, edge, particleSize);\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// BUFFER TO CONTROL PARTICLE POSITIONS\n\n// Author and AI Claude Opus 4.6 Modified From Particle Shader from the\n// Graham Wakefield\n// https://www.shadertoy.com/view/7ff3RX\n\n// Track particles distances between pixel and distances between particles \n// Takes current pixel with particle value, offset to check and coordinates with the fragCoord value\n// Return which particle is closer\nvec4 trackParticles(vec4 currentPixel, vec2 coordinates, vec2 offset) {\n  // Get the particle neighbour\n  vec4 neighbour = texture(iChannel0, (coordinates + offset) / iResolution.xy);\n\n  // Calculated distances between pixel coordinate and particle location\n  float distanceA = distance(coordinates, currentPixel.xy);\n  float distanceB = distance(coordinates, neighbour.xy);\n\n  // Check which particle is closer\n  if (distanceB > distanceA) {\n    return currentPixel;\n  } \n  else {\n    return neighbour;\n  }\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  vec2 uv = fragCoord / iResolution.xy;\n\n  // Get the previous state of the particles\n  vec4 fluidParticlesForces = texture(iChannel1, uv);\n  vec4 previousFrame = texture(iChannel0, uv);\n\n  // Loop to see what particles are the closest to the follower pixel\n  for (int i = -3; i < 3; i++) {\n    for (int j = -3; j < 3; j++) {\n      previousFrame = trackParticles(previousFrame, fragCoord, vec2(i, j));\n    }\n  }\n\n  // Initialize the noise based on the particle coordinates\n  vec4 noise = random4(vec3(previousFrame.xy, iTime));\n\n  // Particles parameters initialization\n  float speed = 50.;\n  float turn = 0.5;\n  float wander = 0.8;\n  float turnfactor = 0.8;\n\n  // Length of the particle sensing\n  float sensor_length = 15.;\n\n  // Set up our antennae:\n  mat2 rot = rotate2d(previousFrame.z);\n  vec2 sensor0 = vec2(1, 0) * sensor_length;\n  vec2 sensor1 = vec2(1, 1) * sensor_length;\n  vec2 sensor2 = vec2(1, -1) * sensor_length;\n  vec2 sensor0_in_world = rot * sensor0 + previousFrame.xy;\n  vec2 sensor1_in_world = rot * sensor1 + previousFrame.xy;\n  vec2 sensor2_in_world = rot * sensor2 + previousFrame.xy;\n\n  // Get the trail field where our antennae are:\n  vec4 F = texture(iChannel2, sensor0_in_world / iResolution.xy);\n  vec4 FL = texture(iChannel2, sensor1_in_world / iResolution.xy);\n  vec4 FR = texture(iChannel2, sensor2_in_world / iResolution.xy);\n  \n  // Based on the fluid velocity value from buffer A change the speed for the voronoi particle\n  // Snipped is not quite right programatically since it samples the values 2 times from the same buffer but the \n  // effect is quite intersting\n  float fluidVelocityInfluence = texture(iChannel1, fluidParticlesForces.zw / iResolution.xy).z;\n  if (fluidVelocityInfluence > 0.8) {\n    speed *= 0.5;\n  }\n\n  // If Middle Antennae sensing the strongest signal from the probability field\n  if (F.g > FL.g && F.g > FR.g) {\n    // Go straight\n  }\n  // If Middle Antennae is sensing lower than left and right antennae signal\n  // wander randomly\n  else if (F.g < FL.g && F.g < FR.g) {\n    previousFrame.z += wander * (noise.z - 0.5);\n  }\n  // If right antennae is sensing stronger signal then turn\n  else if (FL.g < FR.g) {\n    previousFrame.z += turnfactor;\n  }\n  // If left antennae is sensing stronger signal then turn the other way\n  else if (FR.g < FL.g) {\n    previousFrame.z -= turnfactor;\n  }\n\n  // Move the particle\n  // Get the xy velocity from the previous frame direction\n  rot = rotate2d(previousFrame.z);\n\n  // Polar to cartesian\n  vec2 vel = rot * vec2(speed, 0);\n\n  // Integrate velocity to position\n  previousFrame.xy += vel * iTimeDelta;\n\n  // Get the bounded position within the screen image\n  vec2 screenBounds = clamp(previousFrame.xy, vec2(0), iResolution.xy);\n\n  // Compare the bounded and actual positions -- if they are different, reflect\n  if (previousFrame.x != screenBounds.x) {\n    previousFrame.z = TWOPI * 0.5 - previousFrame.z;\n  }\n  // Reflect in X axis\n  if (previousFrame.y != screenBounds.y) {\n    previousFrame.z = TWOPI - previousFrame.z;\n  }\n  // Reflect in Y axis\n  previousFrame.xy = screenBounds.xy;\n\n  // Initialize the particle grid\n  if (iFrame == 0) {\n    // Create a grid system for each particle - 20px for each particle\n    vec2 grid = round(fragCoord / 20.) * 20.;\n    // Save XY in the red and green channel\n    previousFrame.xy = grid;\n    // Save rotation in the blue channel\n    previousFrame.z = noise.x * TWOPI;\n  }\n\n  fragColor = vec4(previousFrame);\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XdfGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// VORONOI PARTICLE TRAILS BUFFER\n\n// Slightly Modified From Lecture\n// Graham Wakefield\n// https://www.shadertoy.com/view/7ff3RX\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  vec2 uv = fragCoord / iResolution.xy;\n\n  // Get the voronoi particles and previous frame of own buffer\n  vec4 voronoiParticles = texture(iChannel0, uv);\n  vec4 previousFrame = texture(iChannel1, uv);\n\n  // Render the voronoi particle as a dot\n  float dist = distance(fragCoord, voronoiParticles.xy);\n  float particles = step(0.5, 1.0 / dist);\n\n  // Accumulate the trail of the particle movement\n  previousFrame += vec4(particles);\n\n  // Multiply by 0.96 to make the trails fade over time\n  // the number seemed to give optimal fade time\n  previousFrame *= 0.96;\n\n  fragColor = previousFrame;\n}",
+				"name": "Buffer D",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "sffSz7",
+			"date": "1775619133",
+			"viewed": 58,
+			"name": "Chlorophyll",
+			"username": "Philip	Michalowski",
+			"description": "Paticle Fluid System with Physarum",
+			"likes": 3,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"particles"
+			],
+			"hasliked": 0,
+			"parentid": "7flSzH",
+			"parentname": "SWIM"
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\nSTUDENT NUMBER: 215907876\n\nASSIGNMENT NUMBER : FA/DATT4950M / GS/DIGM5950M Assignment 03\n\nNAME: PHILIP MICHALOWSKI\n\nTITLE: OVERGROWN\n\nINTERACTIONS: The shader mostly illustrates particles and Ising automata\ncollaborative potential. There is no interaction to be made by human however\nthere are quite a few possible modifications\n- speed modifications on the particle side\n- modification of uv values and timing in the automata buffer\n- modification of self state in the automata buffer\n- rotation matrix in common to get more unexpected particle turns\n- different buffer outputs in the image buffer\n\nDESCRIPTION: Overgrown - Modified Lecture Particle system (Wakefield,\nhttps://www.shadertoy.com/view/7ff3RX) and Ising cellular automata model\n(Wakefield, https://www.shadertoy.com/view/33yyzc) aim to show an ability how\ntwo systems can modify each other with the states creating generative textures\nbased on their internal states and randomness. The particle system follows the\nprobability map of the Ising model morphed by the perlin noise (Gustavson,\nhttps://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83). The automata\nbased on the timing records random values of the wandering particles saved in\nthe texture and use it to create a new generated by the particles probability\nfield. This cycle of generative texture loops over.\n\nIt's definitely interesting to see the particle, perlin noise and automata\ninteractions. Each phase the particles wander around the static probability\nfield and then are being sucked by the perlin noise field to once again get on\nthe probability field tracks. Then the random overgrowth happens and the\nparticles form a new probability field by randomly wandering around. When I was\ndoing this work it was resembling a blood vessels in the leaf (new way to create\na heart tissue)(National Geographic, https://www.youtube.com/watch?v=x4KS6NyFo3Y) \nThe growth is similar to some of the plant growth timelapses that I was watching \nbefore the project (timelapselop, https://www.youtube.com/shorts/6rr6xd9-Ad4). \nThe system doesn't create a long term behaviour but rather generative texture \nwithin the 32 seconds phase. Despite that the effect is quite different after the initial phase.\n\nTECHNICAL REALIZATION : I started with the particle shader (Wakefield,\nhttps://www.shadertoy.com/view/7ff3RX) and I tried to modify speed, turn\nparameters and particle generation code to understand how it works. After\nunderstanding how particles are being attracted to colors on the textures, I\nused the lecture Ising cellular automata (Wakefield,\nhttps://www.shadertoy.com/view/33yyzc) because it seemed to be interesting when\nit creates a green probability path between the patches of red values combined\nwith temperature. Same as the circle on the particles lecture shader\n(Wakefield, https://www.shadertoy.com/view/7ff3RX) I tried to attract the\nparticle to perlin noise emphasized probability as a morph the temperature\nparameter result and stretch of the red channel boundaries. This created a nice\neffect but the particles didn't have any result on the automata system and follow\nthe perlin generated map.\n\nTo address that I created a phase period when the particles are wandering over 8\nseconds and they are attracted to probability field for 24 seconds. In the grown\nperiod the automata gets the values from the particle trail buffer and saves it\nto create a new pattern in the red channel. Then that pattern morphed by the\nperlin noise and used as a density attractor field.\n\nWhat didn't work is - I tried to create a perlin noise attraction based on the\nparticles forces. I tried to reduce the speed of the particle based on the noise\nto cluster them together. I tried to count particles in the region to attract\nmore particles to that spot but none of those worked - so I stuck to the\nperlin noise.\n\nFUTURE EXTENSIONS: It would be interesting to see the particles density based on\nthe regional count to replace perlin noise. I believe that it's interesting to\neliminate all of the external forces and use what we have in the system. Also\nother idea is to adjust the system so that particles behave more fluid like so they\nfollow the trails to the noise - like being sucked in to the external force and\nthen released. It's easily achievable with perlin but using the particles system\nforce and its attraction is quite a challenge as well as a good idea for the\nfuture.\n\n*/\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  vec2 uv = fragCoord / iResolution.xy;\n  // Particle Control\n  vec4 A = texture(iChannel0, uv);\n  // Particle Traces\n  vec4 B = texture(iChannel1, uv);\n  // Ising Automata\n  vec4 C = texture(iChannel2, uv);\n\n  // Output to screen\n  // Multiplication by 0.15 of the automata channel gives nice transparency\n  // and give room for particle to show its movement\n  fragColor = 0.15 * C * B;\n  // Another variant with stronger colors\n  // fragColor = 0.15*C*0.15*C*B;\n  // To check how the probability field changes\n  // fragColor = C;\n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// BUFFER TO CONTROL PARTICLE POSITIONS\n\n// Modified From Particle Shader from the\n// Graham Wakefield\n// https://www.shadertoy.com/view/7ff3RX\n\n// Track particles distances between pixel and distances between particles to\n// return which is closer\nvec4 trackParticles(vec4 currentPixel, vec2 coordinates, vec2 offset) {\n  // Get the particle neighbour\n  vec4 neighbour = texture(iChannel0, (coordinates + offset) / iResolution.xy);\n\n  // Calculated distances between pixel coordinate and particle location\n  float distanceA = distance(coordinates, currentPixel.xy);\n  float distanceB = distance(coordinates, neighbour.xy);\n\n  // Check which particle is closer\n  if (distanceB > distanceA) {\n    return currentPixel;\n  } else {\n    return neighbour;\n  }\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  vec2 uv = fragCoord / iResolution.xy;\n\n  // Get the previous state of the particles\n  vec4 A = texture(iChannel0, uv);\n  vec4 B = texture(iChannel2, uv);\n\n  // Loop to see what particles are the closest to the follower pixel\n  for (int i = -3; i < 3; i++) {\n    for (int j = -3; j < 3; j++) {\n      A = trackParticles(A, fragCoord, vec2(i, j));\n    }\n  }\n\n  // Initialize the noise based on the particle coordinates\n  vec4 noise = random4(vec3(A.xy, iTime));\n\n  // Particles parameters initialization\n  float speed = 50.;\n  float turn = 0.;\n  float wander = 0.8;\n  float turnfactor = 0.5;\n\n  // Length of the particle sensing\n  float sensor_length = 10.;\n  // float sensor_length = 20.;\n\n  // Set up our antennae:\n  mat2 rot = rotate2d(A.z);\n  vec2 sensor0 = vec2(1, 0) * sensor_length;\n  vec2 sensor1 = vec2(1, 1) * sensor_length;\n  vec2 sensor2 = vec2(1, -1) * sensor_length;\n  vec2 sensor0_in_world = rot * sensor0 + A.xy;\n  vec2 sensor1_in_world = rot * sensor1 + A.xy;\n  vec2 sensor2_in_world = rot * sensor2 + A.xy;\n\n  // Get the trail field where our antennae are:\n  vec4 F = texture(iChannel1, sensor0_in_world / iResolution.xy);\n  vec4 FL = texture(iChannel1, sensor1_in_world / iResolution.xy);\n  vec4 FR = texture(iChannel1, sensor2_in_world / iResolution.xy);\n\n  // Get the phase of the particle movement based on the 32. seconds interval\n  float phase = mod(iTime, 32.0);\n\n  // When mod >= 24 (8 seconds)turn the particles into the wandering mode\n  // This mode writes into the CA buffer to create generative random probability\n  // The wandering of the particles goes into the random directions giving the\n  // growth simulated effect\n  if (phase >= 24.0) {\n    // Wander randomly into the noise direction\n    A.z += wander * (noise.z - 0.5);\n    // Slower Speed gives better growth effect\n    speed = 25.;\n    // speed = 45.;\n    //  Higer turn factor gives more wandering effect\n    turnfactor = 0.5;\n  }\n  // For a longer time (24 seconds) follow the density field of the probability from the\n  // Ising automata buffer and attached to it perlin noise\n  else {\n    // Faster speed of automata gives faster patch tracking effect as well as\n    // follow perlin noise outbreaks better\n    speed = 80.;\n    // speed = 20.;\n    //  Lower turn factor gives more controll to the particles to follow the\n    //  probability field\n    turnfactor = 0.1;\n\n    // If Middle Antenae sensing the strongest signal from the probability field\n    if (F.g > FL.g && F.g > FR.g) {\n    }\n    // If Middle Antenae is sensing lower then left and right antenae signal\n    // wander randomly\n    else if (F.g < FL.g && F.g < FR.g) {\n      A.z += wander * (noise.z - 0.5);\n    }\n    // If right antenae is sensing stronger signal then turn\n    else if (FL.g < FR.g) {\n      A.z += turnfactor;\n    }\n    // If left antenae is sensing stronger signal then turn the other way\n    else if (FR.g < FL.g) {\n      A.z -= turnfactor;\n    }\n  }\n\n  // Move the particle\n  // Get the xy velocity from the A.z direction\n  rot = rotate2d(A.z);\n\n  // Polar to cartesian\n  vec2 vel = rot * vec2(speed, 0);\n\n  // Integrate velocity to position\n  A.xy += vel * iTimeDelta;\n\n  // Get the bounded position within the screen image\n  vec2 b = clamp(A.xy, vec2(0), iResolution.xy);\n\n  // Compare the bounded and actual positions -- if they are different, reflect\n  if (A.x != b.x) {\n    A.z = TWOPI * 0.5 - A.z;\n  }\n  // Reflect in Y axis\n  if (A.y != b.y) {\n    A.z = TWOPI - A.z;\n  }\n  // Reflect in X axis\n  A.xy = b.xy;\n\n  // Initialize the particle grid\n  if (iFrame == 0) {\n    // Create a grid system for each particle - 15px for each particle\n    // vec2 grid = round(fragCoord / 20.) * 20.;\n    // vec2 grid = round(fragCoord / 50.) * 50.;\n    vec2 grid = round(fragCoord / 15.) * 15.;\n    // Save XY in the red and green channel\n    A.xy = grid;\n    // Save rotation in the blue channel\n    A.z = noise.x * TWOPI;\n  }\n\n  fragColor = vec4(A);\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "// Rotation Matrix taken from class\n// Graham Wakefield\n// https://www.shadertoy.com/view/7ff3RX\n\nmat2 rotate2d(float angle) {\n    float s = sin(angle);\n    float c = cos(angle);\n    /*return mat2(\n        -c, -s, \n        -s, -c\n    ); */ \n     return mat2(\n        c, -s, \n        s, c\n    ); \n}\n\n//\tClassic Perlin 2D Noise \n//\tby Stefan Gustavson\n//  https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83\n\nvec4 permute(vec4 x){ return mod(((x*34.0)+1.0)*x, 289.0); }\nvec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }\nvec3 fade(vec3 t) { return t*t*t*(t*(t*6.0-15.0)+10.0); }\n\nfloat cnoise(vec3 P)\n{\n    vec3 Pi0 = floor(P); // Integer part for indexing\n    vec3 Pi1 = Pi0 + vec3(1.0); // Integer part + 1\n    Pi0 = mod(Pi0, 289.0);\n    Pi1 = mod(Pi1, 289.0);\n    vec3 Pf0 = fract(P); // Fractional part for interpolation\n    vec3 Pf1 = Pf0 - vec3(1.0); // Fractional part - 1.0\n    vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);\n    vec4 iy = vec4(Pi0.yy, Pi1.yy);\n    vec4 iz0 = Pi0.zzzz;\n    vec4 iz1 = Pi1.zzzz;\n\n    vec4 ixy = permute(permute(ix) + iy);\n    vec4 ixy0 = permute(ixy + iz0);\n    vec4 ixy1 = permute(ixy + iz1);\n\n    vec4 gx0 = ixy0 / 7.0;\n    vec4 gy0 = fract(floor(gx0) / 7.0) - 0.5;\n    gx0 = fract(gx0);\n    vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);\n    vec4 sz0 = step(gz0, vec4(0.0));\n    gx0 -= sz0 * (step(0.0, gx0) - 0.5);\n    gy0 -= sz0 * (step(0.0, gy0) - 0.5);\n\n    vec4 gx1 = ixy1 / 7.0;\n    vec4 gy1 = fract(floor(gx1) / 7.0) - 0.5;\n    gx1 = fract(gx1);\n    vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);\n    vec4 sz1 = step(gz1, vec4(0.0));\n    gx1 -= sz1 * (step(0.0, gx1) - 0.5);\n    gy1 -= sz1 * (step(0.0, gy1) - 0.5);\n\n    vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);\n    vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);\n    vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);\n    vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);\n    vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);\n    vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);\n    vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);\n    vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);\n\n    vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));\n    g000 *= norm0.x;\n    g010 *= norm0.y;\n    g100 *= norm0.z;\n    g110 *= norm0.w;\n    vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));\n    g001 *= norm1.x;\n    g011 *= norm1.y;\n    g101 *= norm1.z;\n    g111 *= norm1.w;\n\n    float n000 = dot(g000, Pf0);\n    float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));\n    float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));\n    float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));\n    float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));\n    float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));\n    float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));\n    float n111 = dot(g111, Pf1);\n\n    vec3 fade_xyz = fade(Pf0);\n    vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);\n    vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);\n    float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); \n    \n    return 2.2 * n_xyz;\n}\n\n//  Taken from Lecture Slides\n//  Graham Wakefield\n//  https://alicelab.world/digm5950/glsl.html#randomnoise\n\nfloat TWOPI = 6.28318530718;\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// PARTICLE TRAILS BUFFER\n\n// Slightly Modified From Lecture\n// Graham Wakefield\n// https://www.shadertoy.com/view/7ff3RX\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  vec2 uv = fragCoord / iResolution.xy;\n\n  // Get the paticle channel with the positions\n  vec4 A = texture(iChannel0, uv);\n\n  // Get the saved copy of the previous frame of particle trails\n  vec4 B = texture(iChannel1, uv);\n\n  // Distance between the pixel coordinate and the particle\n  float dist = distance(fragCoord, A.xy);\n  // Create particles - the step with the 1./dist works too\n  float particles = step(0.99, 1. / dist);\n\n  // Accumulate particle trails so the tails are visible\n  B += particles;\n\n  // Reduce the intensity of the trails so they can dissapear after some time\n  // 0.989 decay factor works the best to keep particle tail visible but \n  // doesn't overwhelm the canvas with it\n  B *= 0.989;\n  fragColor = B;\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// ISING AUTOMATA\n\n// Modified From Lecture\n// Graham Wakefield\n// https://www.shadertoy.com/view/33yyzc\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n  vec2 uv = fragCoord / iResolution.xy;\n\n  // Get the Particle Possitions Channel\n  vec4 A = texture(iChannel1, uv);\n  // Get the Particle Trails Channel\n  vec4 B = texture(iChannel2, uv);\n\n  // Get self state\n  vec4 C = texture(iChannel0, (fragCoord + vec2(0, 0)) / iResolution.xy);\n  // vec4 C = texture(iChannel0, (A.xy + vec2(0, 0)) / iResolution.xy);\n\n  // Get state of all neighbour pixels:\n  vec4 E = texture(iChannel0, (fragCoord + vec2(1, 0)) / iResolution.xy);\n  vec4 W = texture(iChannel0, (fragCoord + vec2(-1, 0)) / iResolution.xy);\n  vec4 N = texture(iChannel0, (fragCoord + vec2(0, 1)) / iResolution.xy);\n  vec4 S = texture(iChannel0, (fragCoord + vec2(0, -1)) / iResolution.xy);\n  vec4 NE = texture(iChannel0, (fragCoord + vec2(1, 1)) / iResolution.xy);\n  vec4 NW = texture(iChannel0, (fragCoord + vec2(-1, 1)) / iResolution.xy);\n  vec4 SE = texture(iChannel0, (fragCoord + vec2(1, -1)) / iResolution.xy);\n  vec4 SW = texture(iChannel0, (fragCoord + vec2(-1, -1)) / iResolution.xy);\n\n  // Put all of my neighbor states into an array:\n  float near[8] = float[8](N.r, S.r, E.r, W.r, NW.r, NE.r, SW.r, SE.r);\n\n  // How many of my neighbours have different states:\n  int different_states = int(C.r != N.r) + int(C.r != S.r) + int(C.r != E.r) +\n                         int(C.r != W.r) + int(C.r != NE.r) + int(C.r != NW.r) +\n                         int(C.r != SE.r) + int(C.r != SW.r);\n\n  // Initialize the random noise. Time is slowed down so the changes are more subtle\n  vec4 noise = random4(vec3(fragCoord, iTime / 3.));\n\n  // Calculate different average state of the particle\n  float different = float(different_states) / 8.0;\n\n  // Mix the value of the uv and noise so that the perlin noise will switch\n  // between random values of noise and perlin patches - to ensure that the\n  // process is repetitive I use cos and slow down the time - Initially I wanted\n  // to make cos in the 0-1 range however I tested couple other values and this\n  // pattern (0.1 for time to get -0.4 to 0.6 range) seems to amplify the perlin and random noise effect combination\n  // I also multiply uv and noise by 6 to create more points on the perlin noise\n  // rather then one big patch\n  vec2 mixedValue = mix(uv * 6., noise.xy * 6., cos(iTime * 0.1) * 0.5 + 0.1);\n  // vec2 mixedValue = mix(uv * 2., noise.xy * 2., cos(iTime ) * 0.5 + 0.5);\n\n  // Slowed down perlin noise\n  float perlin = cnoise(vec3(mixedValue, iTime / 3.));\n\n  // Get the perlin noise as temperature so that the probability field is\n  // stronger where the noise occurs. Perlin multiplied by 2 create a stronger\n  // attraction field for the particles\n  float temperature = abs(perlin * 2.);\n\n  // Probability of me changing state\n  // Increases if more neighbours are different AND/OR temperature is high\n  // 0.8 seemed like a sweet spot - lower I adjusted the value the probability field \n  // was more dense giving this boring monocolor effect\n  float probability = pow(different, 0.8 / temperature);\n\n  // Flip the state according to the state - same as the particle to maintain\n  // the effect similarity\n  float phase = mod(iTime, 32.0);\n\n  // If noise is smaller then probability\n  if (noise.x < probability) {\n    // When time phase is lesser or equal to 24 draw the state of the particles\n    // from perlin noise so that the base red field of the automata stretches\n    // according to perlin noise\n    if (phase <= 24.0) {\n      int which = int(abs(perlin) * 8.);\n      // C.r /= near[which];\n      C.r = near[which];\n    }\n    // Otherwise get the particle system trails going into the random directions\n    // to create a newly generated red field and probability pattern\n    else {\n      C.r = B.x;\n    }\n  }\n\n  // initialize on the 1st frame:\n  if (iFrame == 0) {\n    C.r = noise.x;\n  }\n\n  // Accumulate the probability - Its easier for the particles to track the\n  // probability field when it accumulates. Amplified by perlin noise to make\n  // the particles move more vividly across the field\n  C.g += probability * abs(perlin);\n  // Perlin based temperature\n  C.b = temperature;\n  // Multiply the probability so that the values create a form of gradient\n  // 0.97 attracts the particles well and the probability field doesn't dissapear too fast\n  C.g *= 0.97;\n\n  fragColor = C;\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "7fBGWh",
+			"date": "1774133905",
+			"viewed": 112,
+			"name": "Overgrown",
+			"username": "Philip	Michalowski",
+			"description": "Overgrown Project - Ising model CA + Particles System",
+			"likes": 3,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"particles"
+			],
+			"hasliked": 0,
+			"parentid": "ffS3RD",
+			"parentname": "Fork ParticlesT ajemphilip 027"
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    // --- 1. 电影级特效：色散采样 (Chromatic Aberration) ---\n    // 模拟真实镜头在边缘产生的色彩偏移，消除空洞感\n    float aberration = 0.004 * length(uv - 0.5);\n    float rV = texture(iChannel1, uv + vec2(aberration, 0)).g;\n    float gV = texture(iChannel1, uv).g;\n    float bV = texture(iChannel1, uv - vec2(aberration, 0)).g;\n    float v = (rV + gV + bV) / 3.0; // 用于计算亮度的平均浓度\n    \n    float dataB = texture(iChannel1, uv).b; // 用于调色的 phase\n\n    // --- 2. 法线提取与菲涅尔效应 ---\n    vec2 eps = vec2(2.0 / iResolution.x, 0.0);\n    float v_n = texture(iChannel1, uv + eps.yx).g;\n    float v_s = texture(iChannel1, uv - eps.yx).g;\n    float v_e = texture(iChannel1, uv + eps.xy).g;\n    float v_w = texture(iChannel1, uv - eps.xy).g;\n    \n    // 计算梯度法线，0.05 是凹凸深度因子\n    vec3 normal = normalize(vec3(v_w - v_e, v_s - v_n, 0.05));\n    \n    // 菲涅尔：模拟生物发光，边缘发光强烈，中心透明，制造有机果冻质感\n    float fresnel = pow(1.0 - max(dot(normal, vec3(0, 0, 1)), 0.0), 3.0);\n    \n    // --- 3. 基础色彩映射 ---\n    vec3 baseCol = getAurora(dataB * 0.5 + iTime * 0.05);\n    \n    // --- 4. 混合最终视觉 ---\n    // 用 v (浓度) 作为遮罩，结合次表面散色和生物荧光\n    vec3 col = baseCol * v * 0.3; // 内部弱光\n    col += baseCol * fresnel * gV * 2.5; // 边缘强烈的生物荧光\n    \n    // 增加边缘轮廓，让画面更锐利\n    float edge = smoothstep(0.01, 0.03, length(vec2(v_e - v_w, v_n - v_s)));\n    col += edge * baseCol * fresnel * 0.8;\n\n    // --- 5. 渲染深邃背景与体积焦散 ---\n    // 深海基色\n    vec3 bgCol = vec3(0.002, 0.005, 0.01);\n    \n    // 模拟上方透射下来的流动光斑 (Caustics)\n    float lightPattern = fbm2D(uv * 1.5 + iTime * 0.03, iTime * 0.02);\n    lightPattern += smoothstep(0.5, 0.8, fbm2D(uv * 3.0 - iTime * 0.05, iTime * 0.01));\n    bgCol += vec3(0.02, 0.06, 0.08) * lightPattern;\n    \n    // 混合背景与主体\n    vec3 finalCol = mix(bgCol, col, smoothstep(0.01, 0.3, gV));\n    \n    // --- 6. 最后的电影化处理 ---\n    // 增加细微的胶片颗粒感 (Film Grain) 消除数字感\n    finalCol += (random2(uv + iTime).x - 0.5) * 0.02;\n\n    // 暗角 (Vignette)\n    finalCol *= smoothstep(1.3, 0.5, length(uv - 0.5));\n    \n    fragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);\n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "const float TWOPI = 6.283185307179586;\n\nmat2 rotate2d(float angle) {\n    float s = sin(angle);\n    float c = cos(angle);\n    return mat2(c, -s, s, c); \n}\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\n// --- 基础随机与噪声函数 ---\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nfloat smoothNoise2D(vec2 p) {\n    vec2 i = floor(p);\n    vec2 f = fract(p);\n    f = f*f*(3.0-2.0*f); \n    float a = fract(sin(dot(i, vec2(12.9898, 78.233))) * 43758.5453);\n    float b = fract(sin(dot(i + vec2(1.0, 0.0), vec2(12.9898, 78.233))) * 43758.5453);\n    float c = fract(sin(dot(i + vec2(0.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453);\n    float d = fract(sin(dot(i + vec2(1.0, 1.0), vec2(12.9898, 78.233))) * 43758.5453);\n    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);\n}\n\nfloat fbm2D(vec2 p, float time) { \n    float v = 0.0;\n    float a = 0.5;\n    mat2 rot = rotate2d(0.5);\n    for (int i = 0; i < 4; ++i) {\n        v += a * smoothNoise2D(p);\n        p = rot * p * 2.0 + time * 0.1; \n        a *= 0.5;\n    }\n    return v;\n}\n\n// --- 色彩处理函数 ---\n\nvec3 getAurora(float t) {\n    // a 决定了基础亮度（中值）\n    vec3 a = vec3(0.5, 0.5, 0.6); \n    // b 决定了色彩的鲜艳程度（振幅）\n    vec3 b = vec3(0.5, 0.4, 0.4); \n    vec3 c = vec3(1.0, 1.0, 1.0);\n    vec3 d = vec3(0.0, 0.33, 0.67); \n    return a + b * cos(TWOPI * (c * t + d));\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// JFA 风格的最邻近粒子追踪\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    vec4 N = texture(iChannel0, (fragCoord+offset)/iResolution.xy);\n    float d1 = distance(fragCoord, A.xy);\n    float d2 = distance(fragCoord, N.xy);\n    if (d2 < d1) { return N; } else { return A; }\n}\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord) {\n    vec2 uv = fragCoord / iResolution.xy;\n    vec4 A = texture(iChannel0, uv);\n    \n    // --- 1. 物理追踪与种群维持 ---\n    for (int x=-2; x<=2; x++) {\n        for (int y=-2; y<=2; y++) {\n            A = getNearestParticle(A, fragCoord, vec2(x, y));\n        }\n    }\n    \n    float myDist = distance(fragCoord, A.xy);\n    // 维持种群密度，如果某处空了，就在本地诞生新生物\n    if (myDist > 25.0) {\n        A.xy = fragCoord + (random2(fragCoord + iTime) - 0.5) * 10.0;\n        A.z = random2(fragCoord + iTime + 1.0).x * TWOPI;\n        A.w = 0.0; // 初始为黯淡状态\n    }\n\n    // --- 2. 智能行为逻辑 ---\n    vec4 noise = random4(vec3(A.xy, iTime));\n    \n    float baseSpeed = 50. + noise.y * 20.0; \n    float speed = baseSpeed;\n    float turnfactor = 0.3; \n    float sensor_length = 25.; \n    \n    mat2 rot = rotate2d(A.z);\n    // 三个前向传感器\n    vec2 sensorF_pos = rot * vec2(1, 0) * sensor_length + A.xy;\n    vec2 sensorL_pos = rot * vec2(1, 1) * sensor_length + A.xy; \n    vec2 sensorR_pos = rot * vec2(1, -1) * sensor_length + A.xy;\n    \n    // 采样栖息地 V 浓度 (来自 Buffer B)\n    float habF = texture(iChannel1, sensorF_pos / iResolution.xy).g;\n    float habL = texture(iChannel1, sensorL_pos / iResolution.xy).g;\n    float habR = texture(iChannel1, sensorR_pos / iResolution.xy).g;\n    float maxHab = max(habF, max(habL, habR));\n\n    // 采样鼠标诱饵 (来自 Buffer C)\n    float lureF = texture(iChannel2, sensorF_pos / iResolution.xy).r;\n    float lureL = texture(iChannel2, sensorL_pos / iResolution.xy).r;\n    float lureR = texture(iChannel2, sensorR_pos / iResolution.xy).r;\n    float maxLure = max(lureF, max(lureL, lureR));\n\n    // 基础漫游转向\n    A.z += (noise.x - 0.5) * 0.15;\n\n    // --- 决策树 ---\n    if (maxLure > 0.1) {\n        // A. 优先级最高：响应鼠标诱饵 (掠食/逃跑模式)\n        if (lureF > lureL && lureF > lureR) { /* 直行 */ } \n        else if (lureL > lureR) { A.z += turnfactor * 1.5; } \n        else { A.z -= turnfactor * 1.5; }\n        speed = baseSpeed * 2.5; // 兴奋加速\n    } \n    else if (maxHab > 0.05) {\n        // B. 优先级中等：趋生行为 (游向有机质浓度高的地方)\n        if (habF > habL && habF > habR) { A.z += (noise.x-0.5)*0.05; } // 在物质中轻微晃动游动\n        else if (habL > habR) { A.z += turnfactor * 0.5; } \n        else { A.z -= turnfactor * 0.5; }\n        speed = baseSpeed * (1.0 + maxHab); // 有食物时加速\n    }\n    else {\n        // C. 空旷地带：洋流漂移与随机漫游\n        if (iMouse.z > 0.0) {\n            // 鼠标点击时的全局召唤\n            vec2 dirToMouse = normalize(iMouse.xy - A.xy);\n            float angleToMouse = atan(dirToMouse.y, dirToMouse.x);\n            A.z = mix(A.z, angleToMouse, 0.05);\n            speed = baseSpeed * 1.5;\n        } else {\n            // 随洋流漂移\n            float flowAngle = fbm2D(A.xy * 0.003, iTime * 0.05) * TWOPI * 2.0; \n            A.z = mix(A.z, flowAngle, 0.08);\n            speed = baseSpeed * 0.6; // 节能模式\n        }\n    }\n    \n    // --- 3. 运动学更新 ---\n    vec2 vel = rot * vec2(speed, 0);\n    A.xy += vel * iTimeDelta;\n    \n    // 边界反弹\n    vec2 b = clamp(A.xy, vec2(0), iResolution.xy);\n    if (A.x != b.x) { A.z = TWOPI*0.5 - A.z; A.xy.x = b.x;}\n    if (A.y != b.y) { A.z = TWOPI - A.z; A.xy.y = b.y;}\n    \n    // --- 4. 生命反馈 (A.w 代表光亮强度) ---\n    // 生物在有机质丰富的地方会变得明亮健康，在空旷处黯淡\n    A.w = mix(A.w, smoothstep(0.02, 0.5, maxHab) * 1.2, 0.05);\n    if(maxLure > 0.5) A.w = 1.5; // 被诱饵激活时发出强光\n\n    // 初始化\n    if (iFrame < 5) {\n        A.xy = random2(fragCoord).xy * iResolution.xy;\n        A.z = random2(fragCoord).y * TWOPI; \n        A.w = 1.0; \n    }\n    \n    fragColor = A;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = fragCoord / iResolution.xy;\n    vec2 texel = 1.0 / iResolution.xy;\n\n    // --- 1. 空间异质性参数 (生物群落调制) ---\n    // 用噪声调制 F 和 K，创造出“生物多样性”，打破全屏均匀感\n    float variantNoise = fbm2D(uv * 1.8 + iTime * 0.01, iTime * 0.005);\n    float variantNoise2 = smoothNoise2D(uv * 3.5 - iTime * 0.02);\n    \n    // F 控制“喂食率”，K 控制“消亡率”\n    // 在噪声高的区域产生斑点(Dots)，低区域产生迷宫线条(Stripes)\n    float baseF = 0.03, baseK = 0.06;\n    float F = mix(baseF - 0.005, baseF + 0.02, variantNoise); \n    float K = mix(baseK - 0.002, baseK + 0.008, variantNoise2);\n    \n    float Du = 0.2, Dv = 0.1; // 扩散速率\n\n    // --- 2. 拉普拉斯算子 ---\n    vec4 n = texture(iChannel1, uv + vec2(0,1)*texel);\n    vec4 s = texture(iChannel1, uv - vec2(0,1)*texel);\n    vec4 e = texture(iChannel1, uv + vec2(1,0)*texel);\n    vec4 w = texture(iChannel1, uv - vec2(1,0)*texel);\n    vec4 cur = texture(iChannel1, uv);\n    vec4 lap = n + s + e + w - 4.0 * cur;\n\n    // --- 3. Gray-Scott 公式更新 ---\n    float u = cur.r;\n    float v = cur.g;\n    float reaction = u * v * v;\n    \n    float nextU = u + (Du * lap.r - reaction + F * (1.0 - u));\n    float nextV = v + (Dv * lap.g + reaction - (F + K) * v);\n\n    // --- 4. 生物交互 (Buffer A 注入活性物质 V) ---\n    vec4 A = texture(iChannel0, uv);\n    float dist = distance(fragCoord, A.xy);\n    // 鱼群经过的地方会强烈激发反应，产生物质 V，A.w 控制强度\n    float injection = smoothstep(3.0, 0.0, dist) * A.w;\n    nextV += injection * 0.4;\n\n    // --- 5. 洋流漂移 (让生成的线随洋流动起来) ---\n    float flowNoise = fbm2D(uv * 1.0, iTime * 0.02);\n    vec2 drift = vec2(cos(flowNoise * TWOPI), sin(flowNoise * TWOPI)) * 0.0006;\n    vec4 advectedState = texture(iChannel1, uv - drift); \n    \n    // 结合新计算的状态与漂移状态\n    nextU = mix(clamp(nextU, 0.0, 1.0), advectedState.r, 0.05);\n    nextV = mix(clamp(nextV, 0.0, 1.0), advectedState.g, 0.05);\n\n    // B 通道存储色彩相位，随时间缓慢增长，并受活性 V 调制\n    float phase = advectedState.b + 0.001 + nextV * 0.01;\n\n    fragColor = vec4(nextU, nextV, phase, 1.0);\n    \n    // 初始化 (全屏充满 U)\n    if(iFrame < 10) fragColor = vec4(1.0, 0.0, 0.0, 1.0);\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = fragCoord / iResolution.xy;\n    vec4 C = texture(iChannel2, uv);\n    \n    // --- 1. 扩散与淡出 ---\n    vec2 eps = 1.0 / iResolution.xy;\n    vec4 avg = (\n        texture(iChannel2, uv + vec2(0,eps.y)) +\n        texture(iChannel2, uv - vec2(0,eps.y)) +\n        texture(iChannel2, uv + vec2(eps.x,0)) +\n        texture(iChannel2, uv - vec2(eps.x,0))\n    ) * 0.25;\n    \n    // 混合扩散并快速淡出，形成瞬时的诱饵场\n    C = mix(C, avg, 0.2) * 0.96;\n    \n    // --- 2. 鼠标点击画下诱饵 ---\n    if(iMouse.z > 0.0) {\n        float d = distance(fragCoord, iMouse.xy);\n        C.r += smoothstep(25.0, 0.0, d) * 0.5;\n    }\n    \n    fragColor = clamp(C, 0.0, 1.0);\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "NcXSzr",
+			"date": "1775606353",
+			"viewed": 59,
+			"name": "Abyssal Symbiosis",
+			"username": "Jingwen Zhang",
+			"description": "“Abyssal Symbiosis: Bioluminescent Swarm” is an interactive generative art piece that simulates a self-organizing biological system in the extreme environment of the deep sea.",
+			"likes": 4,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950",
+				"digm5950"
+			],
+			"hasliked": 0,
+			"parentid": "ffB3D3",
+			"parentname": "Fork Fork Fork  catsnowyi 963"
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Establishes vec2 'applyZoom' that contains the zoom-in interaction\nvec2 applyZoom(vec2 uv)\n{\n    // Establishes vec2 'm' for use in the zoom-in interaction\n    vec2 m = iMouse.xy / iResolution.xy;\n\n    // The statment and following lines create the zoom-in interaction\n    if(iMouse.z <= 0.0)\n        m = vec2(0.5);\n    float zoom = (iMouse.z > 0.0) ? 2.5 : 1.0;\n    uv = (uv - m) / zoom + m;\n    return uv;\n}\n\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord)\n{\n    // Normalized pixel coordinates (from 0 to 1), keeping the image in view based on the resolution size\n    vec2 uv = fragCoord / iResolution.xy;\n    uv = applyZoom(uv);\n    \n    // Establishes vec4 'state' and floats 'chem' and 'voltage to visualize Buffer A, B, and C\n    vec4 state = texture(iChannel0, uv);\n    float chem = texture(iChannel1, uv).r;\n    float voltage = texture(iChannel2, uv).r;\n    \n    // Establishes floats 'd', 'e', and 'p' for use elsewhere in the Buffer    \n    float d = state.r;\n    float e = state.g;\n    float p = state.b;\n\n    // Establishes vec3 'col' that creates the system's colour palette\n    vec3 col = vec3(\n        0.3 + 0.2 * d,\n        0.2 + 0.8 * e,\n        0.5 + 0.5 * sin(p * 6.283)\n    );\n    \n    // Adds \"chemical\" glow through Buffer B\n    col += vec3(1.0, 0.5, 0.2) * chem * 0.8;\n\n    // Alters 'col' to stablize colours\n    col *= smoothstep(0.0, 0.8, d);\n    \n    // Alters 'col' to apply the bright \"electric\" glow\n    col += vec3(0.3, 0.8, 1.5) * voltage * 1.2;\n\n    // Sets fragColor so the system is visible\n    fragColor = vec4(col, 1.0);\n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage(out vec4 fragColor, in vec2 fragCoord)\n{\n    // Normalized pixel coordinates (from 0 to 1), keeping the image in view based on the resolution size\n    vec2 uv = fragCoord / iResolution.xy;\n    vec2 px = 1.0 / iResolution.xy;\n    \n    // Establishes vec4 'state' to represent the previous location/state of a given cell\n    vec4 state = texture(iChannel0, uv);\n    float chem = texture(iChannel1, uv).r;\n\n    // Establishes floats 'd', 'e', and 'p' for use elsewhere in the Buffer\n    float d = state.r;\n    float e = state.g;\n    float p = state.b;\n    \n    // Establishes float 'voltage', representing Buffer C\n    float voltage = texture(iChannel2, uv).r;\n\n    // Establishes float 'lap' which uses the laplacian float established in the common tab to represent the current Buffer\n    float lap = laplacian(iChannel0, uv, px);\n\n    // Establishes vec2 'grad' which uses the gradient vec2 established in the common tab to represent Buffer B\n    vec2 grad = gradient(iChannel1, uv, px);\n\n    // Establishes vec2 'flow' that dictates the movement of the system\n    vec2 flow = normalize(grad) * 0.1;\n    \n    // Establishes vec2 'eGrad', which uses the \"electric\" system established in Buffer C\n    vec2 eGrad = gradient(iChannel2, uv, px);\n    \n    // Establishes float 'chaosMask' for use in altering the 'flow' vec2\n    float chaosMask = noise(uv * 8.0 + iTime);\n    \n    // Applies an alteration of 'grad' and 'eGrad' to flow\n    flow += grad * mix(-0.5, 1.0, chaosMask);\n    flow += eGrad * mix(-1.0, 1.5, noise(uv * 6.0 - iTime));\n    \n    // Establishes floats related to advection, which leads to the overlapping movement found within the system\n    float advectStrength = 5.0 + 10.0 * noise(uv * 4.0 + iTime);\n    float advected = texture(iChannel0, uv - flow * px * advectStrength).r;\n\n    // Uses float 'd' in combination with the above floats to allow the system to move as it does\n    d = mix(d, advected, 0.75);\n   \n    // Establishes and utilizes floats 'pressure' and 'tension' to make the explosions more \"rough\" for lack of a better word\n    float pressure = d * d;\n    float tension  = -lap * 0.3;\n    d += pressure * 0.04;\n    d += tension;\n\n    // Establishes and utilizes 'jitter' float. Without it, the system would just be a static white after a few seconds\n    float jitter = (noise((uv) * 50.0 + iTime * 3.0) - 0.5) * 0.05;\n    d += jitter;\n\n    // Establishes and utilizes 'regrow' float that makes the bright, explosion-like cells more prevalent\n    float regrow = smoothstep(0.0, 0.2, 0.25 - d) * 0.01;\n    d += regrow;\n    \n    // Establishes 'intake', 'growth', and 'decay' floats to be used in the cell-spawning process\n    float intake = chem * 0.25;\n    float growth = d * (1.0 - d) * 0.25;\n    float decay  = 0.08 * d;\n    \n    // Alters float 'e', with the above established floats\n    e += growth + intake - decay;\n    e = clamp(e, 0.05, 1.0);\n\n    // An if statement that changes the values of 'd' and 'e' depending on their values following the above alterations\n    if(e > 0.9 && d > 0.75)\n    {\n        d *= 0.7;\n        e *= 0.7;\n    }\n\n    // The float 'p' is altered using the current state of 'd'\n    p += 0.03 + d * 0.15;\n    \n    // The float 'd' is altered to keep the system running\n    d = clamp(d, 0.0, 1.0);\n\n    // Establishes floats 'cluster' and 'spawn' for use in the current Buffer\n    float cluster = fbm((uv) * 6.0 + iTime * 0.2);\n    float spawn = smoothstep(0.75, 0.85, cluster) * step(0.9, noise(uv * 20.0 + iTime));\n    d += spawn * 0.5;\n    \n    // Establishes 'burst' float for use in the upcoming 'flow' modification\n    float burst = step(0.85, noise(uv * 3.0 + floor(iTime * 2.0)));\n    flow += vec2(\n        noise(uv * 40.0 + iTime * 5.0),\n        noise(uv * 40.0 - iTime * 5.0)\n    ) * burst * 1.5;\n    \n    // Sets fragColor so the system is visible\n    fragColor = vec4(d, e, fract(p), 1.0);\n\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage(out vec4 fragColor, in vec2 fragCoord)\n{\n    // Normalized pixel coordinates (from 0 to 1), keeping the image in view based on the resolution size\n    vec2 uv = fragCoord / iResolution.xy;\n    vec2 px = 1.0 / iResolution.xy;\n\n    // Establishes float 'heat' represent the previous location/state of a given cell, in this case, being used for the heat map\n    float heat = texture(iChannel0, uv).r;\n    float lap = laplacian(iChannel0, uv, px);\n\n    // Establishes float 'blurred' for use elsewhere in the Buffer\n    float blurred = heat + lap * 0.5;\n\n    // Establishes float 'decay', which destroys the bright cells as they move\n    float decay = 0.98;\n    blurred *= decay;\n\n    // Establishes floats 'cellDensity' and 'heatAdd' that work with Buffer A\n    float cellDensity = texture(iChannel1, uv).r;\n    float heatAdd = cellDensity * 0.05;\n    blurred += heatAdd;\n\n    // Alters 'blurred' so it is limited to a value between 0.0 and 1.0\n    blurred = clamp(blurred, 0.0, 1.0);\n\n    // Sets fragColor so the system is visible\n    fragColor = vec4(blurred,0.0,0.0,1.0);\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage(out vec4 fragColor, in vec2 fragCoord)\n{\n    // Normalized pixel coordinates (from 0 to 1), keeping the image in view based on the resolution size\n    vec2 uv = fragCoord / iResolution.xy;\n    vec2 px = 1.0 / iResolution.xy;\n    \n    // Establishes vec4 'state' to represent the previous location/state of a given cell\n    vec4 state = texture(iChannel0, uv);\n    \n    // Establishes floats 'v' and 'r' that represent the metaphorical \"voltage\" and \"revovery\" systems found within the Buffer\n    float v = state.r; // voltage\n    float r = state.g; // recovery\n\n    // Establishes float 'lap' which uses the laplacian float established in the common tab to represent the current Buffer\n    float lap = laplacian(iChannel0, uv, px);\n\n    // Establishes floats 'cellDensity' that works with Buffer A\n    float cellDensity = texture(iChannel1, uv).r;\n\n    // Establishes float 'stimulus' that triggers when density is in a \"sweet spot\"\n    float stimulus = smoothstep(0.3, 0.6, cellDensity) * 0.8;\n\n    // Establishes floats 'diffusion', 'excite', and 'recover' that are used to alter 'v' and 'r' later in the system\n    float diffusion = 1.2;\n    float excite    = 1.5;\n    float recover   = 0.8;\n\n    // Alters 'v' using the aboce floats\n    v += diffusion * lap;\n    v += excite * stimulus * (1.0 - r);\n\n    // Establishes natural, constant \"decay\" within 'v'\n    v *= 0.96;\n\n    // Makes 'r' increases when active\n    r += v * 0.05;\n\n    // Establishes natural, constant \"decay\" within 'r'\n    r *= 0.97;\n\n    // Clamps both 'v' and 'r' to make sure their values are between 0.0 and 1.0\n    v = clamp(v, 0.0, 1.0);\n    r = clamp(r, 0.0, 1.0);\n    \n    // Sets fragColor so the system is visible\n    fragColor = vec4(v, r, 0.0, 1.0);\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "/*\n\n218802405\nFinal Project\nGianluca Sabatini\nExplosive Skies\n\nInteractions:\nBy clicking down on the mouse, the viewer can zoom in on the system. By moving the mouse while it is held down, the visible\narea in the viewer window is changed.\n\nDescription:\n\"Explosive Skies\" is a system of conflicting forces moving in opposite directions. Each of these forces is represented by a\ngroup of cells. One of these groups take the form of dark blobs, almost resembling clouds, gliding and contorting from the\ntop right to the bottom left of the visible area. The other major group is more akin to explosions, encapsulating the system's \ndark spaces into a blinding light. These cells combust as they move, never taking up as much space as the blobs in the overall\nsystem, almost creating a light show. Colour-wise, the system most potently focuses on black and white, but the darker spaces\nhave a subtle green hue, while the bright explosions turn blue as they fizzle out. The system is a clash of forces, and a\nvisual spectacle as a result. Its unique sets of cells are very dynamic in their movement and interactions, as opposed to\nsimpler automota developed in Shadertoy.\n\nTechnical Realization:\nFor this assignment, the a novel, complex system, with a major focus on its behaviours rather than soley its visuals. Unlike\nprevious designs in Shadertoy, for this task, I started from scratch, figuring it would be the best way to develop a design\nintended to have a high level of complexity. As I developed the system further, I added additional buffers that would create\nthe \"heat map\" and \"voltage\" systems. Both systems help to enhance the potentness of the explosions, with Buffer B expanding\ntheir reach and Buffer C drastically increasing the brightness. All together, this created the striking visials present in the\nsystem, and led to it really clicking for me. Looking at it now, its flow and colour reminds me of a Y2K aesthetic, to the\npoint where I can picture techno music playing over it.\n\n*/\n\n// Defined values for use accross the common tab (use cases are self-explanitory from title)\n#define FLOW_STRENGTH    1.5\n#define ELECTRIC_FORCE   1.2\n#define TURBULENCE       0.3\n#define DIFFUSION_RATE   1.2\n#define DECAY_RATE       0.96\n\n// Establishes the float 'hash' for use in the rest of the common tab\nfloat hash(vec2 p)\n{\n    return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453123);\n}\n\n// Establishes float 'noise' for use accross the common tab\nfloat noise(vec2 p)\n{\n    // Establishes vec2s 'i' and 'f', manipulations on the vec2 attributed to the float ('p')\n    vec2 i = floor(p);\n    vec2 f = fract(p);\n    \n    // Establishes floats 'a', 'b', 'c', and 'd' by manipulating the previously established vec2, 'i'\n    float a = hash(i);\n    float b = hash(i + vec2(1.0,0.0));\n    float c = hash(i + vec2(0.0,1.0));\n    float d = hash(i + vec2(1.0,1.0));\n    \n    // Establishes vec2 'u' by using multiplications of the previously established vec2, 'f'\n    vec2 u = f*f*(3.0-2.0*f);\n\n    return mix(a,b,u.x)\n         + (c-a)*u.y*(1.0-u.x)\n         + (d-b)*u.x*u.y;\n}\n\n// Establishes float 'fbm', that creates fractal noise, allowing for the richer motion present in the system\nfloat fbm(vec2 p)\n{\n    // Establishes floats 'v' and 'a' that are altered in an upcoming for loop\n    float v = 0.0;\n    float a = 0.5;\n    \n    // For loop that alters 'v', 'a', and the vec2 attributed to the float ('p')\n    for(int i = 0; i < 4; i++)\n    {\n        v += a * noise(p);\n        p *= 2.0;\n        a *= 0.5;\n    }\n    // Returns the float 'v' as a value whenever the float 'fbm' is called\n    return v;\n}\n\n// Establiahes float 'sampleR', that utilizes texture and 'uv' for use across the rest of the common tab\nfloat sampleR(sampler2D tex, vec2 uv)\n{\n    return texture(tex, uv).r;\n}\n\n// Establishes vec2 'gradient' that is a core component in Buffer A\nvec2 gradient(sampler2D tex, vec2 uv, vec2 px)\n{\n    // Establishes 'gradient' on the x axis\n    float gx = sampleR(tex, uv + vec2(px.x,0.0)) -\n               sampleR(tex, uv - vec2(px.x,0.0));\n\n    // Establishes 'gradient' on the y axis\n    float gy = sampleR(tex, uv + vec2(0.0,px.y)) -\n               sampleR(tex, uv - vec2(0.0,px.y));\n    \n    // Returns 'gx' and 'gy' in a coordinate-esque structure as the vec2 value whenever the vec2 'gradient' is called\n    return vec2(gx, gy);\n}\n\n// Establishes float 'laplacian' that is used as a core component of all 3 Buffers\nfloat laplacian(sampler2D tex, vec2 uv, vec2 px)\n{\n    // Establishes float 'sum' for use within the laplacian float\n    float sum = 0.0;\n    \n    // For loop that is used as a grid-esque setup\n    for(int x=-1; x<=1; x++)\n    for(int y=-1; y<=1; y++)\n    {\n        // Establishes vec2 'o' for use within the loop\n        vec2 o = vec2(x,y) * px;\n        \n        // Establishes float 'n' that utilizes float 'sampleR' to run through its motions while modifying 'uv' by adding\n        // the previously established vec2 'o'\n        float n = sampleR(tex, uv + o);\n        \n        // Establishes a value for float 'sum' if the loop is in its first position\n        if(x == 0 && y == 0)\n            sum -= 8.0 * n;\n        else\n            sum += n;\n    }\n    \n    // Returns 'sum' divided by 8.0 whenever the float 'laplacian' is called\n    return sum / 8.0;\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "fcsSRM",
+			"date": "1775516777",
+			"viewed": 56,
+			"name": "Explosive Skies",
+			"username": "Gianluca Sabatini",
+			"description": "GS/DIGM 5950 Final Project",
+			"likes": 0,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"finalproject"
+			],
+			"hasliked": 0,
+			"parentid": "",
+			"parentname": ""
+		}
+	},
+		{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n    Final Compositing and Rendering\n    \n    INTERACTIONS:\n    - Hold mouse in TOP half: DISPERSIVE mode (Licorice background)\n    - Hold mouse in BOTTOM half: COOPERATIVE mode (Delft Blue background)\n    - Mouse click anywhere: Attracts agents and deposits pheromone\n    \n    COLOR PALETTE:\n    - Delft Blue (#353B56): Cooperative mode background\n    - Licorice (#251211): Dispersive mode background\n    - Taupe Gray (#7D7585): Low pheromone trails\n    - Persian Orange (#C99379): High pheromone trails\n    - Earth Yellow (#FBB45E): Agent bodies\n*/\n\n\n// COLOR PALETTE\n\n\n#define DELFT_BLUE vec3(0.208, 0.231, 0.337)\n#define LICORICE vec3(0.145, 0.071, 0.067)\n#define TAUPE_GRAY vec3(0.490, 0.459, 0.522)\n#define PERSIAN_ORANGE vec3(0.788, 0.576, 0.475)\n#define EARTH_YELLOW vec3(0.984, 0.706, 0.369)\n\n#define AGENT_COUNT 300\n\n// Transition speed for background color change\n#define BG_TRANSITION_SPEED 0.08\n\nivec2 agentIndexToCoord(int idx, vec2 res) {\n    int width = int(res.x);\n    return ivec2(idx % width, idx / width);\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    vec2 res = iResolution.xy;\n    vec2 uv = fragCoord / res;\n    \n   \n    // READ MODE FROM BUFFER B\n    \n    \n    float mode = texelFetch(iChannel1, ivec2(0, 0), 0).a;\n    \n    // mode = 0.0: Cooperative (Delft Blue)\n    // mode = 1.0: Dispersive (Licorice)\n    \n  \n    // BACKGROUND: Changes based on mode\n\n    \n    vec3 backgroundColor = mix(DELFT_BLUE, LICORICE, mode);\n    \n    // subtle vignette\n    float vignette = 1.0 - length(uv - 0.5) * 0.25;\n    backgroundColor *= vignette;\n    \n    // very subtle noise texture to background\n    float noise = fract(sin(dot(fragCoord, vec2(12.9898, 78.233))) * 43758.5453);\n    backgroundColor += (noise - 0.5) * 0.015;\n    \n   \n    // PHEROMONE TRAILS (Buffer B)\n   \n    \n    float pheromone = texture(iChannel1, uv).r;\n    \n    // Color mapping based on pheromone intensity\n    vec3 trailColor;\n    \n    if (pheromone < 0.1) {\n        // Very low: fade from background toward Taupe Gray\n        float t = pheromone / 0.1;\n        trailColor = mix(backgroundColor, TAUPE_GRAY, t * 0.7);\n    } else if (pheromone < 0.4) {\n        // Medium: Taupe Gray\n        float t = (pheromone - 0.1) / 0.3;\n        trailColor = mix(TAUPE_GRAY, mix(TAUPE_GRAY, PERSIAN_ORANGE, 0.5), t);\n    } else {\n        // High: Persian Orange\n        float t = (pheromone - 0.4) / 0.6;\n        t = clamp(t, 0.0, 1.0);\n        trailColor = mix(mix(TAUPE_GRAY, PERSIAN_ORANGE, 0.5), PERSIAN_ORANGE, t);\n    }\n    \n    // Blend trails over background\n    float trailAlpha = smoothstep(0.0, 0.08, pheromone);\n    vec3 color = mix(backgroundColor, trailColor, trailAlpha);\n    \n  \n    // LANGTON STATE FIELD (Buffer C)\n    \n    \n    float langtonState = texture(iChannel2, uv).r;\n    \n    // Subtle texture from Langton field\n    float langtonIntensity = abs(langtonState - 0.5) * 2.0;\n    \n    // Color shifts based on state\n    vec3 langtonColor = langtonState > 0.5 ? \n        mix(backgroundColor, TAUPE_GRAY, 0.3) : \n        mix(backgroundColor, DELFT_BLUE, 0.2);\n    \n    float langtonAlpha = langtonIntensity * 0.15 * (1.0 - trailAlpha * 0.8);\n    color = mix(color, langtonColor, langtonAlpha);\n    \n  \n    // AGENT BODIES\n    \n    \n    float agentGlow = 0.0;\n    \n    for (int i = 0; i < AGENT_COUNT; i++) {\n        ivec2 agentCoord = agentIndexToCoord(i, res);\n        vec4 agentData = texelFetch(iChannel0, agentCoord, 0);\n        vec2 agentPos = agentData.xy;\n        \n        vec2 diff = abs(fragCoord - agentPos);\n        diff = min(diff, res - diff);\n        float dist = length(diff);\n        \n        // Soft outer glow\n        if (dist < 12.0) {\n            float glow = 1.0 - dist / 12.0;\n            glow = glow * glow * glow; // Cubic falloff\n            agentGlow += glow * 0.2;\n        }\n        \n        // Bright core\n        if (dist < 2.5) {\n            agentGlow += (1.0 - dist / 2.5) * 0.9;\n        }\n    }\n    \n    agentGlow = min(agentGlow, 1.0);\n    color = mix(color, EARTH_YELLOW, agentGlow);\n    \n   \n    // MOUSE INDICATOR\n    \n    \n    if (iMouse.z > 0.0) {\n        vec2 mousePos = iMouse.xy;\n        vec2 diff = abs(fragCoord - mousePos);\n        diff = min(diff, res - diff);\n        float dist = length(diff);\n        \n        // Pulsing attraction ring\n        float ringRadius = 30.0 + sin(iTime * 4.0) * 8.0;\n        float ring = abs(dist - ringRadius);\n        \n        if (ring < 4.0) {\n            float ringAlpha = 1.0 - ring / 4.0;\n            ringAlpha *= ringAlpha;\n            color = mix(color, EARTH_YELLOW, ringAlpha * 0.6);\n        }\n        \n        // Inner glow at mouse\n        if (dist < 15.0) {\n            float innerGlow = 1.0 - dist / 15.0;\n            innerGlow *= innerGlow;\n            color = mix(color, EARTH_YELLOW, innerGlow * 0.3);\n        }\n    }\n    \n    \n    // MODE INDICATOR BOX (top-left corner)\n   \n    float boxWidth = 100.0;\n    float boxHeight = 25.0;\n    float margin = 10.0;\n    \n    float boxLeft = margin;\n    float boxRight = margin + boxWidth;\n    float boxBottom = res.y - margin - boxHeight;\n    float boxTop = res.y - margin;\n    \n    if (fragCoord.x > boxLeft && fragCoord.x < boxRight &&\n        fragCoord.y > boxBottom && fragCoord.y < boxTop) {\n        \n        // color based on mode\n        vec3 boxFill = mode > 0.5 ? LICORICE : DELFT_BLUE;\n        \n        // Lighter border\n        vec3 boxBorder = mode > 0.5 ? PERSIAN_ORANGE : TAUPE_GRAY;\n        \n        float borderWidth = 2.0;\n        bool isBorder = fragCoord.x < boxLeft + borderWidth || \n                        fragCoord.x > boxRight - borderWidth ||\n                        fragCoord.y < boxBottom + borderWidth ||\n                        fragCoord.y > boxTop - borderWidth;\n        \n        if (isBorder) {\n            color = boxBorder;\n        } else {\n            color = boxFill;\n            \n            //  text hint using simple shapes\n            // \"C\" or \"D\" indicator\n            float centerX = (boxLeft + boxRight) * 0.5;\n            float centerY = (boxBottom + boxTop) * 0.5;\n            \n            // Simple dot pattern to indicate mode\n            float dotDist = length(fragCoord - vec2(centerX, centerY));\n            if (mode < 0.5) {\n                // Cooperative: cluster of dots (together)\n                float d1 = length(fragCoord - vec2(centerX - 8.0, centerY));\n                float d2 = length(fragCoord - vec2(centerX + 8.0, centerY));\n                float d3 = length(fragCoord - vec2(centerX, centerY));\n                if (d1 < 4.0 || d2 < 4.0 || d3 < 4.0) {\n                    color = EARTH_YELLOW;\n                }\n            } else {\n                // Dispersive: spread out dots\n                float d1 = length(fragCoord - vec2(centerX - 20.0, centerY));\n                float d2 = length(fragCoord - vec2(centerX + 20.0, centerY));\n                float d3 = length(fragCoord - vec2(centerX, centerY - 6.0));\n                float d4 = length(fragCoord - vec2(centerX, centerY + 6.0));\n                if (d1 < 3.0 || d2 < 3.0 || d3 < 3.0 || d4 < 3.0) {\n                    color = EARTH_YELLOW;\n                }\n            }\n        }\n    }\n    \n \n \n    \n  //FINAL OUTPUT\n    \n    fragColor = vec4(color, 1.0);\n}\n",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "keyboard",
+						"id": "4dXGRr",
+						"filepath": "/presets/tex00.jpg",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n    Student Number:219884246\n    Assignment: Final Project\n    Name: Hana Namdar\n    Title: \"Unruly Paths\" - Chemotactic Agents with Langton Dynamics\n    \n    INTERACTIONS:\n    - Mouse Hold: Attracts agents toward the cursor\n    - Mouse Position (Vertical):\n        • Top half: DISPERSIVE mode (agents avoid pheromone trails)\n        • Bottom half: COOPERATIVE mode (agents follow pheromone trails)\n    - Mouse Click: Creates a burst of pheromone at the cursor\n    \n    INTERESTING PARAMETERS TO MODIFY:\n    - AGENT_COUNT: Number of agents (100–500)\n    - ANTENNA_LENGTH: How far ahead agents sense (affects smoothness of trails)\n    - ANTENNA_ANGLE: Spread of antennae (wider = more exploration)\n    - TURN_SPEED: How fast agents turn\n    - LANGTON_STRENGTH: How much the binary state affects movement\n    \n    DESCRIPTION:\n    This system combines chemotaxis with a Langton-like binary state field to create \n    a hybrid agent-based system. Each agent uses two forward sensors (antennae) to \n    detect pheromone differences and decide which way to turn, while also interacting \n    with a grid-based state that changes over time.\n    \n    Unlike classic grid-based systems, the agents move in continuous space, which \n    makes the motion feel smoother and more natural. As they move, they both deposit \n    pheromones and flip the binary state underneath them, creating a feedback loop \n    between movement and the environment.\n    \n    This interaction leads to emergent behavior. In cooperative mode, agents follow \n    and reinforce existing trails, forming stable path networks. In dispersive mode, \n    they avoid trails and spread out, creating more scattered and exploratory patterns.\n    \n    Over time, the system reorganizes itself as pheromones diffuse and decay, leading \n    to changing structures instead of a fixed result.\n    \n    TECHNICAL REALIZATION:\n    - Buffer A: Stores agent data (position, direction, internal state)\n    - Buffer B: Handles pheromone diffusion and decay\n    - Buffer C: Stores and updates the binary Langton-like state field\n    - Image: Combines everything visually using the color palette\n    \n    - One challenge was balancing the pheromone system with the Langton state,\n    since one would often overpower the other and affect the behavior too much. \n    I also had to adjust parameters like diffusion, decay, and turning strength to get\n    more stable but still interesting results. Another difficulty was handling screen \n    wrapping while keeping movement smooth, which required careful distance calculations.\n\n    \n    Each frame, agents:\n    1. Sample pheromone using their antennae\n    2. Turn based on the gradient and binary state\n    3. Deposit pheromone\n    4. Flip the binary state\n    5. Move forward and wrap around the screen\n    \n    SOURCES:\n    - Chemotaxis and antenna sensing from course notes\n    - Langton’s Ant rules from course material\n    - Rotation matrix approach from shader examples\n    \n    FUTURE EXTENSIONS:\n    - Multiple pheromone types\n    - Agent lifespan and reproduction\n    - Obstacle avoidance\n    \n*/\n\n/*\n    Buffer A: Agent Storage\n    \n    Each pixel represents one agent:\n    - xy: position in space\n    - z: direction (mapped from 0–1 to 0–2π)\n    - w: binary state used for Langton-like behavior\n    \n    BEHAVIOR MODES:\n    - Cooperative: agents move toward higher pheromone\n    - Dispersive: agents move away from pheromone\n*/\n\n#define AGENT_COUNT 300\n#define ANTENNA_LENGTH 14.0\n#define ANTENNA_ANGLE 0.45\n#define TURN_SPEED 0.12\n#define MOVE_SPEED 1.0\n#define LANGTON_STRENGTH 0.1\n#define MOUSE_ATTRACT 0.0004\n\n#define PI 3.14159265359\n#define TWOPI 6.28318530718\n\nmat2 rotate2D(float angle) {\n    float s = sin(angle);\n    float c = cos(angle);\n    return mat2(c, -s, s, c);\n}\n\nfloat hash(vec2 p) {\n    p = fract(p * vec2(123.34, 456.21));\n    p += dot(p, p + 45.32);\n    return fract(p.x * p.y);\n}\n\nfloat hash21(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * 0.1031);\n    p3 += dot(p3, p3.yzx + 33.33);\n    return fract((p3.x + p3.y) * p3.z);\n}\n\nivec2 agentIndexToCoord(int idx) {\n    int width = int(iResolution.x);\n    return ivec2(idx % width, idx / width);\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    ivec2 iCoord = ivec2(fragCoord);\n    vec2 res = iResolution.xy;\n    \n    int agentIdx = iCoord.y * int(res.x) + iCoord.x;\n    \n    // Not an agent pixel\n    if (agentIdx >= AGENT_COUNT) {\n        fragColor = vec4(0.0);\n        return;\n    }\n    \n   \n    // INITIALIZATION\n  \n    if (iFrame < 1) {\n        vec2 center = res * 0.5;\n        float spawnRadius = min(res.x, res.y) * 0.12;\n        \n        vec2 seed = vec2(float(agentIdx) * 1.234, float(agentIdx) * 5.678);\n        float randAngle = hash(seed) * TWOPI;\n        float randDist = sqrt(hash(seed + 100.0)) * spawnRadius;\n        \n        vec2 pos = center + vec2(cos(randAngle), sin(randAngle)) * randDist;\n        float dir = hash(seed + 200.0);\n        float state = step(0.5, hash(seed + 300.0));\n        \n        fragColor = vec4(pos, dir, state);\n        return;\n    }\n    \n    \n    // READ CURRENT STATE\n    \n    vec4 agentData = texelFetch(iChannel0, iCoord, 0);\n    vec2 pos = agentData.xy;\n    float dir = agentData.z;\n    float state = agentData.w;\n    \n    float angle = dir * TWOPI;\n    \n    \n    // READ MODE FROM BUFFER B\n    \n    float mode = texelFetch(iChannel1, ivec2(0, 0), 0).a;\n    \n    // behaviorSign: 1.0 = cooperative (toward pheromone)\n    //              -1.0 = dispersive (away from pheromone)\n    float behaviorSign = mode > 0.5 ? -1.0 : 1.0;\n    \n    \n    // DUAL ANTENNA SAMPLING\n    \n    \n    mat2 rot = rotate2D(angle);\n    \n    vec2 leftAntennaLocal = vec2(-sin(ANTENNA_ANGLE), cos(ANTENNA_ANGLE)) * ANTENNA_LENGTH;\n    vec2 rightAntennaLocal = vec2(sin(ANTENNA_ANGLE), cos(ANTENNA_ANGLE)) * ANTENNA_LENGTH;\n    \n    vec2 leftAntennaWorld = mod(pos + rot * leftAntennaLocal, res);\n    vec2 rightAntennaWorld = mod(pos + rot * rightAntennaLocal, res);\n    \n    float leftSample = texture(iChannel1, leftAntennaWorld / res).r;\n    float rightSample = texture(iChannel1, rightAntennaWorld / res).r;\n    \n    \n    // TURNING DECISION\n    \n    \n    float gradient = (rightSample - leftSample) * behaviorSign;\n    float turnAmount = gradient * TURN_SPEED * 3.0;\n    \n    // Langton bias\n    float langtonBias = (state - 0.5) * 2.0 * LANGTON_STRENGTH;\n    turnAmount += langtonBias;\n    \n    \n    // MOUSE ATTRACTION\n    \n    \n    if (iMouse.z > 0.0) {\n        vec2 mousePos = iMouse.xy;\n        vec2 toMouse = mousePos - pos;\n        \n        if (abs(toMouse.x) > res.x * 0.5) {\n            toMouse.x -= sign(toMouse.x) * res.x;\n        }\n        if (abs(toMouse.y) > res.y * 0.5) {\n            toMouse.y -= sign(toMouse.y) * res.y;\n        }\n        \n        float distToMouse = length(toMouse);\n        float angleToMouse = atan(toMouse.y, toMouse.x);\n        float angleDiff = mod(angleToMouse - angle + PI, TWOPI) - PI;\n        \n        float attractStrength = MOUSE_ATTRACT * res.x / (1.0 + distToMouse * 0.02);\n        turnAmount += angleDiff * attractStrength;\n    }\n    \n    \n    // RANDOM WIGGLE\n    \n    \n    float wiggle = (hash21(pos + vec2(iTime * 60.0, float(agentIdx))) - 0.5) * 0.08;\n    turnAmount += wiggle;\n    \n    turnAmount = clamp(turnAmount, -TURN_SPEED * 4.0, TURN_SPEED * 4.0);\n    \n    \n    // UPDATE\n   \n    angle = mod(angle + turnAmount, TWOPI);\n    \n    // Read and flip Langton state\n    float groundState = texture(iChannel2, pos / res).r;\n    state = groundState > 0.5 ? 0.0 : 1.0;\n    \n    // Move forward\n    pos += vec2(cos(angle), sin(angle)) * MOVE_SPEED;\n    pos = mod(pos, res);\n    \n    dir = angle / TWOPI;\n    \n    fragColor = vec4(pos, dir, state);\n}\n",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n    Buffer B: Pheromone Field\n    \n    MODE CONTROL:\n    - Mouse in TOP half: Dispersive (mode transitions toward 1.0)\n    - Mouse in BOTTOM half: Cooperative (mode transitions toward 0.0)\n    - Smooth transition between modes for gradual background change\n*/\n\n#define DECAY_RATE 0.006\n#define DIFFUSION_RATE 0.18\n#define DEPOSIT_AMOUNT 0.12\n#define AGENT_COUNT 300\n\n// How fast the mode transitions (0.0 to 1.0 range per frame)\n#define MODE_TRANSITION_SPEED 0.03\n\nivec2 agentIndexToCoord(int idx, vec2 res) {\n    int width = int(res.x);\n    return ivec2(idx % width, idx / width);\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    vec2 res = iResolution.xy;\n    vec2 uv = fragCoord / res;\n    ivec2 iCoord = ivec2(fragCoord);\n    \n    \n    // INITIALIZATION\n    \n    if (iFrame < 1) {\n        fragColor = vec4(0.0);\n        return;\n    }\n    \n    \n    // MODE CONTROL WITH SMOOTH TRANSITION\n    \n    \n    // Read previous mode value\n    float mode = texelFetch(iChannel0, ivec2(0, 0), 0).a;\n    \n    // Target mode based on mouse position\n    float targetMode = mode; // Default: keep current\n    \n    if (iMouse.z > 0.0) {\n        // Mouse is pressed\n        if (iMouse.y > res.y * 0.5) {\n            // Top half = dispersive\n            targetMode = 1.0;\n        } else {\n            // Bottom half = cooperative\n            targetMode = 0.0;\n        }\n    }\n    \n    // Smoothly transition toward target\n    mode = mix(mode, targetMode, MODE_TRANSITION_SPEED);\n    \n    \n    // PHEROMONE FIELD PROCESSING\n    \n    \n    float currentPheromone = texelFetch(iChannel0, iCoord, 0).r;\n    \n    // Diffusion\n    float sum = 0.0;\n    for (int dx = -1; dx <= 1; dx++) {\n        for (int dy = -1; dy <= 1; dy++) {\n            vec2 samplePos = fragCoord + vec2(float(dx), float(dy));\n            samplePos = mod(samplePos, res);\n            sum += texture(iChannel0, samplePos / res).r;\n        }\n    }\n    float neighborAvg = sum / 9.0;\n    float diffused = mix(currentPheromone, neighborAvg, DIFFUSION_RATE);\n    \n    // Decay\n    diffused *= (1.0 - DECAY_RATE);\n    \n    \n    // AGENT DEPOSITS\n    \n    \n    for (int i = 0; i < AGENT_COUNT; i++) {\n        ivec2 agentCoord = agentIndexToCoord(i, res);\n        vec4 agentData = texelFetch(iChannel1, agentCoord, 0);\n        vec2 agentPos = agentData.xy;\n        \n        vec2 diff = abs(fragCoord - agentPos);\n        diff = min(diff, res - diff);\n        float dist = length(diff);\n        \n        if (dist < 4.0) {\n            float deposit = DEPOSIT_AMOUNT * (1.0 - dist / 4.0);\n            diffused += deposit;\n        }\n    }\n    \n    \n    // MOUSE PHEROMONE BURST\n \n    \n    if (iMouse.z > 0.0) {\n        vec2 mousePos = iMouse.xy;\n        vec2 diff = abs(fragCoord - mousePos);\n        diff = min(diff, res - diff);\n        float dist = length(diff);\n        \n        if (dist < 40.0) {\n            float burst = 0.35 * (1.0 - dist / 40.0);\n            burst *= burst;\n            diffused += burst;\n        }\n    }\n    \n    diffused = clamp(diffused, 0.0, 1.0);\n    \n    \n    // OUTPUT\n    \n    \n    float alphaOut = (iCoord.x == 0 && iCoord.y == 0) ? mode : 0.0;\n    \n    fragColor = vec4(diffused, 0.0, 0.0, alphaOut);\n}\n",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n    Buffer C: Langton State Field\n    \n    Binary state field (0 or 1) that agents flip as they traverse.\n    This creates the classic Langton's Ant emergent complexity.\n    \n    - Red channel: binary state (0 = off, 1 = on)\n    \n    Agents read this state to bias their turning direction,\n    then flip the state after passing through.\n*/\n\n#define AGENT_COUNT 300\n\n// Decay rate for state field (creates fading trails)\n// Set to 0 for classic Langton behavior (permanent flips)\n#define STATE_DECAY 0.002\n\nivec2 agentIndexToCoord(int idx, vec2 res) {\n    int width = int(res.x);\n    return ivec2(idx % width, idx / width);\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    vec2 res = iResolution.xy;\n    ivec2 iCoord = ivec2(fragCoord);\n    \n    \n    // INITIALIZATION\n    \n    if (iFrame < 1) {\n        // Start with alternating pattern for visual interest\n        float pattern = mod(floor(fragCoord.x / 20.0) + floor(fragCoord.y / 20.0), 2.0);\n        fragColor = vec4(pattern * 0.3, 0.0, 0.0, 1.0);\n        return;\n    }\n    \n   \n    // READ CURRENT STATE\n   \n    \n    float currentState = texelFetch(iChannel0, iCoord, 0).r;\n    \n    \n    // CHECK FOR AGENT FLIPS\n    \n    float newState = currentState;\n    \n    // Check if any agent is at this pixel and should flip it\n    for (int i = 0; i < AGENT_COUNT; i++) {\n        ivec2 agentCoord = agentIndexToCoord(i, res);\n        vec4 agentData = texelFetch(iChannel1, agentCoord, 0);\n        vec2 agentPos = agentData.xy;\n        \n        // Check if agent is at this cell\n        vec2 diff = abs(fragCoord - agentPos);\n        diff = min(diff, res - diff);\n        float dist = length(diff);\n        \n        // Flip state if agent is here\n        if (dist < 1.5) {\n            // Toggle: if > 0.5 go to 0, if < 0.5 go to 1\n            newState = 1.0 - step(0.5, newState);\n        }\n    }\n    \n    \n    // GRADUAL DECAY \n    // This makes old flips fade back toward 0.5\n   \n    \n    newState = mix(newState, 0.5, STATE_DECAY);\n    \n   \n    // OUTPUT\n    \n    \n    fragColor = vec4(newState, 0.0, 0.0, 1.0);\n}\n",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": true,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "fflSR2",
+			"date": "1775579751",
+			"viewed": 42,
+			"name": "Unruly Paths",
+			"username": "Hana Namdar",
+			"description": "description in buffer A, Chemotaxis and antenna - Langton’s Ant - Rotation matrix approach",
+			"likes": 4,
+			"published": 1,
+			"flags": 48,
+			"usePreview": 0,
+			"tags": [
+				"sample4"
+			],
+			"hasliked": 0,
+			"parentid": "",
+			"parentname": ""
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n    vec2 m = iMouse.xy / iResolution.xy;\n\n    // zoom\n    if (iMouse.z > 0.0) {\n        float magnification = 10.0;\n        uv /= magnification;\n        uv += iMouse.xy / (iResolution.xy + (iResolution.xy / (magnification - 1.0)));\n    }\n\n    vec4 A = texture(iChannel0, uv);\n    vec4 B = texture(iChannel1, uv);\n    vec4 C = texture(iChannel2, uv);\n\n    // distance from tracked particle\n    float d = distance(uv * iResolution.xy, A.xy);\n\n    // sharper core + soft halo\n    float core = smoothstep(4.0, 0.0, d);\n    float halo = exp(-0.03 * d * d);\n\n    // trails / fields\n    float trail = length(B.rgb);\n    float sugar = length(C.rgb);\n\n    // animated palette\n    vec3 palette = 0.5 + 0.5 * cos(\n        vec3(0.0, 2.0, 4.0)\n        + iTime * 9.0\n        + sugar * 7.2\n        + trail * 1.0\n    );\n\n    // radial glow pulse\n    float pulse = 0.5 + 1.5 * sin(iTime * 12.0 - d * 0.08);\n\n    // slight screen warp from sugar field\n    vec2 warp = (C.xy - 0.5) * 0.15;\n    vec3 warpedTrail = texture(iChannel2, uv + warp).rgb;\n\n    // background nebula feel\n    vec3 bg = 0.08 + 0.05 * cos(vec3(0.0, 1.5, 3.0) + iTime + uv.xyx * 8.0);\n\n    vec3 col = bg;\n\n    // trails become iridescent\n    col += warpedTrail * palette * 1.8;\n\n    // particle body\n    col += vec3(0.0, 1.95, 0.9) * core * 6.8;\n\n    // mouse proximity \"divine spotlight\"\n    float md = distance(uv, m);\n    col += vec3(0.2, 0.4, 1.0) * exp(-20.0 * md) * 0.4;\n\n\n    fragColor = vec4(col, 1.0);\n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "const float TWOPI = 6.283185307179586;\n\n// create a 2D rotation matrix from an angle in radians:\nmat2 rotate2d(float angle) {\n    float s = sin(angle);\n    float c = cos(angle);\n    return mat2(\n        c, -s, \n        s, c\n    ); \n}\n\n// make a sigmoid transition of x around center with given width\nfloat sigmoid(float x, float center, float width) {\n    return 1.0 / (1.0 + exp(-(x-center)*4.0/width));\n}\n\n\n// Gaussian blur\nvec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {\n    // N/2 .. N/4\n    float sigma = float(N)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(img, fragCoord/resolution) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=N; i++) {\n        vec2 offset = float(i) * dir;\n        float weight = exp(float(i*i) * expFactor);\n        sum += texture(img, (fragCoord + offset)/resolution) * weight;\n        sum += texture(img, (fragCoord - offset)/resolution) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    return sum / weightSum;\n}\n\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\nSTUDENT NUMBER: 220016416\nASSIGNMENT: Final Project\nNAME: Hiromune Kubayashi\nTITLE: Party Lights\n\nINTERACTION:\n- Click the mouse to zoom into the simulation.\n- Refresh to reset and observe different emergent behaviors.\n- Each particle has a unique personality, so results vary every run.\n\nCONCEPT:\nThis project explores a particle system interacting with a dynamic \"sugar landscape\" field.\nParticles move, sense their environment, and leave trails, creating a feedback loop between\nagents (particles), memory (trails), and environment (field).\n\nEach particle has its own parameters (speed, wandering, sensing distance) and a \"mood\"\nvalue that affects its behavior. Calm particles follow the field, while excited particles\nmove more chaotically.\n\nThe system produces emergent behaviors such as clustering, flowing motion, and glowing\npatterns. It demonstrates how simple local interactions can generate complex global visuals.\n\nTECHNICAL:\n- Multi-buffer system:\n  iChannel0 = particles (position, direction, mood)\n  iChannel1 = trails (decay + accumulation)\n  iChannel2 = field (diffusion + energy sources)\n\n- Key techniques:\n  - Nearest particle tracking (5x5 neighborhood)\n  - Sensor-based steering (front / left / right)\n  - Per-particle noise (consistent behavior)\n  - Mood-driven dynamics\n  - Field diffusion and decay\n\nREFERENCES:\n- AI-assisted: code structure, comments, and parameter tuning suggestions generated \nwith ChatGPT (OpenAI).\n- Inspired by and partially based on lecture examples from Professor Graham (Lab 8):\n  “Building agents from a nearest-particle tracking system”\n  https://www.shadertoy.com/view/7fl3zH\n\nFUTURE WORK:\n- Add reaction-diffusion behavior\n- Enable user interaction (inject energy with mouse)\n- Audio-reactive visuals\n- Application to projection / immersive installation\n*/\n\n\n// Each pixel tracks a single particle (agent)\n// A.xy = particle position (pixel coordinates)\n// A.z  = direction it is facing (radians)\n// A.w  = memory / mood (excitement level)\n\n// Function that selects the \"closest particle\" by comparing surrounding pixels\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    // Get particle data from a neighboring pixel\n    vec4 N = texture(iChannel0, (fragCoord + offset) / iResolution.xy);\n\n    // Compare distance between current particle and neighbor particle\n    float d1 = distance(fragCoord, A.xy);\n    float d2 = distance(fragCoord, N.xy);\n\n    // Return the closer particle\n    return (d2 < d1) ? N : A;\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord)\n{\n    // Normalized coordinates (0–1)\n    vec2 uv = fragCoord / iResolution.xy;\n\n    // Get particle data from previous frame\n    vec4 A = texture(iChannel0, uv);\n\n    // ===== Find the nearest particle =====\n    // Search within a 5×5 neighborhood\n    for (int x = -2; x <= 2; x++) {\n        for (int y = -2; y <= 2; y++) {\n            A = getNearestParticle(A, fragCoord, vec2(float(x), float(y)));\n        }\n    }\n\n    // ===== Random values (particle-based) =====\n    // Generate noise based on particle position instead of pixel\n    // → Important so pixels tracking the same particle behave consistently\n    vec4 noise = random4(vec3(A.xy * 0.01, iTime * 0.3));\n\n    // Personality noise fixed per particle\n    vec4 idNoise = random4(vec3(floor(A.xy / 30.0), 1.234));\n\n    // ===== Per-particle personality =====\n    float baseSpeed    = mix(25.0, 90.0, idNoise.x); // base speed\n    float wander       = mix(0.05, 1.2, idNoise.y);  // tendency to wander\n    float turnfactor   = mix(0.08, 0.7, idNoise.z);  // ease of turning\n    float sensorLength = mix(6.0, 22.0, idNoise.w);  // sensing distance\n\n    // ===== Mood (excitement level) =====\n    float mood = A.w;\n\n    // ===== Forward sensors =====\n    // Rotation matrix based on particle direction\n    mat2 rot = rotate2d(A.z);\n\n    // Three sensors: forward, front-left, front-right\n    vec2 sensor0 = vec2(12.0,  0.0) * sensorLength;\n    vec2 sensor1 = vec2(12.0,  0.7) * sensorLength;\n    vec2 sensor2 = vec2(12.0, -0.7) * sensorLength;\n\n    // Compute sensor positions\n    vec2 s0 = A.xy + rot * sensor0;\n    vec2 s1 = A.xy + rot * sensor1;\n    vec2 s2 = A.xy + rot * sensor2;\n\n    // Sample environment (field)\n    vec4 F  = texture(iChannel2, s0 / iResolution.xy);\n    vec4 FL = texture(iChannel2, s1 / iResolution.xy);\n    vec4 FR = texture(iChannel2, s2 / iResolution.xy);\n\n    // ===== Field intensity =====\n    float f  = F.x;   // front\n    float fl = FL.x;  // left\n    float fr = FR.x;  // right\n\n    // Average RGB energy\n    float energyAhead = dot(F.rgb, vec3(0.333));\n\n    // Left-right difference (bias)\n    float asym = fl - fr;\n\n    // ===== Mood update =====\n    // Excited by strong fields\n    mood += energyAhead * 0.03;\n\n    // Small random spikes (twitch-like motion)\n    mood += smoothstep(0.96, 1.0, noise.x) * 0.08;\n\n    // Gradual calming (decay)\n    mood *= 0.985;\n\n    // Clamp to [0,1]\n    mood = clamp(mood, 0.0, 1.0);\n\n    // ===== Direction control =====\n    // Higher mood → more chaotic\n    float chaos = mix(0.0, 1.5, mood);\n\n    if (f > fl && f > fr) {\n        // Forward is strongest → keep going\n    } else if (f < fl && f < fr) {\n        // No clear direction → random jitter\n        A.z += wander * (noise.z - 0.5) * (1.0 + chaos);\n    } else if (fl < fr) {\n        // Right is stronger → turn right\n        A.z += turnfactor * (1.0 + 0.7 * chaos);\n    } else if (fr < fl) {\n        // Left is stronger → turn left\n        A.z -= turnfactor * (1.0 + 0.7 * chaos);\n    }\n\n    // ===== Field obedience (mood-dependent) =====\n    // calm → follow field\n    // excited → resist field\n    A.z += asym * mix(-0.12, 0.15, mood);\n\n    // ===== Small quirks (natural variation) =====\n    A.z += 0.07 * sin(iTime * 0.9 + idNoise.x * TWOPI);\n\n    // ===== Speed =====\n    float speed = baseSpeed;\n\n    // More excited → faster\n    speed *= (1.0 + 1.8 * mood);\n\n    // Also influenced by forward energy\n    speed *= mix(0.8, 1.25, smoothstep(0.02, 0.25, energyAhead));\n\n    // ===== Movement =====\n    rot = rotate2d(A.z);\n    vec2 vel = rot * vec2(speed, 0.0);\n\n    // Update position\n    A.xy += vel * iTimeDelta;\n\n    // ===== Screen edge handling =====\n    // Soft avoidance near edges\n    float margin = 20.0;\n    if (A.x < margin)                  A.z += 0.08 + 0.12 * noise.y;\n    if (A.x > iResolution.x - margin)  A.z -= 0.08 + 0.12 * noise.y;\n    if (A.y < margin)                  A.z += 0.08 + 0.12 * noise.x;\n    if (A.y > iResolution.y - margin)  A.z -= 0.08 + 0.12 * noise.x;\n\n    // Reflect if out of bounds\n    vec2 b = clamp(A.xy, vec2(0.0), iResolution.xy);\n    if (A.x != b.x) { A.z = TWOPI * 0.5 - A.z; }\n    if (A.y != b.y) { A.z = TWOPI - A.z; }\n    A.xy = b;\n\n    // Keep angle within 0–2π\n    A.z = mod(A.z, TWOPI);\n\n    // Save mood\n    A.w = mood;\n\n    // ===== Initialization =====\n    if (iFrame == 0 || (noise.x < 0.01 && noise.y < 0.01) ) {\n        float N = 50.;\n\n        // Initial position (grid-based)\n        A.xy = round(fragCoord / N) * N;\n\n        vec4 initNoise = random4(vec3(A.xy * 0.01, 0.0));\n\n        // Initial direction\n        A.z = initNoise.z * TWOPI;\n\n        // Initial mood (low)\n        A.w = initNoise.x * 0.2;\n    }\n\n    // Output particle data for next frame\n    fragColor = A;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    // convert pixel coordinate to normalize texture coord\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    // our previous state\n    vec4 A = texture(iChannel0, uv); // the particles\n    vec4 B = texture(iChannel1, uv); // the trails\n    \n    \n    // decay:\n    B *= 0.91;\n    \n    // draw the particle\n    // get distance from this pixel to the particle it is tracking:\n    float d = distance(fragCoord, A.xy);\n    //float p = 1/d.;\n    //float p = exp(1.9*-d);\n    float p = smoothstep(1., 0., d);\n    \n    \n    B += vec4(p);\n    \n    fragColor = B;\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// sugar landscape (shader that generates the field / energy environment)\n\n// Gaussian blur kernel (currently unused)\nmat3 gaussBlur = mat3(\n        1, 2, 1,\n        2, 4, 2,\n        1, 2, 1\n    ) * 1.0/16.0;\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n\n    // Normalized coordinates (0–1)\n    vec2 uv = (fragCoord / iResolution.xy);\n    \n    // Field state from previous frame (trail / sugar)\n    vec4 C = texture(iChannel2, uv);\n\n    // ===== Diffusion =====\n    // Get neighboring pixels (up, down, left, right)\n    vec4 N = texture(iChannel2, (fragCoord + vec2(0, 1)) / iResolution.xy);\n    vec4 S = texture(iChannel2, (fragCoord + vec2(0, -1)) / iResolution.xy);\n    vec4 E = texture(iChannel2, (fragCoord + vec2(1, 0)) / iResolution.xy);\n    vec4 W = texture(iChannel2, (fragCoord + vec2(-1, 0)) / iResolution.xy);\n\n    // Create \"blurring\" by averaging neighbors\n    vec4 avg = (N + S + E + W) / 4.;\n\n    // Blend current value with average → diffusion of the field\n    C = mix(C, avg, 0.);\n\n    // ===== Decay =====\n    // Gradually fades over time (memory fading)\n    C = C * 0.95;\n    \n    // ===== Writing by particles =====\n    // Get particle data\n    vec4 A = texture(iChannel0, uv);\n\n    // Distance between this pixel and the particle\n    float dist = distance(fragCoord, A.xy);\n\n    // Add to field based on distance (stronger at the center)\n    C += exp(-dist * dist);\n    \n    \n    // ===== Moving energy source (circular motion) =====\n    float a = iTime * 0.2;\n    float r = iResolution.y / 2.;\n\n    // Point moving in a circle around the center\n    vec2 p = vec2(iResolution.xy / 2.);\n    p.x += r * cos(a);\n    p.y += r * sin(a);\n\n    // Option to control position with mouse (currently disabled)\n    if (iMouse.z > 0.0) {\n        // p = iMouse.xy;\n    }\n\n    float d = distance(fragCoord, p*5.);\n    \n    // ===== Circle radius (time-varying) =====\n    float circleRadius = 100.0 + 150.0 * sin(iTime * 2.0);\n    \n    // ===== Ring structure (around particles) =====\n    // Ring based on distance (strong at a specific radius, not center)\n    float ring = exp(-0.02 * (dist - 12.0) * (dist - 12.0));\n    C += ring;\n    \n    // ===== Value clamping =====\n    // Keep field values within 0–1\n    C = clamp(C, 0., 1.);\n    \n    // ===== Soft circular energy =====\n    // Smooth-edged glowing circle\n    float circle = smoothstep(circleRadius, circleRadius - 20.0, d);\n    C += vec4(circle);\n    \n    // ===== Multiple energy sources (two moving points) =====\n    vec2 p1 = iResolution.xy * vec2(\n        0.3 + 0.3 * cos(iTime),\n        0.5 + 0.2 * sin(iTime)\n    );\n\n    vec2 p2 = iResolution.xy * vec2(\n        0.7 + 0.2 * cos(iTime * 1.3),\n        0.5 + 0.2 * sin(iTime * 0.8)\n    );\n\n    float d1 = distance(fragCoord, p1);\n    float d2 = distance(fragCoord, p2);\n\n    // Smooth glowing fields\n    float c1 = smoothstep(120.0, 10.0, d1);\n    float c2 = smoothstep(100.0, 70.0, d2);\n\n    C += vec4(c1 + c2);\n\n    // ===== Composition with camera (live or external video) =====\n    vec4 cam = texture(iChannel2, uv);\n\n    // Blend field with camera (light overlay at 0.25)\n    fragColor = mix(C, cam, 0.25);\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "7cBGzc",
+			"date": "1775591236",
+			"viewed": 20,
+			"name": "Party Lights",
+			"username": "HiromuneKubayashi",
+			"description": "ASSIGNMENT: Final Project\nNAME: Hiromune Kubayashi\nTITLE: Party Lights",
+			"likes": 0,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950"
+			],
+			"hasliked": 0,
+			"parentid": "7ff3RX",
+			"parentname": "DATT4950 lab 9"
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "repeat",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\nStudent number: 219045111\nAssignment number: Final\nName: Ian Hayward\nTitle: In The Bloodstream\n\n-+< Description >+-\nThis system is a microscopic ecosystem simulation that attempts to visualize the inside of a bloodstream. It\nis an agent-based system, containing different types of cells like red & white blood cells, and virus cells.\nThe virus cells also leave behind \"trails\" that are represented by agents as well The system functions using\ntwo buffers - one that manages a neighbor-sampling cellular automata that creates a gradient map, and another\nthat manages all four types of agents.\n\nThe system places heavy focus on predator-prey dynamics. All cells simply move throughout the window, with\nviruses spawning every now and then in random spots. The white blood cells, upon detecting the trail of a\nnearby virus, cease normal movement and immediately start chasing the virus until they either eliminate it or\ncan no longer sense a virus. This creates an organic-feeling ecosystem that displays continuous and interesting\nbehaviour rather than feeling stagnant or scripted.\n\nThe way the system works makes use of two buffers - Buffer A and Buffer B. Buffer A manages a cellular automata\nthat stores a direction vector and averages its own direction with its neighbors and changes its angle with a\nbit of controlled randomness. This creates a shifting flow that dictates the movement of all agents. Buffer B\nmanages all actors in the system by storing their data (xPos, yPos, angle, state) in pixels in the bottom left.\nIt also manages the behaviour of all actors at once, removing the need for multiple buffers.\n\nThe system supports long-term behaviour in that more viruses constantly spawn for white blood cells to chase.\nOver time, the flow that cells follow will stagnate into one or two large streams that wrap around the edges of\nthe screen, but the infection never truly stops changing.\n\n-+< Interactions >+-\nThe shader offers many global variables that the user can change to see different results:\nBUFFER A:\n- bias: To what degree the neighbor-sampling algorithm prioritizes the self cell in its calculations.\n    - Higher value means it samples the self's value with more weight\n\nBUFFER B:\n- speedBC: The base speed of blood cells (red and white)\n    - Higher value makes them go faster\n- speedChase: The chasing speed of white blood cells\n    - Higher value makes them go faster when chasing a virus\n- speedV: The base speed of virus cells\n    - Higher value makes them go faster\n- turnSpeed: The speed at which cells turn with the flow\n    - Higher value makes them turn faster\n- virusSpawn: Chance for viruses to randomly spawn\n    - Higher value makes viruses spawn more often\n\n-+< Technical Realization >+-\nOriginally, I wanted to create blood vessels across the screen and have cells travel through them, much like\nthey do now (actually, I originally made leaves that grow from nothing using agents, but pivoted because I\ncouldn't figure out any extensions for the project). I couldn't figure out how to make vessels, so instead I\nmade a gradient map CA where each pixel has a direction vector. This was much easier to create, though it\nstill took a great deal of number tweaking to get it to work well.\n\nSome issues I ran into involved the CA slowly drifting towards the top-right corner of the screen, this turned\nout to be because I was adding 0.00001 to the vectors before normalizing them. This led to a top-right bias\nthat evolved over a long time of running the simulation. I removed it as cos() and sin() never result in a 0,\nso there is no need to avoid normalizing a 0 vector as it will never be 0.\n\nInitially, the cells moved much faster horizontally than vertically. This is because their movement is UV-based,\nand I did not account for the aspect ratio. By taking the aspect ratio into account when manipulating the cells'\nmovement, I was able to negate this issue.\n\nThis project was (very obviously) inspired by blood cells and viruses in a bloodstream.\n\nSome future extensions of the project may include adding some interaction between virus cells and red blood cells,\nwhere perhaps viruses seek out red blood cells and damage them in order to replicate. I could also add some\ninteraction between the CA and agents in the opposite direction, where the density of blood cells in a certain\narea may affect the flow direction.\n\n-+< External Credits >+-\nMany of the random functions in the \"Common\" tab of this shader were taken from in-class labs and exercises.\nAll other code in this shader has been written from scratch. If any code was inspired by work that does not\nbelong to me (e.g. random1() in the Common tab), the original source has been credited in the comments.\n\n*/\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord/iResolution.xy;\n    \n    vec4 data = texture(iChannel0, uv);\n    \n    // DISPLAY GRADIENT MAP FOR BACKGROUND --------------\n    // Extract the direction of flow from buffer A\n    vec2 flowDir = data.rg * 2.0 - 1.0;\n    \n    // Use dot product to compare the flow direction to a vector from the top left corner of the window\n    float dotP = dot(flowDir, normalize(vec2(-1.0, 1.0)));\n    \n    // Map back to 0.0 to 1.0 for colours\n    dotP = dotP * 0.5 + 0.5;\n    \n    // Mix background colours in based on the result, deep red-tinted black vs dark red (imitates inside of blood)\n    vec3 col = mix(vec3(0.1, 0.0, 0.04), vec3(0.25, 0.02, 0.05), dotP);\n    \n    // DISPLAY CELLS ------------------------------------\n    // Cycle through agents in buffer B\n    for(int x = 0; x < 30; x++) {\n        for(int y = 0; y < 12; y++) {\n            \n            // Get areas for agents, skip empty ones\n            bool isRBC   = x < 10 && y < 10;\n            bool isWBC   = x >= 10 && x < 15 && y < 5;\n            bool isVirus = x >= 15 && x < 18 && y < 3;\n            bool isTrail = x >= 18 && x < 30 && y < 12;\n            \n            if (!isRBC && !isWBC && !isVirus && !isTrail) continue;\n            \n            // Get cell data\n            vec4 data = texelFetch(iChannel1, ivec2(x,y), 0);\n            float state = data.w;\n            \n            // Calculate wrap-around so if a cell is half off-screen it will appear on both edges\n            vec2 diff = abs(uv - data.xy);\n            diff = min(diff, 1.0 - diff);\n            diff.x *= iResolution.x / iResolution.y; \n            float dist = length(diff);\n            \n            // Draw the cells depending on the type\n            if (isRBC) {\n                // Use smoothstep to draw.\n                // param 1 is the outer egde of the cell\n                // param 2 is the inner part of the cell\n                // between param 1 and 2, smoothly transition from 0 to 1 (in terms of colour)\n                float m = smoothstep(0.008, 0.005, dist);\n                // Use mix to actually draw the cell. vec3 is the colour of the cell\n                col = mix(col, vec3(0.9, 0.0, 0.0), m);\n            } else if (isWBC) {\n                float m = smoothstep(0.010, 0.007, dist);\n                col = mix(col, vec3(0.9, 0.9, 0.9), m);\n            } else if (isVirus && state > 0.0) {\n                float m = smoothstep(0.008, 0.003, dist);\n                col = mix(col, vec3(0.3, 0.9, 0.1), m);\n            } else if (isTrail && state > 0.0) {\n                // For the trail, multiply by its life value so it fades out\n                float m = smoothstep(0.004, 0.001, dist) * state;\n                col = mix(col, vec3(0.1, 0.7, 0.2), m);\n            }\n        }\n    }\n    \n    fragColor = vec4(col, 1.0);\n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "repeat",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Global variables\nconst float bias = 20.0; // How much the neighbor averaging is biased toward self\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord)\n{\n    // Get normalized coordinates (0.0-1.0)\n    vec2 uv = fragCoord/iResolution.xy;\n    // Get previous frame's data\n    vec4 map = texture(iChannel0, uv);\n    vec4 C = map;\n    \n    // INITIALIZE on frame 0\n    if(iFrame == 0) {\n        // Determine starting angle for this pixel\n        float angle = random1(vec3(floor(uv * 15.0), iDate.w)) * 2.0 * PI;\n        // Translate angle into a normalized direction vector\n        vec2 dir = vec2(cos(angle), sin(angle));\n    \n        // pack into 0–1\n        dir = dir * 0.5 + 0.5;\n    \n        fragColor = vec4(dir, 0.0, 1.0);\n        return;\n    }\n    \n    vec2 px = 1.0/iResolution.xy;\n    \n    // Get directions of current cell and NSWE neighbors\n    vec2 center = texture(iChannel0, uv).rg * 2.0 - 1.0;\n    vec2 up = texture(iChannel0, uv + vec2(0, px.y)).rg * 2.0 - 1.0;\n    vec2 down = texture(iChannel0, uv + vec2(0, -px.y)).rg * 2.0 - 1.0;\n    vec2 left = texture(iChannel0, uv + vec2(-px.x, 0)).rg * 2.0 - 1.0;\n    vec2 right = texture(iChannel0, uv + vec2(px.x, 0)).rg * 2.0 - 1.0;\n    // Get diagonals (weighted less)\n    vec2 upLeft = (texture(iChannel0, uv + vec2(-px.x, px.y)).rg * 2.0 - 1.0) * 0.707;\n    vec2 upRight = (texture(iChannel0, uv + vec2(px.x, px.y)).rg * 2.0 - 1.0) * 0.707;\n    vec2 downLeft = (texture(iChannel0, uv + vec2(-px.x, -px.y)).rg * 2.0 - 1.0) * 0.707;\n    vec2 downRight = (texture(iChannel0, uv + vec2(px.x, -px.y)).rg * 2.0 - 1.0) * 0.707;\n    \n    // Over time, average direction vector with yourself and neighbors\n    // (prio self based on bias variable)\n    vec2 avg = (center * bias + up + down + left + right + upLeft + upRight + downLeft + downRight) / (6.828 + bias);\n    \n    // Add some cool extra directional bias\n    vec2 curl = vec2(\n        right.y - left.y,\n        up.x - down.x\n    );\n    //avg += curl * 0.01;\n    \n    // Add some controlled randomness to stop things from going stagnant\n    float rand = random1(vec3(fragCoord / 5.0, iDate.w));\n    float angleNoise = ((rand - 0.5) * 0.25);\n    // Get the angle from the average direction vector\n    float angle = atan(avg.y, avg.x);\n    // Add the randomness\n    angle += angleNoise;\n    \n    // Update direction vector\n    vec2 dir = vec2(cos(angle), sin(angle));\n    dir = normalize(dir); // + 0.00001 is not necessary because cos and sin will never generate 0\n    dir = dir * 0.5 + 0.5; // Map back to 0.0-1.0\n    \n    C = vec4(dir, 0.0, 1.0);\n    \n    fragColor = C;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "repeat",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Global Variables\nconst float speedBC = 0.0015; // Blood cell speed\nconst float speedChase = 0.002; // White blood cell chase speed\nconst float speedV = 0.001; // Virus speed\nconst float turnSpeed = 0.025; // How fast cells can turn with the flow\nconst float virusSpawn = 0.003; // How rare a virus spawns\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    ivec2 texelCoord = ivec2(fragCoord);\n    float aspect = iResolution.y / iResolution.x;\n    \n    // Allocate parts of the corner of the screen to each type of agent\n    bool isRBC   = texelCoord.x < 10 && texelCoord.y < 10;\n    bool isWBC   = texelCoord.x >= 10 && texelCoord.x < 15 && texelCoord.y < 5;\n    bool isVirus = texelCoord.x >= 15 && texelCoord.x < 18 && texelCoord.y < 3;\n    bool isTrail = texelCoord.x >= 18 && texelCoord.x < 30 && texelCoord.y < 12;\n    bool isAgent = isRBC || isWBC || isVirus || isTrail;\n    \n    // Discard anything not an agent\n    if(!isAgent) {\n        fragColor = vec4(0.0);\n        discard;\n    }\n    \n    // INITIALIZE agents on frame 0\n    if(iFrame == 0) {\n        // Generate random data for agent\n        float randX = random1(vec3(texelCoord.x, 1.0, iDate.w));\n        float randY = random1(vec3(1.0, texelCoord.y, iDate.w));\n        float randAngle = random1(vec3(texelCoord, 1.0)) * 2.0 * PI;\n        \n        float state = 1.0; \n        if(isVirus || isTrail) state = 0.0; // Start dead\n        \n        fragColor = vec4(randX, randY, randAngle, state);\n        return;\n    }\n    \n    // Read data from previous frame\n    vec4 data = texelFetch(iChannel1, texelCoord, 0);\n    vec2 pos = data.xy;\n    float angle = data.z;\n    float state = data.w;\n    \n    // Virus trail logic\n    if(isTrail) {\n        // Determine which virus this trail belongs to\n        int trailID = texelCoord.y * 12 + (texelCoord.x - 18); // 0 to 143\n        int parentId = trailID / 16; // trailID can be from 0 to 143, so parentID is from 0 to 8\n        ivec2 parentPos = ivec2(15 + (parentId % 3), parentId / 3);\n        vec4 parentData = texelFetch(iChannel1, parentPos, 0);\n        \n        // Decay over time\n        if(state > 0.0) state -= 0.002; \n        \n        if(parentData.w <= 0.0) {\n            state = 0.0; // If the parent virus dies, kill the trail\n        } else {\n            // Check if there's a white blood cell in range\n            for (int x = 10; x < 15; x++) {\n                for (int y = 0; y < 5; y++) {\n                    vec4 WBC = texelFetch(iChannel1, ivec2(x,y), 0);\n                    vec2 far = abs(pos - WBC.xy);\n                    far = min(far, 1.0 - far);\n                    if (length(far) < 0.01) state = 0.0;\n                }\n            }\n            \n            // If dead, wait to spawn\n            if (state <= 0.0) {\n                int offset = trailID % 16;\n                // Drop a trail every 45 frames, offset so its one trail agent at a time\n                if (iFrame % (16 * 45) == (offset * 45)) {\n                    pos = parentData.xy;\n                    state = 1.0;\n                }\n            }\n        }\n        fragColor = vec4(pos, angle, state);\n        return;\n    }\n\n    // Other agent logic (red blood cells, white blood cells, viruses\n    // Get the direction of flow from buffer A\n    vec2 flowDir = texture(iChannel0, pos).rg * 2.0 - 1.0;\n    vec2 targetDir = flowDir;\n    \n    // Make new variables from the global variables, as these change depending on state and type of cell\n    float speed = 0.0;\n    float turn = turnSpeed;\n    \n    if(isRBC) { // If it is a red blood cell, no special behaviour.\n        speed = speedBC;\n    } else if(isWBC) { // If it is a white blood cell, write chasing logic and state switching:\n        speed = speedBC;\n        float minDist = 0.1; // How far it can detect viruses from\n        vec2 bestDiff = vec2(0.0); // Store the CLOSEST virus trail in range to prioritize it\n        bool chasing = false;\n        \n        // Look for alive virus trails\n        for(int x = 17; x < 30; x++) {\n            for(int y = 0; y < 12; y++) {\n                vec4 tData = texelFetch(iChannel1, ivec2(x,y), 0);\n                // Check to see if there is an alive virus/trail at this pixel\n                if(tData.w > 0.0) {\n                    // Also look for virus trails that wrap around the screen:\n                    vec2 diff = tData.xy - pos;\n                    diff = mod(diff + 0.5, 1.0) - 0.5; \n                    float dist = length(diff);\n                    // If the virus is within the WBC's hunting range, chase it\n                    if(dist < minDist) {\n                        minDist = dist;\n                        bestDiff = diff;\n                        chasing = true;\n                    }\n                }\n            }\n        }\n        \n        if(chasing) {\n            targetDir = normalize(bestDiff);\n            speed = speedChase;\n            turn = 0.25;\n        }\n    } else if(isVirus) { // If it is a virus cell, write spawning and death logic\n        speed = speedV; \n        if(state <= 0.0) { // If it is dead, chance to spawn\n            speed = 0.0;\n            if(random1(vec3(fragCoord, iTime)) < virusSpawn) { // Rare spawn\n                state = 1.0;\n                pos = random2(vec3(fragCoord, iDate.w));\n            }\n        } else {\n            // Check if caught by WBC\n            for(int x = 10; x < 15; x++) { // Cycle through all WBCs\n                for(int y = 0; y < 5; y++) {\n                    vec4 WBC = texelFetch(iChannel1, ivec2(x,y), 0);\n                    vec2 diff = abs(pos - WBC.xy);\n                    diff = min(diff, 1.0 - diff);\n                    if(length(diff) < 0.015) state = 0.0; // Die when caught\n                }\n            }\n        }\n    }\n    \n    // Apply steering based off gradient map from buffer A\n    vec2 currentDir = vec2(cos(angle), sin(angle));\n    vec2 newDir = normalize(mix(currentDir, targetDir, turn));\n    angle = atan(newDir.y, newDir.x);\n    \n    // Reuse rebel steering from assignment 3\n    float rebelChance = random1(vec3(pos.x, pos.y, iTime));\n    // If the chance succeeds, make the cell take a sharp turn (to break loops)\n    if (rebelChance < 0.2) {\n        angle += (random1(vec3(angle, iTime, iFrame)) * 4.0 - 2.0) * 0.1; \n    }\n    \n    pos.x += newDir.x * speed * aspect;\n    pos.y += newDir.y * speed;\n    pos = fract(pos); \n    \n    fragColor = vec4(pos, angle, state);\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\nconst float PI = 3.1415926535897932384626433; // Mathematical constant PI to the 25th decimal\n\n// Random functions (by me) that return a float, inspired by the random functions from class\nfloat random1(float p) {\n    vec3 p3  = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.x + p3.y) * p3.z);\n}\n\nfloat random1(vec2 p) {\n    vec3 p3  = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.x + p3.y) * p3.z);\n}\n\nfloat random1(vec3 p) {\n    vec3 p3  = fract(p * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.x + p3.y) * p3.z);\n}\n\n// Below are random functions not by me, but from class\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "fcsXRS",
+			"date": "1775594267",
+			"viewed": 11,
+			"name": "Bloodstream",
+			"username": "Ian Hayward",
+			"description": "Final assignment",
+			"likes": 0,
+			"published": 2,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950",
+				"digm5950"
+			],
+			"hasliked": 0,
+			"parentid": "",
+			"parentname": ""
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "\n/*\n\nStudent ID: 219581438\nAssignment 3\nJulia Scheerer \n\nSpiral Chasers\n\nDESCRIPTION:\nOverall what A3 does:\n1 spiral of \"sugar\" (orange) that agents are atracted to and eat. orange does not decay but gets eaten\n\n1 spiral of yellow that agents are attracted to and add to. yellow decays on its own\n\nagents that have 2 antenea for sensing sugar and yellow. \n\nsuagr and yellow restart their spirals from the middle\nafter a cerntain amount of time elapses (orange = 50 seconds)\n(yellow starts at 10 seconds and regens at 60 seconds.)\n\n\nTECHNICAL REALIZATONS:\n\nFirst I took the lab 8 code and made the circle of orange sugar into a spiral\n\nI turned the agents into agents with antenea from lab 9 to increase their acuracy.\n\nfrom their I wanted to have the agents perform a different behaviour so i create a second spiral that \nagents would add to instead of subtract from. This yellow spiral that decays relativly fast, so even though \nagents are attracted to it more than the orange that is only the case until yellow decays to less than orange  in the current stop\nat which time the agents are atracted to the orange again. \n\nI ran into a problem where it seemed like agents were \"generating\" their own yellow where the orange spiral was \ninstead of \"taking\" yellow and spreading it past the spiral. This is because there is somehow a low level amount of \nyellow where the orange spiral is and yellow increases through mutliplication so low level amounts of yellow can still grow \nand make an impact on the overall yellow. I managed to combat this by making sure yellow was above a certain threshold\nbefore its allowed to expand. \n\noverall I really like the behaviours you can for the first 2 minutes or so as the agents eat orange ad expand yellow\n\n\ninteraction: when you click yellow forms \n\n\nFUTURE EXTENTIONS:\nI really like the version I created but in the future I could seperate the behaviours of eating orange \nor spreading yellow to 2 seperate agent systems. I could also create a version where proximity or yellow or orange increases\nthe speed where speed is saved in A.w now that A.w doesn't have to hold the previous frame anymore. \n\n*/\n\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = (fragCoord / iResolution.xy);\n   \n    // zoom in\n    if (iMouse.z > 0.0) {\n        float magnification = 6.;\n        uv /= magnification;\n        uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));\n    }\n    \n    \n    // get our cell\n    vec4 A = texture(iChannel0, uv);\n    vec4 B = texture(iChannel1, uv);\n    vec4 C = texture(iChannel2, uv);\n    vec4 D = texture(iChannel3, uv);\n    // divide position by resolution to view in 0..1\n    \n    // get distance from this pixel to the particle it is tracking:\n    float d = distance(uv * iResolution.xy, A.xy);\n    //float p = 1/d.;\n    //float p = exp(0.3*-d);\n    float p = smoothstep(2., 0., d);\n    \n    \n    // sugar field:\n  \n    // orange \n    fragColor = vec4(C.x*1.,C.y* 0.5, 0, C.a);\n    // yellow\n    fragColor += vec4(D.x*1.,D.y* 1., 0, D.a);\n    // trails:\n    fragColor += B;\n    // agents:\n    fragColor += vec4(p);\n   \n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "const float TWOPI = 6.283185307179586;\n\n// make a sigmoid transition of x around center with given width\nfloat sigmoid(float x, float center, float width) {\n    return 1.0 / (1.0 + exp(-(x-center)*4.0/width));\n}\n\n\n\n///  2 out, 3 in...\nvec2 hash23(vec3 p3)\n{\n\tp3 = fract(p3 * vec3(.1031, .1030, .0973));\n    p3 += dot(p3, p3.yzx+33.33);\n    return fract((p3.xx+p3.yz)*p3.zy);\n}\n\n// create a 2D rotation matric from an angle in radians\nmat2 rotate2d(float angle){\n    float s = sin(angle);\n    float c = cos(angle);\n    return mat2(\n        c,-s,\n        s,c\n    );\n}\n\n// Gaussian blur\nvec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {\n    // N/2 .. N/4\n    float sigma = float(N)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(img, fragCoord/resolution) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=N; i++) {\n        vec2 offset = float(i) * dir;\n        float weight = exp(float(i*i) * expFactor);\n        sum += texture(img, (fragCoord + offset)/resolution) * weight;\n        sum += texture(img, (fragCoord - offset)/resolution) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    return sum / weightSum;\n}\n\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "\n\n// each pixel tracks an agent\n// .xy is the agent location (in pixels)\n// .z is the agent direction (in radians)\n\n// given current particle \"A\" at pixel `fragCoord`\n// is the particle at `fragCoord+offset` nearer? if so return that.\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    // get by neighbour pixel\n    vec4 N = texture(iChannel0, (fragCoord+offset)/iResolution.xy);\n    // distance from my pixel to the particle I'm tracking:\n    float d1 = distance(fragCoord, A.xy);\n    // distance from my pixel to the particle my neighbor is tracking:\n    float d2 = distance(fragCoord, N.xy);\n    // if my neighbor's particle is nearer, track that instead! \n    if (d2 < d1) { return N; } else { return A; }\n}\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord) {\n    // convert pixel coordinate to normalize texture coord\n    vec2 uv = fragCoord / iResolution.xy;\n    // our previous state\n    vec4 A = texture(iChannel0, uv);\n    \n    // make sure we are tracking the nearest particle by testing\n    // each of our nearest pixels to see if their particle is nearer\n    for (int x=-2; x<=2; x++) {\n        for (int y=-2; y<=2; y++) {\n            A = getNearestParticle(A, fragCoord, vec2(x, y));\n        }\n    }\n    \n    vec4 noise = random4(vec3(A.xy, iTime));\n    \n    float speed = 50.;\n    float sensor_length = 20.;\n    \n    // set up antenea \n    mat2 rot = rotate2d(A.z);\n    vec2 sensor0 = vec2(1,0) * sensor_length; // sensor straight ahead at the angle your moving \n    vec2 sensor1 = vec2(1,1) * sensor_length; // sensor to the right\n    vec2 sensor2 = vec2(1,-1) * sensor_length; // sensor to the left\n    vec2 sensor0_in_world = rot* sensor0+A.xy;\n    vec2 sensor1_in_world = rot* sensor1+A.xy;\n    vec2 sensor2_in_world = rot* sensor2+A.xy;\n    \n    // get the orange\n    vec4 For = texture (iChannel2, sensor0_in_world/iResolution.xy);\n    vec4 FLor = texture (iChannel2, sensor1_in_world/iResolution.xy);\n    vec4 FRor = texture (iChannel2, sensor2_in_world/iResolution.xy);\n    \n    // get the yellow\n    vec4 Fyellow = texture (iChannel3, sensor0_in_world/iResolution.xy);\n    vec4 FLyellow = texture (iChannel3, sensor1_in_world/iResolution.xy);\n    vec4 FRyellow = texture (iChannel3, sensor2_in_world/iResolution.xy);\n    \n    // follow the orange if its greater in the current dirction than the yellow is in a different direction \n    // yellow is a stronger lure\n    // that being said because yellow is decays fast it is only a stronger force for a short window of time\n    \n    \n    // if front orange is greater than left and front is greater than right \n    if (For.x > FLor.x && For.x > FRor.x) {\n       \n        if((FRyellow.x> FLyellow.x )&& (FRyellow.x>For.x)){ // yellow to the right is stronger than yellow to the left and yellow to the right is stronger than orange to the front \n            A.z += 1.;\n        }else if((FLyellow.x> FRyellow.x )&& (FLyellow.x>For.x)){\n            A.z -= 1.;\n        }\n      \n        // no change to heading\n    } else if (For.x < FLor.x && For.x < FRor.x) { // sugar to right and left are the same \n        // rotate randomly left or right\n        A.z += (noise.z = 0.5);\n    } else if (FLor.x < FRor.x) { // if sugar to the right is stronger than left\n    \n        if( FLyellow.x >FRor.x){ // if yellow to the left is stronger than sugar to the right \n            if(Fyellow.x>FLyellow.x){// if yellow straight ahead is great that yellow to the left\n            // keep going straight\n            }else{\n              A.z-= 1.; // rotate left \n            }\n        }else{ // sugar to the right is stronger than yellow to the left\n         \n            A.z+= 1.;\n           // rotate right\n        }\n     \n    } else if (FRor.x < FLor.x) { // if sugar to the left is stronger than sugar to the right\n    \n        if( FRyellow.x >FLor.x){ // yellow to the right is stronger than sugar to the left\n            if(Fyellow.x>FRyellow.x){// if yellow straight ahead is great that yellow to the right\n                // keep going straight\n            }else{\n                    // rotate right\n                A.z += 1.;\n            }\n        }else{\n                // rotate left\n            A.z -=1.;\n        }\n    }\n    \n    rot = rotate2d(A.z);\n    // move the particle\n    // get the xy velocity from the A.z direction\n    // polar to cartesian\n    vec2 vel =  rot* vec2(speed,0);\n    // integrate velocity to position\n    A.xy += vel * iTimeDelta;\n    \n    // get the bounded position within the screen image\n    vec2 b = clamp(A.xy, vec2(0), iResolution.xy);\n    // compare the bounded and actual positions -- if they are different, reflect their orientations:\n    if (A.x != b.x) { A.z = TWOPI*0.5 - A.z; } // reflect in Y axis\n    if (A.y != b.y) { A.z = TWOPI - A.z; } // reflect in X axis\n    // also, actually clamp the position on screen\n    A.xy = b.xy; \n    \n    // initialize:\n    if (iFrame == 0) {\n        //A.xy = iResolution.xy * noise.xy;\n        // every pixel in a NxN square is tracking the same particle\n        // round the position to the nearest \"N\"\n        float N = 30.;\n        A.xy = round(fragCoord/N) * N;\n        // we have to seed the random generator using the particle's\n        // location, not the pixel location, so that all pixels agree\n        vec4 noise = random4(vec3(A.xy, iFrame));\n        \n        \n        // direction:\n        A.z = noise.z * TWOPI;\n    }\n    \n    fragColor = A;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// agent trails \n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    // convert pixel coordinate to normalize texture coord\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    // our previous state\n    vec4 A = texture(iChannel0, uv); // the particles\n    vec4 B = texture(iChannel1, uv); // the trails\n    \n    \n    // decay:\n    B *= 0.97;\n    \n    // draw the particle\n    // get distance from this pixel to the particle it is tracking:\n    float d = distance(fragCoord, A.xy);\n    //float p = 1/d.;\n    //float p = exp(0.3*-d);\n    float p = smoothstep(1., 0., d);\n    \n    B += vec4(p);\n    \n    fragColor = B;\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// sugar landscape\n\nmat3 gaussBlur = mat3(\n        1, 2, 1,\n        2, 4, 2,\n        1, 2, 1\n    ) * 1.0/16.0;\n    \n    \n   \n\n/*\nBuffer C generates an orange spiral. Heavily inspired by lab 8 \nthis spiral regernerates every 50 seconds (once it goes beyond my screen)\n*/\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = (fragCoord / iResolution.xy);\n    \n    vec4 C = texture(iChannel2, uv); // the previous frame\n    \n    // gaussian blurred previous frame:\n    vec4 N = texture(iChannel2, (fragCoord + vec2(0, 1))/iResolution.xy);\n    vec4 S = texture(iChannel2, (fragCoord + vec2(0, -1))/iResolution.xy);\n    vec4 E = texture(iChannel2, (fragCoord + vec2(1, 0))/iResolution.xy);\n    vec4 W = texture(iChannel2, (fragCoord + vec2(-1, 0))/iResolution.xy);\n    vec4 NE = texture(iChannel2, (fragCoord + vec2(1, 1))/iResolution.xy);\n    vec4 SE = texture(iChannel2, (fragCoord + vec2(1, -1))/iResolution.xy);\n    vec4 NW = texture(iChannel2, (fragCoord + vec2(-1, 1))/iResolution.xy);\n    vec4 SW = texture(iChannel2, (fragCoord + vec2(-1, -1))/iResolution.xy);\n    C = ((NE+SE+NW+SW) + 2.*(N+E+S+W) + 4.*C)/16.;\n    \n    vec4 noise = random4(vec3(fragCoord, iTime));\n   \n    // am I being eaten?\n   \n    vec4 A = texture(iChannel0, uv); // the nearest agent\n    float ad = distance(A.xy, fragCoord); // distance to agent\n    if (ad < 1.) { \n        \n        C.xyz *= 0.7;\n    }\n    \n    float a = iTime*3.;\n    \n    \n    // creates a spiral effect that lasts for 49 seconds then resets. \n   \n    if (int(iTime)%50< 49){ \n        a = iTime*3.;\n    }else{\n        C.a =0.;\n    }\n    \n\n    float r = (iResolution.y)/30.+C.a;\n\n    vec2 p = vec2(iResolution.xy/2.);\n    p.x += r * cos(a);\n    p.y += r * sin(a);\n    \n    float d = distance(fragCoord, p);\n    \n    \n    // add a circle to the field:\n    C += vec4(step(d, 10.)); // size of circle \n    C.a +=0.1; \n    // keep it in the range of 0..1:\n    C.xyz = clamp(C.xyz, 0., 1.);\n    fragColor = C;\n    \n    \n}\n",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XdfGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// sugar landscape\n\nmat3 gaussBlur = mat3(\n        1, 2, 1,\n        2, 4, 2,\n        1, 2, 1\n    ) * 1.0/16.0;\n    \n    \n   \n\n// buffere D generates the yellow pixles. \n// \nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = (fragCoord / iResolution.xy);\n    \n    vec4 C = texture(iChannel2, uv); // the previous frame\n    \n    // gaussian blurred previous frame:\n    vec4 N = texture(iChannel2, (fragCoord + vec2(0, 1))/iResolution.xy);\n    vec4 S = texture(iChannel2, (fragCoord + vec2(0, -1))/iResolution.xy);\n    vec4 E = texture(iChannel2, (fragCoord + vec2(1, 0))/iResolution.xy);\n    vec4 W = texture(iChannel2, (fragCoord + vec2(-1, 0))/iResolution.xy);\n    vec4 NE = texture(iChannel2, (fragCoord + vec2(1, 1))/iResolution.xy);\n    vec4 SE = texture(iChannel2, (fragCoord + vec2(1, -1))/iResolution.xy);\n    vec4 NW = texture(iChannel2, (fragCoord + vec2(-1, 1))/iResolution.xy);\n    vec4 SW = texture(iChannel2, (fragCoord + vec2(-1, -1))/iResolution.xy);\n    C = ((NE+SE+NW+SW) + 2.*(N+E+S+W) + 4.*C)/16.;\n    \n    vec4 noise = random4(vec3(fragCoord, iTime));\n    C.xyz *=0.997; // 0.992 \n    \n    // am I adding to the yellow?\n   \n    vec4 A = texture(iChannel0, uv); // the nearest agent\n    float ad = distance(A.xy, fragCoord); // distance to agent\n\n\n          // if the current pixel isn't at the edge, \n    if (!(uv.x >= 0.95)&&!(uv.y >= 0.95)){ \n\n        // if the distance between the current pixel and its agent is < 1\n        if (ad < 0.8 && C.x+C.y>0.3) { \n            // there are low level amounts of C.x and C.y in a circular pattern that cause agents to seemingly \n            // \"generate their own yellow in a spiral. avoid this by not increasing the yellow when it is small \n            C.xyz *= 3.;\n        \n        }\n   \n    }\n      \n    float a = iTime*1.;\n  \n    \n    \n    // creates a spiral effect after 9 seconds has passed \n\n    if(iTime>9.){\n    \n        if(int(iTime)%10 > 9){\n            C.a =0.;\n      \n        }else{\n             a = iTime*1.;\n        }\n         //reset the spiral every 60 seconds. \n        if(iTime>59.){\n     \n            if (int(iTime)%60< 59){\n                a = iTime*1.;\n            }else{\n                C.a =0.;\n            }\n    \n        }\n    \n\n        float r = (iResolution.y)/30.+C.a;\n\n        vec2 p = vec2(iResolution.xy/2.);\n        p.x += r * cos(a);\n        p.y += r * sin(a);\n\n        // if the mouse is held, randomize some pixels near the mouse\n        if (iMouse.z > 0.0) {\n            p = iMouse.xy;\n        }\n        float d = distance(fragCoord, p);  // circumference edge \n\n\n        // add a circle to the field:\n        C += vec4(step(d, 10.)); // size of circle, returns 0 if distance > 10, returns 1 if distance < 10\n        C.a +=0.1; // raduis increases by 0.1 every time you hit this pixel causing a spiral\n        // keep it in the range of 0..1:\n        C.xyz = clamp(C.xyz, 0., 1.);\n    }\n    \n    fragColor = C;\n    \n   \n}\n",
+				"name": "Buffer D",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "7fBGDm",
+			"date": "1774150603",
+			"viewed": 15,
+			"name": "Spiral Chasers",
+			"username": "Julia Scheerer",
+			"description": "agents tracking the CA. CA is a spiral. one orange, one yellow. they eat orange and add to yellow.  ",
+			"likes": 0,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950"
+			],
+			"hasliked": 0,
+			"parentid": "sfs3Wl",
+			"parentname": "finished lab 8 extended"
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "\n/*\n\nStudent ID: 219581438\nFinal Project\nJulia Scheerer \n\ntitle: Caterpillars and Healers\n\n\n\nDESCRIPTION:\nOverall what Assignment does:\nyellow agents: caterpillars, eat trees and blue agents/healers inspire spores and tree growth\n\nthis system is an extention of the forest fire probabilistic CA in conjunction with an agent system. \n2 types of agents to control the growth and decay of the forest. \n\n\nTECHNICAL REALIZATONS:\n\nI was able to create this system by putting the forest fire CA into what was previously the \"sugar\" buffer\nin lab 8. from here I had to decide how the agwents were going to affect the forest. \ninitially I had them attached to the lightning strikes but lightning strikes were already so rare that it wasn't\nclear thats what the agents were affecting. I then wondered what would happen if I attached them to the burning\nprobability (if near an agent check burning probabiliy otherwise don't burn). \n\nthis was decent but I had to decide on on the burn radius around each agent. I made this relativly large because \nnot every agent is automatically causing the forest to burn so I wanted the ones who were to make a statment. \nThen I attached the spore and tree growth probabilites to another set of agents that were avoiding the trees \nthese agents would promote tree growth in their current locations, this just meant randomly assigning the agents to be \nburning or growth agents and storing their type. I just reversed the attracted to trees logic for growth agents so they \navoided trees instead. \n\nfrom here it was all about balancing the probabilites for this version where they were only considered when \nan agent of the correct type was near them. this meant all probabilites needed to increase significantly overall, \nwhile still maintaning balance between growth and burning probabilites. I like the levels I settled on but feel free\nto adjust them. I think this version works because theres always some amount of burning from a decent amount of agents \nbut not too many and the regrowth is slow enough not to make the forest too dense but fast enough that the forest \nstill regrows and doesnt stay mostly dead. you could go smaller with the growth probability but I didn't want\nthis to be way too slow either. \n\n\n\nFUTURE EXTENTIONS:\nI really like the version I created but in the future I could see attaching rain probability to something. \nI could implement a version where if 2 or more agents are close to each other rain is more likly or lightning is more likely.\n\n*/\n\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = (fragCoord / iResolution.xy);\n   \n    // zoom in\n    if (iMouse.z > 0.0) {\n        float magnification = 6.;\n        uv /= magnification;\n        uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));\n    }\n    \n    \n    // get our cell\n    vec4 A = texture(iChannel0, uv);\n    vec4 B = texture(iChannel1, uv);\n    vec4 C = texture(iChannel2, uv);\n    \n    // divide position by resolution to view in 0..1\n    \n    // get distance from this pixel to the particle it is tracking:\n    float d = distance(uv * iResolution.xy, A.xy);\n    //float p = 1/d.;\n    //float p = exp(0.3*-d);\n    float p = smoothstep(2., 0., d);\n    \n    \n    // forest:\n  \n    if (C.x == 0.5) { // if alive\n        fragColor = vec4(0, 0.5, 0, 1);\n    } else if (C.x == 1.0) { // if burning\n        fragColor = vec4(1, 0.5, 0, 1);\n    } else {\n        fragColor = vec4(0); // dead\n    }\n    \n    // trails:\n   fragColor += B;\n    // agents:\n    fragColor += vec4(p);\n    \n   \n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "const float TWOPI = 6.283185307179586;\n\n// make a sigmoid transition of x around center with given width\nfloat sigmoid(float x, float center, float width) {\n    return 1.0 / (1.0 + exp(-(x-center)*4.0/width));\n}\n\n\n\n///  2 out, 3 in...\nvec2 hash23(vec3 p3)\n{\n\tp3 = fract(p3 * vec3(.1031, .1030, .0973));\n    p3 += dot(p3, p3.yzx+33.33);\n    return fract((p3.xx+p3.yz)*p3.zy);\n}\n\n// create a 2D rotation matric from an angle in radians\nmat2 rotate2d(float angle){\n    float s = sin(angle);\n    float c = cos(angle);\n    return mat2(\n        c,-s,\n        s,c\n    );\n}\n\n// Gaussian blur\nvec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {\n    // N/2 .. N/4\n    float sigma = float(N)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(img, fragCoord/resolution) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=N; i++) {\n        vec2 offset = float(i) * dir;\n        float weight = exp(float(i*i) * expFactor);\n        sum += texture(img, (fragCoord + offset)/resolution) * weight;\n        sum += texture(img, (fragCoord - offset)/resolution) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    return sum / weightSum;\n}\n\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "\n\n\n// each pixel tracks an agent\n// .xy is the agent location (in pixels)\n// .z is the agent direction (in radians)\n\n// given current particle \"A\" at pixel `fragCoord`\n// is the particle at `fragCoord+offset` nearer? if so return that.\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    // get by neighbour pixel\n    vec4 N = texture(iChannel0, (fragCoord+offset)/iResolution.xy);\n    // distance from my pixel to the particle I'm tracking:\n    float d1 = distance(fragCoord, A.xy);\n    // distance from my pixel to the particle my neighbor is tracking:\n    float d2 = distance(fragCoord, N.xy);\n    // if my neighbor's particle is nearer, track that instead! \n    if (d2 < d1) { return N; } else { return A; }\n}\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord) {\n    // convert pixel coordinate to normalize texture coord\n    vec2 uv = fragCoord / iResolution.xy;\n    // our previous state\n    vec4 A = texture(iChannel0, uv);\n    vec4 C = texture(iChannel2, uv);\n    // make sure we are tracking the nearest particle by testing\n    // each of our nearest pixels to see if their particle is nearer\n    for (int x=-2; x<=2; x++) {\n        for (int y=-2; y<=2; y++) {\n            A = getNearestParticle(A, fragCoord, vec2(x, y));\n        }\n    }\n    \n    vec4 noise = random4(vec3(A.xy, iTime));\n    \n    float speed = 20.;\n    float sensor_length = 20.;\n    \n    // set up antenea \n    mat2 rot = rotate2d(A.z);\n    vec2 sensor0 = vec2(1,0) * sensor_length; // sensor straight ahead at the angle your moving \n    vec2 sensor1 = vec2(1,1) * sensor_length; // sensor to the right\n    vec2 sensor2 = vec2(1,-1) * sensor_length; // sensor to the left\n    vec2 sensor0_in_world = rot* sensor0+A.xy;\n    vec2 sensor1_in_world = rot* sensor1+A.xy;\n    vec2 sensor2_in_world = rot* sensor2+A.xy;\n    \n    // get the forest location\n    vec4 F = texture (iChannel2, sensor0_in_world/iResolution.xy);\n    vec4 FL = texture (iChannel2, sensor1_in_world/iResolution.xy);\n    vec4 FR = texture (iChannel2, sensor2_in_world/iResolution.xy);\n    \n  \n    if(A.w ==1.0){\n         // attracted to forest logic\n        if (F.x > FL.x && F.x > FR.x) {\n            // no change to heading\n        } else if (F.x < FL.x && F.x < FR.x) {\n            // rotate randomly left or right\n            A.z += (noise.z = 0.5);\n        } else if (FL.x < FR.x) {\n            A.z+= 1.;\n            // rotate right\n        } else if (FR.x < FL.x) {\n            // rotate left\n            A.z -=1.;\n        }\n    }\n   \n     if(A.w ==0.0){\n        // running from forest logic\n        if (F.x > FL.x && F.x > FR.x) {\n            // no change to heading\n             A.z += (noise.z = 0.5);\n        } else if (F.x < FL.x && F.x < FR.x) {\n            // rotate randomly left or right\n            //A.z += (noise.z = 0.5);\n        } else if (FL.x < FR.x) {\n            A.z-= 1.;\n            // rotate right\n        } else if (FR.x < FL.x) {\n            // rotate left\n            A.z +=1.;\n        }\n     }\n    \n    \n    rot = rotate2d(A.z);\n    // move the particle\n    // get the xy velocity from the A.z direction\n    // polar to cartesian\n    vec2 vel =  rot* vec2(speed,0);\n    // integrate velocity to position\n    A.xy += vel * iTimeDelta;\n    \n    // get the bounded position within the screen image\n    vec2 b = clamp(A.xy, vec2(0), iResolution.xy);\n    // compare the bounded and actual positions -- if they are different, reflect their orientations:\n    if (A.x != b.x) { A.z = TWOPI*0.5 - A.z; } // reflect in Y axis\n    if (A.y != b.y) { A.z = TWOPI - A.z; } // reflect in X axis\n    // also, actually clamp the position on screen\n    A.xy = b.xy; \n    \n    // initialize:\n    if (iFrame == 0) {\n        //A.xy = iResolution.xy * noise.xy;\n        // every pixel in a NxN square is tracking the same particle\n        // round the position to the nearest \"N\"\n        float N = 30.;\n        A.xy = round(fragCoord/N) * N;\n        // we have to seed the random generator using the particle's\n        // location, not the pixel location, so that all pixels agree\n        vec4 noise = random4(vec3(A.xy, iFrame));\n        A.w = noise.y<0.5 ? 1.0: 0.0;\n        \n        // direction:\n        A.z = noise.z * TWOPI;\n    }\n    \n    fragColor = A;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    // convert pixel coordinate to normalize texture coord\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    // our previous state\n    vec4 A = texture(iChannel0, uv); // the particles\n    vec4 B = texture(iChannel1, uv); // the trails\n    \n    \n    // decay:\n    B *= 0.9;\n    \n    // draw the particle\n    // get distance from this pixel to the particle it is tracking:\n    float d = distance(fragCoord, A.xy);\n    //float p = 1/d.;\n    //float p = exp(0.3*-d);\n    float p = smoothstep(1., 0., d);\n    \n    if(p>0.0){\n        if(A.w ==0.0){\n            B += vec4(p,p,0.8,0.7); // running from forest, blue \n       \n        }else if(A.w ==1.0 ){\n        \n            B += vec4(p,p+0.9,0.0,0.4); // going towards forest \n        }\n    }\n     \n    \n    \n    B += vec4(p);\n    \n    fragColor = B;\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// implemented Forest fire CA\n\n// three possible states:\nfloat empty = 0.0;\nfloat tree = 0.5;\nfloat burning = 1.0;\n\n// the chance of an empty cell regrowing trees by expansion:\nfloat growth_probability = 0.04;\n// the chance of an empty cell regrowing trees by random sporing:\nfloat spore_probability = 0.02;// 0.001\n// the chance of lighting striking a cell:\nfloat lightning_probability = 0.001;\n// chance of fire spreading:\nfloat fire_probability = 0.55;\n// chance of fire going out\nfloat chance_of_rain = 0.25;\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    // normalized coordinate (0.0 to 1.0):\n    vec2 uv = fragCoord / iResolution.xy;\n\n    // get self state\n    vec4 C  = texture(iChannel2, (fragCoord+vec2( 0, 0))/iResolution.xy);\n    \n    // get state of all neighbour pixels:\n    vec4 E  = texture(iChannel2, (fragCoord+vec2( 1, 0))/iResolution.xy);\n    vec4 W  = texture(iChannel2, (fragCoord+vec2(-1, 0))/iResolution.xy);\n    vec4 N  = texture(iChannel2, (fragCoord+vec2( 0, 1))/iResolution.xy);\n    vec4 S  = texture(iChannel2, (fragCoord+vec2( 0,-1))/iResolution.xy);\n    vec4 NE = texture(iChannel2, (fragCoord+vec2( 1, 1))/iResolution.xy);\n    vec4 NW = texture(iChannel2, (fragCoord+vec2(-1, 1))/iResolution.xy);\n    vec4 SE = texture(iChannel2, (fragCoord+vec2( 1,-1))/iResolution.xy);\n    vec4 SW = texture(iChannel2, (fragCoord+vec2(-1,-1))/iResolution.xy);\n    \n    vec4 A = texture(iChannel0, uv); // the nearest agent\n    float ad = distance(A.xy, fragCoord); // distance to agent\n\n    // true if any neighbour is a tree:\n\tbool neartree = N.x == tree || E.x == tree \n\t\t\t\t|| W.x == tree || S.x == tree \n\t\t\t\t|| NE.x == tree || SE.x == tree \n\t\t\t\t|| NW.x == tree || SW.x == tree;\n\t\n\t// true if any neighbour is burning and within 10 of an agent:\n\tbool nearburning = (N.x == burning || E.x == burning \n\t\t\t\t|| W.x == burning || S.x == burning \n\t\t\t\t|| NE.x == burning || SE.x == burning \n\t\t\t\t|| NW.x == burning || SW.x == burning )&& (ad<10.) ; \n                \n    if (nearburning== true && A.w== 0.0){ // if nearest agent is a growth agent, don't burn\n        nearburning = false;\n    }\n\n    float value = C.x;\n    vec4 noise = random4(vec3(fragCoord, iTime)); \n    \n    if (value == empty) {\n\t\t// are any neighbors trees?\n\t\tif (neartree) {\t\t\t\n\t\t\t// chance of regrowing (only if near growth agent):\n\t\t\tif (noise.x < growth_probability\n             && noise.y < growth_probability && A.w==0.0&& ad<12. && A.w==0.0) {\n\t\t\t\tvalue = tree;\n\t\t\t}\n\t\t} else if (noise.z < spore_probability \n                && noise.w < spore_probability && A.w==0.0&& ad<7. && A.w==0.0) {\n\t\t\t// smaller chance of propagation by seeding:\n\t\t\tvalue = tree;\n\t\t}\n\t} else if (value == tree) {\n\t\t// are any neighbors burning?\n\t\tif (nearburning && (noise.x < fire_probability \n                         && noise.y < fire_probability)) {\n\t\t\t// if (any neighbors are burning, start burning too:\n\t\t\tvalue = burning;\n\t\t\n\t\t}else if(noise.z < lightning_probability\n                    && noise.w < lightning_probability && A.w==1.0) {\t\t\n                // otherwise, there's a small chance of catching fire due to atmostpheric conditions:\n                value = burning;\n        }\n        \n        \n\t} else if (value == burning && noise.x < chance_of_rain \n                                && noise.y < chance_of_rain) {\n\t\t// a burning tree cell becomes an empty cell\n\t\tvalue = empty;\n\t} \n    \n    // update my state:\n    fragColor = vec4(value);\n  \n   \n    if (iFrame == 0 ) {\n        fragColor = vec4(noise.x < 0.01 ? tree : empty);\n    }\n    \n    // add burning when and where mouse is pressed\n    if (iMouse.z > 0.0) {\n        // if the mouse is held, randomize some pixels near the mouse\n        if (distance(fragCoord, iMouse.xy) < 10.0) {\n            fragColor = vec4(step(0.8, noise.x));\n        }\n    } \n    \n   \n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "sc23Wc",
+			"date": "1775619727",
+			"viewed": 16,
+			"name": "Caterpillars and Healers",
+			"username": "Julia Scheerer",
+			"description": "Forest Fire CA that is controlled by an agent system. Blue void trees and causes new spores and tree growth, yellow agents are attracted to trees and cause trees to burn",
+			"likes": 0,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950"
+			],
+			"hasliked": 0,
+			"parentid": "7fBGDm",
+			"parentname": "A3 Julia Scheerer"
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n    Title:         doomsday: life vs. ai-virus\n\n    VISUAL CONCEPT: Living Biology vs Synthetic Invader\n   \n      - White blowout eliminated: all additive layers are strictly\n        budget-capped so total brightness never saturates to white\n      - Heavily infected areas now show CORRUPTED TISSUE: dark necrotic\n        base with glowing virus-colour cracks and pulsing membrane\n        remnants — visually distinct from healthy AND from white\n      - Agent proximity bloom drastically reduced and hard-clamped\n      - Infected cell interiors REPLACE life colour rather than adding\n        on top of it — prevents double-bright accumulation\n      - Dead + infected cells show dark viral residue, not white\n\n    VISUAL LANGUAGE (organic vs synthetic):\n      Life  = soft rounded cells, warm greens/golds, visible nuclei,\n              breathing pulse, dark olive petri-dish background\n      Virus = hard rotating hexagons, cold neon, circuit-trace trails,\n              corrupted cracked necrotic tissue where it has won\n\n    Reads:\n        iChannel0 = Buffer A  (R=energy, G=age_norm, B=infection)\n        iChannel1 = Buffer B  (XY=pos, Z=heading, W=flavour; A=proximity)\n        iChannel2 = Buffer C  (R=trail, G=pressure, B=evo stage)\n*/\n\n\n// COLOUR PALETTE\n\n// virusColor(t): cold neon virus palette across 4 evolution stages.\n//   t=0: orange (Scout), t=0.33: violet (Swarm),\n//   t=0.66: electric blue (Network), t=1.0: crimson (Dominion)\n\n// Right-half mouse: inoculate radius and trail suppression strength\n#define INOCULATE_RADIUS      50.0\n#define INOCULATE_STRENGTH    0.80\n// Cauterize: hold right-click + shift kills cells (scorched earth)\n// Implemented via right half + long hold detection\n\nvec3 virusColor(float t) {\n    vec3 c0 = vec3(1.00, 0.42, 0.00);\n    vec3 c1 = vec3(0.72, 0.08, 0.95);\n    vec3 c2 = vec3(0.00, 0.48, 1.00);\n    vec3 c3 = vec3(0.95, 0.02, 0.10);\n    float s = clamp(t, 0.0, 1.0) * 3.0;\n    if (s < 1.0) return mix(c0, c1, s);\n    if (s < 2.0) return mix(c1, c2, s - 1.0);\n                 return mix(c2, c3, s - 2.0);\n}\n\n// ----------------------------------------------------------------\n// lifeColor(energy, age): warm organic palette.\n//   Young+healthy: lime green | Mature: gold | Old+weak: amber\n// ----------------------------------------------------------------\nvec3 lifeColor(float energy, float age) {\n    vec3 young = vec3(0.18, 0.92, 0.22);\n    vec3 mid   = vec3(0.82, 0.88, 0.10);\n    vec3 old   = vec3(0.90, 0.42, 0.06);\n    if (energy < 0.04) return vec3(0.04, 0.05, 0.03);\n    vec3 b = mix(young, mid, smoothstep(0.0, 0.45, age));\n    b      = mix(b, old,     smoothstep(0.45, 1.0,  age));\n    return b * (0.14 + 0.86 * energy);\n}\n\n\n// VORONOI CELL GEOMETRY\n\n\n// ----------------------------------------------------------------\n// voronoiCells(p, scale): Voronoi returning nearest cell centre,\n//   cell ID, and edge proximity for membrane rendering.\n//   p     : pixel position in pixels\n//   scale : average cell spacing\n//   Returns vec4(centre.xy, cellID, edgeDist)\n// ----------------------------------------------------------------\nvec4 voronoiCells(vec2 p, float scale) {\n    vec2  ip = floor(p / scale);\n    vec2  fp = fract(p / scale);\n    float minD = 9.0, minD2 = 9.0;\n    vec2  minCentre = vec2(0.0);\n    float minID = 0.0;\n    for (int j = -1; j <= 1; j++) {\n        for (int i = -1; i <= 1; i++) {\n            vec2  cell   = ip + vec2(i, j);\n            vec2  jitter = random2(cell) * 0.75 + 0.12;\n            vec2  r      = (vec2(i, j) + jitter) - fp;\n            float d      = dot(r, r);\n            if (d < minD) {\n                minD2     = minD; minD = d;\n                minCentre = (cell + jitter) * scale;\n                minID     = random2(cell + 5.1).x;\n            } else if (d < minD2) { minD2 = d; }\n        }\n    }\n    return vec4(minCentre, minID, sqrt(minD2) - sqrt(minD));\n}\n\n\n// ORGANIC CELL LAYER — healthy, dying, corrupted states\n\n// drawCellLayer(fragCoord, energy, age, infection, evoStage):\n//   Renders the full cell field with three cell states:\n//     HEALTHY  : warm green/gold interior, bright membrane, nucleus\n//     INFECTED : darkened interior, virus-coloured cracked membrane\n//     NECROTIC : dark husk with glowing viral crack pattern, no nucleus\n//   Critically: uses mix() not addition to prevent colour blowout.\n//   Returns: vec3 cell layer colour for this pixel.\n\n// threatDirection: compute the direction AWAY from nearest threat.\n//   Samples agent proximity and infection from 4 directions and\n//   returns a push vector pointing away from the danger.\n//   Used to offset cell centre position for recoil effect.\n//   fragCoord : current pixel position\n//   infection  : this pixel's current infection level\n//   agentProx  : this pixel's agent proximity value\n//   Returns vec2 push direction (unnormalised, magnitude = threat strength)\n// ----------------------------------------------------------------\nvec2 threatDirection(vec2 fragCoord, float infection, float agentProx) {\n    vec2 ts = 1.0 / iResolution.xy;\n    float senseR = 18.0;  // how far each cell looks for threats\n\n    // Sample infection in 4 cardinal directions\n    float iE = texture(iChannel0, (fragCoord + vec2( senseR, 0.0)) / iResolution.xy).b;\n    float iW = texture(iChannel0, (fragCoord + vec2(-senseR, 0.0)) / iResolution.xy).b;\n    float iN = texture(iChannel0, (fragCoord + vec2(0.0,  senseR)) / iResolution.xy).b;\n    float iS = texture(iChannel0, (fragCoord + vec2(0.0, -senseR)) / iResolution.xy).b;\n\n    // Sample agent proximity in 4 directions\n    float aE = texture(iChannel1, (fragCoord + vec2( senseR, 0.0)) / iResolution.xy).a;\n    float aW = texture(iChannel1, (fragCoord + vec2(-senseR, 0.0)) / iResolution.xy).a;\n    float aN = texture(iChannel1, (fragCoord + vec2(0.0,  senseR)) / iResolution.xy).a;\n    float aS = texture(iChannel1, (fragCoord + vec2(0.0, -senseR)) / iResolution.xy).a;\n\n    // Combine infection and agent threat into a single gradient\n    // Agent proximity weighted higher — agents are immediate danger\n    vec2 infGrad  = vec2(iE - iW, iN - iS);\n    vec2 agentGrad = vec2(aE - aW, aN - aS);\n    return infGrad * 1.0 + agentGrad * 2.4;\n}\n\n// ----------------------------------------------------------------\n// healthPull: compute pull direction TOWARD nearest healthy neighbours.\n//   At the infection front, healthy cells stretch toward each other\n//   creating a tension membrane effect — tissue pulling tight.\n//   fragCoord : current pixel position\n//   energy    : this cell's energy\n//   Returns vec2 pull direction toward healthiest neighbour cluster.\n// ----------------------------------------------------------------\nvec2 healthPull(vec2 fragCoord, float energy) {\n    float senseR = 14.0;\n    float eE = texture(iChannel0, (fragCoord + vec2( senseR, 0.0)) / iResolution.xy).r;\n    float eW = texture(iChannel0, (fragCoord + vec2(-senseR, 0.0)) / iResolution.xy).r;\n    float eN = texture(iChannel0, (fragCoord + vec2(0.0,  senseR)) / iResolution.xy).r;\n    float eS = texture(iChannel0, (fragCoord + vec2(0.0, -senseR)) / iResolution.xy).r;\n    // Pull toward higher energy neighbours\n    return vec2(eE - eW, eN - eS);\n}\n\n// ----------------------------------------------------------------\n// drawCellLayer: renders the full cell field with movement.\n//   Now includes:\n//     - Cell recoil: Voronoi centre shifts away from threat\n//     - Shape elongation: cells stretch toward healthy neighbours\n//       at the infection front (tension membrane)\n//     - Pulse amplitude tied to energy level\n//   energy    : cell energy [0,1]\n//   age       : normalised cell age [0,1]\n//   infection : cell infection [0,1]\n//   evoStage  : global virus evolution stage [0,1]\n//   Returns: vec3 cell layer colour.\n// ----------------------------------------------------------------\nvec3 drawCellLayer(vec2 fragCoord, float energy, float age,\n                   float infection, float evoStage) {\n\n    vec3 vCol = virusColor(evoStage);\n    vec3 lCol = lifeColor(energy, age);\n\n    // --- Compute threat and health vectors for this pixel ---\n    vec2 threat = threatDirection(fragCoord, infection, texture(iChannel1, fragCoord / iResolution.xy).a);\n    vec2 pull   = healthPull(fragCoord, energy);\n\n    float threatLen = length(threat);\n    float pullLen   = length(pull);\n\n    // --- Recoil: shift the sample point away from threat ---\n    // Healthy cells near a threat appear to physically recoil.\n    // We offset the Voronoi sample coordinate so the cell centre\n    // appears displaced — the cell has moved away from danger.\n    float recoilStrength = smoothstep(0.0, 0.6, threatLen)\n                         * (1.0 - infection)   // infected cells can't flee\n                         * energy              // weak cells can't flee either\n                         * 5.5;               // max pixel displacement\n    vec2 recoilOffset = vec2(0.0);\n    if (threatLen > 0.001) {\n        // Push AWAY from threat gradient\n        recoilOffset = -normalize(threat) * recoilStrength;\n    }\n\n    // Recoil oscillates — cells quiver against the pressure\n    // rather than smoothly drifting, giving organic feel\n    float quiver = sin(iTime * 8.5 + fragCoord.x * 0.07 + fragCoord.y * 0.05) * 0.35;\n    recoilOffset *= (1.0 + quiver);\n\n    // Apply recoil to the coordinate used for Voronoi lookup\n    vec2 sampleCoord = fragCoord + recoilOffset;\n\n    // --- Voronoi cell geometry at displaced coordinate ---\n    vec4  vor    = voronoiCells(sampleCoord, 28.0);\n    vec2  centre = vor.xy;\n    float cellID = vor.z;\n    float edgeD  = vor.w;\n\n    // --- Elongation: stretch cell shape toward healthy neighbours ---\n    // At the infection front, cells elongate toward each other,\n    // creating a visible tension membrane — tissue under stress.\n    // We apply an anisotropic scale to the SDF computation.\n    vec2 d = fragCoord - centre;\n\n    // Elongation only at the infection boundary where pull is strong\n    float frontStrength = smoothstep(0.2, 0.7, infection)\n                        * smoothstep(0.0, 0.4, pullLen)\n                        * (1.0 - infection); // disappears when fully infected\n    vec2 elongAxis = vec2(0.0);\n    if (pullLen > 0.001) {\n        elongAxis = normalize(pull);\n    }\n    // Project displacement onto healthy-pull axis for anisotropic stretch\n    float alongPull   = dot(d, elongAxis);\n    float acrossPull  = dot(d, vec2(-elongAxis.y, elongAxis.x));\n    // Compress perpendicular, stretch along pull — classic tension deformation\n    float elongScale  = 1.0 + frontStrength * 0.38;\n    float compScale   = 1.0 - frontStrength * 0.20;\n    // Reconstruct deformed displacement\n    d = elongAxis * alongPull * compScale\n      + vec2(-elongAxis.y, elongAxis.x) * acrossPull * elongScale;\n\n    // Per-cell radius — organic size variation\n    float radius  = mix(9.0, 13.5, cellID);\n    // Slight squish for organic feel, now with elongation baked in\n    d.y *= 1.06;\n    float sdf = length(d) - radius;\n\n    // Per-cell breathing — amplitude boosted when healthy, dampened when threatened\n    float breatheAmp = mix(0.07, 0.14, energy * (1.0 - infection * 0.8));\n    float breathe    = 0.5 + breatheAmp * sin(iTime * 1.4 + cellID * TWOPI * 3.7);\n\n    // ---- NECROTIC STATE (dead + infected) ----\n    if (energy < 0.04) {\n        if (infection < 0.05) return vec3(0.0);\n        float necroFill  = smoothstep(2.0, -2.0, sdf) * 0.35;\n        vec3  necroBase  = vCol * 0.15 * infection * necroFill;\n        float crackRim   = smoothstep(2.5, 0.3, sdf) * (1.0 - smoothstep(0.3, -1.5, sdf));\n        float crackPulse = 0.4 + 0.3 * sin(iTime * 2.5 + cellID * 8.3);\n        vec3  crackCol   = vCol * crackRim * infection * crackPulse * 0.70;\n        vec4  fissureVor = voronoiCells(fragCoord * 1.8 + 17.3, 18.0);\n        float fissure    = smoothstep(0.30, 0.55, fissureVor.w)\n                         * (1.0 - smoothstep(0.55, 0.80, fissureVor.w));\n        vec3  fissureCol = vCol * fissure * infection * 0.45;\n        return clamp(necroBase + crackCol + fissureCol, 0.0, 0.6);\n    }\n\n    // ---- LIVING STATE (healthy or infected) ----\n\n    float interior   = smoothstep(1.5, -2.0, sdf);\n    vec3  healthyInt = lCol * (0.26 + 0.10 * cellID + breatheAmp * breathe);\n    vec3  infectedInt = mix(lCol * 0.12, vCol * 0.30,\n                            smoothstep(0.2, 0.9, infection));\n    vec3  cellInt    = mix(healthyInt, infectedInt,\n                           smoothstep(0.15, 0.80, infection));\n\n    float groove = smoothstep(0.32, 0.52, edgeD)\n                 * (1.0 - smoothstep(0.52, 0.75, edgeD));\n    vec3  out_   = cellInt * interior * (1.0 - groove * 0.55);\n\n    // Membrane — pulses more visibly when fleeing\n    float membrane = smoothstep(2.5, 0.2, sdf)\n                   * (1.0 - smoothstep(0.2, -1.8, sdf));\n    vec3  healthMem = mix(lCol * 1.6, vec3(0.85, 1.0, 0.70), 0.20);\n    vec3  infMem    = vCol * (0.90 + 0.35 * sin(iTime * 3.0 + cellID * 5.0));\n    vec3  memCol    = mix(healthMem, infMem, smoothstep(0.20, 0.85, infection));\n    out_ += memCol * membrane * (0.80 + 0.20 * breathe);\n\n    // Tension membrane highlight — glows brighter when cell is stretching\n    // toward healthy neighbours, makes the front line visually pop\n    float tensionGlow = frontStrength * smoothstep(1.8, 0.4, sdf)\n                      * (1.0 - smoothstep(0.4, -0.8, sdf));\n    out_ += lCol * tensionGlow * 0.55;\n\n    // Rim highlight — fades with infection\n    float rim = smoothstep(1.8, 0.6, sdf) * (1.0 - smoothstep(0.6, -0.5, sdf));\n    out_ += vec3(1.0) * rim * (1.0 - infection) * 0.22;\n\n    // Nucleus — disappears as cell flees (displaced by recoil)\n    float nucleusR   = length(fragCoord - centre) - radius * 0.28;\n    float nucleus    = smoothstep(1.0, -1.0, nucleusR);\n    float nucRim     = smoothstep(1.5, 0.2, nucleusR)\n                     * (1.0 - smoothstep(0.2, -0.8, nucleusR));\n    float nucleusVis = 1.0 - smoothstep(0.3, 0.85, infection);\n    out_ += lCol * 0.10 * nucleus * nucleusVis;\n    out_ += lCol * 0.55 * nucRim  * nucleusVis;\n\n    // Outer glow — healthy cells only, dims when fleeing\n    float outerGlow = exp(-max(sdf, 0.0) * 0.18) * 0.07\n                    * (1.0 - infection) * breathe;\n    out_ += lCol * outerGlow;\n\n    return clamp(out_, 0.0, 0.85);\n}\n\n\n// VIRUS AGENT SHAPE — rotating hexagon (angular, synthetic)\n\n// hexSDF(p, size): regular hexagon signed distance function.\n//   p    : position relative to hexagon centre\n//   size : circumradius in pixels\n// ----------------------------------------------------------------\nfloat hexSDF(vec2 p, float size) {\n    vec2 q = abs(p);\n    return max(q.x * 0.866025 + q.y * 0.5, q.y) - size;\n}\n\n\n// drawVirusAgent(delta, evoStage, vCol): angular rotating hexagon.\n//   delta    : pixel offset from agent centre\n//   evoStage : controls size, spin speed, inner detail\n//   vCol     : current virus colour\n//   Returns: vec3 capped at 0.9 to prevent blowout.\n// ----------------------------------------------------------------\nvec3 drawVirusAgent(vec2 delta, float evoStage, vec3 vCol) {\n    vec3 out_ = vec3(0.0);\n\n    // Rotation: slow at Stage 0, faster and more aggressive at Stage 3\n    float spinSpeed = mix(0.3, 1.4, evoStage);\n    float rot = 0.5236 + iTime * spinSpeed;\n    float c = cos(rot), s = sin(rot);\n    vec2  p = vec2(c*delta.x - s*delta.y, s*delta.x + c*delta.y);\n\n    float hexSize = mix(5.5, 9.5, evoStage);\n    float sdf     = hexSDF(p, hexSize);\n\n    // Outer glow: hard exponential falloff (not the wide soft bloom)\n    float halo    = exp(-max(sdf, 0.0) * 0.35) * 0.40;\n    // Body: slightly transparent so underlying cell is faintly visible\n    float body    = smoothstep(1.0, -1.0, sdf);\n    // Bright hard outline — the synthetic \"shell\"\n    float outline = smoothstep(1.8, 0.5, sdf)\n                  * (1.0 - smoothstep(0.5, -0.8, sdf));\n\n    out_ += vCol * halo    * 0.55;\n    out_ += vCol * body    * 0.28;\n    out_ += vCol * outline * 1.30;\n    out_ += vec3(1.0) * outline * 0.30;\n\n    // Inner concentric hex at Stage 2+\n    if (evoStage > 0.45) {\n        float t2      = smoothstep(0.45, 0.72, evoStage);\n        float innerSDF = hexSDF(p, hexSize * 0.46);\n        float innerRim = smoothstep(1.2, 0.2, innerSDF)\n                       * (1.0 - smoothstep(0.2, -0.8, innerSDF));\n        out_ += vCol * innerRim * 0.70 * t2;\n    }\n\n    // Targeting crosshair at Stage 3\n    if (evoStage > 0.75) {\n        float t3   = smoothstep(0.75, 1.0, evoStage);\n        float crossH = smoothstep(0.7, 0.0, abs(p.y))\n                     * smoothstep(hexSize * 0.9, 0.5, abs(p.x));\n        float crossV = smoothstep(0.7, 0.0, abs(p.x))\n                     * smoothstep(hexSize * 0.9, 0.5, abs(p.y));\n        out_ += vCol * (crossH + crossV) * 0.40 * t3;\n    }\n\n    // Hard cap — agent shape alone should not cause blowout\n    return clamp(out_, 0.0, 0.90);\n}\n\n\n// SOBEL EDGE on infection field\n\nfloat sobelInfection(vec2 uv, vec2 ts) {\n    float tl=texture(iChannel0,uv+vec2(-ts.x, ts.y)).b;\n    float tc=texture(iChannel0,uv+vec2( 0.0,  ts.y)).b;\n    float tr=texture(iChannel0,uv+vec2( ts.x, ts.y)).b;\n    float ml=texture(iChannel0,uv+vec2(-ts.x, 0.0 )).b;\n    float mr=texture(iChannel0,uv+vec2( ts.x, 0.0 )).b;\n    float bl=texture(iChannel0,uv+vec2(-ts.x,-ts.y)).b;\n    float bc=texture(iChannel0,uv+vec2( 0.0, -ts.y)).b;\n    float br=texture(iChannel0,uv+vec2( ts.x,-ts.y)).b;\n    float gx=-tl-2.0*ml-bl+tr+2.0*mr+br;\n    float gy=-tl-2.0*tc-tr+bl+2.0*bc+br;\n    return clamp(sqrt(gx*gx+gy*gy)*4.0, 0.0, 1.0);\n}\n\n\n// MAIN COMPOSITOR\n\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    vec2 uv        = fragCoord / iResolution.xy;\n    vec2 texelSize = 1.0 / iResolution.xy;\n\n    vec4  caState  = texture(iChannel0, uv);\n    vec4  agState  = texture(iChannel1, uv);\n    vec4  evoState = texture(iChannel2, uv);\n\n    float energy    = caState.r;\n    float age       = caState.g;\n    float infection = caState.b;\n    float agentProx = texture(iChannel1, uv).a;\n    float trail     = evoState.r;\n    float evoStage  = texture(iChannel2, vec2(0.5)).b;\n\n    vec3 vCol = virusColor(evoStage);\n\n    // ============================================================\n    // LAYER 1: Petri dish background\n    // ============================================================\n    vec3 dishDark = vec3(0.020, 0.048, 0.018);\n    vec3 dishMid  = vec3(0.038, 0.082, 0.030);\n    float dishR   = length(uv - 0.5);\n    vec3 col      = mix(dishMid, dishDark, smoothstep(0.12, 0.72, dishR));\n    // Faint scan lines — microscope CCD look\n    col          *= 0.965 + 0.035 * (0.5 + 0.5 * sin(fragCoord.y * 3.14159));\n\n    // ============================================================\n    // LAYER 2: Cell field (healthy / infected / necrotic)\n    // ============================================================\n    // Uses mix() internally — won't blowout\n    vec3 cellCol = drawCellLayer(fragCoord, energy, age, infection, evoStage);\n    col = mix(col, col + cellCol, 0.95);   // blend onto background\n\n    // ============================================================\n    // LAYER 3: Chemoattractant circuit traces (Stage 2+)\n    // ============================================================\n    if (trail > 0.06 && evoStage > 0.42) {\n        float vis    = smoothstep(0.42, 0.65, evoStage);\n        float ridge  = pow(1.0 - abs(1.0 - clamp(trail * 2.0, 0.0, 2.0)), 2.8);\n        // Use mix to add trace colour without blowing out the background\n        col = mix(col, col + vCol * ridge * 0.55, vis);\n        col = mix(col, col + vec3(1.0) * ridge * ridge * 0.20, vis);\n    }\n\n    // ============================================================\n    // LAYER 4: Invasion front — hard glowing boundary\n    // ============================================================\n    float edge = sobelInfection(uv, texelSize);\n    if (edge > 0.04) {\n        float pulse    = 0.58 + 0.42 * sin(iTime * 5.2\n                       + fragCoord.x * 0.038 + fragCoord.y * 0.026);\n        float hardLine = smoothstep(0.07, 0.46, edge);\n        float softGlow = smoothstep(0.04, 0.18, edge)\n                       * (1.0 - smoothstep(0.18, 0.48, edge));\n        float whiteCap = smoothstep(0.44, 0.68, edge);\n\n        // Mix-based blending prevents the edge from going white\n        col = mix(col, vCol * pulse, hardLine * 0.75);\n        col += vCol * softGlow * 0.30;\n        col += vec3(1.0) * whiteCap * 0.22;  // small white highlight only\n    }\n\n    \n    // LAYER 5: Agent proximity bloom — STRICTLY CAPPED\n    \n    // Was causing blowout — now uses a hard cap and mix()\n    if (agentProx > 0.01) {\n        // Soft outer bloom: very limited brightness\n        float softBloom = pow(agentProx, 1.80) * 0.55;\n        col = mix(col, col + vCol * softBloom, 0.70);\n        // Tight core: only at very high proximity (agent almost on pixel)\n        float coreBloom = pow(agentProx, 5.0) * 0.85;\n        col = mix(col, vec3(1.0) * 0.80 + vCol * 0.20, coreBloom * 0.6);\n    }\n\n   \n    // LAYER 6: Virus agent hexagons\n    \n    bool agentValid = (agState.x >= 0.0 && agState.x < iResolution.x &&\n                       agState.y >= 0.0 && agState.y < iResolution.y);\n    if (agentValid) {\n        vec2  delta  = fragCoord - agState.xy;\n        float dist   = length(delta);\n        float rRad   = mix(20.0, 30.0, evoStage);\n        if (dist < rRad) {\n            float fade    = smoothstep(rRad, rRad * 0.5, dist);\n            vec3  agentC  = drawVirusAgent(delta, evoStage, vCol);\n            // Mix onto scene: agent colour replaces rather than adds\n            col = mix(col, agentC + col * 0.25, fade * 0.90);\n        }\n    }\n   \n    // LAYER 6b: Player right-half mouse — inoculate visualisation\n   \n    // Right half of screen: mouse deposits anti-viral field (Buffer C trail suppression\n    // is handled in Buffer C; here we just show the player's action visually)\n    if (iMouse.z > 0.0) {\n        float mouseXNorm = iMouse.x / iResolution.x;\n        if (mouseXNorm >= 0.5) {\n            float dist         = distance(fragCoord, iMouse.xy);\n            float brushStrength = smoothstep(INOCULATE_RADIUS, INOCULATE_RADIUS * 0.2, dist);\n            if (brushStrength > 0.0) {\n                // Visual: cold blue-white pulse showing inoculation zone\n                // Mix rather than add — won't blowout existing colour\n                vec3 inoculateCol = vec3(0.30, 0.72, 1.00);\n                float pulse       = 0.6 + 0.4 * sin(iTime * 6.0);\n                col = mix(col, inoculateCol * pulse, brushStrength * 0.55);\n                // Thin bright ring at brush edge — shows active radius\n                float ring = smoothstep(4.0, 0.0, abs(dist - INOCULATE_RADIUS));\n                col += inoculateCol * ring * 0.60;\n            }\n        }\n    }\n\n  \n    // LAYER 7: HUD — dual evolution bars (virus + life)\n    \n    float lifeStageHUD = texture(iChannel2, vec2(0.5)).a;  // life stage from Buffer C .a\n\n    // VIRUS bar (existing, now repositioned slightly)\n    vec2  hudOV = vec2(14.0, iResolution.y - 22.0);\n    float hudW  = 116.0, hudH = 7.0;\n    vec2  hcV   = fragCoord - hudOV;\n    if (hcV.x >= -1.0 && hcV.x <= hudW+1.0 &&\n        hcV.y >= -1.0 && hcV.y <= hudH+1.0) {\n        float barT  = clamp(hcV.x / hudW, 0.0, 1.0);\n        bool  inBar = hcV.x >= 0.0 && hcV.x <= hudW && hcV.y >= 0.0 && hcV.y <= hudH;\n        if (inBar) {\n            float filled = step(barT, evoStage);\n            vec3  barCol = mix(vec3(0.07), virusColor(barT)*0.88, filled);\n            float t1 = smoothstep(0.013,0.0,abs(barT-0.333));\n            float t2 = smoothstep(0.013,0.0,abs(barT-0.666));\n            barCol  += vec3(0.65) * (t1+t2);\n            barCol  += vec3(1.0) * smoothstep(0.017,0.0,abs(barT-evoStage));\n            col = barCol;\n        } else { col = vec3(0.16); }\n    }\n\n    // LIFE IMMUNE bar — warm green, below the virus bar\n    vec2  hudOL = vec2(14.0, iResolution.y - 36.0);\n    vec2  hcL   = fragCoord - hudOL;\n    if (hcL.x >= -1.0 && hcL.x <= hudW+1.0 &&\n        hcL.y >= -1.0 && hcL.y <= hudH+1.0) {\n        float barT  = clamp(hcL.x / hudW, 0.0, 1.0);\n        bool  inBar = hcL.x >= 0.0 && hcL.x <= hudW && hcL.y >= 0.0 && hcL.y <= hudH;\n        if (inBar) {\n            // Life bar only fills to 0.66 max — life never fully dominates\n            float filled = step(barT, lifeStageHUD);\n            // Green → gold palette for life's immune stages\n            vec3 lifeBarCol = mix(vec3(0.07),\n                mix(vec3(0.18, 0.82, 0.22), vec3(0.82, 0.88, 0.10),\n                    smoothstep(0.0, 0.66, barT)) * 0.85,\n                filled);\n            // Stage dividers at 0.33 and 0.66 only (no 1.0 — life maxes at stage 2)\n            float l1 = smoothstep(0.013,0.0,abs(barT-0.333));\n            float l2 = smoothstep(0.013,0.0,abs(barT-0.50));\n            lifeBarCol += vec3(0.65) * (l1+l2);\n            col = lifeBarCol;\n        } else { col = vec3(0.12); }\n    }\n\n   \n    // POST-PROCESSING — tone map THEN clamp, never let it reach 1\n    // ============================================================\n\n    // Pre-clamp: hard cap before tone mapping so nothing is extreme\n    col = clamp(col, 0.0, 1.8);\n\n    // Reinhard tone mapping — compresses the 0-1.8 range cleanly\n    col = col / (col + 0.70);\n    col = clamp(col, 0.0, 1.0);\n\n    // Vignette\n    col *= 1.0 - smoothstep(0.35, 0.80, length(uv - 0.5)) * 0.80;\n\n    // Subtle grain — adds organic texture\n    col = clamp(col + (random4(vec3(fragCoord, iTime)).x * 0.028 - 0.014),\n                0.0, 1.0);\n\n    // Gamma\n    col = pow(col, vec3(0.4545));\n\n    fragColor = vec4(col, 1.0);\n}\n",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "\n\n/// Common Tab\n\nconst float TWOPI = 6.283185307179586;\n\n// Pure math helpers from aether a2 project — \n\nfloat sigmoid(float x, float center, float width) {\n    return 1.0 / (1.0 + exp(-(x - center) * 4.0 / width));\n}\n\n// Random scale constants split by dimension to avoid type mismatch\nconst vec3 RANDOM_SCALE3 = vec3(0.1031, 0.1030, 0.0973);\nconst vec4 RANDOM_SCALE4 = vec4(0.1031, 0.1030, 0.0973, 0.1099);\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n    Student Number: 219284140\n    Final project:   \n    Name:           Katelyn Yew\n    Title:           Doomsday: life vs. ai-virus\n\n    INTERACTIONS:\n    \n    - Click and drag the LEFT side of the screen (left half) to paint\n      healing energy into life cells — restoring their energy, clearing\n      infection, and resetting age. Use this to fight back the virus.\n    - The simulation runs autonomously otherwise. Reset several times\n      to see different outbreak locations and evolutionary paths.\n\n    INTERESTING PARAMETERS TO MODIFY:\n    - INFECTION_SPREAD_RATE (BufferA): base CA neighbour spread rate\n    - AGENT_INFECT_STRENGTH (BufferA): how hard each virus agent hits a cell\n    - EVOLUTION_PRESSURE_RATE (BufferC): how fast virus feels pressure to evolve\n    - VIRUS_SPEED (BufferB): base movement speed of virus agents\n    - TRAIL_DECAY (BufferC): how long virus chemoattractant trails persist\n\n\n\n    DESCRIPTION:\n    \n    Doomsday is a biological-conceptual simulation of Life versus an\n    evolving AI Virus. Life begins dominant with a dense field of glowing\n    yellow-green cells covering the screen. A single virus outbreak\n    seeds itself randomly and begins spreading and outdones the lives.\n \n    The virus is not static. It has four evolutionary stages that\n    activate both automatically over time AND reactively when the\n    virus is losing (life is recovering faster(become greener) than virus spreads).\n\n    STAGE 0 —  orange: few agents, random drift, weak infection\n    \n    STAGE 1 — amber to blue: boids flocking, stronger spread\n    \n    STAGE 2 —  blue to purple: Physarum/slime-mold trail following,\n              agents build persistent chemoattractant networks that\n              efficiently route infection through the life field\n              \n    STAGE 3 — purple to red: maximum infection power, reaction-\n              diffusion gradient climbing, agents seek healthiest cells\n              to maximally damage life's strongest zones\n\n    The CA layer (this buffer) runs A2 leaf-disease mechanics:\n    energy/age/infection with forest-fire probability spread. The key\n    advance beyond A2 is that the VIRUS AGENTS (Buffer B) physically\n    move through the CA field and inject infection directly, creating\n    a two-way coupling: CA spread sustains between-agent gaps while\n    agents pierce deep into healthy territory the CA alone cannot reach.\n\n\n\n\n    SOURCES:\n    \n    \n    - A2: Leaf chlorophyll CA (previous work)\n      https://www.shadertoy.com/view/wXVcRy\n      \n    - A3: AETHER multi-agent Voronoi system ( prior work)\n    \n    - Forest fire probability spread: course lab examples\n    \n    - Physarum/slime mold trail following concept: Jones (2010),\n      \"Characteristics of pattern formation and evolution in\n      approximations of physarum transport networks\"\n      \n    - Claude AI (Anthropic): multiple agent system implementation and debugging\n\n    TECHNICAL REALIZATION:\n    \n    Buffer A is the CA simulation layer. It reads Buffer B (agent\n    positions via trail map in .b channel) to apply direct agent\n    infection at each pixel. The CA then runs standard A2 mechanics:\n    energy decay with age penalty, neighbour energy sharing, and\n    forest-fire probability infection spread from infected neighbours.\n    Evolution stage is read from Buffer C .b channel to scale\n    how aggressively agents and spread behave.\n\n    FUTURE EXTENSIONS:\n \n    - Multiple virus strains competing with each other\n    - Life counter-evolution: healthy zones slowly develop shields\n*/\n\n// CA CONSTANTS (modified from A2) \n\n#define MAX_AGE                 2000.0\n#define ENERGY_DECAY_RATE       0.003\n#define AGE_PENALTY             2.5\n#define NEIGHBOUR_INFLUENCE     0.025\n#define DEATH_THRESHOLD         0.015\n#define SPONTANEOUS_ENERGY      0.004  \n// chance a cell spontaneously gains energy\n\n//-- Disease constants --\n// Base probability of infection spreading from an infected neighbour\n#define INFECTION_SPREAD_RATE   0.55\n// Age multiplier — older cells are more vulnerable (same as A2)\n#define AGE_VULNERABILITY       1.4\n// Energy threshold for immunity — high-energy cells resist\n#define IMMUNITY_ENERGY         0.70\n// How fast cells naturally recover from infection\n#define INFECTION_RECOVERY      0.007\n// Energy drain per frame while infected\n#define INFECTION_ENERGY_DRAIN  0.004\n// Spontaneous infection chance (very rare — seeds micro-outbreaks)\n#define SPONTANEOUS_INFECTION   0.00008\n\n// --- Agent interaction constants ---\n// How strongly a virus agent's proximity injects infection into a cell\n// This is the key new mechanic beyond A2: agents physically pierce cells\n#define AGENT_INFECT_STRENGTH   0.28\n// Radius (in pixels) within which an agent infects a cell\n#define AGENT_INFECT_RADIUS     6.0\n// How strongly agents drain energy from cells they occupy\n#define AGENT_DRAIN_STRENGTH    0.018\n\n// --- Mouse healing brush ---\n#define BRUSH_SIZE              60.0\n\n// ==== TERRAIN CONSTANTS =\n// How much stronghold terrain boosts neighbour energy sharing\n#define TERRAIN_ENERGY_BOOST    0.55\n\n// How much corridor terrain reduces starting energy (pre-weakened)\n#define TERRAIN_CORRIDOR_DRAIN  0.40\n\n\n// How much wall terrain boosts local immunity\n#define TERRAIN_WALL_IMMUNITY   0.60\n\n// Life immune resistance gained after surviving infection (A channel)\n#define IMMUNE_MEMORY_GAIN      0.18\n\n// How fast immune memory decays each frame\n#define IMMUNE_MEMORY_DECAY     0.00008\n\n// Energy threshold below which a cell cannot gain immune memory\n#define IMMUNE_MEMORY_MIN_E     0.35\n\n\n\n\n\n// = MAIN SIMULATION =\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    vec2 uv        = fragCoord / iResolution.xy;\n    vec2 texelSize = 1.0 / iResolution.xy;\n\n    // --- Read current cell state (R=energy, G=age normalised, B=infection) ---\n    vec4  C         = texture(iChannel0, uv);\n    float energy    = C.r;\n    float age       = C.g * MAX_AGE;\n    float infection = C.b;\n\n// - Read terrain from Buffer D -\n    // iChannel3 = Buffer D terrain map (set this in Shadertoy UI)\n    vec4  terrain     = texture(iChannel3, uv);\n    float tStronghold = terrain.r;   // life's fortress zones\n    float tCorridor   = terrain.g;   // pre-weakened fault lines\n    float tWall       = terrain.b;   // membrane chokepoints\n\n    // --- Read immune memory from our own .a channel ---\n    // Cells that survived past infection carry a resistance flag\n    float immuneMemory = C.a;\n    // --- Sample 8 neighbours for CA rules ---\n    vec4 nE  = texture(iChannel0, uv + vec2( texelSize.x, 0));\n    vec4 nW  = texture(iChannel0, uv + vec2(-texelSize.x, 0));\n    vec4 nN  = texture(iChannel0, uv + vec2(0,  texelSize.y));\n    vec4 nS  = texture(iChannel0, uv + vec2(0, -texelSize.y));\n    vec4 nNE = texture(iChannel0, uv + vec2( texelSize.x,  texelSize.y));\n    vec4 nNW = texture(iChannel0, uv + vec2(-texelSize.x,  texelSize.y));\n    vec4 nSE = texture(iChannel0, uv + vec2( texelSize.x, -texelSize.y));\n    vec4 nSW = texture(iChannel0, uv + vec2(-texelSize.x, -texelSize.y));\n\n    // Average neighbour energy for sharing mechanic\n    float neighbourEnergy = (nE.r + nW.r + nN.r + nS.r +\n                             nNE.r + nNW.r + nSE.r + nSW.r) / 8.0;\n\n    // Count living neighbours (used for rebirth rule)\n    float aliveNeighbours =\n        step(DEATH_THRESHOLD, nE.r)  + step(DEATH_THRESHOLD, nW.r) +\n        step(DEATH_THRESHOLD, nN.r)  + step(DEATH_THRESHOLD, nS.r) +\n        step(DEATH_THRESHOLD, nNE.r) + step(DEATH_THRESHOLD, nNW.r) +\n        step(DEATH_THRESHOLD, nSE.r) + step(DEATH_THRESHOLD, nSW.r);\n\n    // Count infected neighbours — for forest-fire spread\n    float infectedNeighbours =\n        step(0.1, nE.b)  + step(0.1, nW.b) +\n        step(0.1, nN.b)  + step(0.1, nS.b) +\n        step(0.1, nNE.b) + step(0.1, nNW.b) +\n        step(0.1, nSE.b) + step(0.1, nSW.b);\n\n    float infectionDensity = infectedNeighbours / 8.0;\n\n    // Per-pixel noise seeded by position + time (from A2 pattern)\n    vec4 noise = random4(vec3(fragCoord, iTime));\n\n    // --- Read virus evolution stage from Buffer C ---\n    // Buffer C .b channel encodes normalised evolution stage [0,1]\n    // Stage 0=0.0, Stage 1=0.33, Stage 2=0.66, Stage 3=1.0\n    float evoStage = texture(iChannel2, uv).b;\n\n    // Evolution amplifies infection spread — late-stage virus is\n    // significantly more aggressive at the CA neighbour level\n    float evoSpreadMul = 1.0 + evoStage * 2.2;\n\n    // === ENERGY & AGE UPDATE =\n\n    age += 1.0;\n\n    // Age and energy factors scale decay rate — older/weaker cells die faster\n    float ageFactor   = 1.0 + (age / MAX_AGE) * AGE_PENALTY;\n    float energyFactor = 1.0 + (1.0 - energy) * 0.5;\n    float decay        = ENERGY_DECAY_RATE * ageFactor * energyFactor;\n    energy -= decay;\n\n   // Alive cells gain energy from healthy neighbours —\n    // stronghold terrain amplifies this sharing (denser tissue)\n    if (aliveNeighbours > 0.0) {\n        float terrainBoost = 1.0 + tStronghold * TERRAIN_ENERGY_BOOST;\n        float gain = neighbourEnergy * NEIGHBOUR_INFLUENCE\n                   * (aliveNeighbours / 8.0) * terrainBoost;\n        energy += gain;\n    }\n    // Death by old age or energy exhaustion\n    if (energy < DEATH_THRESHOLD || age > MAX_AGE) {\n        energy = 0.0;\n        age    = 0.0;\n    }\n\n    // Rebirth: dead cell surrounded by enough healthy neighbours\n    // (same rule as A2 — Life of Life style resurrection)\n    if (energy < DEATH_THRESHOLD) {\n        if (aliveNeighbours >= 3.0 && aliveNeighbours <= 4.0\n            && neighbourEnergy > 0.55) {\n            energy = neighbourEnergy * 0.45;\n            age    = 0.0;\n        }\n    }\n\n    // Rare spontaneous energy boost — keeps life from dying too easily\n    if (noise.w < SPONTANEOUS_ENERGY) {\n        energy = min(energy + 0.25, 1.0);\n    }\n\n    energy = clamp(energy, 0.0, 1.0);\n\n    // ====== DISEASE MECHANICS =====\n\n    if (energy > DEATH_THRESHOLD) {\n        // Age-based susceptibility — older cells catch infection more easily\n        float ageNorm        = age / MAX_AGE;\n        float ageSusceptible = 1.0 + ageNorm * AGE_VULNERABILITY;\n// High-energy cells resist — walls add extra immunity bonus.\n        // Immune memory from surviving past infection also helps.\n        float wallBonus    = tWall * TERRAIN_WALL_IMMUNITY;\n        float memoryBonus  = immuneMemory * 0.50;\n        float immunity     = step(IMMUNITY_ENERGY - wallBonus - memoryBonus, energy);\n\n        // Forest-fire probability spread, scaled by evolution stage\n        float baseChance      = INFECTION_SPREAD_RATE * infectionDensity\n                              * ageSusceptible * evoSpreadMul;\n        float infectionChance = baseChance * (1.0 - immunity * 0.75);\n\n        // Two noise checks required — keeps spread probabilistic, not certain\n        if (noise.x < infectionChance && noise.y < infectionChance) {\n            infection += 0.25;\n        }\n\n        // Rare spontaneous infection (background noise, rare lightning)\n        if (noise.z < SPONTANEOUS_INFECTION) {\n            infection += 0.15;\n        }\n\n        // Natural recovery — cells slowly clear infection on their own\n        infection -= INFECTION_RECOVERY;\n\n        // Infection drains energy — this is the core damage mechanic\n        if (infection > 0.1) {\n            energy -= INFECTION_ENERGY_DRAIN * infection;\n        }\n\n        // Heavily infected weak cells die and become dead-infected tissue\n        if (infection > 0.75 && energy < 0.25) {\n            energy    = 0.0;\n            age       = 0.0;\n            infection = 1.0;\n        }\n\n    } else {\n        // Dead cells slowly clear infection (corpse cleanup)\n        infection -= INFECTION_RECOVERY * 0.4;\n    }\n\n    // === AGENT INFECTION INJECTION =======\n    // key advance beyond A2: virus agents from Buffer B\n    // physically move through the field and inject infection directly.\n    // Buffer B's .b channel is a trail/proximity map of agent positions.\n    // Each pixel reads how close the nearest agent is and gets infected\n    // proportionally — agents are like needles piercing healthy tissue.\n\n    // Agent proximity map stored in Buffer B alpha channel\n    float agentProximity = texture(iChannel1, uv).a;\n\n    // Only living cells can be directly infected by agents\n    if (energy > DEATH_THRESHOLD && agentProximity > 0.01) {\n        // Direct injection: bypasses immunity partially (virus evolved)\n        // Evolution stage reduces how much immunity blocks agents\n        float immunityBlock = 0.6 - evoStage * 0.4;  // stage3: only 20% immunity\n        float immunity2     = step(IMMUNITY_ENERGY, energy) * immunityBlock;\n        float agentInfect   = agentProximity * AGENT_INFECT_STRENGTH\n                            * evoSpreadMul * (1.0 - immunity2);\n        infection += agentInfect;\n\n        // Agents also drain energy directly — parasitic feeding\n        energy -= agentProximity * AGENT_DRAIN_STRENGTH * evoSpreadMul;\n    }\n\n    infection = clamp(infection, 0.0, 1.0);\n    energy    = clamp(energy,    0.0, 1.0);\n\n    // MOUSE: HEALING BRUSH\n    // Left half of screen: drag to heal cells (restore life)\n    if (iMouse.z > 0.0) {\n        float mouseXNorm = iMouse.x / iResolution.x;\n      \n        if (mouseXNorm < 0.5) {\n            float dist          = distance(fragCoord, iMouse.xy);\n            float brushStrength = smoothstep(BRUSH_SIZE, BRUSH_SIZE * 0.3, dist);\n            if (brushStrength > 0.0) {\n                // Restore energy, clear infection, reset age — full healing\n                energy    = mix(energy,    1.0, brushStrength * 0.85);\n                age       = mix(age,       0.0, brushStrength * 0.70);\n                infection = mix(infection, 0.0, brushStrength * 0.95);\n            }\n        }\n    }\n\n    // INITIALISATION \n    if (iFrame == 0) {\n        // Life starts dominant: most cells healthy with varied energy/age\n        energy    = 0.4 + noise.x * 0.6;    // healthy spread [0.4, 1.0]\n        age       = noise.z * MAX_AGE * 0.3; // young-to-middle aged cells\n        infection = 0.0;                      // no virus at start — seeded in BufferC\n    }\n    // --- Update immune memory ---\n    // Cells that are recovering (infection was high, now falling) gain memory.\n    // This is the \"veteran cell\" mechanic — survivors become resistant.\n    float recovering = smoothstep(0.6, 0.15, infection)  // was infected, now clearing\n                     * step(IMMUNE_MEMORY_MIN_E, energy); // only if alive and healthy\n    immuneMemory += recovering * IMMUNE_MEMORY_GAIN * iTimeDelta;\n    // Memory decays very slowly — veterans eventually forget\n    immuneMemory -= IMMUNE_MEMORY_DECAY;\n    immuneMemory  = clamp(immuneMemory, 0.0, 1.0);\n\n    // Corridor terrain pre-drains energy at frame 0 —\n    // fault lines start weakened so virus has entry points\n    if (iFrame == 0) {\n        energy -= tCorridor * TERRAIN_CORRIDOR_DRAIN;\n    }\n\n    // Pack state — now includes immune memory in .a channel\n    // (previously unused, now carrying life's counter-adaptation)\n    fragColor = vec4(energy, age / MAX_AGE, infection, immuneMemory);\n\n    // Pack state into RGBA output\n    fragColor = vec4(energy, age / MAX_AGE, infection, 1.0);\n}\n",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n   doomsday: life vs. ai-virus\n    Encodes virus agents using the Voronoi nearest-particle technique\n    from A3 (AETHER). Each pixel tracks the nearest agent.\n\n    Agent state packed into vec4:\n        .xy = position in pixels\n        .z  = heading in radians\n        .w  = agent-specific evolution flavour [0,1] — used for\n              colour variation and slightly offset behaviour timing\n\n    BEHAVIOUR CHANGES BY EVOLUTION STAGE (read from Buffer C .b):\n        Stage 0 (0.00-0.25): SCOUT — random drift, weak infection deposit\n        Stage 1 (0.25-0.50): SWARM — boids flocking toward infected tissue\n        Stage 2 (0.50-0.75): NETWORK — Physarum trail-following, agents\n                              reinforce each other's paths into the life field\n        Stage 3 (0.75-1.00): DOMINION — reaction-diffusion gradient climb,\n                              agents seek strongest (highest energy) life cells\n                              for maximum damage\n\n    TWO-WAY COUPLING WITH BUFFER A:\n        - Agents read Buffer A energy as terrain: HIGH energy REPELS\n          (life is strong there), LOW / zero energy ATTRACTS (dead zones\n          are food — virus feeds on dying tissue and then radiates outward)\n        - Agents write proximity into .a channel of this buffer's trail map\n          so Buffer A can apply direct injection infection\n\n    Reads:  iChannel0 = this buffer (previous agent state)\n            iChannel1 = Buffer A (CA life field — energy terrain)\n            iChannel2 = Buffer C (evolution state + chemoattractant trail)\n    Writes: RG = agent position | B = heading | A = proximity trail map\n*/\n\n// --- Agent count \n#define NUM_AGENTS      180\n\n// --- Movement constants ---\n#define VIRUS_SPEED         32.0     // base forward speed in pixels/sec\n#define MAX_SPEED_STAGE3    48.0     // faster at full evolution\n#define HEADING_JITTER      0.58     // random angular drift each frame\n\n// --- Boids constants (Stage 1+) ---\n#define BOID_COHESION_R     5.0     // radius to pull toward cluster centre\n#define BOID_SEPARATION_R   14.0     // radius to push apart\n#define W_COHESION          0.55     // cohesion weight\n#define W_SEPARATION        1.40     // separation weight\n\n// --- Terrain sensing ---\n#define TERRAIN_SENSE_R     18.0     // radius for energy gradient sampling\n#define W_TERRAIN           2.20     // terrain steering weight\n\n// --- Trail following (Stage 2+) ---\n#define TRAIL_SENSE_R       62.0     // radius for chemoattractant sensing\n#define W_TRAIL             1.80     // trail following weight\n\n// --- Proximity deposit ---\n// Each agent deposits into .a trail map so Buffer A can read proximity\n#define DEPOSIT_RADIUS      7.0      // pixels\n#define DEPOSIT_DECAY       0.92     // trail fades each frame\n\n\n// getNearestAgent: Voronoi nearest-particle propagation from A3.\n//   Tests whether a neighbour pixel's tracked agent is closer\n//   to fragCoord than the currently tracked agent A.\n//   A         : current best agent state for this pixel\n//   fragCoord : this pixel's screen coordinates\n//   offset    : neighbour offset to test\n//   Returns the closer of the two agent states.\n// -----\nvec4 getNearestAgent(vec4 A, vec2 fragCoord, vec2 offset) {\n    vec4 N  = texture(iChannel0,\n                (fragCoord + offset) / iResolution.xy);\n    float d1 = distance(fragCoord, A.xy);\n    float d2 = distance(fragCoord, N.xy);\n    return (d2 < d1) ? N : A;\n}\n\n\n// sampleEnergy: read cell energy from Buffer A at pixel position.\n//   pos : pixel-space position\n//   Returns float energy in [0,1]. Dead cells = 0.\n\nfloat sampleEnergy(vec2 pos) {\n    return texture(iChannel1, pos / iResolution.xy).r;\n}\n\n\n// sampleInfection: read cell infection from Buffer A at pos.\n//   Used to detect where to steer toward (infect more tissue).\n//   pos : pixel-space position\n//   Returns float infection in [0,1].\n\nfloat sampleInfection(vec2 pos) {\n    return texture(iChannel1, pos / iResolution.xy).b;\n}\n\n\n// sampleTrail: read chemoattractant trail from Buffer C red channel.\n//   Stage 2+ agents follow these trails like Physarum/slime mold.\n//   pos : pixel-space position\n//   Returns float trail concentration in [0,1].\n\nfloat sampleTrail(vec2 pos) {\n    return texture(iChannel2, pos / iResolution.xy).r;\n}\n\n// ----------------------------------------------------------------\n// energyGradient: compute gradient of life energy field at pos.\n//   Used for terrain steering — agents steer toward low energy\n//   (dead/dying tissue) and away from high energy (healthy life).\n//   Central difference finite differencing, same method as A3.\n//   pos : pixel-space position\n//   Returns vec2 gradient direction (unnormalised).\n// ----------------------------------------------------------------\nvec2 energyGradient(vec2 pos) {\n    float eps = TERRAIN_SENSE_R;\n    float dx  = sampleEnergy(pos + vec2(eps, 0.0))\n              - sampleEnergy(pos - vec2(eps, 0.0));\n    float dy  = sampleEnergy(pos + vec2(0.0, eps))\n              - sampleEnergy(pos - vec2(0.0, eps));\n    return vec2(dx, dy);\n}\n\n\n// trailGradient: compute gradient of chemoattractant field.\n//   Stage 2+ agents follow this up-gradient (toward trail peaks).\n//   pos : pixel-space position\n//   Returns vec2 gradient direction (unnormalised).\nvec2 trailGradient(vec2 pos) {\n    float eps = TRAIL_SENSE_R;\n    float dx  = sampleTrail(pos + vec2(eps, 0.0))\n              - sampleTrail(pos - vec2(eps, 0.0));\n    float dy  = sampleTrail(pos + vec2(0.0, eps))\n              - sampleTrail(pos - vec2(0.0, eps));\n    return vec2(dx, dy);\n}\n\n\n// steerAgent: compute new heading for agent at agentIdx.\n//   Combines terrain avoidance, boids, trail following, and\n//   reaction-diffusion gradient climbing based on evo stage.\n//   agentIdx : which agent we are updating\n//   myPos    : current position of this agent\n//   myHeading: current heading in radians\n//   evoStage : global evolution stage [0,1] from Buffer C\n//   Returns float new heading in radians.\n\nfloat steerAgent(int agentIdx, vec2 myPos, float myHeading, float evoStage) {\n    vec4  noise     = random4(vec3(myPos, iTime));\n    float newHeading = myHeading;\n\n    // --- TERRAIN STEERING: flee high energy, seek low energy ---\n    // Agents are repelled by healthy life (high energy = danger)\n    // and attracted to dying/dead cells (low energy = food)\n    // This creates the emergent behaviour of virus eating at edges\n    // of healthy zones and spreading through weakened territory.\n    vec2 eGrad = energyGradient(myPos);\n    float eLen = length(eGrad);\n    if (eLen > 0.001) {\n        // Negate gradient: steer AWAY from high energy (downhill)\n        float targetAngle = atan(-eGrad.y, -eGrad.x);\n        float diff        = targetAngle - newHeading;\n        // Wrap angle difference to [-PI, PI]\n        diff        = mod(diff + TWOPI * 1.5, TWOPI) - TWOPI * 0.5;\n        newHeading += diff * W_TERRAIN * iTimeDelta * (1.0 + evoStage);\n    }\n\n    // --- BOIDS FLOCKING (Stage 1+: evoStage > 0.25) ---\n    // Agents cluster together to create coordinated infection fronts\n    // Separation keeps them from piling up; cohesion forms swarms\n    float boidWeight = smoothstep(0.20, 0.40, evoStage);\n    if (boidWeight > 0.01) {\n        vec2  cohesionCenter = vec2(0.0);\n        int   cohesionCount  = 0;\n        vec2  separation     = vec2(0.0);\n\n        // Sample 8 evenly-spaced directions for boid neighbours\n        for (int i = 0; i < 8; i++) {\n            float sampleAngle = float(i) * TWOPI / 8.0;\n            vec2  samplePos   = myPos + vec2(cos(sampleAngle),\n                                             sin(sampleAngle))\n                                      * BOID_COHESION_R;\n            // Read which agent occupies that region\n            vec4 neighbour = texture(iChannel0,\n                                     samplePos / iResolution.xy);\n            float nd = distance(myPos, neighbour.xy);\n\n            // Cohesion: pull toward cluster if in range\n            if (nd < BOID_COHESION_R && nd > 1.0) {\n                cohesionCenter += neighbour.xy;\n                cohesionCount++;\n            }\n            // Separation: push away if too close\n            if (nd < BOID_SEPARATION_R && nd > 0.5) {\n                separation += normalize(myPos - neighbour.xy)\n                            * (1.0 - nd / BOID_SEPARATION_R);\n            }\n        }\n\n        // Apply cohesion: steer toward cluster centre\n        if (cohesionCount > 0) {\n            cohesionCenter /= float(cohesionCount);\n            float cohAngle  = atan(cohesionCenter.y - myPos.y,\n                                   cohesionCenter.x - myPos.x);\n            float cohDiff   = cohAngle - newHeading;\n            cohDiff         = mod(cohDiff + TWOPI * 1.5, TWOPI) - TWOPI * 0.5;\n            newHeading      += cohDiff * W_COHESION * boidWeight * iTimeDelta;\n        }\n\n        // Apply separation: steer away from too-close agents\n        float sepLen = length(separation);\n        if (sepLen > 0.001) {\n            float sepAngle = atan(separation.y, separation.x);\n            float sepDiff  = sepAngle - newHeading;\n            sepDiff        = mod(sepDiff + TWOPI * 1.5, TWOPI) - TWOPI * 0.5;\n            newHeading     += sepDiff * W_SEPARATION * boidWeight * iTimeDelta;\n        }\n    }\n\n    // --- TRAIL FOLLOWING / PHYSARUM (Stage 2+: evoStage > 0.50) ---\n    // Agents sense chemoattractant trails from Buffer C and\n    // follow them — like Physarum slime mold building efficient\n    // transport networks. This creates persistent viral highways\n    // through the life field that efficiently route new infection.\n    float trailWeight = smoothstep(0.45, 0.65, evoStage);\n    if (trailWeight > 0.01) {\n        vec2  tGrad = trailGradient(myPos);\n        float tLen  = length(tGrad);\n        if (tLen > 0.001) {\n            // Follow the trail gradient uphill (toward dense trails)\n            float trailAngle = atan(tGrad.y, tGrad.x);\n            float tDiff      = trailAngle - newHeading;\n            tDiff            = mod(tDiff + TWOPI * 1.5, TWOPI) - TWOPI * 0.5;\n            newHeading       += tDiff * W_TRAIL * trailWeight * iTimeDelta;\n        }\n    }\n\n    // --- REACTION-DIFFUSION GRADIENT CLIMB (Stage 3: evoStage > 0.75) ---\n    // At maximum evolution, virus inverts its terrain preference:\n    // instead of seeking dead cells, it specifically targets the\n    // STRONGEST living cells to deal maximum damage to life's\n    // most resilient zones. This makes stage 3 feel \"intelligent\".\n    float rdWeight = smoothstep(0.70, 0.90, evoStage);\n    if (rdWeight > 0.01) {\n        // Now seek HIGH energy zones — attack the strongest life\n        vec2  eGradUp  = energyGradient(myPos);\n        float eUpLen   = length(eGradUp);\n        if (eUpLen > 0.001) {\n            // Follow energy gradient UPHILL this time\n            float rdAngle = atan(eGradUp.y, eGradUp.x);\n            float rdDiff  = rdAngle - newHeading;\n            rdDiff        = mod(rdDiff + TWOPI * 1.5, TWOPI) - TWOPI * 0.5;\n            newHeading    += rdDiff * 1.60 * rdWeight * iTimeDelta;\n        }\n    }\n\n    // Small random jitter keeps movement organic and unpredictable\n    newHeading += HEADING_JITTER * (noise.w * 2.0 - 1.0) * iTimeDelta;\n\n    return newHeading;\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    vec2 uv    = fragCoord / iResolution.xy;\n    vec4 A     = texture(iChannel0, uv);  // previous state\n\n    // Read global evolution stage from Buffer C blue channel\n    // Buffer C uses a single \"global\" pixel at (0.5, 0.5) for this\n    float evoStage = texture(iChannel2, vec2(0.5)).b;\n\n    //VORONOI PROPAGATION =\n    // From A3: each pixel propagates the nearest agent through its\n    // neighbourhood so every pixel knows which agent owns it\n    for (int x = -2; x <= 2; x++) {\n        for (int y = -2; y <= 2; y++) {\n            A = getNearestAgent(A, fragCoord, vec2(x, y));\n        }\n    }\n\n    //  UPDATE AGENT STATE\n    // Only the pixel at exactly the agent's position updates state.\n    // All other pixels just track (Voronoi ownership).\n    // We identify the \"home pixel\" as the one nearest to the agent.\n    vec2 homePixel = floor(A.xy) + 0.5;\n    bool isHome    = (distance(fragCoord, homePixel) < 0.5);\n\n    if (isHome) {\n        vec2  pos     = A.xy;\n        float heading = A.z * TWOPI;    // decode heading from [0,1] to radians\n        float flavour = A.w;             // per-agent flavour parameter\n\n        // Compute new heading via steering function\n        float newHeading = steerAgent(\n            int(floor(pos.x / 24.0) + floor(pos.y / 24.0) * 20.0),\n            pos, heading, evoStage\n        );\n\n        // Speed increases with evolution stage — virus gets faster\n        float speed = mix(VIRUS_SPEED, MAX_SPEED_STAGE3, evoStage);\n\n        // Advance position forward along heading\n        vec2 newPos = pos + vec2(cos(newHeading), sin(newHeading))\n                          * speed * iTimeDelta;\n\n        // Wrap at screen edges (toroidal space)\n        newPos = mod(newPos, iResolution.xy);\n\n        // Pack back: heading encoded as [0,1] in .z\n        A = vec4(newPos, newHeading / TWOPI, flavour);\n    }\n\n    //  PROXIMITY TRAIL MAP ==\n    // The .a channel accumulates a decaying proximity map of agent\n    // positions. Buffer A reads this to apply direct infection.\n    // All pixels contribute to the trail independently of Voronoi.\n\n    // Decay previous trail\n    float prevTrail = texture(iChannel0, uv).a * DEPOSIT_DECAY;\n    float newTrail  = prevTrail;\n\n    // Each agent deposits a soft disc at its position\n    // We sample nearby agent states via Voronoi to get deposits\n    float dist = distance(fragCoord, A.xy);\n    if (dist < DEPOSIT_RADIUS) {\n        // Gaussian-like smooth deposit\n        float deposit = smoothstep(DEPOSIT_RADIUS, 0.0, dist);\n        newTrail = max(newTrail, deposit);\n    }\n\n    //  INITIALISATION =\n    if (iFrame == 0) {\n        // Place agents in a tight cluster near a random position\n        // Seeded from pixel position so agents spread across cluster\n        float N        = 24.0;   // grid cell size (same as A3)\n        vec2  gridPos  = round(fragCoord / N) * N;\n        vec4  init     = random4(vec3(gridPos, 0.0));\n\n        // Virus starts from a random point in the middle of the screen\n        // All agents begin near the same origin to simulate outbreak\n        vec2 outbreakCenter = iResolution.xy * vec2(\n            0.3 + init.x * 0.4,   // somewhere in middle 40% of screen\n            0.3 + init.y * 0.4\n        );\n        // Scatter within a small radius of outbreak center\n        float scatterR = 30.0;\n        vec2 scatter   = vec2(\n            (random4(gridPos + 1.0).x - 0.5) * scatterR,\n            (random4(gridPos + 1.0).y - 0.5) * scatterR\n        );\n        gridPos = outbreakCenter + scatter;\n\n        // Random initial heading\n        float initHeading = init.z;   // [0,1] — decoded to radians in steer\n        float flavour     = init.w;   // per-agent permanent identifier\n\n        A = vec4(gridPos, initHeading, flavour);\n        newTrail = 0.0;\n    }\n\n    // Output: XY=agent pos, Z=heading[0,1], W=proximity trail\n    fragColor = vec4(A.xyz, newTrail);\n}\n",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n    Student Number: 219284140\n    Assignment:    doomsday: life vs. ai-virus\n    Name:           Katelyn Yew\n                             Buffer C\n\nBuffer C: Evolution Accumulator + Chemoattractant Field\n  \n    This buffer has two main roles:\n\n    ROLE 1 — CHEMOATTRACTANT TRAIL (.r channel, full resolution):\n        A diffusing, decaying chemical field that virus agents (Buffer B)\n        deposit into each frame and then sense via gradient following.\n        This implements Physarum/slime-mold behaviour at Stage 2+:\n        agents reinforce each other's paths, creating persistent viral\n        highways that efficiently route infection through life tissue.\n        The trail diffuses slowly to neighbouring pixels each frame and\n        decays exponentially so old paths fade when agents leave.\n\n    ROLE 2 — EVOLUTION ENGINE (.g = pressure, .b = evo stage):\n        Tracks \"virus pressure\" — a global scalar that rises when life\n        is winning (high energy, low infection) and drives mutation.\n        Evolution advances BOTH automatically over time AND reactively\n        when pressure crosses a threshold (virus adapts to failure).\n        The .b channel encodes the current normalised evolution stage\n        [0,1] and is read by Buffer A and Buffer B to scale behaviour.\n\n    CHANNEL WIRING FOR THIS BUFFER IN SHADERTOY:\n        iChannel0 = Buffer C (self — for trail diffusion and evo state)\n        iChannel1 = Buffer A (life CA field — for pressure measurement)\n        iChannel2 = Buffer B (virus agents — proximity trail in .a channel)\n\n    Writes: R = chemoattractant trail | G = pressure | B = evo stage\n*/\n\n// --- Evolution timing ---\n// Seconds for the virus to automatically advance one full stage.\n// Reactive pressure can shortcut this when life is winning.\n#define AUTO_EVOLVE_TIME         28.0\n\n// Rate at which pressure accumulates when life is winning each frame\n#define EVOLUTION_PRESSURE_RATE  0.0008\n\n// Pressure level that triggers a reactive mutation jump\n#define MUTATION_THRESHOLD       0.65\n\n// --- Chemoattractant trail parameters ---\n#define TRAIL_DECAY      0.978    // fraction remaining each frame (exponential decay)\n#define TRAIL_DIFFUSION  0.15     // fraction blended toward 4-neighbour average\n#define DEPOSIT_PER_AGENT 0.08    // concentration deposited per agent per frame\n// Life's immune stage thresholds — mirrors virus evo but slower\n// Life reaches stage 1 at ~40s, stage 2 at ~90s (virus hits stage 3 at ~84s)\n#define LIFE_AUTO_STAGE_TIME     40.0\n// How fast immune pressure builds when virus is winning\n#define LIFE_PRESSURE_RATE       0.0005\n// Life pressure threshold to trigger a reactive immune jump\n#define LIFE_MUTATION_THRESHOLD  0.70\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n\n    vec2 uv        = fragCoord / iResolution.xy;\n    vec2 texelSize = 1.0 / iResolution.xy;\n\n    // Read previous state of this buffer (self-referencing for persistence)\n    vec4  self     = texture(iChannel0, uv);\n    float prevTrail = self.r;    // previous trail concentration\n    float pressure  = self.g;   // accumulated virus pressure\n    float evoStage  = self.b;   // current evolution stage [0,1]\n\n    // ====== ROLE 1: CHEMOATTRACTANT TRAIL ==\n    // Runs at full resolution — every pixel maintains its own trail value.\n\n    // Step 1: diffuse trail toward 4-neighbour average (chemical spreading)\n    float trailN = texture(iChannel0, uv + vec2(0.0,        texelSize.y)).r;\n    float trailS = texture(iChannel0, uv + vec2(0.0,       -texelSize.y)).r;\n    float trailE = texture(iChannel0, uv + vec2( texelSize.x, 0.0      )).r;\n    float trailW = texture(iChannel0, uv + vec2(-texelSize.x, 0.0      )).r;\n\n    // Blend: mostly self-preserved, slightly spread to neighbours\n    float trailDiffused = mix(prevTrail,\n                              (trailN + trailS + trailE + trailW) * 0.25,\n                              TRAIL_DIFFUSION);\n\n    // Step 2: apply exponential decay — old trails fade out\n    float newTrail = trailDiffused * TRAIL_DECAY;\n\n    // Step 3: virus agents deposit into trail via Buffer B proximity map.\n    // iChannel2 = Buffer B. The .a channel of Buffer B is the agent\n    // proximity map — high values mean an agent is at or near this pixel.\n    float agentProximity = texture(iChannel2, uv).a;\n    newTrail = clamp(newTrail + agentProximity * DEPOSIT_PER_AGENT, 0.0, 1.0);\n\n    // Step 4: infection in the CA field also boosts trail concentration\n    // — infected zones attract more agents, self-reinforcing spread.\n    float infection = texture(iChannel1, uv).b;   // Buffer A infection channel\n    newTrail = clamp(newTrail + infection * 0.010, 0.0, 1.0);\n\n    // ======= ROLE 2: EVOLUTION ENGINE ====\n    // Pressure and evo stage are global scalars. They are computed\n    // identically at every pixel (using the same sample points) so the\n    // values propagate uniformly across the entire buffer.\n    // The Image tab and Buffer B read from vec2(0.5) to get the global value.\n\n    // Sample life field health at 9 spread points across the canvas.\n    // This gives a cheap proxy for the global state of the simulation\n    // without needing a full-resolution reduction pass.\n    float lifeHealth     = 0.0;\n    float totalInfection = 0.0;\n    for (int i = 0; i < 9; i++) {\n        float fi       = float(i);\n        // Spread sample points in a pseudo-random pattern across [0,1]\n        vec2  sampleUV = vec2(fract(fi * 0.333 + 0.16),\n                              fract(fi * 0.222 + 0.11));\n        vec4  lifeSample = texture(iChannel1, sampleUV);\n        lifeHealth     += lifeSample.r;   // energy channel\n        totalInfection += lifeSample.b;   // infection channel\n    }\n    lifeHealth     /= 9.0;\n    totalInfection /= 9.0;\n\n    // Virus is losing when life energy is high AND infection is low.\n    // This scalar drives the pressure accumulation.\n    float virusLosing = lifeHealth * (1.0 - totalInfection);\n\n    // Pressure builds when life is winning, decays slowly when virus wins\n    pressure += virusLosing  * EVOLUTION_PRESSURE_RATE;\n    pressure -= (1.0 - virusLosing) * EVOLUTION_PRESSURE_RATE * 0.30;\n    pressure  = clamp(pressure, 0.0, 1.0);\n\n    // --- Automatic evolution: advances slowly over time ---\n    // Full evolution (stage 3) reached at 3 × AUTO_EVOLVE_TIME seconds\n    float autoStage = clamp(iTime / (AUTO_EVOLVE_TIME * 3.0), 0.0, 1.0);\n\n    // --- Reactive mutation: pressure spike jumps to next stage ---\n    // If virus has been struggling, it mutates immediately\n    float pressureBoost = 0.0;\n    if (pressure > MUTATION_THRESHOLD) {\n        pressureBoost = 0.33;       // advance by exactly one stage\n        pressure     *= 0.30;       // reset pressure after mutation fires\n    }\n\n    // Final stage: take max of automatic and pressure-boosted values.\n    // Never goes backward — evolution is irreversible.\n    float targetStage = clamp(autoStage + pressureBoost, 0.0, 1.0);\n    float newEvoStage = max(evoStage, targetStage);\n\n    // Smooth interpolation so stage transitions feel gradual, not instant\n    evoStage = mix(evoStage, newEvoStage, 0.018);\n\n    // ======= INITIALISATION ========\n    if (iFrame == 0) {\n        newTrail = 0.0;\n        pressure = 0.0;\n        evoStage = 0.0;   // virus starts at Stage 0: Scout\n    }\n       // LIFE CO-EVOLUTION ENGINE \n    // Mirrors the virus evolution system but is slower and weaker.\n    // Life's immune stage is stored in the .a channel of Buffer C.\n    // Stage 0: baseline CA  |  Stage 1: quarantine pulse\n    // Stage 2: veteran resistance active  |  Stage 3: anti-viral repulsion\n\n    float lifeStage    = self.a;   // current life evolution [0,1]\n\n    // Life pressure rises when virus is winning (high infection, low energy)\n    // — opposite trigger to virus pressure\n    float virusWinning  = totalInfection * (1.0 - lifeHealth);\n    float lifePressure  = self.g;  // reuse .g for life pressure this frame?\n    // NOTE: to avoid collision with virus pressure already in .g,\n    // pack life pressure into a spare bit. Simplest approach:\n    // store life stage in .a, derive life pressure transiently each frame.\n    // Life stage auto-advances at LIFE_AUTO_STAGE_TIME per stage (max stage 2 = 0.66)\n    float lifeAutoStage = clamp(iTime / (LIFE_AUTO_STAGE_TIME * 3.0), 0.0, 0.66);\n\n    // Reactive jump: if virus is winning strongly, life mutates immediately\n    float lifePressureBoost = 0.0;\n    if (virusWinning > LIFE_MUTATION_THRESHOLD && lifeStage < 0.66) {\n        lifePressureBoost = 0.33;\n    }\n\n    float lifeTargetStage = clamp(lifeAutoStage + lifePressureBoost, 0.0, 0.66);\n    // Life never reaches stage 3 — virus stays dominant\n    float newLifeStage    = max(lifeStage, lifeTargetStage);\n    lifeStage = mix(lifeStage, newLifeStage, 0.012); // slightly slower than virus\n\n    // Anti-viral repulsion at life Stage 2+ (evoStage > 0.5):\n    // Veteran cells in strongly infected recovered zones emit a\n    // negative contribution to the chemoattractant trail —\n    // agents are slightly pushed away from well-defended areas.\n    \n    float lifeDefense = smoothstep(0.45, 0.65, lifeStage);\n    if (lifeDefense > 0.01) {\n        // Read immune memory from Buffer A .a channel\n        float immuneMemory = texture(iChannel1, uv).a;\n        // Subtract from trail where veterans are dense and infection was cleared\n        float antiViral = immuneMemory * lifeDefense * 0.04;\n        newTrail = max(newTrail - antiViral, 0.0);\n    }\n\n    // Pack all three roles into output channels\n    // R = chemoattractant trail concentration [0,1]\n    // G = virus pressure accumulator [0,1]\n    // B = evolution stage [0,1]\n   // R = chemoattractant trail | G = virus pressure | B = virus evo stage | A = life stage\n    fragColor = vec4(newTrail, pressure, evoStage, lifeStage);\n    \n \n \n}\n",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XdfGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n\n Buffer D: Terrain Map\n    Generates a PERMANENT geographic terrain at iFrame == 0.\n    Never updates after that because it is a static landscape.\n\n    THREE terrain features stored in three channels:\n        .r = STRONGHOLD density [0,1]\n             Voronoi-seeded \"organ regions\" where life cells are\n             denser and share energy more efficiently. Virus must\n             work harder to breach these zones. Life's fortresses.\n\n        .g = CORRIDOR weakness [0,1]\n             Pre-weakened entry corridors — necrotic scars that\n             start at lower energy. Virus outbreak seeds near the\n             highest corridor value. These are the fault lines.\n\n        .b = WALL mask [0,1]\n             Thin membranes of ultra-high-immunity cells that act\n             as natural chokepoints. Physical barriers slow agent\n             traversal and boost local cell immunity.\n\n    Reads:  nothing (pure generation from position + noise)\n    Writes: R=stronghold | G=corridor | B=wall\n\n    SHADERTOY CHANNEL WIRING:\n        iChannel0 = Buffer D (self — reads own previous state\n                    so iFrame==0 init persists forever)\n*/\n\n// Number of Voronoi stronghold \"organ\" regions across the canvas\n#define NUM_STRONGHOLDS     7\n// Number of weakness corridor lines crossing the canvas\n#define NUM_CORRIDORS       5\n// Wall membrane thickness (fraction of cell spacing)\n#define WALL_THICKNESS      0.46\n\n\n// voronoiStronghold: computes how close this pixel is to the\n//   nearest stronghold centre. Returns [0,1] proximity where\n//   1.0 = at the centre, 0.0 = far away.\n//   fragCoord: pixel position\n//   seed:      unique seed per stronghold\n\nfloat voronoiStronghold(vec2 fragCoord, float seed) {\n    // Place stronghold centres pseudo-randomly but avoiding edges\n    // fract(seed*vec2) gives different positions per stronghold\n    vec2 centre = iResolution.xy * (0.15 + 0.70 * fract(seed * vec2(0.317, 0.719)));\n    float dist  = length(fragCoord - centre);\n    // Soft falloff — stronghold influence fades smoothly over ~25% of screen width\n    float radius = iResolution.x * 0.22;\n    return smoothstep(radius, 0.0, dist);\n}\n\n\n// corridorStrength: computes weakness along a diagonal stripe.\n//   Models a pre-weakened fault line through the life field.\n//   Virus tends to seed and spread along these corridors.\n//   fragCoord: pixel position\n//   seed:      unique seed per corridor (controls angle/offset)\n//   Returns [0,1] where 1.0 = at the corridor centre.\n\nfloat corridorStrength(vec2 fragCoord, float seed) {\n    vec2  uv     = fragCoord / iResolution.xy;\n    // Each corridor is a rotated stripe — angle varies per seed\n    float angle  = seed * 1.618 * 3.14159;  // golden-ratio-spaced angles\n    vec2  dir    = vec2(cos(angle), sin(angle));\n    // Offset along perpendicular — positions corridor across canvas\n    float offset = fract(seed * 0.577);\n    // Signed distance to the rotated stripe\n    float d      = abs(dot(uv - 0.5, vec2(-dir.y, dir.x)) - (offset - 0.5));\n    // Narrow soft corridor — noticeable but not world-dominating\n    return smoothstep(0.18, 0.02, d);\n}\n\n\n// wallMask: thin membrane barrier based on a second Voronoi grid.\n//   Creates organic-looking cell-wall barriers at cell boundaries.\n//   Returns 1.0 at the membrane, 0.0 away from it.\n// ----------------------------------------------------------------\nfloat wallMask(vec2 fragCoord) {\n    // Use a coarse Voronoi grid — walls are at cell boundaries\n    vec2  ip  = floor(fragCoord / 88.0);\n    vec2  fp  = fract(fragCoord / 88.0);\n    float d1  = 9.0, d2 = 9.0;\n\n    // Find two nearest Voronoi centres (d1 and d2)\n    for (int j = -1; j <= 1; j++) {\n        for (int i = -1; i <= 1; i++) {\n            vec2 cell   = ip + vec2(i, j);\n            vec2 jitter = random2(cell + 99.0) * 0.75 + 0.125;\n            vec2 r      = (vec2(i, j) + jitter) - fp;\n            float d     = dot(r, r);\n            if (d < d1) { d2 = d1; d1 = d; }\n            else if (d < d2) { d2 = d; }\n        }\n    }\n\n    // Wall is at the Voronoi edge — where d2 - d1 is smallest\n    float edgeProx = sqrt(d2) - sqrt(d1);\n    return smoothstep(WALL_THICKNESS * 2.0, 0.0, edgeProx);\n}\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n\n    // == PERSIST AFTER FRAME 0 \n    // Once generated, never regenerate — read own previous state.\n    // This is the key trick: the terrain is permanent geography.\n    if (iFrame > 0) {\n        fragColor = texture(iChannel0, fragCoord / iResolution.xy);\n        return;\n    }\n\n    // ===================== FRAME 0: GENERATE TERRAIN =====================\n\n    // --- Stronghold map: accumulate influence of all stronghold centres ---\n    float stronghold = 0.0;\n    for (int i = 0; i < NUM_STRONGHOLDS; i++) {\n        // Each stronghold gets a unique seed from its index\n        stronghold = max(stronghold, voronoiStronghold(fragCoord, float(i) * 0.137 + 0.05));\n    }\n    // Sharpen: strongholds have clear centres and clear edges\n    stronghold = pow(stronghold, 1.4);\n\n    // --- Corridor map: accumulate all weakness corridors ---\n    float corridor = 0.0;\n    for (int i = 0; i < NUM_CORRIDORS; i++) {\n        corridor = max(corridor, corridorStrength(fragCoord, float(i) * 0.251 + 0.10));\n    }\n\n    // Corridors and strongholds partially oppose each other:\n    // a stronghold partially blocks a corridor through it (life\n    // is more resilient there even along the fault line)\n    corridor = corridor * (1.0 - stronghold * 0.55);\n\n    // --- Wall membrane mask ---\n    float wall = wallMask(fragCoord);\n    // Walls only exist where there's no stronghold or corridor —\n    // strongholds absorb walls (their interior is open), corridors\n    // slice through walls (pre-broken membranes)\n    wall = wall * (1.0 - stronghold * 0.70) * (1.0 - corridor * 0.80);\n\n    // Pack three terrain channels\n    // R = stronghold, G = corridor, B = wall\n    fragColor = vec4(stronghold, corridor, wall, 1.0);\n}",
+				"name": "Buffer D",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "NclXzs",
+			"date": "1775792557",
+			"viewed": 42,
+			"name": "Doomsday: life vs ai",
+			"username": "Katelyn Yew",
+			"description": "final project\nai vs. life/living creature. both are evolving creatures but this project essentially highlights AI's outpacing and fast evolution compared to living organisms.",
+			"likes": 4,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"multipleagentsandca"
+			],
+			"hasliked": 0,
+			"parentid": "",
+			"parentname": ""
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n\n218856542\n\nDATT4950 Assignment #3\n\nRobert Jamrocha-Tullo\n\n\"Space Strugglers\"\n\nInteractions: Click, and hold anywhere on the screen with the mouse button\nto create an \"air pocket\". This will create a membrane that stores air which\nthe space strugglers on screen will sense the pressure of, flock to, break\nthrough, and let down their personal membrane while taking in the fresh air.\nIn buffer A, the if statement at the bottom has the N variable, which can be\nchanged to initialize a different number of agents, which is good for\ndifferent screen sizes. Additionally, the constants of the image buffer\n(surrounded by ***) may be fun to play with, and certain screen sizes may\nneed to in order to see intended effects, such as the eyes of the membrane.\nThe program is meant to be run on an 800 x 450 sized screen and the default\nsettings for it will work just fine, I have not tested it with 1600 x 900, but\nI'd imagine it would work fine on that size as well.\n\nDescription: The guys you see floating around the screen are what I like to\ncall \"Space Strugglers!\" They are these little guys with cores of\nbioluminescent blue which sport a pink membrane that they use to trap air\naround them, sort of like a natural spacesuit. They wander around space in\ndifferent directions. What's interesting about them is how they evolve and\nbehave. When moving in a specific direction, if you look closely, you will\nsee that they start to develop eyeballs that look toward that direction. They\nalso seem to have an innate desire to breathe fresh air. When they bump into\neach other, they will combine membranes to share the air between them, like\nthey want to experience something new. Of course, if you click and hold on the\nscreen, they will sense the air pressure of the pocket you've created, and\ntake it as a chance to relax, getting rid of their membrane, similar to how\na human would take off their coat after a long winter day. Many of these\nprocesses such as seeking air pockets were programmed directly, but many\nbehaviours took me by surprise, such as the sharing of membranes and growing\nof eyes.\n\nCitations: The basis of lots of code in this shadertoy was learned from\nlectures by Graham Wakefield, and some was inspired by his shadertoys,\nsuch as https://www.shadertoy.com/view/7fl3zH\nAnd concepts from his website: https://alicelab.world/digm5950/glsl.html\nAdditionally, the concepts for smoothlife used in this shadertoy are\ninterpolated from this research paper by Stephan Rafler:\nhttps://arxiv.org/pdf/1111.1567\nwhich was introduced to me by Graham Wakefield on his website at\nhttps://alicelab.world/digm5950/ca.html\n\nSpecific citations of how each concept was applied from where are further\ndescribed in each buffer (including later in this one).\n\nTechnical Realization: I started out by amending code for particle systems\nbeing attracted to sugar (aka Chemotaxis). I modified the attractor to instead\nbe a system where you click and hold on the screen, and modified the behaviour\nof particles so that it looked more like they were wandering around, running\nto the attractor, and then dispursing when it disappeared. I also modified the\nappearance of the particles and their attractor. I then was inspired by\nRafler's smoothlife algorithms and decided to implement my version of it into\na buffer, essentially taking the image that the particle system created and\nbuilding smoothlife off of it. I then played around with more variables, not\nonly of the smoothlife functions, but also of the particles so that they could\nbetter interact with the smoothlife. Eventually, I found good balances that\ncreated the interesting behaviours that I noted in the system description.\nFuture implementations of this code could introduce more elements to the\nsystem, possibly adding even more cellular automata that the particles can\ninteract with, and possibly even interact with the smoothlife. Maybe an evil\nalien that scares the particles could appear, and it eating particles could\ncause a reaction that makes the smoothlife grow a certain way.\n\n*/\n\n//IMAGE: The image buffer takes the compiled particle + attractor data from\n//buffer D, then transforms the image using smoothlife functions, to give it\n//the appearance we see on screen.\n\n//The basis of this code was inspired by Lectures from Graham Wakefield.\n//Many concepts used in this buffer (although parameters have been heavily\n//modified) come from research by Stephan Rafler, found at:\n// https://arxiv.org/pdf/1111.1567\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    //Creates vec4 A which is the previous state of the image from last frame\n    vec4 A = texture(iChannel0, uv);\n    \n    //initializes inner and outer radii that will be used for functions to\n    //determine size for density\n    float inner_radius = 3.5;\n    float outer_radius = 10.0;\n    \n    //initializes variables that will be added to and used to determine\n    //population for density\n    float inner_sum = 0.0;\n    float outer_sum = 0.0;\n    //loops over the diameter of the outer radius\n    for (float x = -outer_radius; x <= outer_radius; x++) {\n        \n        //and the diameter of the inner radius\n        for (float y = -outer_radius; y <= outer_radius; y++){\n        \n            //creates a variable for texel\n            vec2 pixel = vec2(x,y);\n            vec2 texel = pixel / iResolution.xy;\n            //which is used to get the texture of that area, which will in the\n            //future be used to calculate life population and then density\n            float life = texture(iChannel0, uv + texel).x;     \n            \n            //distance is calculated,\n            float dist = length(pixel);\n            \n            //and then used in a sigmoid function to determine if the current\n            //point is in the radial circle we are looking for (otherwise, the\n            //for loop would go over a square).\n            float outer_w = 1.0 - sigmoid(dist, outer_radius, 1.0);\n            float inner_w = 1.0 - sigmoid(dist, inner_radius, 1.0);\n            \n            //Population is calculated\n            outer_sum += life * outer_w;\n            inner_sum += life * inner_w;\n            \n        }\n    \n    }\n    \n    //area of inner circle is calculated with pi r squared\n    float inner_area = 3.14159 * inner_radius * inner_radius;\n    //population and area are used to calculate density\n    float inner_density = inner_sum / inner_area;\n    \n    //area of outer circle is calculated with pi r squared\n    float outer_area = 3.14159 * outer_radius * outer_radius;\n    //outer density is calculated similarly to how inner density was calculated\n    //except that the inner circle's area must be eliminated\n    float outer_density = (outer_sum - inner_sum) / (outer_area - inner_area);\n    \n    //These are constant variables that effect the appearance of the smoothlife\n    //They have been modified based off Rafler's research to give the particles\n    //their look, which is that of a blue glowing particle inside of a pink\n    //membrane, with an eye pointing in the direction of movement.\n    //These values work best on an 800 x 450 sized screen.\n    //***\n    float b1 = 0.25;\n    float b2 = 0.1;\n    float a1 = 0.01;\n    float d1 = 0.1;\n    float d2 = 0.75;\n    float a2 = 0.01;\n    //***\n    \n    //Rules for transition:\n    //determines a value on if the automata is lonely\n    float notlonely = sigmoid(outer_density, d1, a1);\n    //determines a value on if the automata is crowded\n    float notcrowded = 1.0 - sigmoid(outer_density, d2, a1);\n    //crates a logical AND expression through math to determine that it will\n    //survive if it is not lonely AND not crowded\n    float survive = notlonely * notcrowded;\n    \n    //Rules for birth:\n    //determines value if there is enough density\n    float enough = sigmoid(outer_density, b1, a1);\n    //and if there is not too much density\n    float nottoomuch = 1.0 - sigmoid(outer_density, b2, a1);\n    //then performs a logical AND, automata is born if it is dense enough and\n    //not too dense\n    float birth = enough * nottoomuch;\n    \n    //Creates an interpolation between the transition and birth rules\n    float liveness = sigmoid(inner_density, 0.5, a2);\n    float transition = mix(birth, survive, liveness);\n    \n    //Clamps the transition value from 0 to 1\n    transition = clamp(transition, 0., 1.);\n    \n    //Applies transition to rules to the x value of A\n    A.x = transition;\n    \n    //Applies A to the fragColor of the image buffer, completing the image.\n    fragColor = A;\n   \n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "//COMMON: contains multiple constants and functions used throughout code\n//functions were sourced from https://alicelab.world/digm5950/glsl.html\n//as well as lectures from Graham Wakefield.\n\n//Constant variable for two times pi\nconst float TWOPI = 6.283185307179586;\n\n//function for sigmoid transition\nfloat sigmoid(float x, float center, float width) {\n    //x is a variable that changes the transition around center\n    //depending on width\n    return 1.0 / (1.0 + exp(-(x-center)*4.0/width));\n}\n\n\n//Gaussian blur function\nvec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {\n    float sigma = float(N)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(img, fragCoord/resolution) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=N; i++) {\n        vec2 offset = float(i) * dir;\n        float weight = exp(float(i*i) * expFactor);\n        sum += texture(img, (fragCoord + offset)/resolution) * weight;\n        sum += texture(img, (fragCoord - offset)/resolution) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    return sum / weightSum;\n}\n\n\n//Below are multiple pseudorandom number generator functions\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//BUFFER A: This buffer creates the data of position, direction and\n//movement for the particle agents moving around the screen.\n\n//The basis for this code is from https://www.shadertoy.com/view/7fl3zH\n//By Graham Wakefield, with my changes.\n\n//This buffer creates \"pixels\" (comprised of regions that take up multiple\n//pixels on screen) that track a particle.\n//vec4 A is the variable used for the current \"pixel\"\n//its w contains the nearest particle's memory, its x and y track the nearest\n//particle's location, and the z contains its direction.\n\n//Function to determine nearest particle. It takes the location of the current\n//pixel and its neighbour, then determines which is closer to their particles.\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    //Creates a variant of 'A' for neighbour\n    vec4 N = texture(iChannel0, (fragCoord+offset)/iResolution.xy);\n    //gets the distances for current pixel to particle\n    float d1 = distance(fragCoord, A.xy);\n    //and distance for neighbouring particle to its pixel\n    float d2 = distance(fragCoord, N.xy);\n    //tracks neighbour's particle if it is closer to current pixel\n    if (d2 < d1) { return N; } else { return A; }\n}\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord) {\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = fragCoord / iResolution.xy;\n    //updates A with whatever data was on the previous frame\n    vec4 A = texture(iChannel0, uv);\n    \n    //For loop that performs the getNearestParticle function from earlier\n    //on all the pixel's neighbours, effectively making sure that the pixel\n    //is tracking its nearest neighbour.\n    for (int x=-2; x<=2; x++) {\n        for (int y=-2; y<=2; y++) {\n            A = getNearestParticle(A, fragCoord, vec2(x, y));\n        }\n    }\n    \n    //Noise variable generated, using the particle's position and the time\n    //elapsed as a seed, ensuring that each particle will stay consistent to\n    //itself while also having some randomness.\n    vec4 noise = random4(vec3(A.xy, iTime));\n    \n    //the speed and direction change of the particle are initialized, however\n    //these values will soon update.\n    float speed = 50.;\n    float turn = 0.;\n    \n    //This part of the buffer actually pulls from buffer C, which contains\n    //an attractor field. It uses this data to create a \"pressure\" that\n    //the particles sense.\n    vec4 C = texture(iChannel2, A.xy / iResolution.xy);\n    float pressure = C.g;\n    \n    //Compares strength of pressure to the particle's memory of pressure\n    //last frame\n    float memory = A.w;\n    \n    //Checks if the pressure is stronger than last frame\n    if (pressure > memory) {\n        //If so, go keep following in the direction of the new pressure.\n        //Direction is changed to be more consistent\n        turn = 0.01;\n        //And speed picks up.\n        speed = 100.;\n    } else {\n        //If there is no sensed nearby pressure change, keep changing\n        //directions, and take it slower.\n        turn = 1.;\n        speed = 50.;\n    }\n    \n    //The direction is updated, using the amount of direction change variable,\n    //and a bit of randomization from the earlier noise function.\n    A.z += turn * (noise.x*2. - 1.);\n    \n    //Creates a velocity using cos and sin to create x and y variables from\n    //direction variable z, and combines it with speed, so there is direction\n    //and magnitude.\n    vec2 vel = vec2(cos(A.z), sin(A.z)) * speed;\n    //That velocity is then placed into the x and y variables.\n    A.xy += vel * iTimeDelta;\n    \n    // get the bounded position within the screen image\n    vec2 b = clamp(A.xy, vec2(0), iResolution.xy);\n    // compare the bounded and actual positions -- if they are different, reflect their orientations:\n    if (A.x != b.x) { A.z = TWOPI*0.5 - A.z; } // reflect in Y axis\n    if (A.y != b.y) { A.z = TWOPI - A.z; } // reflect in X axis\n    // also, actually clamp the position on screen\n    A.xy = b.xy; \n    \n    //add current pressure to memory\n    A.w = pressure;\n    \n    //Initializes particles on frame 0 (the start)\n    if (iFrame == 0) {\n        //Creates each pixel of size N by N\n        // *** You may edit this variable depending on screen size. I have it\n        //set to 40 for an 800 x 450 screen, but if you are double the size,\n        //you may set it to 80. ***\n        float N = 40.;\n        //Also rounds each on screen pixel to nearest N\n        A.xy = round(fragCoord/N) * N;\n        //Noise variable is created using A.xy isntead of fragCoord so that\n        //the particle has consistent noise.\n        vec4 noise = random4(vec3(A.xy, iFrame));\n        \n        //Random direction is chosen\n        A.z = noise.z * TWOPI;\n    }\n    \n    //Data of A is sent to fragColor of the buffer.\n    fragColor = A;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//BUFFER B: This buffer takes data from buffer A and uses it to create actual\n//visual data for the agents, such as trail data.\n\n//The basis for this code is from https://www.shadertoy.com/view/7fl3zH\n//By Graham Wakefield, with my changes.\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    //Gets the state of A (the current particle data)\n    vec4 A = texture(iChannel0, uv);\n    //And the previoius state of B (the trails and other visual data)\n    vec4 B = texture(iChannel1, uv);\n    \n    \n    //This makes the previous frame \"decay\" a little, so the last frame\n    //is still there but less opaque, which creates the trail effect.\n    B *= 0.925;\n    \n    //Gets distance from the actual pixel coordinate to the particle being\n    //tracked\n    float d = distance(fragCoord, A.xy);\n    \n    //If d is less than 50, it adds a new diffused particle to B, with its\n    //intensity scaled off the distance from the particle, essentially making\n    //a small light with the halo radius of 50 pixels.\n    if (d < 50.){\n            B += vec4((1.5/d)*1.,(1.5/d)*1.,(1.5/d)*1.,(1.5/d)*1.);\n        }\n    \n    //Data for visuals of particle/trails is added to the fragColor of the\n    //buffer.\n    fragColor = B;\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//BUFFER C: The attractor\n\n//The basis for this code is from https://www.shadertoy.com/view/7fl3zH\n//By Graham Wakefield, with my changes.\n\n//This buffer creates the \"air pocket\" that can be controlled by clicking and\n//holding anywhere on the screen. It creates pressure that attracts the agents\n//towards it so that they can have a breath of fresh air.\n\n//Gaussian blur matrix\nmat3 gaussBlur = mat3(\n        1, 2, 1,\n        2, 4, 2,\n        1, 2, 1\n    ) * 1.0/16.0;\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = (fragCoord / iResolution.xy);\n    \n    //Creates a vec4 C that takes data from the previous frame\n    vec4 C = texture(iChannel2, uv);\n    \n    //Previous frame is given a gaussian blur\n    vec4 N = texture(iChannel2, (fragCoord + vec2(0, 1))/iResolution.xy);\n    vec4 S = texture(iChannel2, (fragCoord + vec2(0, -1))/iResolution.xy);\n    vec4 E = texture(iChannel2, (fragCoord + vec2(1, 0))/iResolution.xy);\n    vec4 W = texture(iChannel2, (fragCoord + vec2(-1, 0))/iResolution.xy);\n    vec4 NE = texture(iChannel2, (fragCoord + vec2(1, 1))/iResolution.xy);\n    vec4 SE = texture(iChannel2, (fragCoord + vec2(1, -1))/iResolution.xy);\n    vec4 NW = texture(iChannel2, (fragCoord + vec2(-1, 1))/iResolution.xy);\n    vec4 SW = texture(iChannel2, (fragCoord + vec2(-1, -1))/iResolution.xy);\n    C = ((NE+SE+NW+SW) + 2.*(N+E+S+W) + 4.*C)/16.;\n    \n    //decay of C so that the attractor (which appears as a membrane) does\n    //not stay on the screen forever\n    C = C * 0.9;\n\n    //Checks if mouse is held on the screen\n    if (iMouse.z > 0.0) {\n        //saves mouse position\n        vec2 p = iMouse.xy;\n        //saves distance from current coordinate to mouse coordinate\n        float d = distance(fragCoord, p);\n        //generates a diffused light based on distance, similar to the agents,\n        //except much larger halo and larger actual light, which will create\n        //a different appearance when the other CA system takes it over\n        if (d < 150.){\n            //Adds it to C as well\n            C += vec4((5./d)*1.,(5./d)*1.,(5./d)*1.,(5./d)*1.);\n        }\n    }\n    \n    //C is clamped from 0 to 1\n    C = clamp(C, 0., 1.);\n    \n    //C is added to the fragColor of the buffer\n    fragColor = C;\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XdfGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//BUFFER D: Takes image data from buffers B (particles) and C (attractor) and\n//Combines them into one image so that the image can be processed by the image\n//buffer.\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord) {\n    \n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = (fragCoord / iResolution.xy);\n    \n    //Gets data from buffer B\n    vec4 B = texture(iChannel1, uv);\n    //Gets data from buffer C\n    vec4 C = texture(iChannel2, uv);\n    \n    //Adds data from C to the buffer's fragColor, taking only the red data\n    //and modifying it so that its appearance will be ready for the image buffer\n    //to make it appear like a membrane.\n    fragColor = C * vec4(0.5, 0, 0, 0);\n    \n    //Adds data from buffer B to the buffer's fragColor, taking only the red\n    //and blue data and modifying them, so that the CA of the image buffer will\n    //make them look like blue creatures with pink spacesuit membranes.\n    fragColor += (B * vec4(0.25, 0, 0.25, 0));\n    \n}",
+				"name": "Buffer D",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "NcsGWj",
+			"date": "1773613427",
+			"viewed": 48,
+			"name": "Space Strugglers",
+			"username": "Robert	Jamrocha-Tullo",
+			"description": "a3",
+			"likes": 3,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950"
+			],
+			"hasliked": 0,
+			"parentid": "fclGWj",
+			"parentname": "DATT4950 A3 Robert"
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n\n218856542\n\nDATT4950 Final Project\n\nRobert Jamrocha-Tullo\n\n\"Chasing Rays of Light\"\n\nINTERACTIONS: You may zoom in by holding on an area with the mouse button, and\nyou may reset the positions of the agents by pressing the space button, which\nis good for full screen. The default variables were intended to be used on an\n800 x 450 sized screen, however, they also work well on 1920 x 1080, so their\nshould not be a need to edit any variables. Two-way interactions between the\nagents and the rays of light may be unique throughout the running of the\nshadertoy, so watching for longer may help, but the overarching interaction\ntypes should be visible in under a minute.\n\nDESCRIPTION: This shadertoy is a reimagining of my assignment 2, using topics\nI have learned from both assignments 2 and 3, extending those topics further\nand adding some more topics I have learned. It essentially creates\nautonomous fireflies in the way I wanted to make them when I first did\nassignment 2. Each firefly is now tied to an actual agent, and can actually\nsense when light is on the screen. I also wanted to give the attractor more\ninteresting behaviour than just being held by the mouse and attracting agents\nto that point, like in my last assignment. This time around, when an agent\ngets near where the attractor would be, their region begins to light up, and\ntherefore attracts more agents to that region of the screen. This way, there\nis actual meaningful two-way interaction between the agents and their\nattractor. The way that the CA and reaction diffusion makes the fireflies look\nand move is very lifelike, and their movement patterns around the lights are\nvery interesting to see. Due to the two-way interaction, they often 'discover'\nan area that begins to show light, which makes it look like they are telling\ntheir friends to come over to that region- sometimes creating multiple flocks\nat a time, instead of just individually crowding around a single area.\nInterestingly enough, because of the tie to regions, they actually get closer\nand closer as they attract, the regions get smaller, and they shift around.\n\nTopics were learned from lectures and labs by Graham Wakefield. some code from\nhim was implemented and edited into this shadertoy, such as the following:\nhttps://alicelab.world/digm5950/glsl.html\nhttps://alicelab.world/digm5950/glsl.html#randomnoise\nhttps://www.shadertoy.com/view/W3tBRN\nhttps://www.shadertoy.com/view/7fl3zH\nhttps://www.shadertoy.com/view/t3cBRN\nhttps://alicelab.world/digm5950/ca.html#forest-fire\nhttps://www.shadertoy.com/view/tXdcDN\nhttps://www.shadertoy.com/view/7fl3zH\nhttps://alicelab.world/digm5950/glsl.html#mouse-input\n\nSpecifics on how each source's code was implemented are further detailed in\nthe buffers in which they are used.\n\nSmoothlife concepts (although parameters have been heavily\nmodified) come from research by Stephan Rafler, found at:\nhttps://arxiv.org/pdf/1111.1567\n\nTECHNICAL REALIZATION: Buffer A is the starting point, and it creates data for\nagents, including position, velocity, their turn angle, and their memory.\nThey start out moving around aimlessly, but will detect light and fly toward\nit. Keyboard functionality was added to reset the states of these agents.\nThe parameters make it so that they move similar to fireflies in both\nstates. Buffer B creates continuous CA (similar to forest fire). The params\nin this buffer make it look like fuzzy fire particles. Buffer C uses the\nposition data of agents from buffer A to determine an area to show these fire\nparticles from buffer B that tapers off, which creates a firefly-looking\neffect. Buffer D was something that I tested around with, until I found that\npulling from buffer A (the agent positions) and using them to determine their\ndistance from where the light source would be (originally just a diffused\nlight controlled by a sin wave), made for an interesting two-way interaction,\nwhere a firefly stumbling onto an area near the source would create a light\nin its region, therefore 'discovering' that light and attracting its friends.\nThe visual data of the light is sent back to buffer A and is used as an\nattractor. Finally, the image buffer completes a couple visual functions: it\nadds some reaction diffusion into the mix, creating different levels of blur\nto both the agents and the attractor. Using noise on the offset made the\nagent's blur look like wings flapping, and using heavy blur on the attractor\nmade it look like rays of sunlight. I also implemented a zoom effect which was\nrather tricky. I had to reimplement the blur function in the image buffer\ninstead of just calling it. Finally, smoothlife was implemented onto the\nagents, which after some time playing with parameters and outputs, gave them\nthat orange/yellow glow that makes it look like the light-up part of a\nfirefly. Any future implementations would likely focus around the attractor,\nspecifically the source of the light, possibly giving it more autonomous\nmovement.\n\n*/\n\n//IMAGE: The image buffer takes data from buffer C (The actual visuals of\n//the agents and their fire particle effects), as well as data from buffer D\n//(the rays of light/the attractor). It applies a blur function to both of the\n//images from these buffers, with noise for buffer C so that the blur looks\n//like the flapping of wings (and overall makes the fireflies look more\n//orange), and buffer D without noise but a much higher blur factor, to\n//further diffuse the light. Smoothlife is also implemented on a separate\n//retrieval of buffer C's data, to allow the centre of each agent to actually\n//look like a lit up firefly. In the end, all of these images are added\n//together to make the final frame.\n\n//The basis of smoothlife was inspired by lectures from Graham Wakefield.\n//Many concepts used in this buffer (although parameters have been heavily\n//modified) come from research by Stephan Rafler, found at:\n// https://arxiv.org/pdf/1111.1567\n//Some functions, such as blur functions, were implemented and edited from\n// https://www.shadertoy.com/view/W3tBRN\n//by Graham Wakefield.\n//Mouse functionality was implemented (and edited) from:\n// https://alicelab.world/digm5950/glsl.html#mouse-input\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    //a texture is created from buffer C (the visuals of agents)\n    vec4 C = texture(iChannel0, uv);\n    //a texture is created from buffer D (the rays of light)\n    vec4 B = texture(iChannel1, uv);\n    //a noise variable is created based on iTime, so that later on in the\n    //code, the blur variable for the agents will move over time, making a\n    //wing flapping effect.\n    vec2 wingNoise = random2(iTime);\n    //variables containing the shadertoy's resolution and current fragCoord\n    //are created, this just made it easier for me to code the zoom effect\n    //later on.\n    vec2 resolution = iResolution.xy;\n    vec2 coordinate = fragCoord;\n    \n    //A variable for magnification is created, therefore pressing the mouse\n    //(mostly) just updates the factor that renders the sketch.\n    //Default value is 1x (no zoom) when mouse is not pressed.\n    float magnification = 1.;\n    \n    //from the alicelab website, code that makes it so that you may zoom in at\n    //a specific point by holding the mouse button when the cursor is dragged\n    //over that location.\n    //checks if mouse is pressed\n    if(iMouse.z > 0.0) {\n        //sets the magnification to 5x, to make a 5x zoom\n        magnification = 5.;\n        //sets the image to be 5x smaller than the standard image, and sets it\n        //to be around where the cursor is.\n        uv /= magnification;\n        uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));\n    }\n    \n    //This is a reimplementation of the gaussian blur function from:\n    // https://www.shadertoy.com/view/W3tBRN\n    //It needed to be implemented (and edited) in the image buffer, so that\n    //the updated uv value from zooming could be added, and so that the\n    //magnification values could update the fragCoord and resolution, which\n    //allows the shadertoy to render the zoom of the gaussBlur'd elements.\n    //This was particularily tricky to figure out so I apologize for the long\n    //lines of code\n    //The radius value for the blur effect is 20 pixels for the agents\n    float sigma = float(20)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(iChannel0, uv) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=20; i++) {\n        //Here is where the noise is applied to make a rapid \"wing flap\".\n        vec2 offset = (float(i)) * vec2(wingNoise.x,wingNoise.y);\n        float weight = exp(float(i*i) * expFactor);\n        //where I added zoom effects to the blur function.\n        sum += texture(iChannel0, ((coordinate / magnification + iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))))) + offset)/resolution + iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))))) * weight;\n        sum += texture(iChannel0, ((coordinate / magnification + iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))))) - offset)/resolution + iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))))) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    //This blur is given to the image from buffer C (the agents).\n    C = sum / weightSum;\n    \n    //The same blur is implemented for the image from buffer D: the light rays\n    //This time, the radius is a very high value to create lots of blur.\n    sigma = float(10000)/3.14;   \n    expFactor = -0.5/(sigma*sigma);\n    weight = 1.;\n    sum = texture(iChannel1, uv) * weight;\n    weightSum = weight;\n    for (int i=1; i<=20; i++) {\n        //No noise on the offset. We don't want rapid flashing.\n        vec2 offset = (float(i)) * vec2(1.,1.);\n        float weight = exp(float(i*i) * expFactor);\n        //where I added zoom effects to the blur function.\n        sum += texture(iChannel1, ((coordinate / magnification + iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))))) + offset)/resolution + iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))))) * weight;\n        sum += texture(iChannel1, ((coordinate / magnification + iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))))) - offset)/resolution + iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))))) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    //This blur is giben to the image from buffer D.\n    B = sum / weightSum;\n    \n    //Creates vec4 A which retrieves data from buffer C (the agents), but\n    //WITHOUT the blur we just added.\n    vec4 A = texture(iChannel0, uv);\n    \n    //SMOOTHLIFE IMPLEMENTATION:\n    \n    //initializes inner and outer radii that will be used for functions to\n    //determine size for density\n    float inner_radius = 3.5;\n    float outer_radius = 10.0;\n    \n    //initializes variables that will be added to and used to determine\n    //population for density\n    float inner_sum = 0.0;\n    float outer_sum = 0.0;\n    //loops over the diameter of the outer radius\n    for (float x = -outer_radius; x <= outer_radius; x++) {\n        \n        //and the diameter of the inner radius\n        for (float y = -outer_radius; y <= outer_radius; y++){\n        \n            //creates a variable for texel\n            vec2 pixel = vec2(x,y);\n            vec2 texel = pixel / iResolution.xy;\n            //which is used to get the texture of that area, which will in the\n            //future be used to calculate life population and then density\n            float life = texture(iChannel0, uv + texel).x;     \n            \n            //distance is calculated,\n            float dist = length(pixel);\n            \n            //and then used in a sigmoid function to determine if the current\n            //point is in the radial circle we are looking for (otherwise, the\n            //for loop would go over a square).\n            float outer_w = 1.0 - sigmoid(dist, outer_radius, 1.0);\n            float inner_w = 1.0 - sigmoid(dist, inner_radius, 1.0);\n            \n            //Population is calculated\n            outer_sum += life * outer_w;\n            inner_sum += life * inner_w;\n            \n        }\n    \n    }\n    \n    //area of inner circle is calculated with pi r squared\n    float inner_area = 3.14159 * inner_radius * inner_radius;\n    //population and area are used to calculate density\n    float inner_density = inner_sum / inner_area;\n    \n    //area of outer circle is calculated with pi r squared\n    float outer_area = 3.14159 * outer_radius * outer_radius;\n    //outer density is calculated similarly to how inner density was calculated\n    //except that the inner circle's area must be eliminated\n    float outer_density = (outer_sum - inner_sum) / (outer_area - inner_area);\n    \n    //Here are the variables that determine how the smoothlife will look. I\n    //worked both on an 800x 450 screen, and a 1920 x 1080 screen when in\n    //fullscreen, and the values created a good amount of smooth blending\n    //which allowed the centres of the agents to actually look like lit\n    //fireflies.\n    \n    float b1 = 0.25;\n    float b2 = 0.25;\n    float a1 = 0.01;\n    float d1 = 0.01;\n    float d2 = 0.75;\n    float a2 = 0.5;\n    \n    //Rules for transition:\n    //determines a value on if the automata is lonely\n    float notlonely = sigmoid(outer_density, d1, a1);\n    //determines a value on if the automata is crowded\n    float notcrowded = 1.0 - sigmoid(outer_density, d2, a1);\n    //crates a logical AND expression through math to determine that it will\n    //survive if it is not lonely AND not crowded\n    float survive = notlonely * notcrowded;\n    \n    //Rules for birth:\n    //determines value if there is enough density\n    float enough = sigmoid(outer_density, b1, a1);\n    //and if there is not too much density\n    float nottoomuch = 1.0 - sigmoid(outer_density, b2, a1);\n    //then performs a logical AND, automata is born if it is dense enough and\n    //not too dense\n    float birth = enough * nottoomuch;\n    \n    //Creates an interpolation between the transition and birth rules\n    float liveness = sigmoid(inner_density, 0.5, a2);\n    float transition = mix(birth, survive, liveness);\n    \n    //Clamps the transition value from 0 to 1\n    transition = clamp(transition, 0., 1.);\n    \n    //Applies transition to rules to the x and y value of A\n    //These created the best implementation of smoothlife on the buffers\n    A.x = transition;\n    A.y = transition;\n    \n    //C (the blurred agents) is edited to remove the blue values, creating\n    //more orange fireflies.\n    C = vec4(C.r * 1., C.g * 1., C.b * 0., C.a);\n    //A (the smoothlifed agents), are added to C. the red and blue values are\n    //flipped to make the smoothlife appear more red, and the green value is\n    //scaled down to appear less green and more orange/yellow.\n    C += vec4(A.b * 1., A.g * 0.75, A.r * 0., 1.);\n    //The blurred rays of light are added to the image.\n    C += B;\n    \n    //The compiled image is added to fragColor, completing the image!\n    fragColor = C;\n   \n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "//COMMON: contains multiple constants and functions used throughout code\n//functions were sourced from https://alicelab.world/digm5950/glsl.html\n// https://alicelab.world/digm5950/glsl.html#randomnoise\n//and\n// https://www.shadertoy.com/view/W3tBRN\n//as well as lectures from Graham Wakefield.\n\n//Constant variable for two times pi\nconst float TWOPI = 6.283185307179586;\n\n//function for sigmoid transition\nfloat sigmoid(float x, float center, float width) {\n    //x is a variable that changes the transition around center\n    //depending on width\n    return 1.0 / (1.0 + exp(-(x-center)*4.0/width));\n}\n\n\n//Gaussian blur function\n//Was re-implemented and edited in the image buffer\nvec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {\n    float sigma = float(N)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(img, fragCoord/resolution) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=N; i++) {\n        vec2 offset = float(i) * dir;\n        float weight = exp(float(i*i) * expFactor);\n        sum += texture(img, (fragCoord + offset)/resolution) * weight;\n        sum += texture(img, (fragCoord - offset)/resolution) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    return sum / weightSum;\n}\n\n\n//Below are multiple pseudorandom number generator functions\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "keyboard",
+						"id": "4dXGRr",
+						"filepath": "/presets/tex00.jpg",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//BUFFER A: This buffer creates the data of position, direction and\n//movement for the particle agents moving around the screen.\n//Also draws data from buffer D to determine each particle's attraction level\n//to the attractor.\n\n//The basis for this code is from https://www.shadertoy.com/view/7fl3zH\n//By Graham Wakefield, with my changes.\n\n//Keyboard functionality was implemented from:\n// https://www.shadertoy.com/view/t3cBRN\n//by Graham Wakefield.\n\n//This buffer creates \"pixels\" (comprised of regions that take up multiple\n//pixels on screen) that track a particle.\n//vec4 A is the variable used for the current \"pixel\"\n//its w contains the nearest particle's memory, its x and y track the nearest\n//particle's location, and the z contains its direction.\n\n//Function to determine nearest particle. It takes the location of the current\n//pixel and its neighbour, then determines which is closer to their particles.\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    //Creates a variant of 'A' for neighbour\n    vec4 N = texture(iChannel0, (fragCoord+offset)/iResolution.xy);\n    //gets the distances for current pixel to particle\n    float d1 = distance(fragCoord, A.xy);\n    //and distance for neighbouring particle to its pixel\n    float d2 = distance(fragCoord, N.xy);\n    //tracks neighbour's particle if it is closer to current pixel\n    if (d2 < d1) { return N; } else { return A; }\n}\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord) {\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = fragCoord / iResolution.xy;\n    //updates A with whatever data was on the previous frame\n    vec4 A = texture(iChannel0, uv);\n    \n    //For loop that performs the getNearestParticle function from earlier\n    //on all the pixel's neighbours, effectively making sure that the pixel\n    //is tracking its nearest neighbour.\n    for (int x=-2; x<=2; x++) {\n        for (int y=-2; y<=2; y++) {\n            A = getNearestParticle(A, fragCoord, vec2(x, y));\n        }\n    }\n    \n    //Noise variable generated, using the particle's position and the time\n    //elapsed as a seed, ensuring that each particle will stay consistent to\n    //itself while also having some randomness.\n    vec4 noise = random4(vec3(A.xy, iTime));\n    \n    //the speed and direction change of the particle are initialized, however\n    //these values will soon update.\n    float speed = 50.;\n    float turn = 1.;\n    \n    //This part of the buffer actually pulls from buffer D, which contains\n    //an attractor field. It uses this data to create a \"light attraction\"\n    //that the particles sense.\n    //The attraction is done by seeing how much visual data is on that frame,\n    //and if there is more, they follow that visual data.\n    \n    vec4 C = texture(iChannel2, A.xy / iResolution.xy);\n    float lightAttraction = C.g;\n    \n    //Compares strength of light attraction to the particle's memory\n    //of light attraction from last frame\n    float memory = A.w;\n    \n    //Checks if the light attraction is stronger than last frame\n    if (lightAttraction > memory) {\n        //If so, go keep following in the direction of the new light.\n        //Direction is changed to be more consistent\n        turn = 0.01;\n        //And speed picks up.\n        speed = 100.;\n    } else {\n        //If there is no sensed nearby light change, keep changing\n        //directions, and take it slower.\n        turn = 1.;\n        speed = 50.;\n    }\n    \n    //The direction is updated, using the amount of direction change variable,\n    //and a bit of randomization from the earlier noise function.\n    A.z += turn * (noise.x*2. - 1.);\n    \n    //Creates a velocity using cos and sin to create x and y variables from\n    //direction variable z, and combines it with speed, so there is direction\n    //and magnitude.\n    vec2 vel = vec2(cos(A.z), sin(A.z)) * speed;\n    //That velocity is then placed into the x and y variables.\n    A.xy += vel * iTimeDelta;\n    \n    // get the bounded position within the screen image\n    vec2 b = clamp(A.xy, vec2(0), iResolution.xy);\n    //compare bounded/actual positions:if different, reflect orientations:\n    if (A.x != b.x) { A.z = TWOPI*0.5 - A.z; } // reflect in Y axis\n    if (A.y != b.y) { A.z = TWOPI - A.z; } // reflect in X axis\n    // also, actually clamp the position on screen\n    A.xy = b.xy; \n    \n    //add current light attraction to memory\n    \n    A.w = lightAttraction;\n    \n    //Initializes particles on frame 0 (the start)\n    //Will also reinitialize positions (and amounts) when space bar is pressed.\n    //This is where the keyboard functionality code cited above is implemented.\n    if (iFrame == 0 || texture(iChannel3, vec2(32./256., 0.)).r > 0.f) {\n        //Creates each pixel of size N by N\n        float N = 100.;\n        //Also rounds each on screen pixel to nearest N\n        A.xy = round(fragCoord/N) * N;\n        //Noise variable is created using A.xy isntead of fragCoord so that\n        //the particle has consistent noise.\n        vec4 noise = random4(vec3(A.xy, iFrame));\n        \n        //Random direction is chosen\n        A.z = noise.z * TWOPI;\n    }\n    \n    //Data of A is sent to fragColor of the buffer.\n    fragColor = A;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//BUFFER B: purpose of this buffer is to create continuous cellular automata,\n//making pixels exist in one of three states, and sending this data\n//to buffer C to determine if the fire particles of the fireflies will be\n//displayed, which they will if they are near an agent.\n\n//https://alicelab.world/digm5950/ca.html#forest-fire\n//and\n//https://www.shadertoy.com/view/tXdcDN\n\n//Code from these examples were used as a basis to create the cellular automata\n//system that creates state values for the pixels to exist as.\n\n//three states of fire particles:\nfloat empty = 0.0;//no fire particles\nfloat fire = 0.5;//fire particle exists\nfloat cinder = 1.0;//fire particle is a cinder and may die out\n\n//chance of fire spreading to another pixel:\nfloat spreadProbability = 0.45;\n//the chance of a random cell becoming a fire particle:\nfloat fireProbability = 0.01;\n//chance of a fire particle becoming a cinder:\nfloat fadeProbability = 0.6;\n//chance of other nearby particles having their fire absorbed and becoming a\n//cinder when near another cinder:\nfloat absorbProbability = 0.75;\n//chance of a cinder dying out:\nfloat deathProbability = 0.6;\n\nvoid mainImage(out vec4 fragColor, in vec2 fragCoord) {\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = fragCoord / iResolution.xy;\n\n    //Get state of self\n    vec4 C  = texture(iChannel0, (fragCoord+vec2( 0, 0))/iResolution.xy);\n    \n    //Get state of neighbouring pixels\n    vec4 E  = texture(iChannel0, (fragCoord+vec2( 1, 0))/iResolution.xy);\n    vec4 W  = texture(iChannel0, (fragCoord+vec2(-1, 0))/iResolution.xy);\n    vec4 N  = texture(iChannel0, (fragCoord+vec2( 0, 1))/iResolution.xy);\n    vec4 S  = texture(iChannel0, (fragCoord+vec2( 0,-1))/iResolution.xy);\n    vec4 NE = texture(iChannel0, (fragCoord+vec2( 1, 1))/iResolution.xy);\n    vec4 NW = texture(iChannel0, (fragCoord+vec2(-1, 1))/iResolution.xy);\n    vec4 SE = texture(iChannel0, (fragCoord+vec2( 1,-1))/iResolution.xy);\n    vec4 SW = texture(iChannel0, (fragCoord+vec2(-1,-1))/iResolution.xy);\n\n    //True if any neighbour is a normal fire particle:\n\tbool nearFire = N.x == fire || E.x == fire \n\t\t\t\t|| W.x == fire || S.x == fire \n\t\t\t\t|| NE.x == fire || SE.x == fire \n\t\t\t\t|| NW.x == fire || SW.x == fire;\n\t\n\t//True if any neighbour is a cinder:\n\tbool nearCinder = N.x == cinder || E.x == cinder \n\t\t\t\t|| W.x == cinder || S.x == cinder \n\t\t\t\t|| NE.x == cinder || SE.x == cinder \n\t\t\t\t|| NW.x == cinder || SW.x == cinder;\n    //Create a variable to store value as one of the 3 states:\n    float value = C.x;\n    \n    //generate a vec4 of noise:\n    vec4 noise = random4(vec3(fragCoord, iTime)); \n    \n    //if pixel is empty\n    if (value == empty) {\n        // are any neighbors fire particles?\n        if (nearFire) {\t\t\t\n            // chance of fire spreading to another pixel\n            if (noise.x < spreadProbability && noise.y < spreadProbability) {\n                value = fire;\n            }\n            //fire may also just randomly come out of the firefly\n            } else if (noise.z < fireProbability && noise.w < fireProbability) {\n                value = fire;\n            }\n    //if pixel is a fire particle\n    } else if (value == fire) {\n        // are any neighbors cinders\n        if (nearCinder && (noise.x < absorbProbability && noise.y < absorbProbability)) {\n            // if chance is met, have firea absorbed and become a cinder\n            value = cinder;\n        } else if (noise.z < fadeProbability && noise.w < fadeProbability) {\t\t\n            //chance of fire particle becoming a cinder on its own\n            value = cinder;\n        }\n    } else if (value == cinder && noise.x < deathProbability && noise.y < deathProbability) {\n        //a cinder has a chance of dying out\n        value = empty;\n    } \n    \n    // update this pixel's state:\n    fragColor = vec4(value);\n   \n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//BUFFER C: This buffer takes data from buffer A, B, and itself, and uses that\n//data to create visuals for the agents, adding fire particles around them.\n\n//The basis for this code is from https://www.shadertoy.com/view/7fl3zH\n//By Graham Wakefield, with my changes.\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    //Gets the state of buffer A (the current particle data)\n    vec4 A = texture(iChannel0, uv);\n    //And the previoius state of C (the trails and other visual data)\n    vec4 B = texture(iChannel1, uv);\n    //And the data of the fire particles\n    vec4 C = texture(iChannel2, uv);\n    \n    //This makes the previous frame \"decay\" a little, so the last frame\n    //is still there but less opaque, which creates a trail effect.\n    B *= 0.85;\n    \n    //Gets distance from the actual pixel coordinate to the particle being\n    //tracked\n    float d = distance(fragCoord, A.xy);\n    \n    //if distance of the actual pixel coordinate from an agent is less than\n    //20 pixels, it reveals the fire particles in the surrounding 20 pixels,\n    //scaled by a factor so that the particles fade out when they get too far\n    //from the agent.\n    if (d < 20.){\n            B += vec4(C.x * (2./d), 0., C.x * (2./d), 0.);\n        }\n    \n    //Data for visuals of particle/trails is added to the fragColor of the\n    //buffer.\n    fragColor = B;\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XdfGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//BUFFER D: The attractor/rays of light\n\n//The basis for this code is from https://www.shadertoy.com/view/7fl3zH\n//By Graham Wakefield, with my changes.\n\n//This buffer creates rays of light that move left and right across the screen\n//with a sin wave function. The actual appearance of these rays of light are\n//tied to their distance from an agent, so they only appear when an agent\n//is close by. Data from this buffer is sent to buffer A as an attractor\n//value, making for a two-way interaction between the agents and the attractor.\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n\n    //takes current coordinate and scales it to (0,0)-(1,1), aka normalize\n    vec2 uv = (fragCoord / iResolution.xy);\n    \n    //Creates a vec4 A that takes particle position data from buffer A\n    vec4 A = texture(iChannel0, uv);\n    //Creates a vec4 C that takes data from the previous frame\n    vec4 C = texture(iChannel2, uv);\n    \n    //Previous frame is given a gaussian blur\n    vec4 N = texture(iChannel2, (fragCoord + vec2(0, 1))/iResolution.xy);\n    vec4 S = texture(iChannel2, (fragCoord + vec2(0, -1))/iResolution.xy);\n    vec4 E = texture(iChannel2, (fragCoord + vec2(1, 0))/iResolution.xy);\n    vec4 W = texture(iChannel2, (fragCoord + vec2(-1, 0))/iResolution.xy);\n    vec4 NE = texture(iChannel2, (fragCoord + vec2(1, 1))/iResolution.xy);\n    vec4 SE = texture(iChannel2, (fragCoord + vec2(1, -1))/iResolution.xy);\n    vec4 NW = texture(iChannel2, (fragCoord + vec2(-1, 1))/iResolution.xy);\n    vec4 SW = texture(iChannel2, (fragCoord + vec2(-1, -1))/iResolution.xy);\n    C = ((NE+SE+NW+SW) + 2.*(N+E+S+W) + 4.*C)/15.;\n    \n    //decay of C so that the rays of light do not stay on the screen forever\n    C = C * 0.9;\n    \n    //the position of the source of the light is created. It is determined\n    //by a sin wave and iTime, so that the source of the light bounces from\n    //the left side of the screen to the right side of the screen over time.\n    vec2 lightPos;\n    //light source only moves across the x axis\n    lightPos.y = iResolution.y/2.;\n    lightPos.x = abs(sin(iTime/10.)) * iResolution.x;\n    \n    //The distance between the light source and any agent is determined.\n    float d = distance(lightPos, A.xy);\n        \n    //if the distance between the light source and an agent is less than 150\n    //pixels, that agent's regen will light up yellow, with its intensity\n    //scaled by a factor of how close the agent is to the light source.\n    if (d < 150.){\n        C += vec4((5./d)*0.1,(5./d)*0.1,(5./d)*0.,(5./d));\n    }\n    \n    //C is clamped from 0 to 1\n    C = clamp(C, 0., 1.);\n    \n    //C is added to the fragColor of the buffer\n    fragColor = C;\n}",
+				"name": "Buffer D",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": true,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "scfSDH",
+			"date": "1775507293",
+			"viewed": 43,
+			"name": "Chasing Rays of Light",
+			"username": "Robert	Jamrocha-Tullo",
+			"description": "final project",
+			"likes": 2,
+			"published": 1,
+			"flags": 48,
+			"usePreview": 0,
+			"tags": [
+				"datt4950"
+			],
+			"hasliked": 0,
+			"parentid": "",
+			"parentname": ""
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\nStudent Number: 219029677\nAssignment: A4\nName: Santiago Bucio-Cano\nTitle: Ecology of Disturbance\n\nInteractions:\n- Clicking the mouse adds local resources and\n  temporarily calms disturbed regions.\n- Resetting the shader can produce different\n  long-term outcomes due to random initial states.\n- Key parameters include agent speed, sensor length,\n  nutrient diffusion, disturbance strength, and\n  orbit phase speed.\n- The system is best viewed over time, as behavior\n  emerges through cycles rather than a static frame.\n\nSystem Idea:\nThis project explores an artificial ecosystem built from multiple interacting systems. It combines a\nnearest-particle agent simulation, a trail and nutrient field, and a dynamic cellular substrate that behaves like a living membrane.\n\nAgents are divided into multiple castes with different responses to food, substrate stability, and zones of change. An orbiting source alternates\nbetween feeding and disruption phases, making the environment continuously unstable.\n\nThe substrate actively participates in the system by shaping both agent behavior and environmental conditions such as nutrient growth, disturbance,\nand trail persistence. Instead of acting as a passive background, it becomes part of the ecology, influencing where regions become stable, unstable,\nor resource-rich.\n\nInteresting Behaviors:\nThe three behavioral castes produce visibly different movement patterns. Foragers converge on resource-rich zones, settlers prefer stable\nregions, and disruptors move toward unstable or changing areas.\n\nBecause these castes coexist, the system produces mixed regions of clustering, circulation, avoidance, and interference rather than a single\nuniform pattern.\n\nThe orbiting source creates cyclical behavior. During feeding phases, agents cluster and build dense trails. During disruption phases, agents\nscatter and reorganize. This creates repeating cycles of growth, collapse, and redistribution.\n\nTechnical Realization:\nThe project uses multiple buffers. One stores agent state (position, direction, caste seed). Another stores trail accumulation. A third stores\nthe attractor field (nutrient, disturbance, phase glow). A fourth implements a cellular substrate using a stochastic neighbor-copying\nprocess inspired by Ising systems.\n\nAgents use directional sensing to guide movement based on environmental signals. Each caste applies different weights to food, stability, and change.\nThe orbiting source modifies the environment, which indirectly changes agent behavior.\n\nThe Ising-based substrate was extended beyond a visual or steering influence to directly modify the environment. It affects nutrient accumulation,\ndisturbance intensity, and trail persistence, allowing it to act as an ecological regulator.\n\nThe substrate evolves continuously, creating regions of stability, activity, and transition. These regions influence both agent movement and\nenvironmental fields, producing feedback between motion, memory, and environmental change.\n\nSources / Credits:\n- Nearest-particle tracking and trail movement\n  from course material and Lab 9.\n- Cellular substrate logic from course material\n  and Lab 4.\n- Integration, caste behavior, swim motion, and\n  ecological system design are original extensions.\n\nFuture Extensions:\nFuture work could allow castes to directly modify the substrate, creating long-term environmental memory. \nIntroducing reproduction or competition could allow the system to evolve over time. Additional orbiting sources or irregular phase\npatterns could produce more complex dynamics.\n*/\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    if (iMouse.z > 0.0)\n    {\n        float magnification = 4.0;\n        uv /= magnification;\n        uv += iMouse.xy / (iResolution.xy + (iResolution.xy / (magnification - 1.0)));\n    }\n\n    vec4 A = texture(iChannel0, uv);\n    vec4 B = texture(iChannel1, uv);\n    vec4 C = texture(iChannel2, uv);\n    vec4 D = texture(iChannel3, uv);\n\n    float d = distance(uv * iResolution.xy, A.xy);\n    float p = smoothstep(2.0, 0.0, d);\n\n    // Reconstruct the moving circle source from Buffer C so it is clearly visible.\n    float a = iTime * 0.18;\n    float r = iResolution.y / 3.0;\n    vec2 center = iResolution.xy * 0.5 + vec2(cos(a), sin(a)) * r;\n    float dCircle = distance(fragCoord, center);\n\n    // Bright cyan core with a white ring for contrast.\n    float circleCore = smoothstep(60.0, 0.0, dCircle);\n    float circleEdge = smoothstep(110.0, 90.0, dCircle);\n\n   // Deep blue -> bright cyan circle\n    vec3 circleCol = mix(\n        vec3(0.0, 0.08, 0.28),\n        vec3(0.0, 0.75, 1.0),\n        circleCore\n    ) * 1.7;\n\n    // Cyan edge ring\n    circleCol += vec3(0.15, 0.85, 1.0) * circleEdge * 1.1;\n\n    // Soft inner glow\n    circleCol += vec3(0.0, 0.45, 0.9) * pow(circleCore, 2.0) * 0.45;\n\n    // Pulse\n    circleCol *= 1.0 + 0.12 * sin(iTime * 2.0);\n\n    vec3 membrane = mix(\n        vec3(0.03, 0.05, 0.10),\n        vec3(0.12, 0.35, 0.55),\n        D.r\n    );\n\n    // Recently changed membrane glows a little teal.\n    membrane += vec3(0.0, 0.35, 0.45) * D.a * 0.35;\n\n    float sugarVal = C.r;\n    float disturbVal = C.g;\n    float phaseGlow = C.b;\n\n    // Food = warm amber/orange\n    vec3 sugar = vec3(0.85, 0.42, 0.08) * sugarVal * 0.65;\n    sugar += vec3(1.0, 0.55, 0.12) * pow(sugarVal, 2.0) * 0.35;\n\n    // Disturbance = purple/magenta\n    vec3 disturbance = vec3(0.55, 0.08, 0.70) * disturbVal * 0.95;\n    disturbance += vec3(0.85, 0.18, 0.90) * phaseGlow * 0.22;\n\n    // Trails = darker cool blue\n    vec3 trails = B.rgb * vec3(0.22, 0.50, 0.72) * 0.75;\n\n    vec3 agentColor;\n\n    if (A.w > 0.42 && A.w < 0.58)\n        agentColor = vec3(0.65, 0.88, 1.0);   // hybrid = pale cyan\n    else if (A.w < 0.333)\n        agentColor = vec3(1.0, 0.72, 0.18);   // forager = amber\n    else if (A.w < 0.666)\n        agentColor = vec3(0.18, 0.95, 0.45);  // settler = green\n    else\n        agentColor = vec3(0.95, 0.18, 0.72);  // disruptor = magenta\n\n    vec3 agents = agentColor * p * 0.9;\n\n    vec3 col = membrane * 0.85 + sugar + disturbance + trails + agents + circleCol;\n\n    // Lower exposure so highlights do not wash out.\n    col = 1.0 - exp(-col * 1.02);\n\n    fragColor = vec4(col, 1.0);\n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Buffer A\n// This buffer controls ALL agent behavior.\n// Each pixel represents one agent.\n\n// Data stored in A:\n// A.xy = position (in pixels)\n// A.z  = direction (angle in radians)\n// A.w  = caste / personality\n\n// Caste ranges:\n// 0.0–0.33  = forager (food-seeking)\n// 0.33–0.66 = settler (stability-seeking)\n// 0.66–1.0  = disruptor (chaos-seeking)\n//\n// 0.42–0.58 = hybrid (fusion state)\n\n\n// Finds the closest agent nearby (for tracking system)\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset)\n{\n    // Wrap coordinates so simulation loops around edges\n    vec2 wrapped = mod(fragCoord + offset + iResolution.xy, iResolution.xy);\n\n    // Sample neighbor agent\n    vec4 N = texture(iChannel0, wrapped / iResolution.xy);\n\n    // Compare distances\n    float d1 = distance(fragCoord, A.xy);\n    float d2 = distance(fragCoord, N.xy);\n\n    // Return whichever agent is closer\n    return (d2 < d1) ? N : A;\n}\n\n// Finds a nearby agent to simulate \"collision\" / fusion\nvec4 getCloseNeighbor(vec2 fragCoord, vec4 selfParticle, float radius)\n{\n    for (int x = -3; x <= 3; x++)\n    {\n        for (int y = -3; y <= 3; y++)\n        {\n            // Wrap around screen edges\n            vec2 wrapped = mod(fragCoord + vec2(x, y) + iResolution.xy,\n                               iResolution.xy);\n\n            vec4 N = texture(iChannel0, wrapped / iResolution.xy);\n\n            // Compute toroidal (wrap-around) distance\n            vec2 delta = abs(selfParticle.xy - N.xy);\n            delta = min(delta, iResolution.xy - delta);\n            float d = length(delta);\n\n            // If close enough, return this neighbor\n            if (d > 0.5 && d < radius)\n            {\n                return N;\n            }\n        }\n    }\n\n    return selfParticle;\n}\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    // Current agent\n    vec4 A = texture(iChannel0, uv);\n\n  \n    // Find nearest agent (particle tracking system)\n    for (int x = -2; x <= 2; x++)\n    {\n        for (int y = -2; y <= 2; y++)\n        {\n            A = getNearestParticle(A, fragCoord, vec2(x, y));\n        }\n    }\n\n    // Random noise for variation\n    vec4 noise = random4(vec3(A.xy, iTime));\n\n    // Base movement values\n    float speed = 42.0;\n    float wander = 0.45;\n    float turnfactor = 0.42;\n    float sensor_length = 10.0;\n\n    // Determine agent type\n    float caste = floor(A.w * 3.0);\n    bool hybrid = (A.w > 0.42 && A.w < 0.58);\n\n    // Fusion / collision logic\n\n    vec4 neighbor = getCloseNeighbor(fragCoord, A, 6.0);\n\n    // Compute distance with wrapping\n    vec2 nDelta = abs(A.xy - neighbor.xy);\n    nDelta = min(nDelta, iResolution.xy - nDelta);\n    float neighborDist = length(nDelta);\n\n    float neighborCaste = floor(neighbor.w * 3.0);\n    bool neighborHybrid = (neighbor.w > 0.42 && neighbor.w < 0.58);\n\n    if (neighborDist < 4.0)\n    {\n        // Fusion rule: forager + disruptor\n        bool fusionPair =\n            ((caste < 0.5 && neighborCaste > 1.5) ||\n             (caste > 1.5 && neighborCaste < 0.5));\n\n        // Hybrid can absorb others\n        bool hybridAbsorb =\n            (hybrid && !neighborHybrid && neighborDist < 3.0);\n\n        if (fusionPair || hybridAbsorb)\n        {\n            // Pull positions together\n            A.xy = mix(A.xy, neighbor.xy, 0.08);\n\n            // Blend directions\n            A.z = mix(A.z, neighbor.z, 0.5);\n\n            // Become hybrid\n            A.w = 0.5 + 0.06 * sin(iTime + A.xy.x * 0.01 + A.xy.y * 0.01);\n\n            caste = floor(A.w * 3.0);\n            hybrid = true;\n        }\n    }\n\n    // Behavior tuning based on caste\n\n    float sugarBias;\n    float membraneBias;\n    float changeBias;\n    float tempBias;\n\n    if (hybrid)\n    {\n        // Smooth, balanced movement\n        speed = 18.0;\n        wander = 0.08;\n        turnfactor = 0.18;\n        sensor_length = 16.0;\n\n        sugarBias = 1.1;\n        membraneBias = 0.85;\n        changeBias = 0.65;\n        tempBias = 0.05;\n    }\n    else if (caste < 0.5)\n    {\n        // Foragers (fast, food-seeking)\n        speed = 54.0;\n        wander = 0.20;\n        turnfactor = 0.62;\n        sensor_length = 14.0;\n\n        sugarBias = 2.2;\n        membraneBias = 0.15;\n        changeBias = 0.10;\n        tempBias = 0.12;\n    }\n    else if (caste < 1.5)\n    {\n        // Settlers (slow, stable)\n        speed = 24.0;\n        wander = 0.10;\n        turnfactor = 0.22;\n        sensor_length = 8.0;\n\n        sugarBias = 0.65;\n        membraneBias = 1.35;\n        changeBias = -0.45;\n        tempBias = -0.20;\n    }\n    else\n    {\n        // Disruptors (fast, chaotic)\n        speed = 62.0;\n        wander = 0.82;\n        turnfactor = 0.70;\n        sensor_length = 11.0;\n\n        sugarBias = 0.55;\n        membraneBias = 0.25;\n        changeBias = 1.80;\n        tempBias = 0.42;\n    }\n\n    // Directional sensing (front, left, right)\n\n    mat2 rot = rotate2d(A.z);\n\n    vec2 sensor0 = vec2(1.0,  0.0) * sensor_length;\n    vec2 sensor1 = vec2(1.0,  1.0) * sensor_length;\n    vec2 sensor2 = vec2(1.0, -1.0) * sensor_length;\n\n    vec2 sensor0_world = mod(rot * sensor0 + A.xy + iResolution.xy, iResolution.xy);\n    vec2 sensor1_world = mod(rot * sensor1 + A.xy + iResolution.xy, iResolution.xy);\n    vec2 sensor2_world = mod(rot * sensor2 + A.xy + iResolution.xy, iResolution.xy);\n\n    // Sample environment (food + disturbance)\n    vec4 F  = texture(iChannel1, sensor0_world / iResolution.xy);\n    vec4 FL = texture(iChannel1, sensor1_world / iResolution.xy);\n    vec4 FR = texture(iChannel1, sensor2_world / iResolution.xy);\n\n    // Sample substrate\n    vec4 D0 = texture(iChannel2, sensor0_world / iResolution.xy);\n    vec4 D1 = texture(iChannel2, sensor1_world / iResolution.xy);\n    vec4 D2 = texture(iChannel2, sensor2_world / iResolution.xy);\n\n    // Combine influences into movement decisions\n    float front =\n          F.r * sugarBias\n        - F.g * 0.9\n        + D0.r * membraneBias\n        + D0.a * changeBias;\n\n    float left =\n          FL.r * sugarBias\n        - FL.g * 0.9\n        + D1.r * membraneBias\n        + D1.a * changeBias;\n\n    float right =\n          FR.r * sugarBias\n        - FR.g * 0.9\n        + D2.r * membraneBias\n        + D2.a * changeBias;\n\n    // Steering decision\n    if (front < left && front < right)\n        A.z += wander * (noise.z - 0.5);\n    else if (left < right)\n        A.z += turnfactor;\n    else if (right < left)\n        A.z -= turnfactor;\n\n    // Swim motion (adds organic movement)\n\n    float swimPhase = iTime * 4.0 + A.xy.x * 0.01;\n\n    A.z += sin(swimPhase) * 0.1;\n\n    // Move agent\n    vec2 vel = rotate2d(A.z) * vec2(speed, 0.0);\n    A.xy += vel * iTimeDelta;\n\n    // Wrap around screen (important!)\n    A.xy = mod(A.xy + iResolution.xy, iResolution.xy);\n\n \n    if (iFrame == 0)\n    {\n        float N = 28.0;\n        A.xy = round(fragCoord / N) * N;\n\n        vec4 seed = random4(vec3(A.xy, iFrame));\n        A.z = seed.z * TWOPI;\n        A.w = seed.w;\n    }\n\n    fragColor = A;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "const float TWOPI = 6.283185307179586;\n\n// create a 2D rotation matrix from an angle in radians:\nmat2 rotate2d(float angle) {\n    float s = sin(angle);\n    float c = cos(angle);\n    return mat2(\n        c, -s, \n        s, c\n    ); \n}\n\n// make a sigmoid transition of x around center with given width\nfloat sigmoid(float x, float center, float width) {\n    return 1.0 / (1.0 + exp(-(x-center)*4.0/width));\n}\n\n\n// Gaussian blur\nvec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {\n    // N/2 .. N/4\n    float sigma = float(N)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(img, fragCoord/resolution) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=N; i++) {\n        vec2 offset = float(i) * dir;\n        float weight = exp(float(i*i) * expFactor);\n        sum += texture(img, (fragCoord + offset)/resolution) * weight;\n        sum += texture(img, (fragCoord - offset)/resolution) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    return sum / weightSum;\n}\n\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Buffer B\n// Trail accumulation shaped by the living substrate\n// Wrapped neighbor sampling for seamless edges.\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    vec4 A = texture(iChannel0, uv);\n    vec4 B = texture(iChannel1, uv);\n    vec4 D = texture(iChannel2, uv);\n\n    float substrate  = D.r;\n    float activity   = D.g;\n    float transition = D.a;\n\n    vec2 coordN = mod(fragCoord + vec2(0, 1) + iResolution.xy, iResolution.xy);\n    vec2 coordS = mod(fragCoord + vec2(0,-1) + iResolution.xy, iResolution.xy);\n    vec2 coordE = mod(fragCoord + vec2(1, 0) + iResolution.xy, iResolution.xy);\n    vec2 coordW = mod(fragCoord + vec2(-1,0) + iResolution.xy, iResolution.xy);\n\n    vec4 N = texture(iChannel1, coordN / iResolution.xy);\n    vec4 S = texture(iChannel1, coordS / iResolution.xy);\n    vec4 E = texture(iChannel1, coordE / iResolution.xy);\n    vec4 W = texture(iChannel1, coordW / iResolution.xy);\n    vec4 avg = (N + S + E + W) / 4.0;\n\n    float decay = 0.988;\n    decay += substrate * 0.006;\n    decay -= activity * 0.008;\n    decay -= transition * 0.006;\n    decay = clamp(decay, 0.97, 0.995);\n\n    B *= decay;\n    B = mix(B, avg, 0.07);\n\n    vec2 delta = abs(fragCoord - A.xy);\n    delta = min(delta, iResolution.xy - delta);\n    float d = length(delta);\n\n    float p = smoothstep(1.8, 0.0, d);\n    p *= mix(0.85, 1.35, substrate);\n    B += vec4(p);\n\n    vec4 floorVal = vec4(0.002 + substrate * 0.004);\n    B = max(B, floorVal);\n\n    fragColor = clamp(B, 0.0, 1.0);\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Buffer C\n// Sugar / attractor field\n// Influenced strongly by the living substrate in Buffer D\n//\n// R = nutrient / attractor\n// G = disturbance memory\n// B = phase glow / thermal glow\n// A = spare glow\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    vec4 C = texture(iChannel1, uv);\n\n    vec2 coordN = mod(fragCoord + vec2(0, 1) + iResolution.xy, iResolution.xy);\n    vec2 coordS = mod(fragCoord + vec2(0,-1) + iResolution.xy, iResolution.xy);\n    vec2 coordE = mod(fragCoord + vec2(1, 0) + iResolution.xy, iResolution.xy);\n    vec2 coordW = mod(fragCoord + vec2(-1,0) + iResolution.xy, iResolution.xy);\n\n    vec4 N = texture(iChannel1, coordN / iResolution.xy);\n    vec4 S = texture(iChannel1, coordS / iResolution.xy);\n    vec4 E = texture(iChannel1, coordE / iResolution.xy);\n    vec4 W = texture(iChannel1, coordW / iResolution.xy);\n    vec4 avg = (N + S + E + W) / 4.0;\n\n    C = mix(C, avg, 0.22);\n    C *= vec4(0.992, 0.985, 0.990, 0.985);\n\n    vec4 A = texture(iChannel0, uv);\n    vec2 delta = abs(fragCoord - A.xy);\n    delta = min(delta, iResolution.xy - delta);\n    float dist = length(delta);\n\n    C.r += exp(-dist * dist * 0.08);\n\n    vec4 D = texture(iChannel2, uv);\n\n    float substrate  = D.r;\n    float activity   = D.g;\n    float temp       = D.b;\n    float transition = D.a;\n\n    C.r += substrate * 0.025;\n    C.g += transition * 0.045;\n    C.r -= activity * 0.020;\n    C.g += activity * 0.020;\n    C.r -= temp * 0.010;\n    C.b += temp * 0.020;\n\n    // Smooth wandering motion using sin waves\n    vec2 p = vec2(\n        sin(iTime * 0.17 + 1.3),\n        cos(iTime * 0.13 + 2.1)\n    );\n\n    // Add secondary motion so it's not just a loop\n    p += vec2(\n        sin(iTime * 0.07 + 4.0),\n        cos(iTime * 0.05 + 3.2)\n    ) * 0.5;\n\n    // Normalize to screen space\n    p = p * 0.4 + 0.5;  // keep inside bounds\n    p *= iResolution.xy;\n\n    vec2 cDelta = abs(fragCoord - p);\n    cDelta = min(cDelta, iResolution.xy - cDelta);\n    float d = length(cDelta);\n\n    float circleCore = smoothstep(85.0, 0.0, d);\n    float circleRing = smoothstep(120.0, 70.0, d) - smoothstep(70.0, 40.0, d);\n\n    vec4 Dcircle = texture(iChannel2, p / iResolution.xy);\n    float circleSubstrate = Dcircle.r;\n    float circleActivity  = Dcircle.g;\n    float circleTemp      = Dcircle.b;\n    float circleChange    = Dcircle.a;\n\n    float phase = 0.5 + 0.5 * sin(iTime * 0.9);\n\n    if (phase > 0.5)\n    {\n        float feedStrength = smoothstep(0.5, 1.0, phase);\n        float feedBoost = 1.0 + circleSubstrate * 0.6 - circleActivity * 0.4;\n\n        C.r += circleCore * 0.08 * feedStrength * feedBoost;\n        C.b += circleRing * 0.04 * feedStrength;\n        C.a += circleCore * 0.02 * feedStrength;\n    }\n    else\n    {\n        float disruptStrength = smoothstep(0.5, 0.0, phase);\n        float disruptBoost = 1.0 + circleChange * 0.8 + circleTemp * 0.3;\n\n        C.r -= circleCore * 0.05 * disruptStrength;\n        C.g += circleCore * 0.10 * disruptStrength * disruptBoost;\n        C.b += circleRing * 0.05 * disruptStrength;\n    }\n\n    if (iMouse.z > 0.0)\n    {\n        vec2 mDelta = abs(fragCoord - iMouse.xy);\n        mDelta = min(mDelta, iResolution.xy - mDelta);\n        float dm = length(mDelta);\n\n        float brush = smoothstep(120.0, 0.0, dm);\n        C.r += brush * 0.05;\n        C.g *= 1.0 - brush * 0.2;\n    }\n\n    C = clamp(C, 0.0, 1.0);\n    fragColor = C;\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XdfGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Buffer D\n// Living substrate / membrane\n// R = local state\n// G = flip probability\n// B = temperature\n// A = moment of change\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n    vec4 noise = random4(vec3(fragCoord.xy, iTime));\n\n    vec2 c0  = mod(fragCoord + vec2( 0, 0) + iResolution.xy, iResolution.xy);\n    vec2 cE  = mod(fragCoord + vec2( 1, 0) + iResolution.xy, iResolution.xy);\n    vec2 cW  = mod(fragCoord + vec2(-1, 0) + iResolution.xy, iResolution.xy);\n    vec2 cN  = mod(fragCoord + vec2( 0, 1) + iResolution.xy, iResolution.xy);\n    vec2 cS  = mod(fragCoord + vec2( 0,-1) + iResolution.xy, iResolution.xy);\n    vec2 cNE = mod(fragCoord + vec2( 1, 1) + iResolution.xy, iResolution.xy);\n    vec2 cNW = mod(fragCoord + vec2(-1, 1) + iResolution.xy, iResolution.xy);\n    vec2 cSE = mod(fragCoord + vec2( 1,-1) + iResolution.xy, iResolution.xy);\n    vec2 cSW = mod(fragCoord + vec2(-1,-1) + iResolution.xy, iResolution.xy);\n\n    vec4 C  = texture(iChannel0, c0  / iResolution.xy);\n    vec4 E  = texture(iChannel0, cE  / iResolution.xy);\n    vec4 W  = texture(iChannel0, cW  / iResolution.xy);\n    vec4 N  = texture(iChannel0, cN  / iResolution.xy);\n    vec4 S  = texture(iChannel0, cS  / iResolution.xy);\n    vec4 NE = texture(iChannel0, cNE / iResolution.xy);\n    vec4 NW = texture(iChannel0, cNW / iResolution.xy);\n    vec4 SE = texture(iChannel0, cSE / iResolution.xy);\n    vec4 SW = texture(iChannel0, cSW / iResolution.xy);\n\n    float nearVals[8] = float[8](N.r, S.r, E.r, W.r, NW.r, NE.r, SW.r, SE.r);\n\n    float differences =\n          abs(C.r - N.r) + abs(C.r - S.r)\n        + abs(C.r - E.r) + abs(C.r - W.r)\n        + abs(C.r - NE.r) + abs(C.r - NW.r)\n        + abs(C.r - SE.r) + abs(C.r - SW.r);\n\n    float different = differences / 8.0;\n\n    float temperature = 0.15 + 0.85 * uv.x;\n    temperature *= 0.8 + 0.2 * sin(iTime * 0.15);\n\n    float probability = pow(max(different, 0.0001), 1.0 / max(temperature, 0.02));\n\n    if (noise.x < probability)\n    {\n        int which = int(noise.y * 8.0);\n        C.r = nearVals[which];\n        C.a = 1.0;\n    }\n    else\n    {\n        C.a = 0.0;\n    }\n\n    if (iFrame == 0)\n    {\n        C.r = noise.x;\n        C.a = 0.0;\n    }\n\n    C.g = probability;\n    C.b = temperature;\n\n    fragColor = C;\n}",
+				"name": "Buffer D",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "sfsXRB",
+			"date": "1775614318",
+			"viewed": 25,
+			"name": "Ecology of Disturbance",
+			"username": "Santiago Bucio-Cano",
+			"description": "A multi-agent ecosystem where different behavioral castes respond to a shifting environment, producing cycles of growth, disruption, and migration across a living substrate.",
+			"likes": 2,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950"
+			],
+			"hasliked": 0,
+			"parentid": "",
+			"parentname": ""
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//GS/DIGM5950M\n//Student Number: 214684153\n//Assignment: Final Project\n//Name: XingbangTang\n\n\n// Image — Lenia + species trail + particle dots\n\n// iChannel0: bufA  (Lenia)\n// iChannel1: bufB  (particle state)\n// iChannel2: bufC  (trail: .r=intensity, .g=speciesID/9)\n\n/*\nInstruction:\n \n   A Lenia cellular automaton built on top of a particle system.\n   Each particle carries a species identity and leaves a trail behind,\n   allowing multiple species to coexist in the same field at once.\n \n   Instead of evolving as a single uniform lifeform, the system supports\n   competition, suppression, and conversion between species, producing\n   a more dynamic and ecologically-like behavior over time.\n\n\nEcological balance:\n   Species 9 tends to grow uncontrollably and would normally take over the whole screen.\n   In this setup, though, other species compete with it.\n   Their kernels lower the local average density around species 9,\n   pushing its growth below the survival threshold.\n   Interestingly, its dense clusters still act as a kind of baseline,\n   giving nearby species enough density to keep growing.\n\n   The system settles into a dynamic balance — species keep growing,\n   suppressing each other, and converting into one another.\n   This prevents any single species from taking over,\n   and keeps the simulation active over long periods.\n\n\n\nFuture work: \n   move beyond simple collision-based interactions,\n   and use the particle system to model more biologically-inspired behaviors between species, \n   such as coexistence, competition, and evolutionary dynamics.\n\n*/\n\nvec3 speciesColor(float s) {\n    float h = s / 10.0;\n    vec3 rgb = clamp(abs(mod(h*6.0 + vec3(0.,4.,2.), 6.)-3.)-1., 0., 1.);\n    return mix(vec3(1.), rgb, 0.85);\n}\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    vec3 lenia = texture(iChannel0, uv).rgb;\n    vec4 A     = texture(iChannel1, uv);          // particle\n    vec2 trail = texture(iChannel2, uv).rg;       // .r=intensity .g=speciesNorm\n\n    vec3 trailColor = speciesColor(trail.g * 9.0);\n\n    vec3 col = lenia;\n\n    // species trail glow\n    // ---------------------------------------\n    //uncomment this line to show trails\n    //col += trailColor * trail.r * 0.5;\n\n    // particle dot colored by species\n    float d  = distance(fragCoord, A.xy);\n    vec3  sc = speciesColor(A.w);\n    \n    // ----------------------------------------\n    //uncomment this line to show particles\n    //col += sc * smoothstep(3., 0., d);\n\n    fragColor = vec4(clamp(col, 0., 1.), 1.);\n}\n",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Buffer A — Lenia multichannel, per-pixel species from nearest particle\n//\n// iChannel0: self  (Lenia feedback)\n// iChannel1: bufC  (trail — .r=intensity, .g=speciesID/9)\n\n// Gaussian bell applied element-wise to a mat4.\n// bell(x, m, s) = exp(-(x-m)² / (2s²))\nmat4 bell(in mat4 x, in mat4 m, in mat4 s) {\n    mat4 v = -mult(x-m,x-m)/s/s/2.;\n    return mat4(exp(v[0]),exp(v[1]),exp(v[2]),exp(v[3]));\n}\n\n\n// Compute the 16-kernel weight matrix for a sample at normalised\n// radius r = dist/R (r=0 = center, r=1 = outer edge).\n//   1. Br = betaLen/relR * r  →  which ring each kernel is in\n//   2. height = beta value of that ring (beta0/1/2)\n//   3. mod(Br,1) = fractional phase within the ring  →  bell shape\n// Returns a mat4 of per-kernel weights.\nmat4 getWeight(float r, mat4 _relR, mat4 _betaLen, mat4 _beta0, mat4 _beta1, mat4 _beta2) {\n    mat4 Br = _betaLen / _relR * r;\n    ivec4 Br0=ivec4(Br[0]), Br1=ivec4(Br[1]), Br2=ivec4(Br[2]), Br3=ivec4(Br[3]);\n    mat4 height = mat4(\n        _beta0[0]*vec4(equal(Br0,iv0)) + _beta1[0]*vec4(equal(Br0,iv1)) + _beta2[0]*vec4(equal(Br0,iv2)),\n        _beta0[1]*vec4(equal(Br1,iv0)) + _beta1[1]*vec4(equal(Br1,iv1)) + _beta2[1]*vec4(equal(Br1,iv2)),\n        _beta0[2]*vec4(equal(Br2,iv0)) + _beta1[2]*vec4(equal(Br2,iv1)) + _beta2[2]*vec4(equal(Br2,iv2)),\n        _beta0[3]*vec4(equal(Br3,iv0)) + _beta1[3]*vec4(equal(Br3,iv1)) + _beta2[3]*vec4(equal(Br3,iv2)));\n    mat4 mod1 = mat4(mod(Br[0],1.),mod(Br[1],1.),mod(Br[2],1.),mod(Br[3],1.));\n    return mult(height, bell(mod1, kmu, ksigma));\n}\n\n\n// Broadcast a vec3 RGB value into a mat4 row, selecting the\n// component specified by srcv (0=R, 1=G, 2=B) for each column.\n// Used to route each kernel's source channel independently.\nvec4 getSrc(in vec3 v, in ivec4 srcv) {\n    return v.r*vec4(equal(srcv,iv0)) + v.g*vec4(equal(srcv,iv1)) + v.b*vec4(equal(srcv,iv2));\n}\n\n// Accumulate the growth contributions from all kernels whose\n// destination channel matches ch (0=R, 1=G, 2=B).\nfloat getDst(in mat4 m, in ivec4 ch) {\n    return dot(m[0],vec4(equal(dst0,ch))) + dot(m[1],vec4(equal(dst1,ch)))\n         + dot(m[2],vec4(equal(dst2,ch))) + dot(m[3],vec4(equal(dst3,ch)));\n}\n\n// Sample the Lenia field at pixel xy and expand it into a mat4\n// where each column feeds the correct source channel per kernel.\nmat4 getVal(in vec2 xy) {\n    vec2 txy = mod(xy/iResolution.xy, 1.);\n    vec3 val = texture(iChannel0, txy).rgb;\n    return mat4(getSrc(val,src0), getSrc(val,src1), getSrc(val,src2), getSrc(val,src3));\n}\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    // read species ID from trail (persists after particle moves away)\n    vec2 trail = texture(iChannel1, uv).rg;\n    int sid = clamp(int(trail.g * 9.0 + 0.5), 0, 9);\n\n    // fetch species-specific kernel parameters\n    mat4 _betaLen = sp_betaLen(sid);\n    mat4 _beta0   = sp_beta0(sid);\n    mat4 _beta1   = sp_beta1(sid);\n    mat4 _beta2   = sp_beta2(sid);\n    mat4 _relR    = sp_relR(sid);\n    mat4 _mu      = sp_mu(sid);\n    mat4 _sigma   = sp_sigma(sid);\n    mat4 _eta     = sp_eta(sid);\n\n    // ---- Convolution: weighted sum over the disk of radius R ----\n    // Three passes cover all directions without a full 2-D loop:\n    //   1) cardinal axes  2) 45° diagonals  3) all other off-axis pairs\n    mat4 sum   = mat4(0.); // accumulates weighted cell densities\n    mat4 total = mat4(0.); // accumulates weights  →  avg = sum / total\n\n    float r;        // normalised sample radius  (0 = center, 1 = edge)\n    mat4  weight;   // per-kernel weights returned by getWeight()\n    mat4  valSrc;   // cell value expanded into per-kernel source channels\n\n    // Center pixel  (r = 0)\n    r      = 0.;\n    weight = getWeight(r, _relR, _betaLen, _beta0, _beta1, _beta2);\n    valSrc = getVal(fragCoord);\n    sum   += mult(valSrc, weight);\n    total += weight;\n\n    // cardinal axes (+x, -x, +y, -y)\n    for (int x=1; x<=intR; x++) {\n        r=float(x)/R; weight=getWeight(r,_relR,_betaLen,_beta0,_beta1,_beta2);\n        valSrc=getVal(fragCoord+vec2(+x,0)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n        valSrc=getVal(fragCoord+vec2(-x,0)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n        valSrc=getVal(fragCoord+vec2(0,+x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n        valSrc=getVal(fragCoord+vec2(0,-x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n    }\n    \n    // diagonals (45°, r = x√2/R)\n    for (int x=1; x<=intR; x++) {\n        r=sqrt(2.)*float(x)/R;\n        if (r<=1.) {\n            weight=getWeight(r,_relR,_betaLen,_beta0,_beta1,_beta2);\n            valSrc=getVal(fragCoord+vec2(+x,+x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(+x,-x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(-x,+x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(-x,-x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n        }\n    }\n    \n    // all remaining off-axis directions (8 symmetrical samples each)\n    for (int y=1; y<=intR-1; y++)\n    for (int x=y+1; x<=intR; x++) {\n        r=sqrt(float(x*x+y*y))/R;\n        if (r<=1.) {\n            weight=getWeight(r,_relR,_betaLen,_beta0,_beta1,_beta2);\n            valSrc=getVal(fragCoord+vec2(+x,+y)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(+x,-y)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(-x,+y)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(-x,-y)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(+y,+x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(+y,-x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(-y,+x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n            valSrc=getVal(fragCoord+vec2(-y,-x)*samplingDist); sum+=mult(valSrc,weight); total+=weight;\n        }\n    }\n    mat4 avg = sum / (total + EPSILON);\n\n    mat4 growth = mult(_eta, bell(avg,_mu,_sigma)*2.-1.);\n    vec3 growthDst = vec3(getDst(growth,iv0), getDst(growth,iv1), getDst(growth,iv2));\n    vec3 val = texture(iChannel0, uv).rgb;\n    vec3 rgb = clamp(dt*growthDst + val, 0., 1.);\n\n    // First frame or mouse drag: reset to seeded noise\n    if (iFrame==0 || iMouse.z>0.) {\n        float bn = 0.16;\n        vec3 noiseRGB = vec3(\n            noise(fragCoord/R/samplingDist + mod(iDate.w,1.)*100.),\n            noise(fragCoord/R/samplingDist + sin(iDate.w)*100.),\n            noise(fragCoord/R/samplingDist + cos(iDate.w)*100.) );\n        rgb = bn + noiseRGB;\n    }\n\n    fragColor = vec4(rgb, 1.);\n}\n",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Buffer B — Particle state\n// Each pixel stores the state of the nearest particle:\n//   .xy = particle position (pixels)\n//   .z  = heading angle (radians)\n//   .w  = species ID (0–9, stored as float)\n//\n// Role of particles in the ecosystem:\n//   Particles do NOT directly overwrite cell values.\n//   Instead, their trails (bufC) carry species information that\n//   bufA reads to select which kernel to apply at each location.\n//   This means particles only shape the *surrounding kernel environment*\n//   of living cells — they act as \"gardeners\" steering growth rules,\n//   not bulldozers that destroy existing life.\n//\n//   Without steering, a particle moving in a straight line through a colony\n//   stamps its species trail across the interior, flipping the kernel and\n//   killing the cells it crosses.  Steering keeps particles on the edges.\n//\n// Particle–cell relationship:\n//   - In regions where cells have already grown (high Lenia luminance),\n//     particles are attracted toward the bright boundary edges.\n//     They orbit around established colonies rather than\n//     cutting straight through, preserving the active kernel zone.\n//   - When a particle does pass near a living region, its species trail\n//     may shift the local kernel — but only gradually, because trail\n//     diffusion and decay (bufC) smooth out abrupt transitions.\n//   - The net effect: particles continuously sculpt the kernel landscape\n//     around cell colonies, enabling new growth patterns to emerge at\n//     the periphery while leaving the interior ecology intact.\n\n// iChannel0: bufA   (Lenia field for attraction)\n// iChannel1: bufB   (particle feedback)\n\n\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    vec4 N = texture(iChannel1, (fragCoord+offset)/iResolution.xy);\n    return (distance(fragCoord,N.xy) < distance(fragCoord,A.xy)) ? N : A;\n}\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n    vec4 A  = texture(iChannel1, uv);\n\n    // nearest-particle propagation\n    for (int x=-2; x<=2; x++)\n    for (int y=-2; y<=2; y++)\n        A = getNearestParticle(A, fragCoord, vec2(x,y));\n    \n    // per-particle random values\n    vec4 rnd = random4(vec3(A.xy, iTime));\n\n    float speed        = 60.;   // pixels per second\n    float wander       = 0.4;   // random drift when no clear gradient\n    float turnfactor   = 0.6;   // radians to turn toward brighter sensor\n    float sensor_length = 18.;  // how far ahead sensors reach (pixels)\n\n    // Sensors: F=forward, FL=forward-left, FR=forward-right\n    mat2 rot = rotate2d(A.z);\n    vec2 s0  = rot * vec2(1., 0.) * sensor_length + A.xy;\n    vec2 s1  = rot * vec2(1., 1.) * sensor_length + A.xy;\n    vec2 s2  = rot * vec2(1.,-1.) * sensor_length + A.xy;\n\n    // Sample Lenia luminance at each sensor position\n    vec3 c0 = texture(iChannel0, s0/iResolution.xy).rgb;\n    vec3 c1 = texture(iChannel0, s1/iResolution.xy).rgb;\n    vec3 c2 = texture(iChannel0, s2/iResolution.xy).rgb;\n    float F  = dot(c0, vec3(0.333));\n    float FL = dot(c1, vec3(0.333));\n    float FR = dot(c2, vec3(0.333));\n\n    // Steer: wander if forward is brightest, else turn toward brighter side\n    if (F>=FL && F>=FR)   A.z += wander*(rnd.z-0.5)*0.3;\n    else if (FL>=FR)      A.z += turnfactor;\n    else                  A.z -= turnfactor;\n\n    rot   = rotate2d(A.z);\n    A.xy += rot * vec2(speed,0.) * iTimeDelta;\n\n    vec2 b = clamp(A.xy, vec2(0.), iResolution.xy);\n    if (A.x!=b.x) A.z = TWOPI*0.5 - A.z;\n    if (A.y!=b.y) A.z = TWOPI     - A.z;\n    A.xy = b;\n\n    // Place particles on a regular N×N grid, random heading and specie\n    if (iFrame==0) {\n        float N = 100.;\n        A.xy = round(fragCoord/N)*N;\n        vec4 r0 = random4(vec3(A.xy, 0.));\n        A.z  = r0.z * TWOPI;              // random initial heading       \n        A.w  = floor(r0.w * 10.);   // species 0-9\n    }\n\n    fragColor = A;\n}\n",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Buffer C — Particle trail\n// .r = trail intensity   .g = species ID / 9.0 (preserved across diffusion)\n//\n// iChannel1: bufB  (particle state)\n// iChannel2: self  (trail feedback)\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    // diffuse trail (4-neighbour weighted average)\n    vec4 C  = texture(iChannel2, uv);\n    vec4 N  = texture(iChannel2, (fragCoord+vec2( 0, 1))/iResolution.xy);\n    vec4 S  = texture(iChannel2, (fragCoord+vec2( 0,-1))/iResolution.xy);\n    vec4 E  = texture(iChannel2, (fragCoord+vec2( 1, 0))/iResolution.xy);\n    vec4 W  = texture(iChannel2, (fragCoord+vec2(-1, 0))/iResolution.xy);\n\n    // intensity diffuses normally\n    float intensity = mix(C.r, (N.r+S.r+E.r+W.r)*0.25, 0.12);\n    intensity *= 0.997;   // decay\n\n    // species ID: take from the brightest neighbour (species \"dominates\" into surroundings)\n    vec4 best = C;\n    if (N.r > best.r) best = N;\n    if (S.r > best.r) best = S;\n    if (E.r > best.r) best = E;\n    if (W.r > best.r) best = W;\n    float speciesNorm = best.g;   // inherit species from brightest neighbour\n\n    // deposit from nearest particle\n    vec4  A = texture(iChannel1, uv);\n    float d = distance(fragCoord, A.xy);\n    float deposit = exp(-d*d*0.005);   // ~14px glow radius\n\n    if (deposit > intensity) {\n        intensity    = deposit;\n        speciesNorm  = A.w / 9.0;   // overwrite species where particle is strong\n    }\n\n    fragColor = vec4(intensity, speciesNorm, 0., 1.);\n}\n",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "// ============================================================\n//  common.glsl — shared constants and helpers for all passes\n//\n//  Multichannel Lenia with up to 16 kernels packed into a 4×4\n//  mat4 (column-major).  Each kernel maps one source RGB channel\n//  to one destination RGB channel.\n// ============================================================\n\n\n// maximum 16 kernels by using 4x4 matrix\n#define EPSILON 0.000001\n#define mult matrixCompMult\n\nconst float samplingDist = 1.;\n\nconst ivec4 iv0 = ivec4(0);\nconst ivec4 iv1 = ivec4(1);\nconst ivec4 iv2 = ivec4(2);\nconst ivec4 iv3 = ivec4(3);\nconst vec4 v0 = vec4(0.);\nconst vec4 v1 = vec4(1.);\nconst mat4 m0 = mat4(v0, v0, v0, v0); // all-zero mat4\nconst mat4 m1 = mat4(v1, v1, v1, v1); // all-one  mat4\n\n// fixed: all species use R=12, T=2 (species3 originally R=10 but approximated)\nconst float R    = 12.;    // kernel radius in pixels\nconst float T    = 2.;     // time-steps \nconst int   intR = int(ceil(R));\nconst float dt   = 1./T;\n\n// ---- Bell-curve kernel shape ----\n// Every ring within a kernel is shaped by a Gaussian bell\n// centered at the ring midpoint (kmu=0.5) with width ksv=0.15.\n// These are the same for all species / kernels.\nconst vec4 kmv    = vec4(0.5);\nconst mat4 kmu    = mat4(kmv, kmv, kmv, kmv);   // ring-bell center\nconst vec4 ksv    = vec4(0.15);\nconst mat4 ksigma = mat4(ksv, ksv, ksv, ksv);   // ring-bell width\n\n// channel routing — identical for all 10 species\nconst mat4 src = mat4(0.,0.,0.,1., 1.,1.,2.,2., 2.,0.,0.,1., 1.,2.,2.,0.);\nconst mat4 dst = mat4(0.,0.,0.,1., 1.,1.,2.,2., 2.,1.,2.,0., 2.,0.,1.,0.);\n// Pre-cast to ivec4 for integer comparisons inside bufA\nconst ivec4 src0=ivec4(src[0]), src1=ivec4(src[1]), src2=ivec4(src[2]), src3=ivec4(src[3]);\nconst ivec4 dst0=ivec4(dst[0]), dst1=ivec4(dst[1]), dst2=ivec4(dst[2]), dst3=ivec4(dst[3]);\n\n// ---- Per-species parameter getters (species 0-9) ----\n// mat4 is column-major: mat4(col0, col1, col2, col3), each col = 4 floats\n\nmat4 sp_betaLen(int s) {\n    if (s==0) return mat4(1.,1.,2.,2., 1.,2.,1.,1., 1.,2.,2.,2., 1.,2.,1.,0.);\n    if (s==1) return mat4(1.,1.,2.,2., 1.,2.,1.,1., 1.,2.,2.,2., 1.,2.,1.,0.);\n    if (s==2) return mat4(1.,1.,1.,2., 1.,2.,1.,1., 1.,1.,1.,2., 1.,1.,2.,0.);\n    if (s==3) return mat4(2.,3.,1.,2., 3.,1.,2.,3., 1.,0.,0.,0., 0.,0.,0.,0.);\n    if (s==4) return mat4(1.,1.,2.,2., 1.,2.,1.,1., 1.,2.,2.,1., 1.,2.,1.,0.);\n    if (s==5) return mat4(1.,1.,2.,2., 1.,2.,1.,1., 1.,2.,2.,2., 1.,3.,1.,0.);\n    if (s==6) return mat4(1.,1.,2.,2., 1.,2.,1.,1., 1.,2.,2.,2., 1.,2.,1.,0.);\n    if (s==7) return mat4(1.,1.,2.,2., 1.,2.,1.,1., 1.,2.,2.,2., 1.,2.,1.,0.);\n    if (s==8) return mat4(1.,1.,2.,2., 1.,2.,1.,1., 1.,2.,2.,2., 1.,2.,1.,0.);\n    /*s==9*/  return mat4(1.,1.,1.,2., 1.,2.,1.,1., 1.,1.,1.,3., 1.,1.,2.,0.);\n}\n\n\n// sp_beta0/1/2 — relative height of ring 0, 1, 2 respectively.\n//   Scales the bell amplitude for that ring.\n//   Rings beyond betaLen are unused (height irrelevant).\n\nmat4 sp_beta0(int s) {\n    if (s==0) return mat4(1.,1.,1.,0., 1.,.8333,1.,1., 1.,.9167,.75,.9167, 1.,.1667,1.,0.);\n    if (s==1) return mat4(1.,1.,1.,0., 1.,.75,1.,1.,   1.,.9167,.75,1.,    1.,.25,1.,0.);\n    if (s==2) return mat4(1.,1.,1.,.0833, 1.,.8333,1.,1., 1.,1.,1.,1.,     1.,1.,1.,0.);\n    if (s==3) return mat4(.25,1.,1.,.25, 1.,1.,.25,1., 1.,0.,0.,0.,         0.,0.,0.,0.);\n    if (s==4) return mat4(1.,1.,1.,0., 1.,.8333,1.,1., 1.,.9167,.75,1.,    1.,.1667,1.,0.);\n    if (s==5) return mat4(1.,1.,1.,0., 1.,.8333,1.,1., 1.,.9167,.75,.9167, 1.,.1667,1.,0.);\n    if (s==6) return mat4(1.,1.,1.,0., 1.,.75,1.,1.,   1.,.9167,.8333,1.,  1.,.25,1.,0.);\n    if (s==7) return mat4(1.,1.,1.,0., 1.,.8333,1.,1., 1.,.9167,.75,1.,    1.,.1667,1.,0.);\n    if (s==8) return mat4(1.,1.,1.,0., 1.,.75,1.,1.,   1.,.9167,.75,1.,    1.,.1667,1.,0.);\n    /*s==9*/  return mat4(1.,1.,1.,.0833, 1.,.8333,1.,1., 1.,1.,1.,1.,     1.,1.,1.,0.);\n}\n\nmat4 sp_beta1(int s) {\n    if (s==0) return mat4(0.,0.,.25,1., 0.,1.,0.,0., 0.,1.,1.,1.,    0.,1.,0.,0.);\n    if (s==1) return mat4(0.,0.,.25,1., 0.,1.,0.,0., 0.,1.,1.,.9167, 0.,1.,0.,0.);\n    if (s==2) return mat4(0.,0.,0.,1.,  0.,1.,0.,0., 0.,0.,0.,.9167, 1.,0.,0.,0.);\n    if (s==3) return mat4(1.,.75,0.,1., .75,0.,1.,.75, 0.,0.,0.,0.,  0.,0.,0.,0.);\n    if (s==4) return mat4(0.,0.,.25,1., 0.,1.,0.,0., 0.,1.,1.,0.,    0.,1.,0.,0.);\n    if (s==5) return mat4(0.,0.,.25,1., 0.,1.,0.,0., 0.,1.,1.,1.,    0.,1.,0.,0.);\n    if (s==6) return mat4(0.,0.,.25,1., 0.,1.,0.,0., 0.,1.,1.,.9167, 0.,1.,0.,0.);\n    if (s==7) return mat4(0.,0.,.25,1., 0.,1.,0.,0., 0.,1.,1.,.9167, 0.,1.,0.,0.);\n    if (s==8) return mat4(0.,0.,.25,1., 0.,1.,0.,0., 0.,1.,1.,.9167, 0.,1.,0.,0.);\n    /*s==9*/  return mat4(0.,0.,0.,1.,  0.,1.,0.,0., 0.,0.,0.,.9167, 0.,0.,.0833,0.);\n}\n\n\n// beta2 is non-zero only for species 3 (which has 3-ring kernels)\nmat4 sp_beta2(int s) {\n    if (s==3) return mat4(0.,.75,0.,0., .75,0.,0.,.75, 0.,0.,0.,0., 0.,0.,0.,0.);\n    return mat4(0.,0.,0.,0., 0.,0.,0.,0., 0.,0.,0.,0., 0.,0.,0.,0.);\n}\n\n\n// sp_mu — target density for each kernel's growth function.\n//   Growth is maximized when the kernel's neighbourhood average\n//   equals mu, and becomes negative when far from mu.\nmat4 sp_mu(int s) {\n    if (s==0) return mat4(.272,.349,.2,.114,    .447,.247,.21,.462,  .446,.327,.476,.379, .262,.412,.201,0.);\n    if (s==1) return mat4(.175,.382,.231,.123,  .398,.224,.193,.512, .427,.286,.508,.372, .196,.371,.246,0.);\n    if (s==2) return mat4(.118,.174,.244,.114,  .374,.222,.306,.449, .498,.295,.43,.353,  .238,.39,.1,0.);\n    if (s==3) return mat4(.16,.22,.28,.16,      .22,.28,.16,.22,     .28,0.,0.,0.,        0.,0.,0.,0.);\n    if (s==4) return mat4(.204,.359,.176,.128,  .386,.229,.181,.466, .466,.37,.447,.391,  .299,.398,.183,0.);\n    if (s==5) return mat4(.282,.354,.197,.164,  .406,.251,.259,.517, .455,.264,.472,.417, .208,.395,.184,0.);\n    if (s==6) return mat4(.272,.337,.129,.132,  .429,.239,.25,.497,  .486,.276,.425,.352, .21,.381,.244,0.);\n    if (s==7) return mat4(.242,.375,.194,.122,  .413,.221,.192,.492, .426,.361,.464,.361, .235,.381,.216,0.);\n    if (s==8) return mat4(.22,.351,.177,.126,   .437,.234,.179,.489, .419,.341,.469,.369, .219,.385,.208,0.);\n    /*s==9*/  return mat4(.168,.1,.265,.111,    .327,.223,.293,.465, .606,.404,.377,.297, .319,.483,.1,0.);\n}\n\n// sp_sigma — width of the growth bell around mu.\n//   Smaller sigma → sharper peak → more sensitive to exact density.\n//   The last element (sentinel kernel) uses sigma=1 (growth near 0).\nmat4 sp_sigma(int s) {\n    if (s==0) return mat4(.0595,.1585,.0332,.0528, .0777,.0342,.0617,.1192, .1793,.1408,.0995,.0697, .0877,.1101,.0786,1.);\n    if (s==1) return mat4(.0682,.1568,.034,.0484,  .0816,.0376,.063,.1189,  .1827,.1422,.1079,.0724, .0934,.1107,.0712,1.);\n    if (s==2) return mat4(.0639,.159,.0287,.0469,  .0822,.0294,.0775,.124,  .1836,.1373,.0999,.0954, .0995,.1094,.0601,1.);\n    if (s==3) return mat4(.025,.042,.025,.025,     .042,.025,.025,.042,     .025,1.,1.,1.,           1.,1.,1.,1.);\n    if (s==4) return mat4(.0574,.152,.0314,.0545,  .0825,.0348,.0657,.1224, .1789,.1372,.1064,.0644, .0891,.1065,.0773,1.);\n    if (s==5) return mat4(.0646,.1584,.0359,.056,  .0738,.0383,.0665,.1164, .1806,.1437,.0939,.0666, .0815,.1049,.0748,1.);\n    if (s==6) return mat4(.0674,.1576,.0382,.0514, .0813,.0409,.0691,.1166, .1751,.1344,.1026,.0797, .0921,.1056,.0813,1.);\n    if (s==7) return mat4(.061,.1553,.0361,.0531,  .0774,.0365,.0649,.1219, .1759,.1381,.1044,.0686, .0924,.1118,.0748,1.);\n    if (s==8) return mat4(.0628,.1539,.0333,.0525, .0797,.0369,.0653,.1213, .1775,.1388,.1054,.0721, .0898,.1102,.0749,1.);\n    /*s==9*/  return mat4(.062,.1495,.0488,.0555,  .0763,.0333,.0724,.1345, .1807,.1413,.1136,.0701, .1038,.1185,.0571,1.);\n}\n\n// sp_eta — growth weight (step size) for each kernel.\n//   The kernel's growth value is multiplied by eta before being\n//   accumulated into the destination channel's update.\n//   Higher eta → stronger / faster influence from this kernel.\n//   Sentinel (last element) is always 0 — no contribution.\nmat4 sp_eta(int s) {\n    if (s==0) return mat4(.19,.66,.39,.38,    .74,.92,.59,.37,  .94,.51,.77,.92,  .71,.59,.41,0.);\n    if (s==1) return mat4(.138,.544,.326,.256, .544,.544,.442,.198, .58,.282,.396,.618, .382,.374,.376,0.);\n    if (s==2) return mat4(.082,.462,.496,.27,  .518,.576,.324,.306, .544,.374,.33,.528, .498,.43,.26,0.);\n    if (s==3) return mat4(.666,.666,.666,.666, .666,.666,.666,.666, .666,0.,0.,0.,      0.,0.,0.,0.);\n    if (s==4) return mat4(.116,.448,.332,.392, .398,.614,.448,.224, .624,.352,.342,.634, .362,.472,.242,0.);\n    if (s==5) return mat4(.082,.544,.26,.294,  .508,.56,.326,.21,   .638,.346,.384,.748, .44,.366,.294,0.);\n    if (s==6) return mat4(.15,.474,.342,.192,  .524,.598,.426,.348, .62,.338,.314,.608,  .292,.426,.346,0.);\n    if (s==7) return mat4(.144,.506,.332,.3,   .502,.58,.344,.268,  .582,.326,.418,.642, .39,.378,.294,0.);\n    if (s==8) return mat4(.174,.46,.31,.242,   .508,.566,.406,.27,  .588,.294,.388,.62,  .348,.436,.39,0.);\n    /*s==9*/  return mat4(.076,.562,.548,.306,  .568,.598,.396,.298, .59,.396,.156,.426,  .558,.388,.132,0.);\n}\n\n// sp_relR — relative radius of each kernel as a fraction of R.\n//   Actual pixel radius = relR * R.\n//   Allows different kernels to sense at different spatial scales\n//   within the same species.  Species 3 uses relR=1 for all kernels.\nmat4 sp_relR(int s) {\n    if (s==0) return mat4(.91,.62,.5,.97,  .72,.8,.96,.56,  .78,.79,.5,.72,  .68,.55,.82,1.);\n    if (s==1) return mat4(.78,.56,.6,.84,  .76,.82,1.,.68,  .99,.72,.56,.65, .85,.54,.82,1.);\n    if (s==2) return mat4(.85,.61,.5,.81,  .85,.93,.88,.74, .97,.92,.56,.56, .95,.59,.58,1.);\n    if (s==3) return mat4(1.,1.,1.,1.,     1.,1.,1.,1.,     1.,1.,1.,1.,     1.,1.,1.,1.);\n    if (s==4) return mat4(.93,.59,.58,.97, .79,.87,1.,.64,  .67,.68,.5,.85,  .69,.87,.66,1.);\n    if (s==5) return mat4(.85,.62,.69,.84, .82,.86,1.,.5,   .78,.6,.5,.7,    .67,.6,.8,1.);\n    if (s==6) return mat4(.87,.65,.67,.98, .77,.83,1.,.7,   .99,.69,.7,.57,  .89,.84,.76,1.);\n    if (s==7) return mat4(.98,.59,.5,.93,  .73,.88,.93,.61, .84,.7,.57,.73,  .74,.87,.72,1.);\n    if (s==8) return mat4(.87,.52,.58,.89, .78,.79,1.,.64,  .96,.66,.69,.61, .81,.81,.71,1.);\n    /*s==9*/  return mat4(.58,.68,.5,.87,  1.,1.,.88,.88,   .86,.98,.63,.53, 1.,.89,.59,1.);\n}\n\n// ---- Simplex noise (iq) ----\nvec2 _nh(vec2 p) {\n    p = vec2(dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)));\n    return -1.0 + 2.0*fract(sin(p)*43758.5453123);\n}\nfloat noise(in vec2 p) {\n    const float K1=0.366025404, K2=0.211324865;\n    vec2 i=floor(p+(p.x+p.y)*K1);\n    vec2 a=p-i+(i.x+i.y)*K2;\n    float m=step(a.y,a.x);\n    vec2 o=vec2(m,1.-m), b=a-o+K2, c=a-1.+2.*K2;\n    vec3 h=max(.5-vec3(dot(a,a),dot(b,b),dot(c,c)),0.);\n    return dot(h*h*h*h*vec3(dot(a,_nh(i)),dot(b,_nh(i+o)),dot(c,_nh(i+1.))), vec3(70.));\n}\n\n// ---- Particle utilities ----\nconst float TWOPI = 6.283185307179586;\n\nmat2 rotate2d(float a) {\n    float s=sin(a), c=cos(a);\n    return mat2(c,-s,s,c);\n}\n\n#define RANDOM_SCALE vec4(.1031,.1030,.0973,.1099)\n\nvec4 random4(vec3 p) {\n    vec4 p4=fract(p.xyzx*RANDOM_SCALE);\n    p4+=dot(p4,p4.wzxy+19.19);\n    return fract((p4.xxyz+p4.yzzw)*p4.zywx);\n}\n",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "NflXDn",
+			"date": "1775327248",
+			"viewed": 81,
+			"name": "Lenia Multi-Species Particle",
+			"username": "Xingbang Tang",
+			"description": "reference: https://www.shadertoy.com/view/7lsGDr\nhttps://chakazul.github.io/lenia.html\nThis project extends Lenia by integrating a particle system that allows multiple species to coexist and interact within the same environment.",
+			"likes": 7,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"lenia"
+			],
+			"hasliked": 0,
+			"parentid": "",
+			"parentname": ""
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n\nStudent ID: 218763342\nFinal Project\nStudent Name: Zachery Bissoon\n\nreferences used:\nsmoothLife: https://www.shadertoy.com/view/t3dfR2\nDATT4950 ant stigmergy: https://www.shadertoy.com/view/scXGzX\niTime randomness: https://alicelab.world/digm5950/ca.html#pseudo-randomness\nChatGPT 5.2 used for rectangle generation\n\nSnakes and Slimes\n\nNote: FPS drastically changes how the simulation works, I originally tested it at 180FPS, but I \ntested it afterwords on a different computer with 60FPS, and the ants sort of broke. On 60FPS, putting\nthe speed to 65. helps the ants function properly.\n\nUser Interaction: \nUse LMB to zoom in\n\nDefault Values for ants in buffer A:\n\n    float speed = 175.;        \n    float sensorLen = 6.;      \n    float trailfactor = 1.25;    \n    float wanderfactor = 0.55;\n\nDefault Values for smoothLife in buffer B:\n\n    float b1 = 0.25;           0.21 for faster behaviour\n    float b2 = b1 + 0.08;      anything >0.08 gives fast spawning cells\n    float d1 = 0.36;\n    float d2 = d1 + 0.18;\n\n    float a1 = 0.03;\n    float a2 = 0.15;\n    float dt = 0.2;\n\nchanging the period in buffer C will change the spawn rate of the rectangles \n\nyou can change the dimensions of the circles in buffer C at line 44, defaults are 10. and 30.\n\nyou can also change the spawn rate of ants in the nest in buffer A at line 56, changing above 0.01 will spawn lots of ants\n\nDescription:\nI built this off of my assignment 3, which was the ant roadway stigermy. This is a mesh between the ant stigmergy and smoothLife, with a \nslight modifier to the cells based on their height. The ants have changed, now appearing more snake-like in manner. They still follow similar\nrules based on their pheremones, but the pheremone food trails have now been replaced by smoothLife cells. Once finding their way to food, the\nsnakes break up and return to their ant form, spawning smoothLife cells as they keep moving. These food carrying ants can move through the \nsmoothLife cells which influences their shape as well as spreading it further. The non food carriers will eat through the smoothLife cells, \nhelping to slow the spread. The cells also weaken as they approach the top of the screen.\n\nTechnical Realization:\nAs mentioned before, I continued building upon my assignment 3, and integrated the smoothLife lab on top of it. To do this, I added smoothLife\nto Buffer B mostly unchanged, and removed some of the ant stigermy pheromones, in particular the trails to make way for the smoothLife cells.\nTo do this, the ants had to have the smoothLife cells growing off of them, which happens when they grab the food. The other ants eat through\nthe smoothLife cells in order to keep the growth from getting too out of hand. Towards the top of the screen the smoothLife cells become\nweaker. I did this to maintain an open space that showed the ant's movements outside of the smoothLife cells, since they tend to stabilize\nsomewhat quickly. The food generation is largely the same from my assignment 3, but I did change it to spawn clumps of circles instead. I\nfound that to be much more natural looking. The spawn conditions for the ants were drastically reduced, the inital amount of ants was also\nreduced. I changed this in order to allow the smoothLife a chance to grow, since a lot of non food carrier ants would basically not allow \nthe smoothLife to spawn anywhere.\n\nFuture Ideas:\nHave the ants eat the food more effectively, add different food that makes the ants spawn different behaving smoothLife cells, add user\ninteraction in the form of removing/adding smoothLife cells\n\n*/\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = (fragCoord / iResolution.xy);\n   \n    // zoom in\n    if (iMouse.z > 0.0) {\n        float magnification = 6.;\n        uv /= magnification;\n        uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));\n    }\n    \n    \n    // get our cell\n    vec4 A = texture(iChannel0, uv);\n    vec4 B = texture(iChannel1, uv);\n    vec4 C = texture(iChannel2, uv);\n    //vec4 D = texture(iChannel3, uv);\n   \n   \n   vec4 D = texture(iChannel3, uv); //phremones\n\n    fragColor = vec4(D.x); // grayscale\n    \n    // divide position by resolution to view in 0..1\n    //fragColor.xy = A.xy / iResolution.xy;\n    // divide direction by TWOPI to view in 0..1\n    //fragColor.z = A.z / TWOPI;\n    \n    // get distance from this pixel to the particle it is tracking:\n    float d = distance(uv * iResolution.xy, A.xy);\n    //float p = 1/d.;\n    //float p = exp(0.3*-d);\n    float p = smoothstep(2., 0., d);\n    \n    //fragColor = D.xxxx;\n    // trails: note can change 'B' with 'D' to see the pheremones\n    fragColor = mix(B, C, 0.45)*0.9;\n    \n    // agents:\n    fragColor += vec4(p*(1.-A.w), p*A.w, p*0.75, 0);\n   \n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "const float TWOPI = 6.283185307179586;\nconst float PI = 3.141592653589793;\n\n// make a sigmoid transition of x around center with given width\nfloat sigmoid(float x, float center, float width) {\n    return 1.0 / (1.0 + exp(-(x-center)*4.0/width));\n}\n\n\n// Gaussian blur\nvec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {\n    // N/2 .. N/4\n    float sigma = float(N)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(img, fragCoord/resolution) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=N; i++) {\n        vec2 offset = float(i) * dir;\n        float weight = exp(float(i*i) * expFactor);\n        sum += texture(img, (fragCoord + offset)/resolution) * weight;\n        sum += texture(img, (fragCoord - offset)/resolution) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    return sum / weightSum;\n}\n\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 3,
+						"type": "buffer",
+						"id": "XdfGR8",
+						"filepath": "/media/previz/buffer03.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "\n// create a 2D rotation matrix from an angle in radians:\nmat2 rotate2d(float angle) {\n    float s = sin(angle);\n    float c = cos(angle);\n    return mat2(\n        c, -s, \n        s, c\n    ); \n}\n\n// each pixel tracks an agent\n// .xy is the agent location (in pixels)\n// .z is the agent direction (in radians)\n// .w is food carried by the agent\n\n// given current particle \"A\" at pixel `fragCoord`\n// is the particle at `fragCoord+offset` nearer? if so return that.\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    // get by neighbour pixel\n    vec4 N = texture(iChannel0, (fragCoord+offset)/iResolution.xy);\n    // distance from my pixel to the particle I'm tracking:\n    float d1 = distance(fragCoord, A.xy);\n    // distance from my pixel to the particle my neighbor is tracking:\n    float d2 = distance(fragCoord, N.xy);\n    // if my neighbor's particle is nearer, track that instead! \n    if (d2 < d1) { return N; } else { return A; }\n}\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord) {\n    // convert pixel coordinate to normalize texture coord\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    \n    // respawn in nest:\n    vec2 nest = iResolution.xy * vec2(0.5, 0.5);\n    float nest_radius = 75.; //bigger nest radius for more ants\n    float nd = step(distance(fragCoord, nest), nest_radius);\n    \n    // our previous state\n    vec4 A = texture(iChannel0, uv);\n    \n    // make sure we are tracking the nearest particle by testing\n    // each of our nearest pixels to see if their particle is nearer\n    for (int x=-2; x<=2; x++) {\n        for (int y=-2; y<=2; y++) {\n            A = getNearestParticle(A, fragCoord, vec2(x, y));\n        }\n    }\n    \n    \n    // spawn new ants inside the nest, will spawn in a circle radius outside of the nest\n    if (distance(fragCoord, nest) <= nest_radius) {\n        //spawns ants per pixel, very low number because otherwise it will spawn a lot of ants\n        if (random4(vec3(fragCoord, iFrame)).x < 0.000001) { \n           vec4 r = random4(vec3(fragCoord, iFrame));\n                   \n            float angle = r.x * TWOPI;\n            float radius = nest_radius * sqrt(r.y);\n\n            vec2 spawnPos = nest + vec2(cos(angle), sin(angle)) * radius;\n\n            A.xy = spawnPos;\n            A.z  = r.z * TWOPI;\n\n        }\n    }\n    \n    vec4 noise = random4(vec3(A.xy, iTime));\n    \n    float speed = 175.;        //175. or 65. if at 60FPS\n    float sensorLen = 6.;      //6.\n    float trailfactor = 1.;    //1.\n    float wanderfactor = 0.55; //0.35\n    \n    // get rotation matrix for this agent:\n    mat2 rot = rotate2d(A.z);\n    \n    // move the particle\n    vec2 vel = rot * vec2(speed, 0);\n    // integrate velocity to position\n    A.xy += vel * iTimeDelta;\n    \n    // get the bounded position within the screen image\n    vec2 b = clamp(A.xy, vec2(0), iResolution.xy);\n    // compare the bounded and actual positions -- if they are different, reflect their orientations:\n    if (A.x != b.x) { A.z = TWOPI*0.5 - A.z; } // reflect in Y axis\n    if (A.y != b.y) { A.z = TWOPI - A.z; } // reflect in X axis\n    // also, actually clamp the position on screen\n    A.xy = b.xy; \n        \n    // sense the sugar in buffer C:\n    vec4 C = texture(iChannel2, A.xy / iResolution.xy);\n    \n    // pick up or drop food:\n    if (C.g > 0. && A.w < 0.5) {\n        A.w = 1.;\n    } else if (C.r > 0. && A.w > 0.5) {\n        A.w = 0.;\n    }\n    \n    // if I hit something, turn around:\n    if (C.g > 0. || C.r > 0.) { A.z += PI; }   \n    \n    //rot = rotate2d(A.z);\n    \n    \n    // sensors:   \n    vec2 sensorL = rot * vec2(1, 1) * sensorLen;\n    vec2 sensorR = rot * vec2(1, -1) * sensorLen;\n    vec4 senseL = texture(iChannel3, (A.xy + sensorL)/iResolution.xy);\n    vec4 senseR = texture(iChannel3, (A.xy + sensorR)/iResolution.xy);\n\n    // ants with food follow red pheremone\n    if (A.w > 0.5) {\n        A.z += (senseR.r - senseL.r) * trailfactor;\n    }\n    // ants without food follow green\n    else {\n      A.z += (senseR.g - senseL.g) * trailfactor;\n    }\n    \n    \n    \n    // initialize:\n    if (iFrame == 0) {\n        A = vec4(0);\n        \n        if (nd > 0.5) {\n        \n            float N = 25.; //changed to initialize with less ants\n            A.xy = round(fragCoord/N) * N;\n            \n            vec4 noise = random4(vec3(A.xy, iFrame));\n            A.z = noise.z * TWOPI;\n            A.w = 0.;\n        }\n    }\n    \n    fragColor = A;\n}",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//smoothLife and ants\n//smoothLife taken from https://www.shadertoy.com/view/t3dfR2\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    // previous SmoothLife state\n    vec4 state = texture(iChannel1, uv);\n\n    // ants\n    vec4 A = texture(iChannel0, uv);\n\n    //smoothLife variables\n    float outer_radius = 10.0;\n    float inner_radius = 3.0;\n\n    float b1 = 0.245; //0.21 for faster behaviour\n    float b2 = b1 + 0.08; //anything >0.08 gives fast spawning cells\n    float d1 = 0.36;\n    float d2 = d1 + 0.18;\n\n    float a1 = 0.03;\n    float a2 = 0.15;\n    float dt = 0.2;\n\n    float inner_sum = 0.0;\n    float outer_sum = 0.0;\n    \n    //smoothLife neighbours\n    for (float x = -outer_radius; x <= outer_radius; x++) {\n        for (float y = -outer_radius; y <= outer_radius; y++) {\n            vec2 offset = vec2(x, y);\n            float dist = length(offset);\n\n            vec2 texel = offset / iResolution.xy;\n            float life = texture(iChannel1, uv + texel).x;\n\n            float outer_w = 1.0 - sigmoid(dist, outer_radius, 1.0);\n            float inner_w = 1.0 - sigmoid(dist, inner_radius, 1.0);\n\n            outer_sum += life * outer_w;\n            inner_sum += life * inner_w;\n        }\n    }\n\n    float inner_area = 3.14159 * inner_radius * inner_radius;\n    float outer_area = 3.14159 * outer_radius * outer_radius;\n\n    float inner_density = inner_sum / inner_area;\n    float outer_density = (outer_sum - inner_sum) / (outer_area - inner_area);\n\n    //smoothLife rules\n    float notlonely = sigmoid(outer_density, d1, a1);\n    float notcrowded = 1.0 - sigmoid(outer_density, d2, a1);\n    float survive = notlonely * notcrowded;\n\n    float enough = sigmoid(outer_density, b1, a1);\n    float nottoomuch = 1.0 - sigmoid(outer_density, b2, a1);\n    float birth = enough * nottoomuch;\n\n    float liveness = sigmoid(inner_density, 0.5, a2);\n    float transition = mix(birth, survive, liveness);\n\n    float change = transition * 2.0 - 1.0;\n\n    //smoothLife growth or decay\n    state.x += dt * change;\n    \n\n    //ant behaviours\n    //ant forward movement\n    vec2 dir = vec2(cos(A.z), sin(A.z));\n    vec2 toPixel = fragCoord - A.xy;\n\n    //get vector from ant to pixel\n    float dist = length(toPixel);\n    vec2 n = dist > 0.0 ? toPixel / dist : vec2(0.0);\n\n    float forward = dot(n, dir);\n\n    // elongated falloff\n    float deposit = 1.0 * exp(-dist * 0.17); //0.17\n\n    //2 ant roles, food carriers grow cells, non carriers remove cells\n    float grow = deposit * A.w;\n    float eat  = deposit * (1.0 - A.w);\n\n    //smoothLife seed\n    state.x = max(state.x, grow);\n    \n    //ants eating cells\n    state.x -= eat * state.x * 0.25;\n    \n    state.x -= eat * 0.35;\n\n\n    //weaken smoothLife towards top of screen\n    float h = uv.y;\n\n    state.x += dt * change * (1.0 - h * 0.7);\n\n    state.x *= (1.0 - uv.y * 0.3);\n    \n    state.x = clamp(state.x, 0.0, 1.0);\n\n    //initialization\n    if (iFrame == 0) {\n        state = vec4(0.0);\n    }\n\n    fragColor = state;\n}",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/* \nfood & nest \n\nimplemeted using ChatGPT, prompt is \n\"can I generate one rectangle at a time? so that every 1000 iFrames \nfor example it will generate just one food blotch somewhere random?\"\n\nin this version I changed the rectangle, now uses multiple circles\n\n*/\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    vec4 A = texture(iChannel0, uv); // particles\n    vec4 C = texture(iChannel2, uv); // previous state (persistent)\n    \n    float d = distance(fragCoord, A.xy);\n    \n    // remove food:\n    if (A.w < 0.5 && d < 2.0) C.g = 0.0; \n  \n    //circle spawning\n    \n    float period = 1500.0; //1500.0 is default\n    \n    // which spawn event we're on\n    float t = floor(iTime / period);\n    \n    // trigger only once per period\n    bool spawn = mod(float(iFrame), period) < 1.0;\n    \n    if (spawn) {\n        // used to create random circles\n        vec4 r = random4(vec2(t, iTime));\n        \n        vec2 center = r.xy * iResolution.xy;\n\n    float blob = 0.0;\n\n    //combine circles to spawn\n    for (int i = 0; i < 4; i++) {\n        vec2 offset = (random2(r.xy + float(i)) - 0.5) * 40.0;\n        float radius = mix(10.0, 30.0, r.z);\n\n        float d = distance(fragCoord, center + offset);\n        blob += smoothstep(radius, radius * 0.6, d);\n    }\n\n    // normalize\n    blob /= 4.0;\n\n    C.g = max(C.g, blob);\n    }\n    \n    //initilization \n    if (iFrame == 0) {\n        C = vec4(0.0);\n        \n        // nest in center\n        vec2 nest = iResolution.xy / 2.;\n        if (distance(fragCoord, nest) <= 30.0) {\n            C = vec4(1.0, 0.0, 0.0, 0.0);\n        }\n    }\n    \n    fragColor = C;\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XdfGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// Buffer D = pheromones\n// .r = nest trail (go home)\n// .g = food trail (go to food)\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    vec2 uv = fragCoord / iResolution.xy;\n\n    vec4 A = texture(iChannel0, uv);\n    vec4 B = texture(iChannel1, uv); // previous pheromones\n    vec4 C  = texture(iChannel2, uv); // nest/food\n\n\n\n    //diffusion\n    vec4 N  = texture(iChannel1, (fragCoord + vec2(0, 1))/iResolution.xy);\n    vec4 S  = texture(iChannel1, (fragCoord + vec2(0,-1))/iResolution.xy);\n    vec4 E  = texture(iChannel1, (fragCoord + vec2(1, 0))/iResolution.xy);\n    vec4 W  = texture(iChannel1, (fragCoord + vec2(-1,0))/iResolution.xy);\n\n    B = mix(B, (N+S+E+W)/4.0, 0.5);\n\n    //decay\n    B *= 0.995;\n\n    float d = distance(fragCoord, A.xy);\n\n    //ant pheremone blob \n    float deposit = exp(-d * 0.15);\n\n    //makes pheremone pull stronger or weaker depending on values\n    //this one doesn't seem to change much if anything\n    B.r += deposit * A.w * 5.0;\n    //higher values here will weaken the pull of non-food \n    B.g += deposit * (1.0 - A.w) * 2.0;\n\n    //forces phermone to be strong at certain spots\n    //B.r = max(B.r, C.r); // nest\n    //B.g = max(B.g, C.g); // food\n\n    B = clamp(B, 0.0, 1.0);\n\n    if (iFrame == 0) {\n        B = vec4(0.0);\n    }\n\n    fragColor = B;\n}",
+				"name": "Buffer D",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "fcfSzX",
+			"date": "1775627391",
+			"viewed": 21,
+			"name": "Final",
+			"username": "Zachery Bissoon",
+			"description": "final project",
+			"likes": 0,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950"
+			],
+			"hasliked": 0,
+			"parentid": "7flXz2",
+			"parentname": "oh man"
+		}
+	},
+	{
+		"ver": "0.1",
+		"renderpass": [
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dfGRr"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "/*\n218016485\nA4\nZeta Sovery\nPassing \n--\nInteractions: \nThere is magnification by holding mouse. There are a few parameters that I think are\ncool messing with such as the ad and C.r(specifically the one dealing with the agents\nand noiseCUSTOM) n buffer C\n\nDescription:\nThis CA is mainly based off my previous assignment \"Christmas Time\" which builds off\nof nearest-particle tracking and chemotaxis. This CA takes some inspiration from\nProbabilistic/Stochastic CA to make it nore interesting and so it has less likelihood\nof stabilizing. More specifically this CA looks at the \"Forest Fire\" CA where I take \nthe idea of \"planting\" and \"burning: and integrating it into my already existing\n\"safe\" and \"danger\" type agents. The safe agents try its best to avoid the fire but\nthe spread is so quick it gets caught, but it recovers quickly. The fire spreads out \nlike shards of diamonds similar to my older CAs, while the heads of the \"burning\" \nagents look like its sizzling.The safe agents look glowy and wispy which contrats\nthe harsh visuals of the burning areas. The way the fire spreads kind of like a \nliquid that slowly spreads through thicker liquid. The glowy effect on the safe agents \nmake it look ghostly but the way it looks when burning looks like a disease. \nConceptually it is like ghostly whisps trying to pass through the \"other side\" but\ncan't get past without getting burnt. \n\n\nTechnical Realization: \nThe balance in the base CA makes it hard to expirement by tweaking the parameters. My\nfirst thought was to add a super agent to further evolve the CA, but it still falls\nunder the problem of possibly stabilizing fast. To try and counterbalance this I\nlooked into Stochastic CA, and I really liked the idea of the Forest Fire CA. The danger\nagents are more spontaneous or event-based instead, and the \"planting\" of the safe\nagents add back the balance so the danger agents don't overtake. This way, the safe\nagents aren't added in by a \"sugar field\" like the Chemotaxis from before. The CA\nfeels more flexible and dynamic this way\n\nFuture Extension:\nI still would like to play with adding some kind of super agent. This agent would\ndisrupt the CA and make it more interesting. However, the super agent would preferably\nbe done through the user's actions like dragging the mouse on the screen or keyboard\ninputs. \n\n--\nSource code:\nLab 8 (grrrwaaa) - https://www.shadertoy.com/view/7fl3zH\nDATT4950 Forest Fire (grrrwaaa) - https://www.shadertoy.com/view/tXdcDN\nAgent-based system (grrrwaaa) - https://alicelab.world/digm5950/agent.html\nChemotaxis (grrrwaaa) - https://alicelab.world/digm5950/agent.html\nForest Fire (grrrwaaa) - https://alicelab.world/digm5950/agent.html\nProbabilistic/Stochastic CA (grrrwaaa) - https://alicelab.world/digm5950/agent.html\n\n*/\n\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = (fragCoord / iResolution.xy);\n   \n    // zoom in\n    if (iMouse.z > 0.0) {\n        float magnification = 6.;\n        uv /= magnification;\n        uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));\n    }\n    \n    \n    // get our cell\n    vec4 A = texture(iChannel0, uv);\n    vec4 B = texture(iChannel1, uv);\n    vec4 C = texture(iChannel2, uv);\n    \n    // divide position by resolution to view in 0..1\n    //fragColor.xy = A.xy / iResolution.xy;\n    // divide direction by TWOPI to view in 0..1\n    //fragColor.z = A.z / TWOPI;\n    \n    // get distance from this pixel to the particle it is tracking:\n    float d = distance(uv * iResolution.xy, A.xy);\n    //float p = 1/d.;\n    //float p = exp(0.3*-d);\n    float p = smoothstep(1., 0., d);\n    \n    \n \n    float tree = C.g;\n    float fire = C.r;\n\n    // base colors\n    vec3 treeColor = vec3(1.0, 2.5, 7.7); // babyblue\n    vec3 fireColor = vec3(1.9, 0.5, 1.9); // purple fire!\n    vec3 ashColor  = vec3(0.1, 0.1, 0.1);   // dark\n\n    // combine\n    vec3 col = mix(ashColor, treeColor, tree);\n    col = mix(col, fireColor, fire);\n    col = mix(C.rgb, col, 0.3); // 0.3 = how fast new colors overwrite old\n    fragColor = vec4(col, 1.0);\n}",
+				"name": "Image",
+				"description": "",
+				"type": "image"
+			},
+			{
+				"outputs": [],
+				"inputs": [],
+				"code": "const float TWOPI = 6.283185307179586;\n\n// make a sigmoid transition of x around center with given width\nfloat sigmoid(float x, float center, float width) {\n    return 1.0 / (1.0 + exp(-(x-center)*4.0/width));\n}\n\n\n// Gaussian blur\nvec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {\n    // N/2 .. N/4\n    float sigma = float(N)/3.14;   \n    float expFactor = -0.5/(sigma*sigma);\n    float weight = 1.;\n    vec4 sum = texture(img, fragCoord/resolution) * weight;\n    float weightSum = weight;\n    for (int i=1; i<=N; i++) {\n        vec2 offset = float(i) * dir;\n        float weight = exp(float(i*i) * expFactor);\n        sum += texture(img, (fragCoord + offset)/resolution) * weight;\n        sum += texture(img, (fragCoord - offset)/resolution) * weight;\n        weightSum += weight * 2.0;\n    \n    }\n    return sum / weightSum;\n}\n\n\n#define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)\n\nvec2 random2(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec2 p) {\n    vec3 p3 = fract(p.xyx * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec2 random2(vec3 p3) {\n    p3 = fract(p3 * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xx + p3.yz) * p3.zy);\n}\n\nvec3 random3(float p) {\n    vec3 p3 = fract(vec3(p) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yzx + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx); \n}\n\nvec3 random3(vec2 p) {\n    vec3 p3 = fract(vec3(p.xyx) * RANDOM_SCALE.xyz);\n    p3 += dot(p3, p3.yxz + 19.19);\n    return fract((p3.xxy + p3.yzz) * p3.zyx);\n}\n\nvec3 random3(vec3 p) {\n    p = fract(p * RANDOM_SCALE.xyz);\n    p += dot(p, p.yxz + 19.19);\n    return fract((p.xxy + p.yzz) * p.zyx);\n}\n\nvec4 random4(float p) {\n    vec4 p4 = fract(p * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);   \n}\n\nvec4 random4(vec2 p) {\n    vec4 p4 = fract(p.xyxy * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec3 p) {\n    vec4 p4 = fract(p.xyzx * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}\n\nvec4 random4(vec4 p4) {\n    p4 = fract(p4  * RANDOM_SCALE);\n    p4 += dot(p4, p4.wzxy + 19.19);\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n}",
+				"name": "Common",
+				"description": "",
+				"type": "common"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4dXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "// each pixel tracks an agent\n// .xy is the agent location (in pixels)\n// .z is the agent direction (in radians)\n// .w is the agent's memory\n\n// given current particle \"A\" at pixel `fragCoord`\n// is the particle at `fragCoord+offset` nearer? if so return that.\nvec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {\n    // get by neighbour pixel\n    vec4 N = texture(iChannel0, (fragCoord+offset)/iResolution.xy);\n    // distance from my pixel to the particle I'm tracking:\n    float d1 = distance(fragCoord, A.xy);\n    // distance from my pixel to the particle my neighbor is tracking:\n    float d2 = distance(fragCoord, N.xy);\n    // if my neighbor's particle is nearer, track that instead! \n    if (d2 < d1) { return N; } else { return A; }\n}\n\n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord) {\n    // convert pixel coordinate to normalize texture coord\n    vec2 uv = fragCoord / iResolution.xy;\n    // our previous state\n    vec4 A = texture(iChannel0, uv);\n    \n    // make sure we are tracking the nearest particle by testing\n    // each of our nearest pixels to see if their particle is nearer\n    for (int x=-2; x<=2; x++) {\n        for (int y=-2; y<=2; y++) {\n            A = getNearestParticle(A, fragCoord, vec2(x, y));\n        }\n    }\n    \n    vec4 noise = random4(vec3(A.xy, iTime));\n    \n\n    \n    \n    \n    float speed = 50.;\n    float turn = 0.;\n    \n    \n    \n    // sense the sugar in buffer C:\n    vec4 C = texture(iChannel2, A.xy / iResolution.xy);\n    float smell; \n    float safeTrail   = C.g;   // safe\n    float dangerTrail = C.r;   // danger\n\n    \n    // sense type\n    //vec4 B = texture(iChannel1, A.xy / iResolution.xy);\n    // 0 = safe, 1 = danger\n    float type   = floor(A.w/2.0);\n    float memory = fract(A.w);\n\n    //type attraction\n    if(type < 0.5){ //if safe or simple agent\n        //smell = safeTrail - dangerTrail; //yes safetrail, no danger\n        smell = safeTrail - 2.0 * dangerTrail;\n    }\n    else {       // danger\n        smell = safeTrail + dangerTrail; //yes safetrail, yes danger\n    }\n    \n    \n    // compare it to my memory of the smell on the last frame:\n    // is my life getting better?\n    if (smell > memory) {\n        // if what I smell here is better than \n        // what I remember smelling back there\n        // I'm probably going in a good direction, keep on\n        turn = 0.01;\n        speed = 75.;\n    } else {\n        // the smell here is not better. try another direction.\n        turn = 1.;\n        speed = 20.;\n    }\n    \n    A.z += turn * (noise.x*2. - 1.);\n    \n    // move the particle\n    // get the xy velocity from the A.z direction\n    // polar to cartesian\n    vec2 vel = vec2(cos(A.z), sin(A.z)) * speed;\n    // integrate velocity to position\n    A.xy += vel * iTimeDelta;\n    \n    // get the bounded position within the screen image\n    vec2 b = clamp(A.xy, vec2(0), iResolution.xy);\n    // compare the bounded and actual positions -- if they are different, reflect their orientations:\n    if (A.x != b.x) { A.z = TWOPI*0.5 - A.z; } // reflect in Y axis\n    if (A.y != b.y) { A.z = TWOPI - A.z; } // reflect in X axis\n    // also, actually clamp the position on screen\n    A.xy = b.xy; \n    \n\n    // remember my smell and type:\n    // danger → safe when near \"fire\"\n    if(type > 0.5 && dangerTrail > 0.5){\n        type = 0.0; \n    }\n  \n  \n    \n    A.w = type * 2.0 + clamp(smell, 0.0, 0.999); //so type and memory are cleary separated\n    \n    // initialize:\n    if (iFrame == 0) {\n    \n        //A.xy = iResolution.xy * noise.xy;\n        // every pixel in a NxN square is tracking the same particle\n        // round the position to the nearest \"N\"\n        float N = 30.;\n        A.xy = round(fragCoord/N) * N;\n        // generate danger (60%) agents and safe (40%) agents\n        vec4 noise = random4(vec3(A.xy, iFrame));\n        type = step(0.4, random4(vec3(A.xy,iFrame)).x);\n        A.w = type * 2.0;\n    \n        // direction:\n        A.z = noise.z * TWOPI;\n        }\n    \n    fragColor = A;\n    }\n",
+				"name": "Buffer A",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "XsXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "linear",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "void mainImage( out vec4 fragColor, in vec2 fragCoord )\n{\n    // convert pixel coordinate to normalize texture coord\n    vec2 uv = fragCoord / iResolution.xy;\n    \n    // our previous state\n    vec4 A = texture(iChannel0, uv); // the particles\n    vec4 B = texture(iChannel1, uv); // the trails\n    \n    \n    // decay:\n    B.rgb *= 0.98;\n    \n    // draw the particle\n    // get distance from this pixel to the particle it is tracking:\n    float d = distance(fragCoord, A.xy);\n    //float p = 1/d.;\n    //float p = exp(0.3*-d);\n    float p = smoothstep(2.0, 0., d);\n   \n    \n    B.rgb += vec3(p);\n    \n    fragColor = B;\n}\n\n",
+				"name": "Buffer B",
+				"description": "",
+				"type": "buffer"
+			},
+			{
+				"outputs": [
+					{
+						"channel": 0,
+						"id": "4sXGR8"
+					}
+				],
+				"inputs": [
+					{
+						"channel": 0,
+						"type": "buffer",
+						"id": "4dXGR8",
+						"filepath": "/media/previz/buffer00.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 1,
+						"type": "buffer",
+						"id": "XsXGR8",
+						"filepath": "/media/previz/buffer01.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					},
+					{
+						"channel": 2,
+						"type": "buffer",
+						"id": "4sXGR8",
+						"filepath": "/media/previz/buffer02.png",
+						"sampler": {
+							"filter": "nearest",
+							"wrap": "clamp",
+							"vflip": "true",
+							"srgb": "false",
+							"internal": "byte"
+						}
+					}
+				],
+				"code": "//C.r is danger type/\"fire\"\n//C.g is simple type/\"tree\"\n\n\nmat3 gaussBlur = mat3(\n        1, 2, 1,\n        2, 4, 2,\n        1, 2, 1\n    ) * 1.0/16.0;\n    \n\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\n    vec2 uv = (fragCoord / iResolution.xy);\n    \n    vec4 C = texture(iChannel2, uv); // the previous frame\n    \n    // gaussian blurred previous frame:\n    vec4 N = texture(iChannel2, (fragCoord + vec2(0, 1))/iResolution.xy);\n    vec4 S = texture(iChannel2, (fragCoord + vec2(0, -1))/iResolution.xy);\n    vec4 E = texture(iChannel2, (fragCoord + vec2(1, 0))/iResolution.xy);\n    vec4 W = texture(iChannel2, (fragCoord + vec2(-1, 0))/iResolution.xy);\n    vec4 NE = texture(iChannel2, (fragCoord + vec2(1, 1))/iResolution.xy);\n    vec4 SE = texture(iChannel2, (fragCoord + vec2(1, -1))/iResolution.xy);\n    vec4 NW = texture(iChannel2, (fragCoord + vec2(-1, 1))/iResolution.xy);\n    vec4 SW = texture(iChannel2, (fragCoord + vec2(-1, -1))/iResolution.xy);\n    C = ((NE+SE+NW+SW) + 2.*(N+E+S+W) + 4.*C)/16.;\n    \n    vec4 noise = random4(vec3(fragCoord, iTime));\n    \n    // decay:\n    \n    C.r *= 0.994; // danger trails\n    C.g *= 0.998; // safe trails\n    \n    //checking neighbours for \"fire\"/danger\n    float neighborFire = max(max(N.x, S.x), max(E.x, W.x));\n    //if enough \"tree\" and \"fire\" then \"ignite\"\n    if(C.g > 0.3 && neighborFire > 0.5){\n        C.r = 0.7;\n    }\n    //if fire\n    if(C.r > 0.5){\n        C.r *= 0.73; //\"fire\" depletes\n        C.g *= 0.75; //\"tree\" depletes\n    }\n    \n    float noiseCUSTOM = random4(vec3(fragCoord, iTime)).x;\n\n    if(noiseCUSTOM > 0.9995){\n        C.r = 0.5; // changing this value kind achanges burnign pattern 0.03\n    }\n   \n\n\n    // nearest agent for \"forest fire\"\n    vec4 A = texture(iChannel0, uv); // the nearest agent\n    float ad = distance(A.xy, fragCoord); // distance to agent\n    float type = floor(A.w/2.);\n    //\"fire\" or \"plant\" with agents\n    if (ad < 3.) { //changing AD makes cool effect 3.0 , 10.0, 50.0\n    if (type < 0.5) {\n        // green agent plants tree (not every time)\n        if(random4(vec3(fragCoord, iTime)).x > 0.7){ //chance for planting\n            C.g += 2.2; //\"forest\" growth\n           \n        }\n    } \n    else {\n        C.r += 0.348;// \"fire\" signal\n        }\n    }\n    \n    \n    if(C.r > 0.47){ //0.47 - 0.49 brings most interesting visuals\n        C.g = 0.0; // burn the tree away\n    }\n\n    // background noise\n    //C += 0.1*(noise.z - 0.5);\n \n    \n    C = clamp(C, 0., 1.);\n   \n    \n    fragColor = C;\n}",
+				"name": "Buffer C",
+				"description": "",
+				"type": "buffer"
+			}
+		],
+		"flags": {
+			"mFlagVR": false,
+			"mFlagWebcam": false,
+			"mFlagSoundInput": false,
+			"mFlagSoundOutput": false,
+			"mFlagKeyboard": false,
+			"mFlagMultipass": true,
+			"mFlagMusicStream": false
+		},
+		"info": {
+			"id": "fflXDn",
+			"date": "1775533858",
+			"viewed": 23,
+			"name": "Passing",
+			"username": "Zeta Sovery",
+			"description": "A4",
+			"likes": 1,
+			"published": 1,
+			"flags": 32,
+			"usePreview": 0,
+			"tags": [
+				"datt4950"
+			],
+			"hasliked": 0,
+			"parentid": "NcXGWl",
+			"parentname": " DATT4950 A3 ZS"
+		}
 	}
 ]
