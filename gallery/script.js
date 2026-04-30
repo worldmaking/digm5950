@@ -519,6 +519,7 @@ document.addEventListener('keydown', (e) => {
 
 loadImages(imageUrls).then(images => {
 	// All images are loaded
-	loadNextShadertoy()
+	//loadNextShadertoy()
+	loadRandomShadertoy()
 	render();
 });
