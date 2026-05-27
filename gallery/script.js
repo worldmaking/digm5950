@@ -4,7 +4,7 @@ let duration = 60
 
 // preload all images
 const imageUrls = [
-"0a40562379b63dfb89227e6d172f39fdce9022cba76623f1054a2c83d6c0ba5d.png", "0c7bf5fe9462d5bffbd11126e82908e39be3ce56220d900f633d58fb432e56f5.png", "1f7dca9c22f324751f2a5a59c9b181dfe3b5564a04b724c657732d0bf09c99db.jpg", "08b42b43ae9d3c0605da11d0eac86618ea888e62cdd9518ee8b9097488b31560.png", "8de3a3924cb95bd0e95a443fff0326c869f9d4979cd1d5b6e94e2a01f5be53e9.jpg", "10eb4fe0ac8a7dc348a2cc282ca5df1759ab8bf680117e4047728100969e7b43.jpg", "52d2a8f514c4fd2d9866587f4d7b2a5bfa1a11a0e772077d7682deb8b3b517e5.jpg", "85a6d68622b36995ccb98a89bbb119edf167c914660e4450d313de049320005c.png", "92d7758c402f0927011ca8d0a7e40251439fba3a1dac26f5b8b62026323501aa.jpg", "95b90082f799f48677b4f206d856ad572f1d178c676269eac6347631d4447258.jpg", "3083c722c0c738cad0f468383167a0d246f91af2bfa373e9c5c094fb8c8413e0.png", "3871e838723dd6b166e490664eead8ec60aedd6b8d95bc8e2fe3f882f0fd90f0.jpg", "79520a3d3a0f4d3caa440802ef4362e99d54e12b1392973e4ea321840970a88a.jpg", "8979352a182bde7c3c651ba2b2f4e0615de819585cc37b7175bcefbca15a6683.jpg", "ad56fba948dfba9ae698198c109e71f118a54d209c0ea50d77ea546abad89c57.png", "bd6464771e47eed832c5eb2cd85cdc0bfc697786b903bfd30f890f9d4fc36657.jpg", "cb49c003b454385aa9975733aff4571c62182ccdda480aaba9a8d250014f00ec.png", "cbcbb5a6cfb55c36f8f021fbb0e3f69ac96339a39fa85cd96f2017a2192821b5.png", "cd4c518bc6ef165c39d4405b347b51ba40f8d7a065ab0e8d2e4f422cbc1e8a43.jpg", "e6e5631ce1237ae4c05b3563eda686400a401df4548d0f9fad40ecac1659c46c.jpg", "f735bee5b64ef98879dc618b016ecf7939a5756040c2cde21ccb15e69a6e1cfb.png", "fb918796edc3d2221218db0811e240e72e340350008338b0c07a52bd353666a6.jpg"]
+	"0a40562379b63dfb89227e6d172f39fdce9022cba76623f1054a2c83d6c0ba5d.png", "0c7bf5fe9462d5bffbd11126e82908e39be3ce56220d900f633d58fb432e56f5.png", "1f7dca9c22f324751f2a5a59c9b181dfe3b5564a04b724c657732d0bf09c99db.jpg", "08b42b43ae9d3c0605da11d0eac86618ea888e62cdd9518ee8b9097488b31560.png", "8de3a3924cb95bd0e95a443fff0326c869f9d4979cd1d5b6e94e2a01f5be53e9.jpg", "10eb4fe0ac8a7dc348a2cc282ca5df1759ab8bf680117e4047728100969e7b43.jpg", "52d2a8f514c4fd2d9866587f4d7b2a5bfa1a11a0e772077d7682deb8b3b517e5.jpg", "85a6d68622b36995ccb98a89bbb119edf167c914660e4450d313de049320005c.png", "92d7758c402f0927011ca8d0a7e40251439fba3a1dac26f5b8b62026323501aa.jpg", "95b90082f799f48677b4f206d856ad572f1d178c676269eac6347631d4447258.jpg", "3083c722c0c738cad0f468383167a0d246f91af2bfa373e9c5c094fb8c8413e0.png", "3871e838723dd6b166e490664eead8ec60aedd6b8d95bc8e2fe3f882f0fd90f0.jpg", "79520a3d3a0f4d3caa440802ef4362e99d54e12b1392973e4ea321840970a88a.jpg", "8979352a182bde7c3c651ba2b2f4e0615de819585cc37b7175bcefbca15a6683.jpg", "ad56fba948dfba9ae698198c109e71f118a54d209c0ea50d77ea546abad89c57.png", "bd6464771e47eed832c5eb2cd85cdc0bfc697786b903bfd30f890f9d4fc36657.jpg", "cb49c003b454385aa9975733aff4571c62182ccdda480aaba9a8d250014f00ec.png", "cbcbb5a6cfb55c36f8f021fbb0e3f69ac96339a39fa85cd96f2017a2192821b5.png", "cd4c518bc6ef165c39d4405b347b51ba40f8d7a065ab0e8d2e4f422cbc1e8a43.jpg", "e6e5631ce1237ae4c05b3563eda686400a401df4548d0f9fad40ecac1659c46c.jpg", "f735bee5b64ef98879dc618b016ecf7939a5756040c2cde21ccb15e69a6e1cfb.png", "fb918796edc3d2221218db0811e240e72e340350008338b0c07a52bd353666a6.jpg"]
 
 const preloadedImages = {}
 
@@ -66,8 +66,8 @@ canvas.addEventListener("pointerup", (e) => {
 canvas.addEventListener("pointermove", (e) => {
 	if (mouse.down) {
 		const rect = canvas.getBoundingClientRect();
-		mouse.pos = [(e.clientX - rect.left) / canvas.width, 1 -(e.clientY - rect.top) / canvas.height];
-	} 
+		mouse.pos = [(e.clientX - rect.left) / canvas.width, 1 - (e.clientY - rect.top) / canvas.height];
+	}
 });
 
 const positionBuffer = gl.createBuffer();
@@ -242,9 +242,9 @@ function makeShadertoy(json) {
 	}`;
 
 	let Shadertoy = {
-		time: 0, 
-		frame: 0, 
-		dt: 1/60,
+		time: 0,
+		frame: 0,
+		dt: 1 / 60,
 
 		info,
 
@@ -253,7 +253,7 @@ function makeShadertoy(json) {
 		// lookup table of FBOs and textures
 		textures: {},
 
-		makePass: function(pass) {
+		makePass: function (pass) {
 			if (!pass) return;
 
 			// create an output FBO & texture
@@ -297,7 +297,7 @@ function makeShadertoy(json) {
 			this.passes.push(pass)
 		},
 
-		render: function() {
+		render: function () {
 			const now = new Date();
 			const iDateValue = [
 				now.getFullYear(),
@@ -373,7 +373,7 @@ function makeShadertoy(json) {
 			lasttime = newtime;
 		},
 
-		freeMemory: function() {
+		freeMemory: function () {
 			// free up memory for all allocated resources:
 			for (let pass of this.passes) {
 				// program
@@ -387,14 +387,14 @@ function makeShadertoy(json) {
 			}
 
 			for (let texture of Object.values(this.textures)) {
-				
+
 				gl.deleteTexture(texture.texture)
 			}
 
 		}
 	}
 
-	
+
 	Shadertoy.makePass(json.renderpass.find(pass => pass.name == "Buffer A"))
 	Shadertoy.makePass(json.renderpass.find(pass => pass.name == "Buffer B"))
 	Shadertoy.makePass(json.renderpass.find(pass => pass.name == "Buffer C"))
@@ -404,7 +404,7 @@ function makeShadertoy(json) {
 	title.innerText = `${Shadertoy.info.name} - ${Shadertoy.info.username}`
 
 	//console.log(Shadertoy)
-	
+
 	return Shadertoy
 
 }
@@ -426,7 +426,7 @@ function render() {
 		shadertoy.render()
 
 		let { width, height } = canvas
- 
+
 		let fade = Math.min(shadertoy.time * 2, (duration - shadertoy.time) / 2)
 		fade = Math.min(fade, 1)
 
@@ -457,69 +457,3 @@ function render() {
 
 	requestAnimationFrame(render);
 }
-
-function unloadShadertoy() {
-	if (shadertoy) {
-		shadertoy.freeMemory()
-		shadertoy = null
-	}
-}
-
-function loadNextShadertoy() {
-	unloadShadertoy()
-
-	let toy = data.shift()
-	data.push(toy)
-	shadertoy = makeShadertoy(toy)
-}
-
-function loadPrevShadertoy() {
-	unloadShadertoy()
-
-	let toy = data.pop()
-	data.unshift(toy)
-	shadertoy = makeShadertoy(toy)
-}
-
-function loadRandomShadertoy() {
-	unloadShadertoy()
-	
-	let which = Math.floor(Math.random() * data.length)
-	shadertoy = makeShadertoy(data[which])
-}
-
-
-// "Esc" to fullscreen
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    const elem = document.documentElement;
-    if (!document.fullscreenElement) {
-      elem.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
-    }
-  } else if (e.key == "ArrowRight") {
-	loadNextShadertoy()
-  } else if (e.key == "ArrowLeft") {
-	loadPrevShadertoy()
-  }
-});
-
-// document.addEventListener('click', () => {
-//   if (!document.fullscreenElement) {
-//     // Enter fullscreen (targeting the whole page)
-//     document.documentElement.requestFullscreen()
-//       .catch(err => console.error(`Error: ${err.message}`));
-//   } else {
-//     // Exit fullscreen
-//     document.exitFullscreen();
-//   }
-// });
-
-
-loadImages(imageUrls).then(images => {
-	// All images are loaded
-	//loadNextShadertoy()
-	loadRandomShadertoy()
-	render();
-});

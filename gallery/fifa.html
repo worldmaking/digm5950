@@ -57,7 +57,7 @@ canvas {
     <canvas id="gl" width="960" height="540"></canvas>
     <p id="title" class="roboto100"></p>
     </div>
-    <script src="./data.js"></script>
+    <script src="./data_fifa.js"></script>
     <script src="./script.js"></script>
     <script>
 
@@ -124,10 +124,11 @@ document.addEventListener('keydown', (e) => {
 
 loadImages(imageUrls).then(images => {
 	// All images are loaded
-	//loadNextShadertoy()
-	loadRandomShadertoy()
+	loadNextShadertoy()
+	//loadRandomShadertoy()
 	render();
 });
+
     </script>
   </body>
 </html>
