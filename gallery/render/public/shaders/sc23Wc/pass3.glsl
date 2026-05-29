@@ -2,6 +2,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     // convert pixel coordinate to normalize texture coord
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     
     // our previous state
     vec4 A = texture(iChannel0, uv); // the particles
@@ -32,5 +33,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     
     B += vec4(p);
     
-    fragColor = B;
+    fragColor = B * mask;
 }

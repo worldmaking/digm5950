@@ -58,6 +58,7 @@ vec3 pickType(vec3 p, float r){
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     vec2 px = 1.0 / iResolution.xy;
 
     //random values used for decisions this frame
@@ -129,5 +130,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
         return;
     }
 
-    fragColor = vec4(outRGB, 1.0);
+    fragColor = vec4(outRGB, 1.0) * mask;
 }

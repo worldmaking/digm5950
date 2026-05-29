@@ -50,7 +50,6 @@ automata underneath as I described above.
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = (fragCoord / iResolution.xy);
 
-
     float mask = 1.-texture(iMask, uv).a;
     
     /*

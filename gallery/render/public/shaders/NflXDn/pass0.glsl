@@ -16,6 +16,7 @@ vec3 speciesColor(float s) {
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
     vec3 lenia = texture(iChannel0, uv).rgb;
     vec4 A     = texture(iChannel1, uv);          // particle
@@ -38,5 +39,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     //uncomment this line to show particles
     //col += sc * smoothstep(3., 0., d);
 
-    fragColor = vec4(clamp(col, 0., 1.), 1.);
+    fragColor = vec4(clamp(col, 0., 1.), 1.) * mask;
 }

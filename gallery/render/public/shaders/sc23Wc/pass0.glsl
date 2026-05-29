@@ -52,6 +52,7 @@ I could implement a version where if 2 or more agents are close to each other ra
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = (fragCoord / iResolution.xy);
+    float mask = 1.-texture(iMask, uv).a;
    
     // zoom in
     if (iMouse.z > 0.0) {
@@ -90,5 +91,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     // agents:
     fragColor += vec4(p);
     
-   
+   fragColor *= mask;
 }

@@ -7,6 +7,7 @@
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   // Uv coordinates
   vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
   // Previous State of Automata
   vec4 A = texture(iChannel0, uv);
   // Smoke state to get velocity values
@@ -119,5 +120,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     }
   }
 
-  fragColor = A;
+  fragColor = A * mask;
 }

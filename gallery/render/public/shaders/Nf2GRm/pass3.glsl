@@ -3,6 +3,7 @@ mat2 rot(float a) { return mat2(cos(a), -sin(a), sin(a), cos(a)); }
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     vec2 p = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
     
     // Generate a fractal arena (based on a variation of your original getFractalUV logic)

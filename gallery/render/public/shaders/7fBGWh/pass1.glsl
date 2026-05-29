@@ -24,6 +24,7 @@ vec4 trackParticles(vec4 currentPixel, vec2 coordinates, vec2 offset) {
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
   // Get the previous state of the particles
   vec4 A = texture(iChannel0, uv);

@@ -10,6 +10,7 @@
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
     vec4 C = texture(iChannel1, uv);
 
@@ -110,5 +111,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     }
 
     C = clamp(C, 0.0, 1.0);
-    fragColor = C;
+    fragColor = C * mask;
 }

@@ -36,6 +36,7 @@ mat4 getVal(in vec2 xy) {
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
     // read species ID from trail (persists after particle moves away)
     vec2 trail = texture(iChannel1, uv).rg;

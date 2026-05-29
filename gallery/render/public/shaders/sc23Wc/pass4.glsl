@@ -6,19 +6,20 @@ float tree = 0.5;
 float burning = 1.0;
 
 // the chance of an empty cell regrowing trees by expansion:
-float growth_probability = 0.04;
+float growth_probability = 0.04 * 2.;
 // the chance of an empty cell regrowing trees by random sporing:
-float spore_probability = 0.02;// 0.001
+float spore_probability = 0.02 / 2.;// 0.001
 // the chance of lighting striking a cell:
 float lightning_probability = 0.001;
 // chance of fire spreading:
-float fire_probability = 0.55;
+float fire_probability = 0.8;//0.55 * 1.5;
 // chance of fire going out
 float chance_of_rain = 0.25;
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     // normalized coordinate (0.0 to 1.0):
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
     // get self state
     vec4 C  = texture(iChannel2, (fragCoord+vec2( 0, 0))/iResolution.xy);
@@ -103,6 +104,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
             fragColor = vec4(step(0.8, noise.x));
         }
     } 
+
+    fragColor *= mask;
     
    
 }

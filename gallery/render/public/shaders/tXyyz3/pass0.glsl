@@ -4,6 +4,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     // Normalized coordinates
     // --------------------------------------------------
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
     // --------------------------------------------------
     // Zoom interaction (unchanged)
@@ -38,7 +39,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     // Map state + density to color
     // --------------------------------------------------
     vec3 color = mix(
-        vec3(0.1, 0.2, 0.6),   // low-density/dead: blue
+        vec3(0.1, 0.2, 0.6)*0.5,   // low-density/dead: blue
         vec3(1.0, 0.4, 0.1),   // high-density/active: orange
         density
     );
@@ -46,6 +47,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     // subtle glow based on current state
     color += state * vec3(0.6, 0.6, 0.4);
 
-    fragColor = vec4(color, 1.0);
+    fragColor = vec4(color, 1.0) * mask;
 }
 

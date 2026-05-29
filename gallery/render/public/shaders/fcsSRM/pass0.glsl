@@ -19,6 +19,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     vec2 uv = fragCoord / iResolution.xy;
     uv = applyZoom(uv);
     
+    float mask = 1.-texture(iMask, uv).a;
+    
     // Establishes vec4 'state' and floats 'chem' and 'voltage to visualize Buffer A, B, and C
     vec4 state = texture(iChannel0, uv);
     float chem = texture(iChannel1, uv).r;
@@ -44,6 +46,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     
     // Alters 'col' to apply the bright "electric" glow
     col += vec3(0.3, 0.8, 1.5) * voltage * 1.2;
+
+    col *= mask;
 
     // Sets fragColor so the system is visible
     fragColor = vec4(col, 1.0);

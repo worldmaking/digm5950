@@ -3,7 +3,7 @@ mat2 rot(float a) { return mat2(cos(a), -sin(a), sin(a), cos(a)); }
 
 // Fractal Space Folding: Generating Extremely Complex Patterns
 vec2 getFractalUV(vec2 uv) {
-    uv = (uv - 0.5) * 2.0;
+    uv = (uv - vec2(0.6, 0.45)) * 1.4;
     uv.x *= iResolution.x / iResolution.y;
     
     // Iterative Folding (IFS)
@@ -19,6 +19,7 @@ vec2 getFractalUV(vec2 uv) {
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 baseUV = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, baseUV).a;
     
     if (iMouse.z > 0.) {
         float mag = 10.;
@@ -73,5 +74,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
 
 
-    fragColor = vec4(finalCol, 1.0);
+    fragColor = vec4(finalCol, 1.0) * mask;
 }

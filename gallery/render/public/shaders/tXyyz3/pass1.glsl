@@ -57,6 +57,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     // Normalized pixel coordinates (0–1)
     // --------------------------------------------------
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
     // --------------------------------------------------
     // Read previous frame state from feedback buffer
@@ -70,11 +71,19 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     // --------------------------------------------------
     if (iFrame == 0)
     {
-        vec2 screenCenter = iResolution.xy * 0.5;
+        vec2 screenCenter = iResolution.xy * vec2(0.76, 0.35);
         float distanceFromCenter = length(fragCoord - screenCenter);
 
         // Cells inside radius start fully alive
-        cellState = (distanceFromCenter < 20.0) ? 2.0 : 0.0;
+        cellState = (distanceFromCenter < 20.0) ? 2.0 : cellState;
+    }
+    if (iFrame == 0)
+    {
+        vec2 screenCenter = iResolution.xy * vec2(0.23, 0.25);
+        float distanceFromCenter = length(fragCoord - screenCenter);
+
+        // Cells inside radius start fully alive
+        cellState = (distanceFromCenter < 20.0) ? 2.0 : cellState;
     }
 
     // --------------------------------------------------
@@ -168,7 +177,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     // Output grayscale color based on cell state
     // --------------------------------------------------
     
-    fragColor = vec4(nextState, nextState, nextState, 1.0);
+    fragColor = vec4(nextState, nextState, nextState, 1.0) * mask;
 }
 
 

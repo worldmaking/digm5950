@@ -1,5 +1,7 @@
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = fragCoord / iResolution.xy;
+    
+    float mask = 1.-texture(iMask, uv).a;
     vec2 texel = 1.0 / iResolution.xy;
 
     // --- 1. 空间异质性参数 (生物群落调制) ---
@@ -51,7 +53,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     float phase = advectedState.b + 0.001 + nextV * 0.01;
 
     fragColor = vec4(nextU, nextV, phase, 1.0);
+
     
     // 初始化 (全屏充满 U)
-    if(iFrame < 10) fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    //if(iFrame < 10) fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    fragColor *= mask;
 }

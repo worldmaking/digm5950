@@ -1,5 +1,6 @@
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     
     // --- 1. 电影级特效：色散采样 (Chromatic Aberration) ---
     // 模拟真实镜头在边缘产生的色彩偏移，消除空洞感
@@ -55,5 +56,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     // 暗角 (Vignette)
     finalCol *= smoothstep(1.3, 0.5, length(uv - 0.5));
     
-    fragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);
+    fragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0) * mask;
 }

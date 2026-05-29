@@ -12,34 +12,8 @@
                 {
                     "channel": 0,
                     "type": "buffer",
-                    "id": "4dXGR8",
-                    "filepath": "/media/previz/buffer00.png",
-                    "sampler": {
-                        "filter": "nearest",
-                        "wrap": "clamp",
-                        "vflip": "true",
-                        "srgb": "false",
-                        "internal": "byte"
-                    }
-                },
-                {
-                    "channel": 1,
-                    "type": "buffer",
-                    "id": "XsXGR8",
-                    "filepath": "/media/previz/buffer01.png",
-                    "sampler": {
-                        "filter": "linear",
-                        "wrap": "clamp",
-                        "vflip": "true",
-                        "srgb": "false",
-                        "internal": "byte"
-                    }
-                },
-                {
-                    "channel": 2,
-                    "type": "buffer",
-                    "id": "4sXGR8",
-                    "filepath": "/media/previz/buffer02.png",
+                    "id": "XdfGR8",
+                    "filepath": "/media/previz/buffer03.png",
                     "sampler": {
                         "filter": "linear",
                         "wrap": "clamp",
@@ -49,7 +23,7 @@
                     }
                 }
             ],
-            "code": "shaders/7cBGzc/pass0.glsl",
+            "code": "shaders/NcsGWj/pass0.glsl",
             "name": "Image",
             "description": "",
             "type": "image"
@@ -57,7 +31,7 @@
         {
             "outputs": [],
             "inputs": [],
-            "code": "shaders/7cBGzc/pass1.glsl",
+            "code": "shaders/NcsGWj/pass1.glsl",
             "name": "Common",
             "description": "",
             "type": "common"
@@ -76,7 +50,7 @@
                     "id": "4dXGR8",
                     "filepath": "/media/previz/buffer00.png",
                     "sampler": {
-                        "filter": "nearest",
+                        "filter": "linear",
                         "wrap": "clamp",
                         "vflip": "true",
                         "srgb": "false",
@@ -97,7 +71,7 @@
                     }
                 }
             ],
-            "code": "shaders/7cBGzc/pass2.glsl",
+            "code": "shaders/NcsGWj/pass2.glsl",
             "name": "Buffer A",
             "description": "",
             "type": "buffer"
@@ -137,7 +111,7 @@
                     }
                 }
             ],
-            "code": "shaders/7cBGzc/pass3.glsl",
+            "code": "shaders/NcsGWj/pass3.glsl",
             "name": "Buffer B",
             "description": "",
             "type": "buffer"
@@ -177,8 +151,61 @@
                     }
                 }
             ],
-            "code": "shaders/7cBGzc/pass4.glsl",
+            "code": "shaders/NcsGWj/pass4.glsl",
             "name": "Buffer C",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "XdfGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/NcsGWj/pass5.glsl",
+            "name": "Buffer D",
             "description": "",
             "type": "buffer"
         }
@@ -193,13 +220,13 @@
         "mFlagMusicStream": false
     },
     "info": {
-        "id": "7cBGzc",
-        "date": "1775591236",
-        "viewed": 20,
-        "name": "Party Lights",
-        "username": "HiromuneKubayashi",
-        "description": "ASSIGNMENT: Final Project\nNAME: Hiromune Kubayashi\nTITLE: Party Lights",
-        "likes": 0,
+        "id": "NcsGWj",
+        "date": "1773613427",
+        "viewed": 48,
+        "name": "Space Strugglers",
+        "username": "Robert Jamrocha-Tullo", 
+        "description": "a3",
+        "likes": 3,
         "published": 1,
         "flags": 32,
         "usePreview": 0,
@@ -207,7 +234,7 @@
             "datt4950"
         ],
         "hasliked": 0,
-        "parentid": "7ff3RX",
-        "parentname": "DATT4950 lab 9"
+        "parentid": "fclGWj",
+        "parentname": "DATT4950 A3 Robert"
     }
 }

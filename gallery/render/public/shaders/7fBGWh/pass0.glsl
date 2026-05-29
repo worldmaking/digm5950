@@ -78,6 +78,7 @@ future.
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
   // Particle Control
   vec4 A = texture(iChannel0, uv);
   // Particle Traces
@@ -93,4 +94,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   // fragColor = 0.15*C*0.15*C*B;
   // To check how the probability field changes
   // fragColor = C;
+  fragColor *= mask;
 }

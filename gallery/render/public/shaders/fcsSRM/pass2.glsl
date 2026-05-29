@@ -2,6 +2,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     // Normalized pixel coordinates (from 0 to 1), keeping the image in view based on the resolution size
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     vec2 px = 1.0 / iResolution.xy;
 
     // Establishes float 'heat' represent the previous location/state of a given cell, in this case, being used for the heat map
@@ -25,4 +26,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 
     // Sets fragColor so the system is visible
     fragColor = vec4(blurred,0.0,0.0,1.0);
+    fragColor *= mask;
 }

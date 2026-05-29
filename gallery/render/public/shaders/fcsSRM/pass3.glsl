@@ -2,6 +2,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     // Normalized pixel coordinates (from 0 to 1), keeping the image in view based on the resolution size
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     vec2 px = 1.0 / iResolution.xy;
     
     // Establishes vec4 'state' to represent the previous location/state of a given cell
@@ -44,4 +45,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     
     // Sets fragColor so the system is visible
     fragColor = vec4(v, r, 0.0, 1.0);
+    fragColor *= mask;
 }

@@ -2,6 +2,7 @@
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     vec4 A = texture(iChannel0, uv);
     
     if (iFrame < 5 || length(A.xy) < 0.1) {

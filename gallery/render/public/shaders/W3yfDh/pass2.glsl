@@ -66,6 +66,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   // https://www.shadertoy.com/view/WcccDf
   vec2 oneTexel = 1.0 / iResolution.xy;
   vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
   // Added flexible dt value
   // In the interpolation formula the previous frame is offset by the vector * DT
@@ -176,5 +177,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   // optimized smoke
   me.w -= 0.002;
 
-  fragColor = me;
+  fragColor = me * mask;
 }

@@ -1,5 +1,6 @@
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     vec4 C = texture(iChannel2, uv);
     
     // --- 1. 扩散与淡出 ---
@@ -19,6 +20,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
         float d = distance(fragCoord, iMouse.xy);
         C.r += smoothstep(25.0, 0.0, d) * 0.5;
     }
+
+    C *= mask;
     
     fragColor = clamp(C, 0.0, 1.0);
 }

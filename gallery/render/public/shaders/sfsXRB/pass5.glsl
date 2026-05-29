@@ -9,6 +9,7 @@
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     vec4 noise = random4(vec3(fragCoord.xy, iTime));
 
     vec2 c0  = mod(fragCoord + vec2( 0, 0) + iResolution.xy, iResolution.xy);
@@ -66,5 +67,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     C.g = probability;
     C.b = temperature;
 
-    fragColor = C;
+    fragColor = C * mask;
 }

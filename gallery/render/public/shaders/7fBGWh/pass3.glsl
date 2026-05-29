@@ -6,6 +6,7 @@
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
   // Get the paticle channel with the positions
   vec4 A = texture(iChannel0, uv);
@@ -25,5 +26,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   // 0.989 decay factor works the best to keep particle tail visible but 
   // doesn't overwhelm the canvas with it
   B *= 0.989;
-  fragColor = B;
+  fragColor = B * mask;
 }

@@ -77,6 +77,7 @@ int crowding = 5;
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     vec2 uv = fragCoord/iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     
     // generate noise
     vec4 noise = random4(vec3(fragCoord, iTime));
@@ -196,4 +197,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
         fragColor = texture(iChannel0, uv);
     }
     
+    fragColor *= mask;
 }

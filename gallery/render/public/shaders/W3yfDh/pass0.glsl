@@ -89,6 +89,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 
 {
   vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
   // Smoke vector
   vec4 smoke = texture(iChannel0, uv);  
   // Automata vector

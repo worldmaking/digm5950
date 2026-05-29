@@ -2,6 +2,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
 
     vec2 uv = fragCoord/iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     
     // mouse zoom
     if(iMouse.z > 0.0) {
@@ -13,5 +14,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     
     vec4 C = texture(iChannel0, uv);
     
-    fragColor = C.rgba;
+    fragColor = C.rgba * mask;
 }

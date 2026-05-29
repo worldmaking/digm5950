@@ -67,6 +67,7 @@ patterns could produce more complex dynamics.
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
     if (iMouse.z > 0.0)
     {
@@ -146,10 +147,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     vec3 agents = agentColor * p * 0.9;
 
-    vec3 col = membrane * 0.85 + sugar + disturbance + trails + agents + circleCol;
+    vec3 col = membrane * 0.85 + sugar + disturbance + trails + agents;// + circleCol;
 
     // Lower exposure so highlights do not wash out.
     col = 1.0 - exp(-col * 1.02);
 
-    fragColor = vec4(col, 1.0);
+    fragColor = vec4(col, 1.0) * mask;
 }

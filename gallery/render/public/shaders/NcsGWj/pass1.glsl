@@ -1,24 +1,20 @@
+//COMMON: contains multiple constants and functions used throughout code
+//functions were sourced from https://alicelab.world/digm5950/glsl.html
+//as well as lectures from Graham Wakefield.
+
+//Constant variable for two times pi
 const float TWOPI = 6.283185307179586;
 
-// create a 2D rotation matrix from an angle in radians:
-mat2 rotate2d(float angle) {
-    float s = sin(angle);
-    float c = cos(angle);
-    return mat2(
-        c, -s, 
-        s, c
-    ); 
-}
-
-// make a sigmoid transition of x around center with given width
+//function for sigmoid transition
 float sigmoid(float x, float center, float width) {
+    //x is a variable that changes the transition around center
+    //depending on width
     return 1.0 / (1.0 + exp(-(x-center)*4.0/width));
 }
 
 
-// Gaussian blur
+//Gaussian blur function
 vec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {
-    // N/2 .. N/4
     float sigma = float(N)/3.14;   
     float expFactor = -0.5/(sigma*sigma);
     float weight = 1.;
@@ -35,6 +31,8 @@ vec4 blur(sampler2D img, vec2 fragCoord, vec2 resolution, int N, vec2 dir) {
     return sum / weightSum;
 }
 
+
+//Below are multiple pseudorandom number generator functions
 
 #define RANDOM_SCALE vec4(.1031, .1030, .0973, .1099)
 

@@ -34,6 +34,7 @@ vec3 palette(vec3 onehot, vec2 fragCoord){
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
     if(iMouse.z > 0.0) {
         float magnification = 10.0;
@@ -80,5 +81,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 
     col = pow(col, vec3(0.92));
 
-    fragColor = vec4(col, 1.0);
+    fragColor = vec4(col, 1.0) * mask;
 }

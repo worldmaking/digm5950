@@ -40,6 +40,7 @@ vec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     vec4 A  = texture(iChannel1, uv);
 
     // nearest-particle propagation

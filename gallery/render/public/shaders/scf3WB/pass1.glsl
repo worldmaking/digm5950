@@ -68,9 +68,10 @@ vec2 coord = vec2(0,0);
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
         // normalized coordinate (0.0 to 1.0):
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     
-    int regionH = int(mix(2., 50., uv.y));
-    int regionW = int(mix(2., 100., uv.x));
+    int regionH = int(mix(2., 50., 1.-uv.y));
+    int regionW = int(mix(2., 100., 1.-uv.x));
     
     vec4 noise = random4(vec3(fragCoord, iTime));
 
@@ -253,5 +254,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
             fragColor = vec4(0);
         }
         */
-    } 
+    }
+    fragColor *= mask;
 }

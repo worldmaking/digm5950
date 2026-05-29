@@ -2,6 +2,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 
     // normalized coordinate (0.0 to 1.0):
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     
     //uv /= 4.;
     
@@ -10,6 +11,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
         uv /= magnification;
         uv += iMouse.xy / ((iResolution.xy + (iResolution.xy / (magnification - 1.0))));
     }
+    
     
     // read 1st texture input:
     vec4 ca = texture(iChannel0, uv);
@@ -29,4 +31,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     //fragColor = vec4(i & 2);
     //fragColor = vec4(i & 4);
     //fragColor = vec4(i & 8);
+    fragColor *= mask;
 }

@@ -6,6 +6,7 @@
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
 
   // Get the Particle Possitions Channel
   vec4 A = texture(iChannel1, uv);
@@ -100,5 +101,5 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
   // 0.97 attracts the particles well and the probability field doesn't dissapear too fast
   C.g *= 0.97;
 
-  fragColor = C;
+  fragColor = C * mask;
 }
