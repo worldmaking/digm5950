@@ -60,19 +60,6 @@
                         "srgb": "false",
                         "internal": "byte"
                     }
-                },
-                {
-                    "channel": 4,
-                    "type": "texture",
-                    "id": "mask",
-                    "filepath": "images/mask.png",
-                    "sampler": {
-                        "filter": "linear",
-                        "wrap": "clamp",
-                        "vflip": "true",
-                        "srgb": "false",
-                        "internal": "byte"
-                    }
                 }
             ],
             "code": "shaders/fc2GRw/pass0.glsl",

@@ -28,7 +28,7 @@
 			/*width: 100vw;
     height: 100vh;
     display: block*/
-			width: 100%;
+			width: 80%;
 			height: auto;
 			aspect-ratio: 16 / 9;
 			/* Replace with your desired ratio */
@@ -66,6 +66,7 @@
 const urlParams = new URLSearchParams(window.location.search)
 const shader_name = urlParams.get("shader") || "3XGfzt"
 const totalFrames = urlParams.get("frames") || 0
+const FPS = urlParams.get("fps") || 60
 
 const width = 3840
 const height = 1920
@@ -316,9 +317,10 @@ uniform sampler2D iChannel1;
 uniform sampler2D iChannel2;         
 uniform sampler2D iChannel3;     
 uniform sampler2D iChannel4;          
-uniform sampler2D iChannel5;          
-uniform sampler2D iChannel6;         
-uniform sampler2D iChannel7;     
+uniform sampler2D iChannel5;      
+
+uniform sampler2D iMap;     
+uniform sampler2D iMask;
 
 // TODO
 //uniform vec3      iChannelResolution[4]; // channel resolution (in pixels)   
@@ -335,18 +337,52 @@ void main() {
 mainImage(fragColor,gl_FragCoord.xy);
 }`;
 
+	// always create the mask:
+
+	function defineTexture(input) {
+		// remove any leading "/" characters
+		let filepath = input.filepath.split('\\').pop().split('/').pop();
+		let image = preloadedImages[filepath]
+		if (!image) console.error(filepath, "not preloaded")
+
+		let { width, height } = image
+		let vflip = input.sampler.vflip == "true"
+
+		let texture = createTexture(width, height)
+		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, vflip);
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.texImage2D(
+			gl.TEXTURE_2D,
+			0,                // Mip level
+			gl.RGBA,          // Internal format
+			gl.RGBA,          // Source format
+			gl.UNSIGNED_BYTE, // Type
+			image             // Image element
+		);
+		// 4. Generate Mipmaps if needed
+		gl.generateMipmap(gl.TEXTURE_2D);
+		gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+
+		console.log("loaded", filepath, input.id, width, height, texture, input.channel)
+
+		return { width, height, texture }
+	}
+
+
 	let Shadertoy = {
 		time: 0,
 		frame: 0,
-		dt: 1 / 60,
+		dt: 1 / FPS,
 
 		info,
 
 		passes: [],
 
 		// lookup table of FBOs and textures
-		textures: {},
+		textures: {
+		},
 
+		
 		makePass: function (pass) {
 			if (!pass) return;
 
@@ -359,32 +395,35 @@ mainImage(fragColor,gl_FragCoord.xy);
 
 			if (pass.type == "image") this.finaltexture = pass.buffer
 
+			// insert our special inputs:
+			pass.inputs.push({
+				type: "texture",
+				id: "map",
+				filepath: "map.png",
+				channel: 6,
+				sampler: {
+					filter: "nearest",
+					wrap: "clamp",
+					vflip: "true"
+				}
+			})
+
+			pass.inputs.push({
+				type: "texture",
+				id: "mask",
+				filepath: "mask.png",
+				channel: 7,
+				sampler: {
+					filter: "nearest",
+					wrap: "clamp",
+					vflip: "true"
+				}
+			})
+
 			// loop over the inputs and create textures for any media files:
 			for (let input of pass.inputs) {
 				if (input.type == "texture") {
-
-					// remove any leading "/" characters
-					let filepath = input.filepath.split('\\').pop().split('/').pop();
-
-					let image = preloadedImages[filepath]
-					if (!image) console.error(filepath, "not preloaded")
-
-					let { width, height } = image
-
-					let texture = createTexture(width, height)
-					gl.bindTexture(gl.TEXTURE_2D, texture);
-					gl.texImage2D(
-						gl.TEXTURE_2D,
-						0,                // Mip level
-						gl.RGBA,          // Internal format
-						gl.RGBA,          // Source format
-						gl.UNSIGNED_BYTE, // Type
-						image             // Image element
-					);
-					// 4. Generate Mipmaps if needed
-					gl.generateMipmap(gl.TEXTURE_2D);
-
-					this.textures[input.id] = { width, height, texture, }
+					this.textures[input.id] = defineTexture(input)
 				}
 			}
 
@@ -423,11 +462,13 @@ mainImage(fragColor,gl_FragCoord.xy);
 						let texture = this.textures[id]
 						if (!texture) continue;
 
+
 						let channel = input.channel
 						let filter = input.sampler.filter
 						let wrap = input.sampler.wrap
 						//console.log(i, input.id, filter, wrap, textures[id])
 						//if (i != channel) console.log(name, i, channel)
+						//if (input.type == "texture") console.log(i, input.id, channel, filter, wrap)
 
 						gl.activeTexture(gl.TEXTURE0 + channel);
 						gl.bindTexture(gl.TEXTURE_2D, texture.texture);
@@ -455,8 +496,8 @@ mainImage(fragColor,gl_FragCoord.xy);
 					gl.uniform1i(gl.getUniformLocation(program, "iChannel3"), 3);
 					gl.uniform1i(gl.getUniformLocation(program, "iChannel4"), 4);
 					gl.uniform1i(gl.getUniformLocation(program, "iChannel5"), 5);
-					gl.uniform1i(gl.getUniformLocation(program, "iChannel6"), 6);
-					gl.uniform1i(gl.getUniformLocation(program, "iChannel7"), 7);
+					gl.uniform1i(gl.getUniformLocation(program, "iMap"), 6);
+					gl.uniform1i(gl.getUniformLocation(program, "iMask"), 7);
 
 					const positionLocation = gl.getAttribLocation(program, "position");
 					gl.enableVertexAttribArray(positionLocation);

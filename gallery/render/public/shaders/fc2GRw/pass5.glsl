@@ -23,6 +23,7 @@ vec4 getNearestParticle(vec4 A, vec2 fragCoord, vec2 offset) {
 void mainImage( out vec4 fragColor, in vec2 fragCoord) {
     // convert pixel coordinate to normalize texture coord
     vec2 uv = fragCoord / iResolution.xy;
+    float mask = 1.-texture(iMask, uv).a;
     
     // our previous states
     vec4 D = texture(iChannel0, uv);

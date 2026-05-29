@@ -50,6 +50,8 @@ automata underneath as I described above.
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = (fragCoord / iResolution.xy);
 
+
+    float mask = 1.-texture(iMask, uv).a;
     
     /*
     // zoom in
@@ -85,5 +87,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     fragColor += vec4(p1) * vec4(1, 0.5, 1, 0.5);
     // agents group 2: add to canvaas
     fragColor += vec4(p2) * vec4(0.2, 0.2, 0.2, 0.2);
+
+    fragColor *= mask;
    
 }
