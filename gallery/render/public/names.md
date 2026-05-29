@@ -1,18 +1,16 @@
 Spiral Particle Cellular Automaton - Junxi Li
 Wall of Fire    Robin Tarnocai
-Explosive Skies Gianluca Sabatini
-Lenia Multi-Species Particle    Xingbang Tang
-Caterpillars and Healers    Julia Scheerer
-Space Strugglers - Robert Jamrocha-Tullo
-
 Overgrown - Philip Michalowski
 Dancing in the Smoke - Philip Michalowski
-
+Lenia Multi-Species Particle    Xingbang Tang
+Space Strugglers - Robert Jamrocha-Tullo
+Explosive Skies Gianluca Sabatini
+Caterpillars and Healers    Julia Scheerer
 Abyssal Symbiosis   Jingwen Zhang   
-Kaleidoscope    Jingwen Zhang
-
-Mossflower - Gavin Johnstone
 Greasefire - Gavin Johnstone
 
-Ecology of Disturbance - Santiago Bucio-Cano
+Kaleidoscope    Jingwen Zhang
 Big Bang Cellular Automaton - Santiago Bucio-Cano
+
+Ecology of Disturbance - Santiago Bucio-Cano
+Mossflower - Gavin Johnstone
