@@ -1,0 +1,94 @@
+{
+    "ver": "0.1",
+    "renderpass": [
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dfGRr"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "repeat",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/WXGcDm/pass0.glsl",
+            "name": "Image",
+            "description": "",
+            "type": "image"
+        },
+        {
+            "outputs": [],
+            "inputs": [],
+            "code": "shaders/WXGcDm/pass1.glsl",
+            "name": "Common",
+            "description": "",
+            "type": "common"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "repeat",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/WXGcDm/pass2.glsl",
+            "name": "Buffer A",
+            "description": "",
+            "type": "buffer"
+        }
+    ],
+    "flags": {
+        "mFlagVR": false,
+        "mFlagWebcam": false,
+        "mFlagSoundInput": false,
+        "mFlagSoundOutput": false,
+        "mFlagKeyboard": false,
+        "mFlagMultipass": true,
+        "mFlagMusicStream": false
+    },
+    "info": {
+        "id": "WXGcDm",
+        "date": "1769309913",
+        "viewed": 32,
+        "name": "Greasefire",
+        "username": "Gavin Johnstone",
+        "description": "Greasefire - Cellular Automata",
+        "likes": 1,
+        "published": 1,
+        "flags": 32,
+        "usePreview": 0,
+        "tags": [
+            "datt4950"
+        ],
+        "hasliked": 0,
+        "parentid": "",
+        "parentname": ""
+    }
+}

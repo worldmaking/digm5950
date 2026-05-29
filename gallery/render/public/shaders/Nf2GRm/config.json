@@ -1,0 +1,161 @@
+{
+    "ver": "0.1",
+    "renderpass": [
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dfGRr"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "nearest",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/Nf2GRm/pass0.glsl",
+            "name": "Image",
+            "description": "",
+            "type": "image"
+        },
+        {
+            "outputs": [],
+            "inputs": [],
+            "code": "shaders/Nf2GRm/pass1.glsl",
+            "name": "Common",
+            "description": "",
+            "type": "common"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "nearest",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/Nf2GRm/pass2.glsl",
+            "name": "Buffer A",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "XsXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/Nf2GRm/pass3.glsl",
+            "name": "Buffer B",
+            "description": "",
+            "type": "buffer"
+        }
+    ],
+    "flags": {
+        "mFlagVR": false,
+        "mFlagWebcam": false,
+        "mFlagSoundInput": false,
+        "mFlagSoundOutput": false,
+        "mFlagKeyboard": false,
+        "mFlagMultipass": true,
+        "mFlagMusicStream": false
+    },
+    "info": {
+        "id": "Nf2GRm",
+        "date": "1773805983",
+        "viewed": 41,
+        "name": "Kaleidoscope",
+        "username": "Jingwen Zhang",
+        "description": "Did you ever play with a kaleidoscope when you were a kid?\nStep into the World of the Kaleidoscope",
+        "likes": 3,
+        "published": 1,
+        "flags": 32,
+        "usePreview": 0,
+        "tags": [
+            "datt4950",
+            "digm5950"
+        ],
+        "hasliked": 0,
+        "parentid": "7fB3Rw",
+        "parentname": "Fork Fork Fork  catsnowyi 262"
+    }
+}

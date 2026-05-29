@@ -1,0 +1,240 @@
+{
+    "ver": "0.1",
+    "renderpass": [
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dfGRr"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "nearest",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/NcXSzr/pass0.glsl",
+            "name": "Image",
+            "description": "",
+            "type": "image"
+        },
+        {
+            "outputs": [],
+            "inputs": [],
+            "code": "shaders/NcXSzr/pass1.glsl",
+            "name": "Common",
+            "description": "",
+            "type": "common"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "nearest",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/NcXSzr/pass2.glsl",
+            "name": "Buffer A",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "XsXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/NcXSzr/pass3.glsl",
+            "name": "Buffer B",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4sXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/NcXSzr/pass4.glsl",
+            "name": "Buffer C",
+            "description": "",
+            "type": "buffer"
+        }
+    ],
+    "flags": {
+        "mFlagVR": false,
+        "mFlagWebcam": false,
+        "mFlagSoundInput": false,
+        "mFlagSoundOutput": false,
+        "mFlagKeyboard": false,
+        "mFlagMultipass": true,
+        "mFlagMusicStream": false
+    },
+    "info": {
+        "id": "NcXSzr",
+        "date": "1775606353",
+        "viewed": 59,
+        "name": "Abyssal Symbiosis",
+        "username": "Jingwen Zhang",
+        "description": "“Abyssal Symbiosis: Bioluminescent Swarm” is an interactive generative art piece that simulates a self-organizing biological system in the extreme environment of the deep sea.",
+        "likes": 4,
+        "published": 1,
+        "flags": 32,
+        "usePreview": 0,
+        "tags": [
+            "datt4950",
+            "digm5950"
+        ],
+        "hasliked": 0,
+        "parentid": "ffB3D3",
+        "parentname": "Fork Fork Fork  catsnowyi 963"
+    }
+}

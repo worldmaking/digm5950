@@ -1,0 +1,108 @@
+{
+    "ver": "0.1",
+    "renderpass": [
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dfGRr"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "nearest",
+                        "wrap": "repeat",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/scf3WB/pass0.glsl",
+            "name": "Image",
+            "description": "",
+            "type": "image"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "nearest",
+                        "wrap": "repeat",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 3,
+                    "type": "keyboard",
+                    "id": "4dXGRr",
+                    "filepath": "/presets/tex00.jpg",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/scf3WB/pass1.glsl",
+            "name": "Buffer A",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [],
+            "inputs": [],
+            "code": "shaders/scf3WB/pass2.glsl",
+            "name": "Common",
+            "description": "",
+            "type": "common"
+        }
+    ],
+    "flags": {
+        "mFlagVR": false,
+        "mFlagWebcam": false,
+        "mFlagSoundInput": false,
+        "mFlagSoundOutput": false,
+        "mFlagKeyboard": true,
+        "mFlagMultipass": true,
+        "mFlagMusicStream": false
+    },
+    "info": {
+        "id": "scf3WB",
+        "date": "1773267971",
+        "viewed": 59,
+        "name": "Mossflower",
+        "username": "Gavin Johnstone",
+        "description": "A2 Cellular Automata II, modified from a class project by Gavin Jonstone",
+        "likes": 2,
+        "published": 1,
+        "flags": 48,
+        "usePreview": 0,
+        "tags": [
+            "datt4950",
+            "termite"
+        ],
+        "hasliked": 0,
+        "parentid": "tXVBWG",
+        "parentname": "Final A2"
+    }
+}

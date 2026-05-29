@@ -1,0 +1,292 @@
+{
+    "ver": "0.1",
+    "renderpass": [
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dfGRr"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 3,
+                    "type": "buffer",
+                    "id": "XdfGR8",
+                    "filepath": "/media/previz/buffer03.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sfsXRB/pass0.glsl",
+            "name": "Image",
+            "description": "",
+            "type": "image"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "XdfGR8",
+                    "filepath": "/media/previz/buffer03.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sfsXRB/pass1.glsl",
+            "name": "Buffer A",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [],
+            "inputs": [],
+            "code": "shaders/sfsXRB/pass2.glsl",
+            "name": "Common",
+            "description": "",
+            "type": "common"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "XsXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "XdfGR8",
+                    "filepath": "/media/previz/buffer03.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sfsXRB/pass3.glsl",
+            "name": "Buffer B",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4sXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "XdfGR8",
+                    "filepath": "/media/previz/buffer03.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sfsXRB/pass4.glsl",
+            "name": "Buffer C",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "XdfGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "XdfGR8",
+                    "filepath": "/media/previz/buffer03.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sfsXRB/pass5.glsl",
+            "name": "Buffer D",
+            "description": "",
+            "type": "buffer"
+        }
+    ],
+    "flags": {
+        "mFlagVR": false,
+        "mFlagWebcam": false,
+        "mFlagSoundInput": false,
+        "mFlagSoundOutput": false,
+        "mFlagKeyboard": false,
+        "mFlagMultipass": true,
+        "mFlagMusicStream": false
+    },
+    "info": {
+        "id": "sfsXRB",
+        "date": "1775614318",
+        "viewed": 25,
+        "name": "Ecology of Disturbance",
+        "username": "Santiago Bucio-Cano",
+        "description": "A multi-agent ecosystem where different behavioral castes respond to a shifting environment, producing cycles of growth, disruption, and migration across a living substrate.",
+        "likes": 2,
+        "published": 1,
+        "flags": 32,
+        "usePreview": 0,
+        "tags": [
+            "datt4950"
+        ],
+        "hasliked": 0,
+        "parentid": "",
+        "parentname": ""
+    }
+}

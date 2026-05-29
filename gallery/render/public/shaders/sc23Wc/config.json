@@ -1,0 +1,226 @@
+{
+    "ver": "0.1",
+    "renderpass": [
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dfGRr"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "nearest",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 3,
+                    "type": "buffer",
+                    "id": "XdfGR8",
+                    "filepath": "/media/previz/buffer03.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sc23Wc/pass0.glsl",
+            "name": "Image",
+            "description": "",
+            "type": "image"
+        },
+        {
+            "outputs": [],
+            "inputs": [],
+            "code": "shaders/sc23Wc/pass1.glsl",
+            "name": "Common",
+            "description": "",
+            "type": "common"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4dXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "nearest",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sc23Wc/pass2.glsl",
+            "name": "Buffer A",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "XsXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 1,
+                    "type": "buffer",
+                    "id": "XsXGR8",
+                    "filepath": "/media/previz/buffer01.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sc23Wc/pass3.glsl",
+            "name": "Buffer B",
+            "description": "",
+            "type": "buffer"
+        },
+        {
+            "outputs": [
+                {
+                    "channel": 0,
+                    "id": "4sXGR8"
+                }
+            ],
+            "inputs": [
+                {
+                    "channel": 0,
+                    "type": "buffer",
+                    "id": "4dXGR8",
+                    "filepath": "/media/previz/buffer00.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                },
+                {
+                    "channel": 2,
+                    "type": "buffer",
+                    "id": "4sXGR8",
+                    "filepath": "/media/previz/buffer02.png",
+                    "sampler": {
+                        "filter": "linear",
+                        "wrap": "clamp",
+                        "vflip": "true",
+                        "srgb": "false",
+                        "internal": "byte"
+                    }
+                }
+            ],
+            "code": "shaders/sc23Wc/pass4.glsl",
+            "name": "Buffer C",
+            "description": "",
+            "type": "buffer"
+        }
+    ],
+    "flags": {
+        "mFlagVR": false,
+        "mFlagWebcam": false,
+        "mFlagSoundInput": false,
+        "mFlagSoundOutput": false,
+        "mFlagKeyboard": false,
+        "mFlagMultipass": true,
+        "mFlagMusicStream": false
+    },
+    "info": {
+        "id": "sc23Wc",
+        "date": "1775619727",
+        "viewed": 16,
+        "name": "Caterpillars and Healers",
+        "username": "Julia Scheerer",
+        "description": "Forest Fire CA that is controlled by an agent system. Blue void trees and causes new spores and tree growth, yellow agents are attracted to trees and cause trees to burn",
+        "likes": 0,
+        "published": 1,
+        "flags": 32,
+        "usePreview": 0,
+        "tags": [
+            "datt4950"
+        ],
+        "hasliked": 0,
+        "parentid": "7fBGDm",
+        "parentname": "A3 Julia Scheerer"
+    }
+}
