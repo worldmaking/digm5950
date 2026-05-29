@@ -7,6 +7,7 @@ const http = require('http')
 const express = require("express")
 const { WebSocketServer } = require("ws")
 
+
 //// CONFIG
 const OUTPUT_DIR = path.resolve(".")
 const PORT = 3000
@@ -35,8 +36,6 @@ wss.on("connection", (ws, req) => {
 
     let frameCount = 0
     let ffmpeg
-
-
     let first = true
 
     console.log("client connected")
